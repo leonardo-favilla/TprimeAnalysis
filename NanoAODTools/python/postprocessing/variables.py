@@ -155,7 +155,7 @@ regions = {
 
     
     "Presel"               : "PuppiMET_T1_pt_nominal>250",
-    "AH"                   : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtag > 0",
+    "AH"                   : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
 
 
     
