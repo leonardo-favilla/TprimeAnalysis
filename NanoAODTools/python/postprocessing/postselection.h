@@ -639,20 +639,6 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
   return nfwdjet;
 }
 
-// Int_t njetbtag(rvec_i GoodJet_idx, rvec_f Jet_btagDeepFlavB)
-// {
-//   int nbjet = 0;
-//   for(int i = 0; i < GoodJet_idx.size(); i++)
-//   {
-//     if (Jet_btagDeepFlavB[GoodJet_idx[i]] > btag_mediumWP)
-//     {
-//       nbjet += 1;
-//     }
-//   }
-//   return nbjet;
-// }
-
-
 RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, bool wp){
   // WP legend: 0->loose, 1->medium
     RVec<int> ids;
