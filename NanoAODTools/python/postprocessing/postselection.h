@@ -652,30 +652,31 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
 //   return nbjet;
 // }
 
-RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, str wp){
+RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, bool wp){
+  // WP legend: 0->loose, 1->medium
     RVec<int> ids;
     float bthres;
     if(year == 2018){
-      if(wp == "medium"){
+      if(wp == 1){
         bthres = btagDeepB_mediumWP_2018;
       }
-      else if(wp=="loose"){
+      else if(wp==0){
         bthres = btagDeepB_looseWP_2018;
       }
     }else if(year == 2022){
         if(EE){
-          if(wp == "medium"){
+          if(wp == 1){
             bthres = btagPNet_mediumWP_2022EE;
           }
-          else if(wp=="loose"){
+          else if(wp==0){
             bthres = btagPNet_looseWP_2022EE;
           }
         }
         else{
-          if(wp == "medium"){
+          if(wp == 1){
             bthres = btagPNet_mediumWP_2022;
           }
-          else if(wp=="loose"){
+          else if(wp==0){
             bthres = btagPNet_looseWP_2022;
           }
           
