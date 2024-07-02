@@ -168,8 +168,7 @@ def getFatJetArgsPostProcessor(fatjets, subjets, genjets, subgenjets, rho, run, 
             toRVecFloat(genjetmass)
             ]
     else:
-        args += [ toRVecInt([]), 0, toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]),
-                  toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]) ]
+        args += [ toRVecInt([]), 0, toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([])]
     return args
 
 class CMSJMECalculators(Module):

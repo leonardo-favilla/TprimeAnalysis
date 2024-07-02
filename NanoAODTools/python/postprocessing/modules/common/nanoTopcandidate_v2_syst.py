@@ -135,11 +135,11 @@ class nanoTopcand(Module):
         tophigh_phi_ = []
         tophigh_truth = []
         
-        if self.isMC:
-            tophigh_pt_   = {s: [] for s in self.scenarios}
-            tophigh_mass_ = {s: [] for s in self.scenarios}
-            toplow_pt_    = {s: [] for s in self.scenarios}
-            toplow_mass_  = {s: [] for s in self.scenarios}
+
+        tophigh_pt_   = {s: [] for s in self.scenarios}
+        tophigh_mass_ = {s: [] for s in self.scenarios}
+        toplow_pt_    = {s: [] for s in self.scenarios}
+        toplow_mass_  = {s: [] for s in self.scenarios}
         #low pt top loop
         for idx_j0 in range(ngoodjets):
             for idx_j1 in range(idx_j0):

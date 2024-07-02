@@ -30,6 +30,10 @@ const float btagDeepB_mediumWP_2018   = 0.2783;
 const float btagPNet_mediumWP_2022    = 0.245 ;
 const float btagPNet_mediumWP_2022EE  = 0.2605;
 
+const float btagDeepB_looseWP_2018   = 0.0490;
+const float btagPNet_looseWP_2022    = 0.047 ;
+const float btagPNet_looseWP_2022EE  = 0.0499;
+
 //  Top Resolved threshold {'fpr 10': 0.1334565, 'fpr 5': 0.24193972, 'fpr 1': 0.5411276, 'fpr 01': 0.77197933}
 //  Top Mixed threshold {'fpr 10': 0.13067308068275452, 'fpr 5': 0.2957885265350342, 'fpr 1': 0.7584613561630249, 'fpr 01': 0.9129540324211121}
 
@@ -647,17 +651,34 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
 //   }
 //   return nbjet;
 // }
-RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE){
+
+RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, str wp){
     RVec<int> ids;
     float bthres;
     if(year == 2018){
+      if(wp == "medium"){
         bthres = btagDeepB_mediumWP_2018;
+      }
+      else if(wp=="loose"){
+        bthres = btagDeepB_looseWP_2018;
+      }
     }else if(year == 2022){
         if(EE){
+          if(wp == "medium"){
             bthres = btagPNet_mediumWP_2022EE;
+          }
+          else if(wp=="loose"){
+            bthres = btagPNet_looseWP_2022EE;
+          }
         }
         else{
+          if(wp == "medium"){
             bthres = btagPNet_mediumWP_2022;
+          }
+          else if(wp=="loose"){
+            bthres = btagPNet_looseWP_2022;
+          }
+          
         }
     }
     
