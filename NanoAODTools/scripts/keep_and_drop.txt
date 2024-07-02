@@ -1,0 +1,13 @@
+# this is a comment
+# drop fixedGridRho*
+drop GenDressedLepton*
+drop GenIsolatedPhoton*
+drop GenVisTau*
+drop HTXS*
+drop IsoTrack*
+drop L1*
+drop Photon*
+drop SoftActivity*
+drop Tau*
+drop TrigObj*
+drop genTtbarId*

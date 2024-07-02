@@ -1,0 +1,16 @@
+Build directory is already present, please source again standalone/env_standalone.sh without the build argument.
+Standalone environment set.
+/tmp/acagnott/DataEGammaC_2022/file0
+year, RunTag, jetType:  2022 2022_Summer22 AK4PFPuppi
+JES : Summer22_22Sep2023_RunCD_V2_DATA
+year, RunTag, jetType:  2022 2022_Summer22 AK8PFPuppi
+JES : Summer22_22Sep2023_RunCD_V2_DATA
+year, RunTag, jetType:  2022 2022_Summer22 AK4PFPuppi
+JES : Summer22_22Sep2023_RunCD_V2_DATA
+Will write selected trees to .
+Pre-select 986403 entries out of 986403 (100.00%)
+/tmp/acagnott/DataEGammaC_2022/file0
+hadd Target file: tree_hadd_0.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+/tmp/acagnott/DataEGammaC_2022/file0

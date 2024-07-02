@@ -1,0 +1,8 @@
+python3 stack_rdataframe.py -s -C "MET_pt>150 && MinDelta_phi>0.6"
+python3 stack_rdataframe.py -s -C "MET_pt>150 && MinDelta_phi>0.6 && isResolved==1"
+python3 stack_rdataframe.py -s -C "MET_pt>150 && MinDelta_phi>0.6 && isMix==1"
+python3 stack_rdataframe.py -s -C "MET_pt>150 && MinDelta_phi>0.6 && isMerged==1"
+python3 stack_rdataframe.py -s -C "leptonveto && MET_pt>150 && MinDelta_phi>0.6"
+python3 stack_rdataframe.py -s -C "leptonveto && MET_pt>150 && MinDelta_phi>0.6 && isResolved==1"
+python3 stack_rdataframe.py -s -C "leptonveto && MET_pt>150 && MinDelta_phi>0.6 && isMix==1"
+python3 stack_rdataframe.py -s -C "leptonveto && MET_pt>150 && MinDelta_phi>0.6 && isMerged==1"

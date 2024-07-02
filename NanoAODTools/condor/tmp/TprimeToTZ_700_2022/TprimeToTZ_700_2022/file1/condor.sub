@@ -1,0 +1,13 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/a/acagnott/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "testmatch"
+executable              = /afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/condor/tmp/TprimeToTZ_700_2022/TprimeToTZ_700_2022/file1/runner.sh
+arguments               = $(Proxy_path)
+output                  = /afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/condor/tmp/TprimeToTZ_700_2022/TprimeToTZ_700_2022/condor/output/TprimeToTZ_700_2022_file1.out
+error                   = /afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/condor/tmp/TprimeToTZ_700_2022/TprimeToTZ_700_2022/condor/error/TprimeToTZ_700_2022_file1.err
+log                     = /afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/condor/tmp/TprimeToTZ_700_2022/TprimeToTZ_700_2022/condor/log/TprimeToTZ_700_2022_file1.log
+queue

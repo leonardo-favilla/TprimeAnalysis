@@ -1,0 +1,21 @@
+2024-07-02 10:22:28.927036: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+TClass::Init:0: RuntimeWarning: no dictionary for class edm::Hash<1> is available
+TClass::Init:0: RuntimeWarning: no dictionary for class edm::ParameterSetBlob is available
+TClass::Init:0: RuntimeWarning: no dictionary for class edm::ProcessHistory is available
+TClass::Init:0: RuntimeWarning: no dictionary for class edm::ProcessConfiguration is available
+TClass::Init:0: RuntimeWarning: no dictionary for class pair<edm::Hash<1>,edm::ParameterSetBlob> is available
+Traceback (most recent call last):
+  File "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/condor/tmp/DataEGammaC_2022/DataEGammaC_2022/file0/crab_script.py", line 30, in <module>
+    p.run()
+  File "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/build/lib/python/PhysicsTools/NanoAODTools/postprocessing/framework/postprocessor.py", line 235, in run
+    (nall, npass, timeLoop) = eventLoop(
+  File "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/build/lib/python/PhysicsTools/NanoAODTools/postprocessing/framework/eventloop.py", line 82, in eventLoop
+    ret = m.analyze(e)
+  File "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/build/lib/python/PhysicsTools/NanoAODTools/postprocessing/modules/jme/CMSJMECalculators_module.py", line 257, in analyze
+    res = self.config.produce(*var)
+TypeError: rdfhelpers::ModifiedPtMMsdCollection FatJetVariationsCalculator::produce(const ROOT::VecOps::RVec<float>& jet_pt, const ROOT::VecOps::RVec<float>& jet_eta, const ROOT::VecOps::RVec<float>& jet_phi, const ROOT::VecOps::RVec<float>& jet_mass, const ROOT::VecOps::RVec<float>& jet_rawcorr, const ROOT::VecOps::RVec<float>& jet_area, const ROOT::VecOps::RVec<float>& jet_msoftdrop, const ROOT::VecOps::RVec<int>& jet_subJetIdx1, const ROOT::VecOps::RVec<int>& jet_subJetIdx2, const ROOT::VecOps::RVec<float>& subjet_pt, const ROOT::VecOps::RVec<float>& subjet_eta, const ROOT::VecOps::RVec<float>& subjet_phi, const ROOT::VecOps::RVec<float>& subjet_mass, const ROOT::VecOps::RVec<float>& subjet_rawFactor, const ROOT::VecOps::RVec<int>& jet_jetId, const float rho, const ROOT::VecOps::RVec<int>& jet_genJetIdx, const int seed, const ROOT::VecOps::RVec<float>& genjet_pt, const ROOT::VecOps::RVec<float>& genjet_eta, const ROOT::VecOps::RVec<float>& genjet_phi, const ROOT::VecOps::RVec<float>& genjet_mass) =>
+    TypeError: takes at most 22 arguments (26 given)
+Error in <TFile::TFile>: file /tmp/acagnott/DataEGammaC_2022/file0/tree.root does not exist
+Error in <TFileMerger::AddFile>: cannot open file tree.root
+hadd exiting due to error in tree.root

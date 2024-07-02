@@ -1,0 +1,15 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/a/acagnott/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "nextweek"
+executable              = runner.sh
+arguments               = DataHTA_2018
+output                  = condor/output/DataHTA_2018.out
+error                   = condor/error/DataHTA_2018.err
+log                     = condor/log/DataHTA_2018.log
+queue
