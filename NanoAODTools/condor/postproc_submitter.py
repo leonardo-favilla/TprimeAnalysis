@@ -206,7 +206,7 @@ for sample in samples:
 
     files = get_files_string(sample)
 
-    for i, f in tqdm.tqdm(enumerate(files[:1])):
+    for i, f in tqdm.tqdm(enumerate(files)):
         outfolder_crabscript_i = outfolder_tmp+sample.label+"/file"+str(i)+"/"
         running_subfolder_file = running_subfolder + "/file" + str(i)
         if not os.path.exists(running_subfolder_file):

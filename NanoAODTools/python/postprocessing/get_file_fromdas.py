@@ -20,4 +20,4 @@ def get_files_string(dataset):
         out_stream = os.popen(command)
         files_string = out_stream.read()
         out_stream.close()
-        return files_string.split('\n')
+        return files_string.split('\n')[:-1]
