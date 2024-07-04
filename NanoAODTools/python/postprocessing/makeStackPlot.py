@@ -31,8 +31,8 @@ datasets = [
     # "ZJetsToNuNu_HT100to200_2018", "ZJetsToNuNu_HT200to400_2018", "ZJetsToNuNu_HT400to600_2018", "ZJetsToNuNu_HT600to800_2018", "ZJetsToNuNu_HT800to1200_2018", "ZJetsToNuNu_HT1200to2500_2018", "ZJetsToNuNu_HT2500toInf_2018", 
     # "WJetsHT100to200_2018", "WJetsHT200to400_2018", "WJetsHT400to600_2018", "WJetsHT600to800_2018", "WJetsHT800to1200_2018", "WJetsHT1200to2500_2018", "WJetsHT2500toInf_2018",   
     # "TprimeToTZ_700_2018", "TprimeToTZ_1000_2018", "TprimeToTZ_1800_2018",
-    "DataJetMET_2022", "DataEGamma_2022",#"DataMuon_2022", "DataEGamma_2022", 
-    "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", #"TprimeToTZ_700_2022", "TprimeToTZ_1800_2022",
+    # "DataJetMET_2022", "DataEGamma_2022",#"DataMuon_2022", "DataEGamma_2022", 
+    "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", "TprimeToTZ_700_2022", "TprimeToTZ_1800_2022",
     # "WJets_2jets_2022"
                ]
 
@@ -43,7 +43,7 @@ for d in datasets:
     else:
         components = [sample_dict[d]]
 
-blind = False # Set to True if you want to blind the data
+blind = True # Set to True if you want to blind the data
 
 
 # Specify the path to the JSON file
@@ -65,7 +65,8 @@ print("Regions:           {}".format(regions.keys()))
 
 ############### out folders  
 # folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_preselection/"
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
+# folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
+folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_selection/"
 # "/eos/home-a/acagnott/DarkMatter/nosynch/run2018_exo22014_v2_MET/"
 
 if not os.path.exists(folder):
@@ -86,23 +87,24 @@ if not os.path.exists(repostack+"/C"):
 print("Created folders 'plots' and 'stacks' at ", folder)
 
 # ###########################################
-vars = []
-vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 8, xmin = 100, xmax=800))
-vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
-vars.append(variable(name = "PuppiMET_T1_pt_nominal", title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 11, xarray = np.array([100, 125, 150, 175, 200, 250, 300, 350, 400, 500, 600, 1000], dtype = 'd')))#,xmin = 100, xmax=800))
-vars.append(variable(name = "PuppiMET_T1_phi_nominal", title= "Puppi MET #phi nominal", nbins = 6, xmin = -math.pi, xmax=math.pi))
-vars.append(variable(name = "nJet", title= "# Jet", nbins = 10, xmin = -0.5, xmax=9.5))
-vars.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
-vars.append(variable(name = "LeadingElectronPt_pt", title= "Leading Electron p_{T} [GeV]", nbins = 30, xmin = 0, xmax=300))
+# TriggerSF regions stacks
+# vars = []
+# vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 8, xmin = 100, xmax=800))
+# vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
+# vars.append(variable(name = "PuppiMET_T1_pt_nominal", title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 11, xarray = np.array([100, 125, 150, 175, 200, 250, 300, 350, 400, 500, 600, 1000], dtype = 'd')))#,xmin = 100, xmax=800))
+# vars.append(variable(name = "PuppiMET_T1_phi_nominal", title= "Puppi MET #phi nominal", nbins = 6, xmin = -math.pi, xmax=math.pi))
+# vars.append(variable(name = "nJet", title= "# Jet", nbins = 10, xmin = -0.5, xmax=9.5))
+# vars.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
+# vars.append(variable(name = "LeadingElectronPt_pt", title= "Leading Electron p_{T} [GeV]", nbins = 30, xmin = 0, xmax=300))
 
-hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
-hlt_mu  = "(HLT_IsoMu24 || HLT_Mu50)"
-hlt_ele = "(HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200)"
+# hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
+# hlt_mu  = "(HLT_IsoMu24 || HLT_Mu50)"
+# hlt_ele = "(HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200)"
 
-regions = {
-    "orthogonalPreselR_Ntot"     : hlt_ele +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nVetoElectron > 0",
-    "orthogonalPreselR_Npass"    : hlt_ele +" && "+hlt_met+" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nVetoElectron > 0"
-}
+# regions = {
+#     "orthogonalPreselR_Ntot"     : hlt_ele +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nVetoElectron > 0",
+#     "orthogonalPreselR_Npass"    : hlt_ele +" && "+hlt_met+" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nVetoElectron > 0"
+# }
 ####################################################
 
 
@@ -165,9 +167,9 @@ for v in vars:
         l = []
         for i, (f,s) in enumerate(zip(infile["signal"], insample["signal"])):
             # print(s.label)
-            # print("Getting histo :", v._name+"_"+r+"_"+cut_tag)
-            # print(" from:", f)
-            # print(v._name+"_"+r+"_"+cut_tag)
+            print("Getting histo :", v._name+"_"+r+"_"+cut_tag)
+            print(" from:", f)
+            print(v._name+"_"+r+"_"+cut_tag)
             tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+cut_tag)))
             if len(samples[s.label][s.label]["ntot"]):
                 # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.process][s.label]["ntot"]))
