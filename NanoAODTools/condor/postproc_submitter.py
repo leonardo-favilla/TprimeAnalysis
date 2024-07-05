@@ -1,8 +1,3 @@
-# commenti
-# funziona il run e scrive sul tier il file di output
-# non riesco ad aprire il file sul tier (ma quello in locale è ok) sembra un problema di compatibilità alma9 con tier
-# I file in locale vengono scritti comunque
-
 import os
 import optparse
 import sys
@@ -238,8 +233,8 @@ if submit:
 
         files = get_files_string(sample)
 
-        for i, f in enumerate(files[360:], start=360):
-            print("        submitting file", i)
+        for i, f in enumerate(files):
+            print("....submitting file", i, end='\r')
             outfolder_crabscript_i = outfolder_tmp+sample.label+"/file"+str(i)+"/"
             running_subfolder_file = running_subfolder + "/file" + str(i)
             if not os.path.exists(running_subfolder_file):
