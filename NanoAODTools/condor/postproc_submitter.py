@@ -187,7 +187,7 @@ if submit:
             os.makedirs(running_subfolder+"/condor/log")
 
         sample_folder = sample.label
-        launchtime = "20240704_122343"#time.strftime("%Y%m%d_%H%M%S")
+        launchtime = time.strftime("%Y%m%d_%H%M%S") #"20240704_122343" ho sottomesso diversi job con lo stesso launchtime
         
         if where_to_write == 'tier':
             command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, str(uid)))
@@ -248,6 +248,7 @@ if submit:
                     file.write("\n file "+str(i)+"\n"+ out.read())
         print("##########################################################################")
         print("\033[92mSUBMITTED\033[0m", sample.label)
+        print("##########################################################################\n")
 
 if resubmit:
     print("\n################################################ RESUBMITTING mode")

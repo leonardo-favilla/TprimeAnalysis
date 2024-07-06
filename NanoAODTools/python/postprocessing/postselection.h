@@ -360,7 +360,7 @@ int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutB
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.1) n+=1;
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) n+=1;
   }
   return n;
 }
@@ -370,7 +370,7 @@ RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Elec
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.1) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) ids.emplace_back(i);
   }
   return ids;
 }
@@ -395,12 +395,12 @@ RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
   return ids;
 }
 
-int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased)
+int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 10) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 10 && abs(Electron_eta[i])<2.5) n+=1;
   }
   return n;
 }
@@ -410,7 +410,7 @@ int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 10) n+=1;
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 10 && abs(Muon_eta[i])<2.4) n+=1;
   }
   return n;
 }
@@ -439,7 +439,8 @@ RVec<int> GetGoodJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   RVec<int> ids;
   for(int i = 0; i<Jet_pt.size(); i++)
   {
-      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.7 && Jet_jetId[i]>1)
+    // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
+      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]>1)
       {
         ids.emplace_back(i);
       }
@@ -452,7 +453,8 @@ RVec<int> GetGoodFatJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   RVec<int> ids;
   for(int i = 0; i<Jet_pt.size(); i++)
   {
-      if (Jet_pt[i]>150 && abs(Jet_eta[i])<2.7 && Jet_jetId[i]>1)
+    // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
+      if (Jet_pt[i]>150 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]>1)
       {
         ids.emplace_back(i);
       }
@@ -631,7 +633,7 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
   int nfwdjet = 0;
   for(int i = 0; i < Jet_pt.size(); i++)
   {
-    if (Jet_pt[i]>30 && Jet_jetId[i] && Jet_eta[i]>2.5)
+    if (Jet_pt[i]>30 && Jet_jetId[i] && Jet_eta[i]>2.4)
     {
       nfwdjet += 1;
     }
