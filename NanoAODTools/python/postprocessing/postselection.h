@@ -519,6 +519,19 @@ float max_etajet(rvec_f Jet_eta, rvec_i GoodJet_idx)
 
 }
 
+float MHT(rvec_f GoodJet_idx, rvec_f Jet_pt, rvec_f Jet_phi, rvec_f Jet_eta, rvec_f Jet_mass)
+{
+  RVec<ROOT::Math::PtEtaPhiMVector> v;
+
+  for(int i = 0; i < GoodJet_idx.size(); i++)
+  {
+    const ROOT::Math::PtEtaPhiMVector tmp_ {Jet_pt[GoodJet_idx[i]], Jet_eta[GoodJet_idx[i]], Jet_phi[GoodJet_idx[i]], Jet_mass[GoodJet_idx[i]]};
+    v.emplace_back(tmp_);
+  }
+  auto v_sum_lv = Sum(v, ROOT::Math::PtEtaPhiMVector());
+  return v_sum_lv.M();
+}
+
 // ########################################################
 // ########## New functions for deb #######################
 // ########################################################
