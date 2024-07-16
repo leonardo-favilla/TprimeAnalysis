@@ -400,7 +400,7 @@ int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 10 && abs(Electron_eta[i])<2.5) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5) n+=1;
   }
   return n;
 }
@@ -410,7 +410,7 @@ int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 10 && abs(Muon_eta[i])<2.4) n+=1;
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4) n+=1;
   }
   return n;
 }
@@ -508,16 +508,6 @@ float min_DeltaPhi(float MET_phi, rvec_f Jet_phi, rvec_i GoodJet_idx)
   return min_dphi;
 }
 
-float max_etajet(rvec_f Jet_eta, rvec_i GoodJet_idx)
-{
-  float max_eta = -1000;
-  for(int i = 0; i < GoodJet_idx.size(); i++)
-  {
-    if (abs(Jet_eta[GoodJet_idx[i]]) > max_eta) max_eta = abs(Jet_eta[GoodJet_idx[i]]);
-  }
-  return max_eta;
-
-}
 
 float MHT(rvec_f GoodJet_idx, rvec_f Jet_pt, rvec_f Jet_phi, rvec_f Jet_eta, rvec_f Jet_mass)
 {
