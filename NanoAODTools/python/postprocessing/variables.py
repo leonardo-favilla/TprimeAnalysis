@@ -75,13 +75,13 @@ vars.append(variable(name = "nJetBtagMedium", title= "# b-Jet ", nbins = 5, xmin
 vars.append(variable(name = "nJetBtagLoose", title= "# b-Jet ", nbins = 5, xmin = -0.5, xmax=4.5))
 vars.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
 vars.append(variable(name = "MinDelta_phi", title= "min #Delta #phi", nbins = 18, xmin = 0, xmax = math.pi))
-vars.append(variable(name = "MaxEta_jet", title= "max #eta jet", nbins = 5, xmin = 0, xmax = 5, noUnOvFlowbin=True))
+# vars.append(variable(name = "MaxEta_jet", title= "max #eta jet", nbins = 5, xmin = 0, xmax = 5, noUnOvFlowbin=True))
 vars.append(variable(name = "HT_eventHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
 # vars.append(variable(name = "run", title= "Run Number", nbins = 5142, xmin = 315251.5, xmax = 320393.5))
 vars.append(variable(name = "PV_npvsGood", title= "Number of PV", nbins = 25, xmin = -0.5, xmax = 49.5))
 
-vars.append(variable(name = "TopMixed_TopScore", title= "Top Mixed Score", nbins = 20, xmin = 0, xmax=1, noUnOvFlowbin = True))
-vars.append(variable(name = "TopResolved_TopScore", title= "Top Resolved Score", nbins = 20, xmin = 0, xmax=1, noUnOvFlowbin = True))
+vars.append(variable(name = "TopMixed_TopScore_nominal", title= "Top Mixed Score", nbins = 20, xmin = 0, xmax=1, noUnOvFlowbin = True))
+vars.append(variable(name = "TopResolved_TopScore_nominal", title= "Top Resolved Score", nbins = 20, xmin = 0, xmax=1, noUnOvFlowbin = True))
 
 
 vars.append(variable(name = "EventTopCategory", title= "Top Category", nbins = 4, xmin = 0.5, xmax = 4.5))
