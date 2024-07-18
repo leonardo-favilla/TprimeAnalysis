@@ -62,28 +62,16 @@ def plot2D(h1, folder, v, canv_name = "canv2d" ,extraTest="Simulation", iPos=0, 
     CMS.ResetAdditionalInfo()
     CMS.AppendAdditionalInfo(addInfo)
 
-    # x_min = h1.GetXaxis().GetXmin()
-    # x_max = h1.GetXaxis().GetXmax()
-    # y_min = h1.GetYaxis().GetYmin()
-    # y_max = h1.GetYaxis().GetYmin()
-    # x_axis_name = h1.GetXaxis().GetTitle()
-    # y_axis_name = h1.GetYaxis().GetTitle()
     x_min = v._xarray[0]
     x_max = v._xarray[-1]
     y_min = v._yarray[0]
     y_max = v._yarray[-1]
     x_axis_name = v._xtitle
     y_axis_name = v._ytitle
-    # h1.GetXaxis().SetTitleOffset(1.01)
-    # h1.GetXaxis().SetTitleSize(0.001)
-    # h1.GetXaxis().SetLabelSize(0.001)
-    # h1.GetXaxis().SetLabelOffset(0.005)
-    # h1.GetYaxis().SetTitleOffset(1.01)
-    # h1.GetYaxis().SetTitleSize(0.001)
-    # h1.GetYaxis().SetLabelSize(0.001)
-    # h1.GetYaxis().SetLabelOffset(0.005)
     canv = CMS.cmsCanvas(canv_name,x_min,x_max, y_min ,y_max,x_axis_name,y_axis_name,square=CMS.kSquare,extraSpace= 0.01, iPos=iPos, with_z_axis=True)
-    h1.Draw("same colz")
+    ROOT.gStyle.SetPaintTextFormat("1.3f")
+    h1.Draw("same colz text45")
+    h1.GetZaxis().SetMaxDigits(2)
     h1.GetZaxis().SetTitle(ztitle)
     h1.GetZaxis().SetTitleOffset(1.35)
     h1.GetZaxis().SetTitleSize(0.035)
@@ -103,21 +91,16 @@ cut  = requirements  ### defined in variables.py
 lumi = 7.87#34.3 (full2022) #59.97(2018) 
 run2 = False
 run3 = not run2
-# datasets = [
-#     DataHT_2018,
-#     TT_2018, ZJetsToNuNu_2018, QCD_2018, WJets_2018,   
-#     # TprimeToTZ_700_2018, TprimeToTZ_1000_2018, TprimeToTZ_1800_2018,
-#                ]
+
 datasets = [
     "DataEGamma_2022", 
-    "TT_2022", 
-    "QCD_2022", 
-    "ZJetsToNuNu_2jets_2022",
+    # "TT_2022", 
+    # "QCD_2022", 
+    # "ZJetsToNuNu_2jets_2022",
      "WJets_2jets_2022"
     ]
 
 for d in datasets:
-    ### Extract Components ###
     if hasattr(sample_dict[d], "components"):
         components = sample_dict[d].components
     else:
@@ -291,9 +274,9 @@ for v in [var[2]]:
         print("MET bin [{}, {}]: bkg eff = {:.5f} +/- {:.5f}, data eff = {:.5f} +/- {:.5f}".format(lowedge, upedge, eff_bkg, unc_bkg, eff_data, unc_data))
 
     # plot
-    plot(h_eff_data, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_eff_data", "Preliminary", 11, "13.6", str(lumi), "")
-    plot(h_eff_bkg, repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_bkg", "Preliminary", 11, "13.6", str(lumi), "")
-    plot([h_eff_data, h_eff_bkg], repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff", "Preliminary", 11, "13.6", str(lumi), "")
+    plot(h_eff_data, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_eff_data_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
+    plot(h_eff_bkg, repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_bkg_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
+    plot([h_eff_data, h_eff_bkg], repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
     
     h_ratio = h_eff_bkg.Clone("")
     h_ratio.Divide(h_eff_data)
@@ -302,12 +285,12 @@ for v in [var[2]]:
         eff_data = h_eff_data.GetBinContent(i)
         unc_bkg = h_eff_bkg.GetBinError(i)
         unc_data = h_eff_data.GetBinError(i)
-        sf = eff_bkg / eff_data if eff_data > 0 else 0
+        sf = eff_data / eff_bkg if eff_data > 0 else 0
         unc_sf = sf * math.sqrt((unc_bkg / eff_bkg)**2 + (unc_data / eff_data)**2) if eff_bkg > 0 and eff_data > 0 else 0
         h_ratio.SetBinContent(i, sf)
         h_ratio.SetBinError(i, unc_sf)
         print("MET bin [{}, {}]: SF = {:.5f} +/- {:.5f}".format(h_ratio.GetXaxis().GetBinLowEdge(i), h_ratio.GetXaxis().GetBinUpEdge(i), sf, unc_sf))
-    plot(h_ratio, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_SF", "Preliminary", 11, "13.6", str(lumi), "", ytitle="SF")
+    plot(h_ratio, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_SF_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "", ytitle="SF")
 
 # Plots 2D
 h_bkg_total    = None
@@ -371,9 +354,9 @@ for v in var2d:
     h_eff_bkg.Divide(h_bkg_total)
     # plot
     print(type(h_eff_data))
-    plot2D(h_eff_bkg, repostack, var2d[0], canv_name="TriggerEff_2Dplot_eff_bkg", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
-    plot2D(h_eff_data, repostack,var2d[0], canv_name="TriggerEff_2Dplot_eff_data", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
+    plot2D(h_eff_bkg, repostack, var2d[0], canv_name="TriggerEff_2Dplot_eff_bkg_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
+    plot2D(h_eff_data, repostack,var2d[0], canv_name="TriggerEff_2Dplot_eff_data_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
     # SF
-    h_ratio = h_eff_bkg.Clone("")
-    h_ratio.Divide(h_eff_data)
-    plot2D(h_ratio, repostack,var2d[0], canv_name="TriggerEff_2Dplot_SF", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="", ztitle="SF")
+    h_ratio = h_eff_data.Clone("")
+    h_ratio.Divide(h_eff_bkg)
+    plot2D(h_ratio, repostack,var2d[0], canv_name="TriggerEff_2Dplot_SF_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="", ztitle="SF")

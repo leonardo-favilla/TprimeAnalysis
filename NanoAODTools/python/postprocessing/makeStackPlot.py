@@ -31,9 +31,9 @@ datasets = [
     # "ZJetsToNuNu_HT100to200_2018", "ZJetsToNuNu_HT200to400_2018", "ZJetsToNuNu_HT400to600_2018", "ZJetsToNuNu_HT600to800_2018", "ZJetsToNuNu_HT800to1200_2018", "ZJetsToNuNu_HT1200to2500_2018", "ZJetsToNuNu_HT2500toInf_2018", 
     # "WJetsHT100to200_2018", "WJetsHT200to400_2018", "WJetsHT400to600_2018", "WJetsHT600to800_2018", "WJetsHT800to1200_2018", "WJetsHT1200to2500_2018", "WJetsHT2500toInf_2018",   
     # "TprimeToTZ_700_2018", "TprimeToTZ_1000_2018", "TprimeToTZ_1800_2018",
-    # "DataJetMET_2022", "DataEGamma_2022",#"DataMuon_2022", 
-    "DataEGamma_2022", 
-    "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", #"TprimeToTZ_700_2022", "TprimeToTZ_1800_2022",
+    "DataJetMET_2022",# "DataEGamma_2022",#"DataMuon_2022", 
+    # "DataEGamma_2022", 
+    "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", "TprimeToTZ_700_2022", "TprimeToTZ_1000_2022", "TprimeToTZ_1800_2022",
     # "WJets_2jets_2022"
                ]
 
@@ -65,10 +65,9 @@ print("Producing histos:  {}".format([v._name for v in vars[1:]]))
 print("Regions:           {}".format(regions.keys()))
 
 ############### out folders  
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_preselection/"
+# folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_preselection/"
 # folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
-# folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_selection/"
-# "/eos/home-a/acagnott/DarkMatter/nosynch/run2018_exo22014_v2_MET/"
+folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_selection/"
 
 if not os.path.exists(folder):
     os.mkdir(folder)
@@ -187,7 +186,8 @@ for v in vars:
             # print(tmp.GetBinContent(1))
             h_sign.append(tmp)
             # print(h_sign)
-            if s.leglabel not in l:
+            # if s.leglabel not in l:
+            if s.leglabel :
                 l.append(s.leglabel)
                 leg_stack.AddEntry(tmp, s.leglabel, "l")
             #f.Close()
@@ -216,7 +216,7 @@ for v in vars:
                 leg_stack.AddEntry(tmp, s.leglabel, "f")
             #f.Close()
 
-        if not blind:
+        if (not blind and not "SR"in r):
             h_data = None #ROOT.TH1D()
             if not v._MConly :
                 for f, s in zip(infile["Data"], insample["Data"]):
@@ -273,7 +273,7 @@ for v in vars:
         pad1.SetTicky(1)
         pad1.Draw()
 
-        if not blind and not v._MConly:
+        if (not blind and not "SR" in r and not v._MConly):
           maximum = max(stack.GetMaximum(),h_data.GetMaximum())
         #   minimum = min(stack.GetMinimum(),h_data.GetMinimum())
           if (len(h_sign) != 0 and h_sign[-1].GetMinimum()!= 0):
@@ -321,7 +321,7 @@ for v in vars:
         for h in h_sign: 
             # print(h.GetBinContent(1))
             h.Draw("hist same")
-        if not blind and not v._MConly:
+        if (not blind and not "SR"in r and not v._MConly):
             h_data.SetTitle("")
             h_data.Draw("eSAMEpx0")
         
@@ -361,7 +361,7 @@ for v in vars:
         ROOT.gStyle.SetHatchesLineWidth(2)
         pad2.Draw()
         pad2.cd()
-        if not blind and not v._MConly:
+        if (not blind and not "SR"in r and not v._MConly):
             ratio = h_data.Clone("ratio")
             ratio.SetLineColor(ROOT.kBlack)
             ratio.SetMaximum(2)

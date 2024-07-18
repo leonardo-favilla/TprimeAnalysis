@@ -636,7 +636,7 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
   int nfwdjet = 0;
   for(int i = 0; i < Jet_pt.size(); i++)
   {
-    if (Jet_pt[i]>30 && Jet_jetId[i] && Jet_eta[i]>2.4)
+    if (Jet_pt[i]>30 && Jet_jetId[i] && abs(Jet_eta[i])>2.4)
     {
       nfwdjet += 1;
     }
