@@ -284,8 +284,10 @@ for v in vars:
               minimum = 1e-1 #min(stack.GetMinimum(),1e-4)
         else:
           maximum = stack.GetMaximum()
-          if (len(h_sign) != 0 and h_sign[-1].GetMinimum()!= 0):
-              minimum = h_sign[-1].GetMinimum()
+          if (len(h_sign) != 0):
+              minimum = min([h.GetMaximum() for h in h_sign])
+              if minimum == 0: 
+                  minimum = 1e-1
           elif stack.GetMinimum()!= 0: 
               minimum = stack.GetMinimum()*1e-1
           else:

@@ -5,6 +5,7 @@ from variables import *
 from samples.samples import *
 import numpy as np
 import json
+import math
 import copy
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
@@ -69,8 +70,8 @@ def plot2D(h1, folder, v, canv_name = "canv2d" ,extraTest="Simulation", iPos=0, 
     x_axis_name = v._xtitle
     y_axis_name = v._ytitle
     canv = CMS.cmsCanvas(canv_name,x_min,x_max, y_min ,y_max,x_axis_name,y_axis_name,square=CMS.kSquare,extraSpace= 0.01, iPos=iPos, with_z_axis=True)
-    ROOT.gStyle.SetPaintTextFormat("1.3f")
-    h1.Draw("same colz text45")
+    ROOT.gStyle.SetPaintTextFormat("1.4f")
+    h1.Draw("same colz text50 e")
     h1.GetZaxis().SetMaxDigits(2)
     h1.GetZaxis().SetTitle(ztitle)
     h1.GetZaxis().SetTitleOffset(1.35)
@@ -78,11 +79,23 @@ def plot2D(h1, folder, v, canv_name = "canv2d" ,extraTest="Simulation", iPos=0, 
     h1.GetZaxis().SetLabelSize(0.035)
     h1.GetZaxis().SetLabelOffset(0.005)
 
+    hdf = CMS.GetcmsCanvasHist(canv)
+    hdf.GetYaxis().SetMaxDigits(2)
+    hdf.GetYaxis().SetLabelSize(0.045)
+    hdf.GetXaxis().SetLabelSize(0.045)
+    hdf.GetXaxis().SetLabelOffset(0.005)
+    hdf.GetYaxis().SetLabelOffset(0.005)
+    hdf.GetXaxis().SetTitleOffset(1.3)
+    hdf.GetYaxis().SetTitleOffset(1.3)
+    hdf.GetXaxis().SetTitleSize(0.045)
+    hdf.GetYaxis().SetTitleSize(0.045)
+    # Shift multiplier position
+    ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
+
     # Set the CMS official palette
     CMS.SetCMSPalette()
     CMS.UpdatePalettePosition(h1, canv)
     
-    # CMS.cmsDraw(h1, "", marker= 10 ,lcolor = fillcolor)
     CMS.SaveCanvas(canv, folder+"/pdf/"+canv_name+".pdf")
     # CMS.SaveCanvas(canv, folder+"/png/"+canv_name+".png")
     # CMS.SaveCanvas(canv, folder+"/C/"+canv_name+".C")
@@ -94,11 +107,20 @@ run3 = not run2
 
 datasets = [
     "DataEGamma_2022", 
-    # "TT_2022", 
-    # "QCD_2022", 
-    # "ZJetsToNuNu_2jets_2022",
-     "WJets_2jets_2022"
+    "TT_2022", 
+    "QCD_2022", 
+    "ZJetsToNuNu_2jets_2022",
+    "WJets_2jets_2022"
     ]
+if len(datasets) > 2:
+    plotname = ""
+else:
+    if "TT" in datasets[1]:
+        plotname = "_ONLYTT"
+    elif "ZJets" in datasets[1]:
+        plotname = "_ONLYZJets"
+    elif "WJets" in datasets[1]:
+        plotname = "_ONLYWJets"
 
 for d in datasets:
     if hasattr(sample_dict[d], "components"):
@@ -265,8 +287,8 @@ for v in [var[2]]:
         eff_data = h_eff_data.GetBinContent(i)
         ntot_bkg = h_bkg_total.GetBinContent(i)
         ntot_data = h_data_total.GetBinContent(i)
-        unc_bkg = eff_bkg * (1 - eff_bkg) / ntot_bkg if ntot_bkg > 0 else 0
-        unc_data = eff_data * (1 - eff_data) / ntot_data if ntot_data > 0 else 0
+        unc_bkg = math.sqrt(eff_bkg * (1 - eff_bkg) / ntot_bkg) if ntot_bkg > 0 else 0
+        unc_data = math.sqrt(eff_data * (1 - eff_data) / ntot_data) if ntot_data > 0 else 0
         h_eff_bkg.SetBinError(i, unc_bkg)
         h_eff_data.SetBinError(i, unc_data)
         lowedge = h_eff_bkg.GetXaxis().GetBinLowEdge(i)
@@ -274,24 +296,29 @@ for v in [var[2]]:
         print("MET bin [{}, {}]: bkg eff = {:.5f} +/- {:.5f}, data eff = {:.5f} +/- {:.5f}".format(lowedge, upedge, eff_bkg, unc_bkg, eff_data, unc_data))
 
     # plot
-    plot(h_eff_data, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_eff_data_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
-    plot(h_eff_bkg, repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_bkg_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
-    plot([h_eff_data, h_eff_bkg], repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "")
+    outfileroot.cd()
+    h_eff_data.Write()
+    h_eff_bkg.Write()
+    plot(h_eff_data, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_eff_data"+plotname, "Preliminary", 11, "13.6", str(lumi), "")
+    plot(h_eff_bkg, repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff_bkg"+plotname, "Preliminary", 11, "13.6", str(lumi), "")
+    plot([h_eff_data, h_eff_bkg], repostack, ROOT.TColor.GetColor("#e42536"), "TriggerEff_"+v._name+"_eff"+plotname, "Preliminary", 11, "13.6", str(lumi), "")
     
     h_ratio = h_eff_bkg.Clone("")
     h_ratio.Divide(h_eff_data)
+    h_ratio.SetName("SF1d")
     for i in range(1, h_ratio.GetNbinsX() + 1):
         eff_bkg = h_eff_bkg.GetBinContent(i)
         eff_data = h_eff_data.GetBinContent(i)
         unc_bkg = h_eff_bkg.GetBinError(i)
         unc_data = h_eff_data.GetBinError(i)
         sf = eff_data / eff_bkg if eff_data > 0 else 0
-        unc_sf = sf * math.sqrt((unc_bkg / eff_bkg)**2 + (unc_data / eff_data)**2) if eff_bkg > 0 and eff_data > 0 else 0
+        unc_sf = math.sqrt((unc_data / eff_bkg)**2 + (unc_bkg * sf)**2) if eff_bkg > 0 and eff_data > 0 else 0
         h_ratio.SetBinContent(i, sf)
         h_ratio.SetBinError(i, unc_sf)
         print("MET bin [{}, {}]: SF = {:.5f} +/- {:.5f}".format(h_ratio.GetXaxis().GetBinLowEdge(i), h_ratio.GetXaxis().GetBinUpEdge(i), sf, unc_sf))
-    plot(h_ratio, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_SF_ONLYWJets", "Preliminary", 11, "13.6", str(lumi), "", ytitle="SF")
-
+    plot(h_ratio, repostack, ROOT.kBlack, "TriggerEff_"+v._name+"_SF"+plotname, "Preliminary", 11, "13.6", str(lumi), "", ytitle="SF")
+    outfileroot.cd()
+    h_ratio.Write()
 # Plots 2D
 h_bkg_total    = None
 h_data_total   = None
@@ -352,11 +379,47 @@ for v in var2d:
     h_eff_data.Divide(h_data_total)
     h_eff_bkg = h_bkg_pass.Clone("")
     h_eff_bkg.Divide(h_bkg_total)
+    for i in range(1, h_eff_bkg.GetNbinsX() + 1):
+        for j in range(1, h_eff_bkg.GetNbinsY() + 1):
+            eff_bkg = h_eff_bkg.GetBinContent(i, j)
+            eff_data = h_eff_data.GetBinContent(i, j)
+            ntot_bkg = h_bkg_total.GetBinContent(i, j)
+            ntot_data = h_data_total.GetBinContent(i, j)
+            unc_bkg = math.sqrt(eff_bkg * (1 - eff_bkg) / ntot_bkg) if ntot_bkg > 0 else 0
+            unc_data = math.sqrt(eff_data * (1 - eff_data) / ntot_data) if ntot_data > 0 else 0
+            h_eff_bkg.SetBinError(i, j, unc_bkg)
+            h_eff_data.SetBinError(i, j, unc_data)
+            lowedge_x = h_eff_bkg.GetXaxis().GetBinLowEdge(i)
+            upedge_x = h_eff_bkg.GetXaxis().GetBinUpEdge(i)
+            lowedge_y = h_eff_bkg.GetYaxis().GetBinLowEdge(j)
+            upedge_y = h_eff_bkg.GetYaxis().GetBinUpEdge(j)
+            print("MET bin [{}, {}], MHT bin [{}, {}]: bkg eff = {:.5f} +/- {:.5f}, data eff = {:.5f} +/- {:.5f}".format(lowedge_x, upedge_x, lowedge_y, upedge_y, eff_bkg, unc_bkg, eff_data, unc_data))
+
     # plot
-    print(type(h_eff_data))
-    plot2D(h_eff_bkg, repostack, var2d[0], canv_name="TriggerEff_2Dplot_eff_bkg_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
-    plot2D(h_eff_data, repostack,var2d[0], canv_name="TriggerEff_2Dplot_eff_data_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
+    outfileroot.cd()
+    h_eff_data.Write()
+    h_eff_bkg.Write()
+    plot2D(h_eff_bkg, repostack, var2d[0], canv_name="TriggerEff_2Dplot_eff_bkg"+plotname, extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
+    plot2D(h_eff_data, repostack,var2d[0], canv_name="TriggerEff_2Dplot_eff_data"+plotname, extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="")
     # SF
     h_ratio = h_eff_data.Clone("")
     h_ratio.Divide(h_eff_bkg)
-    plot2D(h_ratio, repostack,var2d[0], canv_name="TriggerEff_2Dplot_SF_ONLYWJets", extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="", ztitle="SF")
+    h_ratio.SetName("SF2d")
+    for i in range(1, h_ratio.GetNbinsX() + 1):
+        for j in range(1, h_ratio.GetNbinsY() + 1):
+            eff_bkg = h_eff_bkg.GetBinContent(i, j)
+            eff_data = h_eff_data.GetBinContent(i, j)
+            unc_bkg = h_eff_bkg.GetBinError(i, j)
+            unc_data = h_eff_data.GetBinError(i, j)
+            sf = eff_data / eff_bkg if eff_bkg > 0 else 0
+            unc_sf = math.sqrt((unc_data / eff_bkg)**2 + (unc_bkg * eff_data)**2) if eff_bkg > 0 and eff_data > 0 else 0
+            h_ratio.SetBinContent(i, j, sf)
+            h_ratio.SetBinError(i, j, unc_sf)
+            lowedge_x = h_ratio.GetXaxis().GetBinLowEdge(i)
+            upedge_x = h_ratio.GetXaxis().GetBinUpEdge(i)
+            lowedge_y = h_ratio.GetYaxis().GetBinLowEdge(j)
+            upedge_y = h_ratio.GetYaxis().GetBinUpEdge(j)
+            print("MET bin [{}, {}], MHT bin [{}, {}]: SF = {:.5f} +/- {:.5f}".format(lowedge_x, upedge_x, lowedge_y, upedge_y, sf, unc_sf))
+    outfileroot.cd()
+    h_ratio.Write()
+    plot2D(h_ratio, repostack,var2d[0], canv_name="TriggerEff_2Dplot_SF"+plotname, extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="", ztitle="SF")
