@@ -23,7 +23,7 @@ using rvec_rvec_i = const RVec<RVec<int>> &;
 
 const float TopRes_trs=  0.5411276;
 const float TopMix_trs=  0.7584613561630249;
-const float TopMer_trs=  0.9;//0.94;
+const float TopMer_trs=  0.8;//0.94; 0.8 for 2022 correspond to fpr 6% on ttbar
 const float dR=  0.8;
 
 const float btagDeepB_mediumWP_2018   = 0.2783;
