@@ -139,9 +139,9 @@ regions = {
 
 
     "SR"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
-    "SRmhtg100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT>100",
-    "SRmhtl100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT<100",
-    "SRnoPU"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
+    # "SRmhtg100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT>100",
+    # "SRmhtl100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT<100",
+    # "SRnoPU"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
     
     "SR0fjets"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0",
     "SRatleast1fjets"      : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0",
@@ -162,9 +162,9 @@ regions = {
 
     
     "Presel"               : "PuppiMET_T1_pt_nominal>250",
-    "PreselNoPu"           : "PuppiMET_T1_pt_nominal>250",
+    # "PreselNoPu"           : "PuppiMET_T1_pt_nominal>250",
     "AH"                   : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
-    "AHNoPu"               : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
+    # "AHNoPu"               : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
 
 
     
@@ -182,9 +182,9 @@ regions = {
 
     "AH0lQCDR"             : "PuppiMET_T1_pt_nominal<250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium == 0", 
 
-    "PreselResolved"       : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==1",
-    "PreselMixed"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==2",
-    "PreselMerged"         : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==3",
-    "PreselNoTop"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==4",
+    # "PreselResolved"       : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==1",
+    # "PreselMixed"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==2",
+    # "PreselMerged"         : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==3",
+    # "PreselNoTop"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==4",
     
 }
