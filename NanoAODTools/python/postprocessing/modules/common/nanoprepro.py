@@ -49,6 +49,17 @@ class nanoprepro(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
         
+        "branches TopGenLevel"
+        self.out.branch("nTopGen", "I")
+        self.out.branch("TopGenTopPart_pt", "F", lenVar="nTopGen")
+        self.out.branch("TopGenTopPart_eta", "F", lenVar="nTopGen")
+        self.out.branch("TopGenTopPart_phi", "F", lenVar="nTopGen")
+        self.out.branch("TopGenTopPart_mass", "F", lenVar="nTopGen")
+        self.out.branch("TopGenProductsSum_pt", "F", lenVar="nTopGen")
+        self.out.branch("TopGenProductsSum_eta", "F", lenVar="nTopGen")
+        self.out.branch("TopGenProductsSum_phi", "F", lenVar="nTopGen")
+        self.out.branch("TopGenProductsSum_mass", "F", lenVar="nTopGen")
+
         "branch deltaR to Jet collection"
         self.out.branch("Jet_deltaR", "F", lenVar="nJet") 
         
@@ -361,6 +372,38 @@ class nanoprepro(Module):
                                     ind_fatjets[-1] = fj
                                     #print "fatjet "+str(fj)+" matched with a wjet "+str(gen.pdgId)
                         '''
+                # Filling TopGen branches
+                topgenpt    = []
+                topgeneta   = []
+                topgenphi   = []
+                topgenmass  = []
+                topgenidx   = []
+                for i, gen in enumerate(genpart):
+                    if abs(gen.pdgId==6) and (gen.statusFlags & (1<<13)): # statusFlag &(1<<13) serve per richiedere che sia la last copy di quell'oggetto
+                        if hadronicTop(genpart, i):
+                            topgenidx.append(i)
+                            ntop += 1
+                            topgenpt.append(gen.pt)
+                            topgeneta.append(gen.eta)
+                            topgenphi.append(gen.phi)
+                            topgenmass.append(gen.mass)
+
+                for top in topgenidx:
+                    for gen in genpart:
+                        if gen.genPartIdxMother_prompt == top and abs(gen.pdgId)==5 and (gen.statusFlags & (1<<13)):
+                            bmomentum = ROOT.TLorentzVector().SetPtEtaPhiM(gen.pt, gen.eta, gen.phi, gen.mass)
+                        if genpart[gen.genPartIdxMother_prompt].genPartIdxMother_prompt == top and abs(gen.pdgId)<5 and abs(gen.pdgId)>0 and (gen.statusFlags & (1<<13)) and abs(gen.pdgId)%2==0:
+                            q1momentum = ROOT.TLorentzVector().SetPtEtaPhiM(gen.pt, gen.eta, gen.phi, gen.mass)
+                        if genpart[gen.genPartIdxMother_prompt].genPartIdxMother_prompt == top and abs(gen.pdgId)<5 and abs(gen.pdgId)>0 and (gen.statusFlags & (1<<13)) and abs(gen.pdgId)%2!=0:
+                            q2momentum = ROOT.TLorentzVector().SetPtEtaPhiM(gen.pt, gen.eta, gen.phi, gen.mass)
+                    topmomentum = bmomentum + q1momentum + q2momentum
+
+
+                self.out.fillBranch("nTopGen", ntop)
+                self.out.fillBranch("TopGenTopPart_pt", topgenpt)
+                self.out.fillBranch("TopGenTopPart_eta", topgeneta)
+                self.out.fillBranch("TopGenTopPart_phi", topgenphi)
+                self.out.fillBranch("TopGenTopPart_mass", topgenmass)                            
 
                 self.out.fillBranch("Jet_deltaR", jets_deltar)
                 self.out.fillBranch("Jet_matched", jets_matched)

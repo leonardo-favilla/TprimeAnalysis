@@ -322,6 +322,25 @@ TprimeToTZ_700_2018.dataset = '/TprimeBToTZ_M-700_LH_TuneCP5_PSweights_13TeV-mad
 TprimeToTZ_700_2018.unix_code = 22002
 # TprimeToTZ_700_2018.local_path = "/eos/home-a/acagnott/DarkMatter/topcandidate_file/"+TprimeToTZ_700_2018.label +"_Skim.root"
 
+###############################################################################################################################
+##########################################                                           ##########################################
+##########################################       samples for tagger studies          ##########################################
+##########################################                                           ##########################################
+###############################################################################################################################
+Zprime4top_500_2018          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M500GeV", "Zprime4top_500_2018")
+Zprime4top_500_2018.sigma    = 1 #pb
+Zprime4top_500_2018.year     = 2018
+Zprime4top_500_2018.dataset  = '/TTZprimeToTT_M-500_Width4_TuneCP5_13TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-500_Width4_nanoaod_hotvr_UL2018v1_230510-00000000000000000000000000000000/USER'
+
+Zprime4top_1000_2018          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M1000GeV", "Zprime4top_1000_2018")
+Zprime4top_1000_2018.sigma    = 1 #pb
+Zprime4top_1000_2018.year     = 2018
+Zprime4top_1000_2018.dataset  = '/TTZprimeToTT_M-1000_Width4_TuneCP5_13TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-1000_Width4_nanoaod_hotvr_UL2018v1_230510-00000000000000000000000000000000/USER'
+
+Zprime4top_2000_2018          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M2000GeV", "Zprime4top_2000_2018")
+Zprime4top_2000_2018.sigma    = 1 #pb
+Zprime4top_2000_2018.year     = 2018
+Zprime4top_2000_2018.dataset  = '/TTZprimeToTT_M-2000_Width4_TuneCP5_13TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-2000_Width4_nanoaod_hotvr_UL2018v1_230510-00000000000000000000000000000000/USER'
 
 ###############################################################################################################################
 ##########################################                                           ##########################################
@@ -714,6 +733,30 @@ TprimeToTZ_1800_2022.year      = 2022
 TprimeToTZ_1800_2022.dataset   = '/TprimeBtoTZ_M-1800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v3/NANOAODSIM'
 TprimeToTZ_1800_2022.unix_code = 22000
 TprimeToTZ_1800_2022.EE        = 0
+
+
+###############################################################################################################################
+##########################################                                           ##########################################
+##########################################       samples for tagger studies          ##########################################
+##########################################                                           ##########################################
+###############################################################################################################################
+Zprime4top_500_2022          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M500GeV", "Zprime4top_500_2022")
+Zprime4top_500_2022.sigma    = 1 #pb
+Zprime4top_500_2022.year     = 2022
+Zprime4top_500_2022.dataset  = '/TopPhilic_ttzp_13p6TeV_m500_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-500_Width4_nanoaod_hotvr_UL2022v1_230510-00000000000000000000000000000000/USER'
+Zprime4top_500_2022.EE       = 0
+
+Zprime4top_1000_2022          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M1000GeV", "Zprime4top_1000_2022")
+Zprime4top_1000_2022.sigma    = 1 #pb
+Zprime4top_1000_2022.year     = 2022
+Zprime4top_1000_2022.dataset  = '/TopPhilic_ttzp_13p6TeV_m1000_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-1000_Width4_nanoaod_hotvr_UL2022v1_230510-00000000000000000000000000000000/USER'
+Zprime4top_1000_2022.EE       = 0
+
+Zprime4top_2000_2022          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M2000GeV", "Zprime4top_2000_2022")
+Zprime4top_2000_2022.sigma    = 1 #pb
+Zprime4top_2000_2022.year     = 2022
+Zprime4top_2000_2022.dataset  = '/TopPhilic_ttzp_13p6TeV_m2000_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-2000_Width4_nanoaod_hotvr_UL2022v1_230510-00000000000000000000000000000000/USER'
+Zprime4top_2000_2022.EE       = 0
 
 
 ###############################################################################################################################
@@ -1121,28 +1164,35 @@ TprimeToTZ_1800_2022EE.dataset   = '/TprimeBtoTZ_M-1800_LH_TuneCP5_13p6TeV_madgr
 TprimeToTZ_1800_2022EE.unix_code = 42002
 TprimeToTZ_1800_2022EE.EE        = 1
 
-##################################################################################
-########################### DATA 2016 ############################################
-##################################################################################
+###############################################################################################################################
+##########################################                                           ##########################################
+##########################################       samples for tagger studies          ##########################################
+##########################################                                           ##########################################
+###############################################################################################################################
+Zprime4top_500_2022EE          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M500GeV", "Zprime4top_500_2022EE")
+Zprime4top_500_2022EE.sigma    = 1 #pb
+Zprime4top_500_2022EE.year     = 2022
+Zprime4top_500_2022EE.dataset  = '/TopPhilic_ttzp_13p6TeV_m500_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-500_Width4_nanoaod_hotvr_UL2022_EEv1_230510-00000000000000000000000000000000/USER'
+Zprime4top_500_2022EE.EE       = 1
 
-DataHTH_2016           = sample(ROOT.kBlack, 1, 1001, "Data", "DataHTH_2016")  #8.6fb
-DataHTH_2016.runP      = 'H'
-DataHTH_2016.year      = 2016
-DataHTH_2016.dataset   = '/MET/Run2016H-UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD'
-# DataHTH_2016.unix_code = 
+Zprime4top_1000_2022EE          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M1000GeV", "Zprime4top_1000_2022EE")
+Zprime4top_1000_2022EE.sigma    = 1 #pb
+Zprime4top_1000_2022EE.year     = 2022
+Zprime4top_1000_2022EE.dataset  = '/TopPhilic_ttzp_13p6TeV_m1000_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-1000_Width4_nanoaod_hotvr_UL2022_EEv1_230510-00000000000000000000000000000000/USER'
+Zprime4top_1000_2022EE.EE       = 1
 
-################### DA ELIMINARE QUANDO ABBIAMO LA VERSIONE NUOVA DA CRAB
-
-# DataHTA_2018           = sample(ROOT.kBlack, 1, 1001, "Data", "DataHTA_2018")
-# DataHTA_2018.runP      = 'A'
-# DataHTA_2018.year      = 2018
-# DataHTA_2018.dataset   = '/MET/Run2018A-UL2018_MiniAODv2_NanoAODv9_GT36-v1/NANOAOD' #'/MET/Run2018A-UL2018_MiniAODv2_NanoAODv9-v2/NANOAOD'
-# DataHTA_2018.process   = "DataMET_2018"
-# DataHTA_2018.unix_code = 20000
+Zprime4top_2000_2022EE          = sample(ROOT.kGreen+2, 1, 1001, "Zprime4top M2000GeV", "Zprime4top_2000_2022EE")
+Zprime4top_2000_2022EE.sigma    = 1 #pb
+Zprime4top_2000_2022EE.year     = 2022
+Zprime4top_2000_2022EE.dataset  = '/TopPhilic_ttzp_13p6TeV_m2000_relwidth4_TuneCP5_13p6TeV-madgraph-pythia8/gmilella-crab_TTZprimeToTT_M-2000_Width4_nanoaod_hotvr_UL2022_EEv1_230510-00000000000000000000000000000000/USER'
+Zprime4top_2000_2022EE.EE       = 1
 
 
 
+
+###############################################################################################################################
 ########################### DATA 2018 ############################################
+###############################################################################################################################
 DataMETA_2018           = sample(ROOT.kBlack, 1, 1001, "Data", "DataMETA_2018")
 DataMETA_2018.runP      = 'A'
 DataMETA_2018.year      = 2018
@@ -1348,7 +1398,6 @@ sample_dict = {
     # 'DataHTA_2018': DataHTA_2018,
 
     ################################## RUN II
-    'DataHTH_2016': DataHTH_2016,
     # Data MET 2018   
     'DataMET_2018': DataMET_2018, 'DataMETA_2018': DataMETA_2018, 'DataMETB_2018': DataMETB_2018,
     'DataMETC_2018': DataMETC_2018, 'DataMETD_2018': DataMETD_2018, 
@@ -1381,6 +1430,9 @@ sample_dict = {
     'TprimeToTZ_700_2018' : TprimeToTZ_700_2018,
 
     'tDM_mPhi50_mChi1_2018' : tDM_mPhi50_mChi1_2018, 'tDM_mPhi500_mChi1_2018' : tDM_mPhi500_mChi1_2018, 'tDM_mPhi1000_mChi1_2018' : tDM_mPhi1000_mChi1_2018,
+    
+
+    "Zprime4top_500_2018":Zprime4top_500_2018, "Zprime4top_1000_2018":Zprime4top_1000_2018, "Zprime4top_2000_2018":Zprime4top_2000_2018, 
     
     #######################################
     ############# RUN III ################
@@ -1424,6 +1476,9 @@ sample_dict = {
     "TprimeToTZ_1000_2022":TprimeToTZ_1000_2022,
     "TprimeToTZ_1800_2022":TprimeToTZ_1800_2022,
 
+    #####################Tagger studies 4 top samples
+    "Zprime4top_500_2022" : Zprime4top_500_2022, "Zprime4top_1000_2022" : Zprime4top_1000_2022, "Zprime4top_2000_2022" : Zprime4top_2000_2022,
+
     #####################2022EE
     ############ QCD
     'QCD_2022EE' : QCD_2022EE,
@@ -1460,6 +1515,9 @@ sample_dict = {
     "TprimeToTZ_700_2022EE":TprimeToTZ_700_2022EE,
     "TprimeToTZ_1000_2022EE":TprimeToTZ_1000_2022EE,
     "TprimeToTZ_1800_2022EE":TprimeToTZ_1800_2022EE,
+
+    #####################Tagger studies 4 top samples
+    "Zprime4top_500_2022EE" : Zprime4top_500_2022EE, "Zprime4top_1000_2022EE" : Zprime4top_1000_2022EE, "Zprime4top_2000_2022EE" : Zprime4top_2000_2022EE,
 
     ############################################# DATA 
     'DataJetMET_2022': DataJetMET_2022, 'DataJetMETC_2022':DataJetMETC_2022, 'DataJetMETD_2022':DataJetMETD_2022, 

@@ -115,8 +115,8 @@ def fill_jets(year, jets_dnn, j0, j1, j2, sumjet, fj_phi, fj_eta, idx_top):
 # Leo's models #
 # path_to_model_folder    = "/afs/cern.ch/user/l/lfavilla/CMSSW_12_6_0/src/PhysicsTools/NanoAODTools/python/postprocessing/my_analysis/my_framework/MLstudies/Training/Train/saved_models"
 # path_to_model_folder    = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/my_analysis/my_framework/MLstudies/Training/Train/saved_models" % os.environ["CMSSW_BASE"]
-path_to_model_folder    = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/dict_tresholds/" % os.environ["CMSSW_BASE"]
-folder_model_antimo     = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/dict_tresholds/" % os.environ["CMSSW_BASE"]
+path_to_model_folder    = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+folder_model_antimo     = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
 # antimo_model_name_H     = "DNN_phase2_test2.h5"#"DNN_withtopmass_phase2.h5"
 # antimo_model_name_L     = "DNN_phase1_test_lowpt_DNN.h5"
 

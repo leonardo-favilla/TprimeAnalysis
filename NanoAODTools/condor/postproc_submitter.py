@@ -9,6 +9,7 @@ from checkjobs import get_file_sizes, find_folder
 usage = 'python3 postproc_submitter.py -d dataset_name'
 parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dat', dest='dat', type=str, default = '', help='Please enter a dataset name')
+parser.add_option('--syst', dest='syst', action='store_true', default=False, help='calculate jerc')
 parser.add_option('--dryrun', dest='debug', action='store_true', default=False, help='dryrun')
 # parser.add_option('-w', '--write', dest='write', type=str, default = 'tier', help='Please enter location where to write the output file (eos or tier)')
 parser.add_option('-s', '--submit', dest='submit', action='store_true', default=False, help='submit jobs')
@@ -23,6 +24,7 @@ submit = opt.submit
 resubmit = opt.resubmit
 status = opt.status
 oldfolderstructure = opt.oldfolderstructure
+calcualte_systematics = opt.syst
 
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
@@ -47,7 +49,7 @@ print("Launching crab script for dataset: ", opt.dat)
 if submit:
     if where_to_write == 'tier':
         print("\nRemote folder name (tier): ", remote_folder_name)
-        os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, str(uid)))
+        if not debug: os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, str(uid)))
         print("          davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} CREATED".format(username, remote_folder_name))
 
     elif where_to_write == 'eos':
@@ -56,7 +58,7 @@ if submit:
             os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name)
         print("root://eosuser.cern.ch//eos/user/l/lfavilla/xAnimo/{} created".format(remote_folder_name))
 
-def write_crab_script(sample, file, modules, run_folder):
+def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, year):
 
     f = open(run_folder+"/crab_script.py", "w")
     f.write("#!/usr/bin/env python3\n")
@@ -71,8 +73,13 @@ def write_crab_script(sample, file, modules, run_folder):
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.PUreweight import *\n") 
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.GenPart_MomFirstCp import *\n")
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoprepro_v2 import *\n")
-    f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopcandidate_v2_syst import *\n")
-    f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopEvaluate_MultiScore_v2_syst import *\n")
+    if year== 2022 and calcualte_systematics:
+        f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopcandidate_v2_syst import *\n")
+        f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopEvaluate_MultiScore_v2_syst import *\n")
+    else:
+        f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopcandidate_v2 import *\n")
+        f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.nanoTopEvaluate_MultiScore_v2 import *\n")
+
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.globalvar import *\n")
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.SampleIdx import *\n")
     f.write("from PhysicsTools.NanoAODTools.postprocessing.modules.common.lumiMask import *\n")
@@ -98,6 +105,8 @@ def write_crab_script(sample, file, modules, run_folder):
         year_tag = year
     if isMC:
         f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/scripts/keep_and_drop.txt')\n")# haddFileName='"+sample.label+".root'
+        
+
     else: 
         f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/scripts/keep_and_drop.txt')\n")#
         
@@ -190,22 +199,23 @@ if submit:
         launchtime = time.strftime("%Y%m%d_%H%M%S") #"20240704_122343" ho sottomesso diversi job con lo stesso launchtime
         
         if where_to_write == 'tier':
-            command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, str(uid)))
-            res1 = command1.read()
-            if "Error:" in res1:
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/   NOT CREATED".format(remote_folder_name, sample_folder))
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-            else:
-                print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ created".format(remote_folder_name, sample_folder))
-            command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, launchtime, str(uid)))
-            res2 = command2.read()
-            if "Error:" in res2:
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}   NOT CREATED".format(remote_folder_name, sample_folder, launchtime))
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            else:
-                print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{} created".format(remote_folder_name, sample_folder, launchtime))
+            if not debug: 
+                command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, str(uid)))
+                res1 = command1.read()
+                if "Error:" in res1:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/   NOT CREATED".format(remote_folder_name, sample_folder))
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+                else:
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ created".format(remote_folder_name, sample_folder))
+                command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, launchtime, str(uid)))
+                res2 = command2.read()
+                if "Error:" in res2:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}   NOT CREATED".format(remote_folder_name, sample_folder, launchtime))
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                else:
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{} created".format(remote_folder_name, sample_folder, launchtime))
         elif where_to_write == 'eos':
             if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder):
                 os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder)
@@ -222,16 +232,23 @@ if submit:
 
         if isMC:
             if sample.year == 2018:
-                modules = "MCweight_writer(), MET_HLT_Filter(), preselection(), SampleIdx("+ str(dictSample[sample.label]) +"), GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'), nanoprepro(),nanoTopcand(isMC=1), globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
+                modules = "MCweight_writer(), MET_Filter(year = "+str(sample.year)+"), preselection(), GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'), nanoprepro(),nanoTopcand(isMC=1), globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
             elif sample.year == 2022:
-                modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")" 
+                if calcualte_systematics:
+                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
+                else:
+                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
         else:
             if sample.year==2018:
-                modules = "lumiMask(year = "+str(sample.year)+"), MET_Filter(year = "+str(sample.year)+"), preselection(), SampleIdx("+ str(dictSample[sample.label]) +"), nanoTopcand(isMC=0), globalvar(), nanoTopevaluate_MultiScore(isMC=0, year = "+str(sample.year)+")"
+                modules = "lumiMask(year = "+str(sample.year)+"), MET_Filter(year = "+str(sample.year)+"), preselection(), nanoTopcand(isMC=0), globalvar(), nanoTopevaluate_MultiScore(isMC=0, year = "+str(sample.year)+")"
             if sample.year==2022:
-                modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+")" 
+                if calcualte_systematics:
+                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+")" 
+                else:
+                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+")"
 
         files = get_files_string(sample)
+        if debug: files = files[:1] 
 
         for i, f in enumerate(files):
             print("....submitting file", i, end='\r')
@@ -239,7 +256,7 @@ if submit:
             running_subfolder_file = running_subfolder + "/file" + str(i)
             if not os.path.exists(running_subfolder_file):
                 os.makedirs(running_subfolder_file)
-            write_crab_script(sample, f, modules, running_subfolder_file)
+            write_crab_script(sample, f, modules, running_subfolder_file, calcualte_systematics, sample.year)
             runner_writer(running_subfolder_file, i, remote_folder_name, sample_folder, launchtime, outfolder_crabscript_i)
             sub_writer(running_subfolder_file, running_subfolder+"/condor", sample.label+"_file"+str(i))
             if not debug : 

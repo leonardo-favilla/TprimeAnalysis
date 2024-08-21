@@ -720,7 +720,7 @@ bool check_same_top(int idx_fj_1, int idx_j0_1, int idx_j1_1, int idx_j2_1, int 
   
   bool check_jets = !intersection.empty();
 
-  bool check_fj = (idx_fj_1 == idx_fj_2)||(idx_fj_1 == -1 || idx_fj_2 == -1);
+  bool check_fj = (idx_fj_1 == idx_fj_2) && (idx_fj_1 != -1 && idx_fj_2 != -1);
   
   return check_jets || check_fj;
 }

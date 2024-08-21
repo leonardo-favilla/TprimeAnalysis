@@ -16,7 +16,12 @@ def get_files_string(dataset):
             os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
             
         os.popen("export XRD_NETWORKSTACK=IPv4")
-        command = 'dasgoclient -query="file dataset='+dataset.dataset+'"'
+        command = 'dasgoclient -query="file dataset='+dataset.dataset#+'"'
+        if "Zprime" in dataset.label: 
+            command += ' instance=prod/phys03"'
+            print(command)
+        else:
+            command += '"'
         out_stream = os.popen(command)
         files_string = out_stream.read()
         out_stream.close()
