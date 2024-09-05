@@ -34,7 +34,9 @@ def find_folder(remote_dir, dataset_label, cert_path, ca_path):
     results = subprocess.run([
         'davix-ls', '-E', cert_path, '--capath', ca_path, "davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+remote_dir+"/"+dataset_label+"/"
     ], capture_output=True, text=True, check=True)
-    subfold = results.stdout.splitlines()[-1]
+    subfold = results.stdout.splitlines()
+    subfold.sort()
+    subfold = subfold[-1]
 
     return "davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+remote_dir+"/"+dataset_label+"/"+subfold
 

@@ -335,7 +335,7 @@ class nanoprepro(Module):
                         topgeneta.append(gen.eta)
                         topgenphi.append(gen.phi)
                         topgenmass.append(gen.mass)
-                        print("topgenmass ", ntopgenhadr, topgenmass)
+                        # print("topgenmass ", ntopgenhadr, topgenmass)
             # la massa della somma viene molto diversa da quella calcolata sopra
             # ma i valori sembrano sensati
             topgensumpt     = []
@@ -345,7 +345,7 @@ class nanoprepro(Module):
             topgenproduct0  = []
             topgenproduct1  = []
             topgenproduct2  = []
-            print("topgenidx ", ntopgenhadr, topgenidx)
+            # print("topgenidx ", ntopgenhadr, topgenidx)
             bmomentum, q1momentum, q2momentum = ROOT.TLorentzVector(), ROOT.TLorentzVector(), ROOT.TLorentzVector()
             for top in topgenidx:
                 flag1, flag2, flag3 = False, False, False
@@ -378,8 +378,8 @@ class nanoprepro(Module):
                     topgensumeta.append(0)
                     topgensumphi.append(0)
                     topgensumm.append(0)
-                    print("Un top hadr non ha tutti i figli")
-            print(ntopgenhadr)
+                    # print("Un top hadr non ha tutti i figli")
+            # print(ntopgenhadr)
             self.out.fillBranch("nTopGenHadr", ntopgenhadr)
             self.out.fillBranch("TopGenTopPart_pt", topgenpt)
             self.out.fillBranch("TopGenTopPart_eta", topgeneta)
