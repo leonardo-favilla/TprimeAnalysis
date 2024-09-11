@@ -129,10 +129,16 @@ for sample in samples:
         out_strings.append(f)
         if not "Data" in sample.label:
             rootfile = ROOT.TFile.Open(f)
+            runstree = rootfile.Get("Runs")
+            runstree.GetEntry(0)
+            geneventSumw = runstree.genEventSumw
             tree = rootfile.Get("Events")
-            positiveEvents = tree.GetEntries("LHEWeight_originalXWGTUP > 0")
-            negativeEvents = tree.GetEntries("LHEWeight_originalXWGTUP < 0")
-            ntot.append(positiveEvents-negativeEvents)
+            tree.GetEntry(0)
+            eventweight = abs(tree.Generator_weight)
+            n = round(abs(geneventSumw/eventweight))
+            # histo = rootfile.Get("plots/h_genweight")
+            # ntot.append(histo.GetBinContent(2))
+            ntot.append(n)
         else:
             ntot.append(None)
     out_dict[dataset][sample.label] = {'strings': out_strings, "ntot": ntot}
