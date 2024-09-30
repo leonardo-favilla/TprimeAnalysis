@@ -866,7 +866,14 @@ Int_t select_TopCategory(rvec_i GoodTopMer_idx, rvec_i GoodTopMix_idx, rvec_i Go
   else if (nRes==0 && nMix<=1 && nMer==1){
     return 3;
   }
-  else return 4;
+  // else return 4;
+  else
+  {
+    if (nMer>=1) return 4;
+    else if (nMix>=1) return 5;
+    else if (nRes>=1) return 6;
+    else return 7;
+  }
 }
 
 Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore){
@@ -896,7 +903,36 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
     } 
     idx = ArgMax(scores);
   }
-  else idx = -1;
+  else if (EventTopCategory==4){
+    for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
+    {
+      scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
+    }
+    idx = ArgMax(scores);    
+  }
+  else if (EventTopCategory==5){
+    for(int i = 0; i < TopMixed_TopScore.size(); i++)
+    {
+      scores.emplace_back(TopMixed_TopScore[i]);
+    }
+    idx = ArgMax(scores); 
+  }
+  else if (EventTopCategory==6){
+    for(int i = 0; i < TopResolved_TopScore.size(); i++)
+    {
+      scores.emplace_back(TopResolved_TopScore[i]);
+    } 
+    idx = ArgMax(scores);
+  }
+  else 
+  {
+    for(int i = 0; i < TopResolved_TopScore.size(); i++)
+    {
+      scores.emplace_back(TopResolved_TopScore[i]);
+    } 
+    idx = ArgMax(scores);
+  }
+
 
   return idx;
 }
