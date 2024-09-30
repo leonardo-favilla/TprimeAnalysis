@@ -867,12 +867,21 @@ Int_t select_TopCategory(rvec_i GoodTopMer_idx, rvec_i GoodTopMix_idx, rvec_i Go
     return 3;
   }
   // else return 4;
-  else
+  else if (nMer>=1)
   {
-    if (nMer>=1) return 4;
-    else if (nMix>=1) return 5;
-    else if (nRes>=1) return 6;
-    else return 7;
+     return 4;
+  }
+  else if (nMix>=1) 
+  {
+    return 5;
+  }
+  else if (nRes>=1) 
+  {
+    return 6;
+  }
+  else 
+  {
+    return 7;
   }
 }
 
@@ -926,14 +935,12 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
   }
   else 
   {
-    for(int i = 0; i < TopResolved_TopScore.size(); i++)
+    for(int i = 0; i < TopMixed_TopScore.size(); i++)
     {
-      scores.emplace_back(TopResolved_TopScore[i]);
-    } 
-    idx = ArgMax(scores);
+      scores.emplace_back(TopMixed_TopScore[i]);
+    }
+    idx = ArgMax(scores); 
   }
-
-
   return idx;
 }
 
