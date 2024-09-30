@@ -935,11 +935,34 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
   }
   else 
   {
-    for(int i = 0; i < TopMixed_TopScore.size(); i++)
-    {
-      scores.emplace_back(TopMixed_TopScore[i]);
+    if (TopMixed_TopScore.size()>0)
+    {      
+      for(int i = 0; i < TopMixed_TopScore.size(); i++)
+      {
+        scores.emplace_back(TopMixed_TopScore[i]);
+      }
+      idx = ArgMax(scores); 
     }
-    idx = ArgMax(scores); 
+    else if (TopResolved_TopScore.size()>0)
+    {
+      for(int i = 0; i < TopResolved_TopScore.size(); i++)
+      {
+        scores.emplace_back(TopResolved_TopScore[i]);
+      } 
+      idx = ArgMax(scores);
+    }
+    else if (FatJet_particleNet_TvsQCD.size()>0)
+    {
+      for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
+      {
+        scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
+      }
+      idx = ArgMax(scores);
+    }
+    else
+    {
+      idx = -1;
+    }
   }
   return idx;
 }
