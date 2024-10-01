@@ -972,7 +972,16 @@ Float_t select_TopVar(Int_t EventTopCategory, Int_t Top_idx, rvec_f FatJet_pt, r
   if (EventTopCategory==1) return TopResolved_pt[Top_idx];
   else if (EventTopCategory==2) return TopMixed_pt[Top_idx];
   else if (EventTopCategory==3) return FatJet_pt[Top_idx];
-  else return -1000;
+  else if (EventTopCategory==4) return FatJet_pt[Top_idx];
+  else if (EventTopCategory==5) return TopMixed_pt[Top_idx];
+  else if (EventTopCategory==6) return TopResolved_pt[Top_idx];
+  else if (EventTopCategory==7) 
+  {
+    if (TopMixed_pt.size()>0) return TopMixed_pt[Top_idx];
+    else if (TopResolved_pt.size()>0) return TopResolved_pt[Top_idx];
+    else if (FatJet_pt.size()>0) return FatJet_pt[Top_idx];
+  }
+  // else return -1000;
 }
 
 // ########################################################
