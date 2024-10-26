@@ -140,7 +140,16 @@ bool tt_mtt_doublecounting(rvec_f GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPa
 
 
 float getZPtCorrection(float zPt, std::map<float, float> zPtCorrectionMap) {
-  std::map<float, float> zPtCorrectionMap = {
+  auto it = zPtCorrectionMap.lower_bound(zPt);
+  if (it == zPtCorrectionMap.end()) {
+    return 1.0; // Default correction if zPt is out of range
+  }
+  return it->second;
+}
+
+float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
+{ 
+    std::map<float, float> zPtCorrectionMap = {
     {100.0,  0.99},
     {200.0,  0.97},
     {300.0,  0.95},
@@ -162,16 +171,22 @@ float getZPtCorrection(float zPt, std::map<float, float> zPtCorrectionMap) {
     {1900.0, 0.71},
     {2000.0, 0.70}
   }; 
-
-  auto it = zPtCorrectionMap.lower_bound(zPt);
-  if (it == zPtCorrectionMap.end()) {
-    return 1.0; // Default correction if zPt is out of range
+  float w_final;
+  float zpart_pt;
+  for(int i = 0; i<genpart_pt.size();i++)
+  {
+    if(abs(genpart_pdg[i])==23 && (genpart_statusFlags[i] & 1<<13))
+    {
+      zpart_pt = genpart_pt[i];
+    }
   }
-  return it->second;
-}
+  float zptcorr = getZPtCorrection(zpart_pt, zPtCorrectionMap);
+  w_final = w_nom*zptcorr;
+  return w_final;
+}  
 
-float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
-{ 
+float nloewcorrectionW(rvec_f w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
+{  
   std::map<float, float> wPtCorrectionMap = {
     {100.0,  0.99},
     {200.0,  0.97},
@@ -194,22 +209,6 @@ float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_
     {1900.0, 0.63},
     {2000.0, 0.62}
   };  
-  float w_final;
-  float zpart_pt;
-  for(int i = 0; i<genpart_pt.size();i++)
-  {
-    if(abs(genpart_pdg[i])==23 && (genpart_statusFlags[i] & 1<<13))
-    {
-      zpart_pt = genpart_pt[i];
-    }
-  }
-  float zptcorr = getZPtCorrection(zpart_pt, zPtCorrectionMap);
-  w_final = w_nom*zptcorr;
-  return w_final;
-}  
-
-float nloewcorrectionW(rvec_f w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
-{  
   float w_final;
   float wpart_pt;
   for(int i = 0; i<genpart_pt.size();i++)
