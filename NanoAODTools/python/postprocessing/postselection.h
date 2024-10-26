@@ -147,7 +147,7 @@ float getZPtCorrection(float zPt, std::map<float, float> zPtCorrectionMap) {
   return it->second;
 }
 
-float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
+float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags)
 { 
     std::map<float, float> zPtCorrectionMap = {
     {100.0,  0.99},
@@ -185,7 +185,7 @@ float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_
   return w_final;
 }  
 
-float nloewcorrectionW(rvec_f w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
+float nloewcorrectionW(rvec_f w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags)
 {  
   std::map<float, float> wPtCorrectionMap = {
     {100.0,  0.99},
