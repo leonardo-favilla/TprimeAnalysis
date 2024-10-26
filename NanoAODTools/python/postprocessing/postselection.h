@@ -133,57 +133,36 @@ bool tt_mtt_doublecounting(rvec_f GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPa
 // ############## NLO EW correction #######################
 // ########################################################
 
-std::map<float, float> zPtCorrectionMap = {
-  {100.0,  0.99},
-  {200.0,  0.97},
-  {300.0,  0.95},
-  {400.0,  0.92},
-  {500.0,  0.90},
-  {600.0,  0.88},
-  {700.0,  0.86},
-  {800.0,  0.84},
-  {900.0,  0.83},
-  {1000.0, 0.81},
-  {1100.0, 0.80},
-  {1200.0, 0.78},
-  {1300.0, 0.77},
-  {1400.0, 0.76},
-  {1500.0, 0.75},
-  {1600.0, 0.74},
-  {1700.0, 0.73},
-  {1800.0, 0.72},
-  {1900.0, 0.71},
-  {2000.0, 0.70}
-}; 
 // sto usando lower_bound quindi quando il pt si trova tra due chiavi prende quella maggiore:
 // es. pt = 75 -> prende 100
 // quindi prima chiave a 50 avrà la correzione 0-50, seconda chiave a 100 avrà la correzione 50-100
 // e così via
 
-std::map<float, float> wPtCorrectionMap = {
-  {100.0,  0.99},
-  {200.0,  0.97},
-  {300.0,  0.93},
-  {400.0,  0.90},
-  {500.0,  0.87},
-  {600.0,  0.85},
-  {700.0,  0.82},
-  {800.0,  0.80},
-  {900.0,  0.78},
-  {1000.0, 0.76},
-  {1100.0, 0.74},
-  {1200.0, 0.72},
-  {1300.0, 0.71},
-  {1400.0, 0.69},
-  {1500.0, 0.68},
-  {1600.0, 0.67},
-  {1700.0, 0.65},
-  {1800.0, 0.64},
-  {1900.0, 0.63},
-  {2000.0, 0.62}
-}; 
 
 float getZPtCorrection(float zPt, std::map<float, float> zPtCorrectionMap) {
+  std::map<float, float> zPtCorrectionMap = {
+    {100.0,  0.99},
+    {200.0,  0.97},
+    {300.0,  0.95},
+    {400.0,  0.92},
+    {500.0,  0.90},
+    {600.0,  0.88},
+    {700.0,  0.86},
+    {800.0,  0.84},
+    {900.0,  0.83},
+    {1000.0, 0.81},
+    {1100.0, 0.80},
+    {1200.0, 0.78},
+    {1300.0, 0.77},
+    {1400.0, 0.76},
+    {1500.0, 0.75},
+    {1600.0, 0.74},
+    {1700.0, 0.73},
+    {1800.0, 0.72},
+    {1900.0, 0.71},
+    {2000.0, 0.70}
+  }; 
+
   auto it = zPtCorrectionMap.lower_bound(zPt);
   if (it == zPtCorrectionMap.end()) {
     return 1.0; // Default correction if zPt is out of range
@@ -192,7 +171,29 @@ float getZPtCorrection(float zPt, std::map<float, float> zPtCorrectionMap) {
 }
 
 float nloewcorrectionZ(float w_nom, rvec_i genpart_pdg, rvec_f genpart_pt, rvec_i genpart_statusFlags):
-{  
+{ 
+  std::map<float, float> wPtCorrectionMap = {
+    {100.0,  0.99},
+    {200.0,  0.97},
+    {300.0,  0.93},
+    {400.0,  0.90},
+    {500.0,  0.87},
+    {600.0,  0.85},
+    {700.0,  0.82},
+    {800.0,  0.80},
+    {900.0,  0.78},
+    {1000.0, 0.76},
+    {1100.0, 0.74},
+    {1200.0, 0.72},
+    {1300.0, 0.71},
+    {1400.0, 0.69},
+    {1500.0, 0.68},
+    {1600.0, 0.67},
+    {1700.0, 0.65},
+    {1800.0, 0.64},
+    {1900.0, 0.63},
+    {2000.0, 0.62}
+  };  
   float w_final;
   float zpart_pt;
   for(int i = 0; i<genpart_pt.size();i++)
