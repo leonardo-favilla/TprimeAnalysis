@@ -770,21 +770,21 @@ TprimeToTZ_1400_2022.unix_code = 32003
 TprimeToTZ_1400_2022.EE        = 0
 
 TprimeToTZ_1500_2022           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1500GeV", "TprimeToTZ_1500_2022")
-TprimeToTZ_1500_2022.sigma     = 0.002121 #pb  # questa è 2018 non 2022
+TprimeToTZ_1500_2022.sigma     = 0.001407 #pb  # questa è 2018 non 2022
 TprimeToTZ_1500_2022.year      = 2022
 TprimeToTZ_1500_2022.dataset   = '/TprimeBtoTZ_M-1500_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v4/NANOAODSIM' 
 TprimeToTZ_1500_2022.unix_code = 32003
 TprimeToTZ_1500_2022.EE        = 0
 
 TprimeToTZ_1600_2022           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1600GeV", "TprimeToTZ_1600_2022")
-TprimeToTZ_1600_2022.sigma     = 0.002121 #pb  # questa è 2018 non 2022
+TprimeToTZ_1600_2022.sigma     = 0.0009456 #pb  # questa è 2018 non 2022
 TprimeToTZ_1600_2022.year      = 2022
 TprimeToTZ_1600_2022.dataset   = '/TprimeBtoTZ_M-1600_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v4/NANOAODSIM' 
 TprimeToTZ_1600_2022.unix_code = 32003
 TprimeToTZ_1600_2022.EE        = 0
 
 TprimeToTZ_1700_2022           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1700GeV", "TprimeToTZ_1700_2022")
-TprimeToTZ_1700_2022.sigma     = 0.002121 #pb  # questa è 2018 non 2022
+TprimeToTZ_1700_2022.sigma     = 0.0006454 #pb  # questa è 2018 non 2022
 TprimeToTZ_1700_2022.year      = 2022
 TprimeToTZ_1700_2022.dataset   = '/TprimeBtoTZ_M-1700_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v4/NANOAODSIM' 
 TprimeToTZ_1700_2022.unix_code = 32003
