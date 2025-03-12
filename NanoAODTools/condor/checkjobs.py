@@ -30,15 +30,15 @@ def get_file_sizes(directory_url, cert_path, ca_path):
         print(f"Errore nell'esecuzione di davix-ls: {e}")
         return {}
 
-def find_folder(remote_dir, dataset_label, cert_path, ca_path):
+def find_folder(username, remote_dir, dataset_label, cert_path, ca_path):
     results = subprocess.run([
-        'davix-ls', '-E', cert_path, '--capath', ca_path, "davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+remote_dir+"/"+dataset_label+"/"
+        'davix-ls', '-E', cert_path, '--capath', ca_path, "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"
     ], capture_output=True, text=True, check=True)
     subfold = results.stdout.splitlines()
     subfold.sort()
     subfold = subfold[-1]
 
-    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+remote_dir+"/"+dataset_label+"/"+subfold
+    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"+subfold
 
 # # Esempio di utilizzo
 # folder = find_folder("Run3Analysis_Tprime", "TprimeToTZ_1800_2022", "/tmp/x509up_u140541", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")

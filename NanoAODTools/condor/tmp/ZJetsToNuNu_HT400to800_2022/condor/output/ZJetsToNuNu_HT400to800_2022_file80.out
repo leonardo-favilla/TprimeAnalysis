@@ -1,0 +1,22 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file80
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./d942a059-1b9c-4ac5-9b92-9284327b2494_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 2311 entries out of 2311 (100.00%)
+Processed 2311 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/d942a059-1b9c-4ac5-9b92-9284327b2494.root (2311 entries). Finally selected 2183 entries
+Done ./d942a059-1b9c-4ac5-9b92-9284327b2494_Skim.root
+Total time 117.7 sec. to process 2311 events. Rate = 19.6 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file80
+hadd Target file: tree_hadd_80.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_80.root:/
+hadd Target path: tree_hadd_80.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file80

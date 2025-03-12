@@ -1,0 +1,29 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT200to400_2022/file17
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./8aed28e0-1a02-48a3-8365-6af4af42857a_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 74023 entries out of 74023 (100.00%)
+Processed    10000/   74023 entries, 13.51% (elapsed time   362.7s, curr speed    0.028 kHz, avg speed    0.028 kHz), accepted     6434/   10001 events (64.33%)
+Processed    20000/   74023 entries, 27.02% (elapsed time   708.9s, curr speed    0.029 kHz, avg speed    0.028 kHz), accepted    12797/   20001 events (63.98%)
+Processed    30000/   74023 entries, 40.53% (elapsed time  1057.0s, curr speed    0.029 kHz, avg speed    0.028 kHz), accepted    19338/   30001 events (64.46%)
+Processed    40000/   74023 entries, 54.04% (elapsed time  1395.4s, curr speed    0.030 kHz, avg speed    0.029 kHz), accepted    25734/   40001 events (64.33%)
+Processed    50000/   74023 entries, 67.55% (elapsed time  1749.9s, curr speed    0.028 kHz, avg speed    0.029 kHz), accepted    32333/   50001 events (64.66%)
+Processed    60000/   74023 entries, 81.06% (elapsed time  2074.5s, curr speed    0.031 kHz, avg speed    0.029 kHz), accepted    38813/   60001 events (64.69%)
+Processed    70000/   74023 entries, 94.57% (elapsed time  2416.7s, curr speed    0.029 kHz, avg speed    0.029 kHz), accepted    45267/   70001 events (64.67%)
+Processed 74023 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/8aed28e0-1a02-48a3-8365-6af4af42857a.root (74023 entries). Finally selected 47832 entries
+Done ./8aed28e0-1a02-48a3-8365-6af4af42857a_Skim.root
+Total time 2703.1 sec. to process 74023 events. Rate = 27.4 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT200to400_2022/file17
+hadd Target file: tree_hadd_17.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_17.root:/
+hadd Target path: tree_hadd_17.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT200to400_2022/file17

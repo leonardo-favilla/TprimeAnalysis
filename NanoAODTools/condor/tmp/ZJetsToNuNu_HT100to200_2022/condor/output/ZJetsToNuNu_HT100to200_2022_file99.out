@@ -1,0 +1,39 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file99
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./3846e252-fa03-4c6b-8f1a-447d6c60c07b_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 177883 entries out of 177883 (100.00%)
+Processed    10000/  177883 entries,  5.62% (elapsed time   220.8s, curr speed    0.045 kHz, avg speed    0.045 kHz), accepted     1578/   10001 events (15.78%)
+Processed    20000/  177883 entries, 11.24% (elapsed time   413.4s, curr speed    0.052 kHz, avg speed    0.048 kHz), accepted     3101/   20001 events (15.50%)
+Processed    30000/  177883 entries, 16.87% (elapsed time   549.7s, curr speed    0.073 kHz, avg speed    0.055 kHz), accepted     4649/   30001 events (15.50%)
+Processed    40000/  177883 entries, 22.49% (elapsed time   745.5s, curr speed    0.051 kHz, avg speed    0.054 kHz), accepted     6210/   40001 events (15.52%)
+Processed    50000/  177883 entries, 28.11% (elapsed time   898.6s, curr speed    0.065 kHz, avg speed    0.056 kHz), accepted     7695/   50001 events (15.39%)
+Processed    60000/  177883 entries, 33.73% (elapsed time  1075.4s, curr speed    0.057 kHz, avg speed    0.056 kHz), accepted     9224/   60001 events (15.37%)
+Processed    70000/  177883 entries, 39.35% (elapsed time  1264.8s, curr speed    0.053 kHz, avg speed    0.055 kHz), accepted    10822/   70001 events (15.46%)
+Processed    80000/  177883 entries, 44.97% (elapsed time  1400.4s, curr speed    0.074 kHz, avg speed    0.057 kHz), accepted    12419/   80001 events (15.52%)
+Processed    90000/  177883 entries, 50.60% (elapsed time  1582.3s, curr speed    0.055 kHz, avg speed    0.057 kHz), accepted    14035/   90001 events (15.59%)
+Processed   100000/  177883 entries, 56.22% (elapsed time  1724.4s, curr speed    0.070 kHz, avg speed    0.058 kHz), accepted    15592/  100001 events (15.59%)
+Processed   110000/  177883 entries, 61.84% (elapsed time  1903.6s, curr speed    0.056 kHz, avg speed    0.058 kHz), accepted    17178/  110001 events (15.62%)
+Processed   120000/  177883 entries, 67.46% (elapsed time  2086.5s, curr speed    0.055 kHz, avg speed    0.058 kHz), accepted    18681/  120001 events (15.57%)
+Processed   130000/  177883 entries, 73.08% (elapsed time  2225.8s, curr speed    0.072 kHz, avg speed    0.058 kHz), accepted    20251/  130001 events (15.58%)
+Processed   140000/  177883 entries, 78.70% (elapsed time  2410.7s, curr speed    0.054 kHz, avg speed    0.058 kHz), accepted    21803/  140001 events (15.57%)
+Processed   150000/  177883 entries, 84.33% (elapsed time  2534.3s, curr speed    0.081 kHz, avg speed    0.059 kHz), accepted    23287/  150001 events (15.52%)
+Processed   160000/  177883 entries, 89.95% (elapsed time  2714.4s, curr speed    0.056 kHz, avg speed    0.059 kHz), accepted    24832/  160001 events (15.52%)
+Processed   170000/  177883 entries, 95.57% (elapsed time  2851.5s, curr speed    0.073 kHz, avg speed    0.060 kHz), accepted    26344/  170001 events (15.50%)
+Processed 177883 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/30000/3846e252-fa03-4c6b-8f1a-447d6c60c07b.root (177883 entries). Finally selected 27467 entries
+Done ./3846e252-fa03-4c6b-8f1a-447d6c60c07b_Skim.root
+Total time 3051.3 sec. to process 177883 events. Rate = 58.3 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file99
+hadd Target file: tree_hadd_99.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_99.root:/
+hadd Target path: tree_hadd_99.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file99

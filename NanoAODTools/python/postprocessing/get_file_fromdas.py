@@ -8,6 +8,8 @@ def get_files_string(dataset):
         uid = 103214
     elif username == 'acagnott':
         uid = 140541
+    elif username == 'lfavilla':
+        uid = 159320
     if not hasattr(dataset, "dataset"): 
         return "ERROR: a sample with dataset method is required"
     else:

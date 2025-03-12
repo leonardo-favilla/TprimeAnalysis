@@ -19,6 +19,11 @@ if username == 'adeiorio':
     uid = 103214
 elif username == 'acagnott':
     uid = 140541
+elif username == 'lfavilla':
+    uid = 159320
+elif username == 'bargient':
+    uid = 163926
+
 if(uid == 0):
     print("Please insert your uid")
     exit()
@@ -30,16 +35,18 @@ os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" 
 remote_folder_name = "Run3Analysis_Tprime"
 
 def find_folder_8(folder, sample, cert_path, ca_path):
-    command = "davix-ls -E "+cert_path+" --capath "+ca_path+" davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+folder+"/"+sample+"/"
+    command = "davix-ls -E "+cert_path+" --capath "+ca_path+" davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"
+    print(command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     subfold = output.decode('utf-8').splitlines()
     subfold.sort()
 
-    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/"+folder+"/"+sample+"/"+subfold[-1]
+    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"+subfold[-1]
 
 def get_file_sizes_8(directory_url, cert_path, ca_path):
     command = "davix-ls -l -E "+cert_path+" --capath "+ca_path+" "+directory_url
+    print(command)
     result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = result.communicate()
     output = output.decode('utf-8').splitlines()
@@ -58,6 +65,7 @@ def get_file_sizes_8(directory_url, cert_path, ca_path):
 def get_files_on_tier(folder, cert_path, ca_path):
     try:
         command = "davix-ls -E "+cert_path+" --capath "+ca_path+" "+folder
+        print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         output, error = process.communicate()
@@ -98,9 +106,9 @@ elif dataset in sample_dict.keys():
 out_dict = {}
 out_dict[dataset] = {}
 
-if 'lxplus9' in os.environ['HOSTNAME']:
-    print("ERROR: Please run this script from lxplus8")
-    exit()
+# if 'lxplus9' in os.environ['HOSTNAME']:
+#     print("ERROR: Please run this script from lxplus8")
+#     exit()
 
 
 for sample in samples:

@@ -1,0 +1,30 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT800to1500_2022/file19
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./f838c708-325c-47cb-aa79-acd5b771e2e6_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 83793 entries out of 83793 (100.00%)
+Processed    10000/   83793 entries, 11.93% (elapsed time   977.1s, curr speed    0.010 kHz, avg speed    0.010 kHz), accepted     9630/   10001 events (96.29%)
+Processed    20000/   83793 entries, 23.87% (elapsed time  1833.0s, curr speed    0.012 kHz, avg speed    0.011 kHz), accepted    19245/   20001 events (96.22%)
+Processed    30000/   83793 entries, 35.80% (elapsed time  2691.8s, curr speed    0.012 kHz, avg speed    0.011 kHz), accepted    28841/   30001 events (96.13%)
+Processed    40000/   83793 entries, 47.74% (elapsed time  3540.3s, curr speed    0.012 kHz, avg speed    0.011 kHz), accepted    38408/   40001 events (96.02%)
+Processed    50000/   83793 entries, 59.67% (elapsed time  4389.2s, curr speed    0.012 kHz, avg speed    0.011 kHz), accepted    47993/   50001 events (95.98%)
+Processed    60000/   83793 entries, 71.61% (elapsed time  5234.1s, curr speed    0.012 kHz, avg speed    0.011 kHz), accepted    57591/   60001 events (95.98%)
+Processed    70000/   83793 entries, 83.54% (elapsed time  6084.3s, curr speed    0.012 kHz, avg speed    0.012 kHz), accepted    67177/   70001 events (95.97%)
+Processed    80000/   83793 entries, 95.47% (elapsed time  6808.8s, curr speed    0.014 kHz, avg speed    0.012 kHz), accepted    76772/   80001 events (95.96%)
+Processed 83793 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-800to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2520000/f838c708-325c-47cb-aa79-acd5b771e2e6.root (83793 entries). Finally selected 80403 entries
+Done ./f838c708-325c-47cb-aa79-acd5b771e2e6_Skim.root
+Total time 7392.0 sec. to process 83793 events. Rate = 11.3 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT800to1500_2022/file19
+hadd Target file: tree_hadd_19.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_19.root:/
+hadd Target path: tree_hadd_19.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT800to1500_2022/file19

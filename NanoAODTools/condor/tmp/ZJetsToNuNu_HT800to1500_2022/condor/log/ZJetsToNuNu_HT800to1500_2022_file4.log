@@ -1,0 +1,45 @@
+000 (13690088.000.000) 03/10 16:08:52 Job submitted from host: <137.138.120.116:9618?addrs=137.138.120.116-9618+[2001-1458-d00-16--17b]-9618&alias=bigbird12.cern.ch&noUDP&sock=schedd_5055_e355>
+...
+040 (13690088.000.000) 03/10 16:45:41 Started transferring input files
+	Transferring to host: <188.185.211.158:9618?addrs=188.185.211.158-9618+[2001-1458-303-17--100-1a]-9618&alias=b9p24p7991.cern.ch&noUDP&sock=slot1_14_4941_21a2_103374>
+...
+040 (13690088.000.000) 03/10 16:45:41 Finished transferring input files
+...
+001 (13690088.000.000) 03/10 16:45:42 Job executing on host: <188.185.211.158:9618?addrs=188.185.211.158-9618+[2001-1458-303-17--100-1a]-9618&alias=b9p24p7991.cern.ch&noUDP&sock=startd_4143_54f5>
+	SlotName: slot1_14@b9p24p7991.cern.ch
+	CondorScratchDir = "/pool/condor/dir_825706"
+	Cpus = 1
+	Disk = 3794
+	GPUs = 0
+	Memory = 3000
+...
+006 (13690088.000.000) 03/10 16:45:51 Image size of job updated: 19616
+	20  -  MemoryUsage of job (MB)
+	19616  -  ResidentSetSize of job (KB)
+...
+006 (13690088.000.000) 03/10 16:47:10 Image size of job updated: 427360
+	418  -  MemoryUsage of job (MB)
+	427360  -  ResidentSetSize of job (KB)
+...
+040 (13690088.000.000) 03/10 16:47:10 Started transferring output files
+...
+040 (13690088.000.000) 03/10 16:47:10 Finished transferring output files
+...
+005 (13690088.000.000) 03/10 16:47:10 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:41, Sys 0 00:00:08  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:41, Sys 0 00:00:08  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	2807  -  Run Bytes Sent By Job
+	11044  -  Run Bytes Received By Job
+	2807  -  Total Bytes Sent By Job
+	11044  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :     0.34        1         1 
+	   Disk (KB)            : 15649          12      3794 
+	   GPUs                 :                           0 
+	   Memory (MB)          :   418        3000      3000 
+
+	Job terminated of its own accord at 2025-03-10T15:47:10Z with exit-code 0.
+...
