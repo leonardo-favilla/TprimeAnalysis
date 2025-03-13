@@ -286,26 +286,26 @@ def fill_jets(year, jets_dnn, j0, j1, j2, sumjet, fj_phi, fj_eta, idx_top, scena
 # folder_model_antimo     = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/dict_tresholds/" % os.environ["CMSSW_BASE"]
 # path_to_model_folder    = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
 # folder_model_antimo     = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
-path_to_model_folder    = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
-folder_model_antimo     = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+# path_to_model_folder    = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+# folder_model_antimo     = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
 
 # antimo_model_name_H     = "DNN_phase2_test2.h5"#"DNN_withtopmass_phase2.h5"
 # antimo_model_name_L     = "DNN_phase1_test_lowpt_DNN.h5"
 
-TopMixed2022            = "model_TopMixed_2022_p2.h5"
-TopMixed2018            = "model_base2.h5"
-TopResolved2022         = "model_TopResolved_2022.h5"
-TopResolved2018         = "DNN_phase1_test_lowpt_DNN.h5"
+# TopMixed2022            = "model_TopMixed_2022_p2.h5"
+# TopMixed2018            = "model_base2.h5"
+# TopResolved2022         = "model_TopResolved_2022.h5"
+# TopResolved2018         = "DNN_phase1_test_lowpt_DNN.h5"
 
-keys                    = ["base2"]
+# keys                    = ["base2"]
 
-models                  = {}
+# models                  = {}
 # models["base"]          = tf.keras.models.load_model(f"{path_to_model_folder}/model_base.h5")
 # print(path_to_model_folder+"model_base2.h5")
-models["TopMixed_2018"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2018)
-models["TopMixed_2022"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2022)
-models["TopResolved_2018"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2018)
-models["TopResolved_2022"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2022)
+# models["TopMixed_2018"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2018)
+# models["TopMixed_2022"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2022)
+# models["TopResolved_2018"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2018)
+# models["TopResolved_2022"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2022)
 # models["score2"]        = tf.keras.models.load_model(folder_model_antimo+antimo_model_name_H)
 
 # for key in keys:
