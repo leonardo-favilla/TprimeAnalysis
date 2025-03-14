@@ -26,19 +26,44 @@ status = opt.status
 oldfolderstructure = opt.oldfolderstructure
 calcualte_systematics = opt.syst
 
+
+
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
 inituser = str(os.environ.get('USER')[0])
 if username == 'adeiorio':
     uid = 103214
+    workdir = "user"
 elif username == 'acagnott':
     uid = 140541
+    workdir = "work"
+elif username == 'lfavilla':
+    uid = 159320
+    workdir = "user"
+elif username == 'bargient':
+    uid = 163926
+    workdir = "user"
 if(uid == 0):
     print("Please insert your uid")
     exit()
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
     os.system('voms-proxy-init --rfc --voms cms -valid 192:00')
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
+
+######## machine learning models ########
+path_to_model_folder        = "/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+folder_model_antimo         = "/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+
+TopMixed2022                = "model_TopMixed_2022_p2.h5"
+TopMixed2018                = "model_base2.h5"
+TopResolved2022             = "model_TopResolved_2022.h5"
+TopResolved2018             = "DNN_phase1_test_lowpt_DNN.h5"
+
+models                      = {}
+models["TopMixed_2018"]     = path_to_model_folder+TopMixed2018
+models["TopMixed_2022"]     = path_to_model_folder+TopMixed2022
+models["TopResolved_2018"]  = path_to_model_folder+TopResolved2018
+models["TopResolved_2022"]  = path_to_model_folder+TopResolved2022
 
 # insert here the name of output folder
 remote_folder_name = "Run3Analysis_Tprime"
@@ -104,11 +129,11 @@ def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, 
     else:
         year_tag = year
     if isMC:
-        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/scripts/keep_and_drop.txt')\n")# haddFileName='"+sample.label+".root'
+        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/scripts/keep_and_drop.txt')\n")# haddFileName='"+sample.label+".root'
         
 
     else: 
-        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/scripts/keep_and_drop.txt')\n")#
+        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/scripts/keep_and_drop.txt')\n")#
         
     f.write("p.run()\n")
     f.write("print('DONE')\n")
@@ -139,7 +164,7 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     f = open(folder+"/runner.sh", "w")
     f.write("#!/bin/bash\n")
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
-    f.write("source analysisel9.sh\n")
+    f.write("source analysis_TPrime.sh\n")
     f.write("mkdir -p "+outfolder+"\n")
     f.write("cd "+outfolder+"\n")
     f.write("pwd\n")
@@ -150,7 +175,7 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     if where_to_write == 'eos':
         f.write("mv tree_hadd_{}.root /eos/home-l/lfavilla/xAnimo/{}/{}/{}/.\n".format(str(i), remote_folder_name, sample_folder, launchtime))
     elif where_to_write == 'tier':
-        f.write("davix-put tree_hadd_{}.root davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), remote_folder_name, sample_folder, launchtime, str(i)))
+        f.write("davix-put tree_hadd_{}.root davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), username, remote_folder_name, sample_folder, launchtime, str(i)))
     f.close()
 
 dataset_to_run = opt.dat
@@ -172,11 +197,11 @@ elif dataset_to_run in sample_dict.keys():
         samples = [sample_dict[dataset_to_run]]
 
 if oldfolderstructure:
-    running_folder = "/afs/cern.ch/work/a/"+username+"/Analysis/NanoAODTools/condor/tmp/"+dataset_to_run
+    running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/condor/tmp/"+dataset_to_run
     if not os.path.exists(running_folder):
         os.makedirs(running_folder)
 else:
-    running_folder = "/afs/cern.ch/work/a/"+username+"/Analysis/NanoAODTools/condor/tmp/"
+    running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/condor/tmp/"
     if not os.path.exists(running_folder):
         os.makedirs(running_folder)
 
@@ -200,22 +225,22 @@ if submit:
         
         if where_to_write == 'tier':
             if not debug: 
-                command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, str(uid)))
+                command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, str(uid)))
                 res1 = command1.read()
                 if "Error:" in res1:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/   NOT CREATED".format(remote_folder_name, sample_folder))
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/   NOT CREATED".format(username, remote_folder_name, sample_folder))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/ created".format(remote_folder_name, sample_folder))
-                command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(remote_folder_name, sample_folder, launchtime, str(uid)))
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ created".format(username, remote_folder_name, sample_folder))
+                command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, launchtime, str(uid)))
                 res2 = command2.read()
                 if "Error:" in res2:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{}   NOT CREATED".format(remote_folder_name, sample_folder, launchtime))
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}   NOT CREATED".format(username, remote_folder_name, sample_folder, launchtime))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/acagnott/{}/{}/{} created".format(remote_folder_name, sample_folder, launchtime))
+                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{} created".format(username, remote_folder_name, sample_folder, launchtime))
         elif where_to_write == 'eos':
             if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder):
                 os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder)
@@ -230,22 +255,24 @@ if submit:
         isMC = True
         if "Data" in sample.label: isMC = False
 
+        modelMix_path = models["TopMixed_"+str(sample.year)]
+        modelRes_path = models["TopResolved_"+str(sample.year)]
         if isMC:
             if sample.year == 2018:
-                modules = "MCweight_writer(), MET_Filter(year = "+str(sample.year)+"), preselection(), GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'), nanoprepro(),nanoTopcand(isMC=1), globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
+                modules = "MCweight_writer(), MET_Filter(year = "+str(sample.year)+"), preselection(), GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'), nanoprepro(),nanoTopcand(isMC=1), globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
             elif sample.year == 2022:
                 if calcualte_systematics:
-                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
+                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=True,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=True,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='.',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=True,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
                 else:
-                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+")"
+                    modules = "MCweight_writer(),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),PUreweight(year="+str(sample.year)+",EE="+str(sample.EE)+"),BTagSF(year="+str(sample.year)+",EE="+str(sample.EE)+"),GenPart_MomFirstCp(flavour='-5,-4,-3,-2,-1,1,2,3,4,5,6,-6,24,-24'),nanoprepro(),nanoTopcand(isMC=True),globalvar(), nanoTopevaluate_MultiScore(year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
         else:
             if sample.year==2018:
-                modules = "lumiMask(year = "+str(sample.year)+"), MET_Filter(year = "+str(sample.year)+"), preselection(), nanoTopcand(isMC=0), globalvar(), nanoTopevaluate_MultiScore(isMC=0, year = "+str(sample.year)+")"
+                modules = "lumiMask(year = "+str(sample.year)+"), MET_Filter(year = "+str(sample.year)+"), preselection(), nanoTopcand(isMC=0), globalvar(), nanoTopevaluate_MultiScore(isMC=0, year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
             if sample.year==2022:
                 if calcualte_systematics:
-                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+")" 
+                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=False,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK8PFPuppi',forMET=False,doJer=True),jetType='AK8PFPuppi',isMC=False,forMET=False,PuppiMET=False,addHEM2018Issue=False,NanoAODv=12),CMSJMECalculators(configcreate(isMC=False,year="+str(sample.year)+",EE="+str(sample.EE)+",runPeriod='"+sample.runP+"',jetType='AK4PFPuppi',forMET=True,doJer=True),jetType='AK4PFPuppi',isMC=False,forMET=True,PuppiMET=True,addHEM2018Issue=False,NanoAODv=12),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
                 else:
-                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+")"
+                    modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
 
         files = get_files_string(sample)
         if debug: files = files[:1] 
@@ -271,7 +298,7 @@ if resubmit:
     print("\n################################################ RESUBMITTING mode")
     for sample in samples:
         if( oldfolderstructure and dataset_to_run=="DataEGamma_2022" and sample.label =="DataEGammaC_2022"):continue
-        davixfolder = find_folder(remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+        davixfolder = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         file_sizes = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         for file_name, file_size in file_sizes.items():
             if file_size <1000:
@@ -289,7 +316,7 @@ if status:
     print("\n################################################ STATUS mode")
     for sample in samples:
         if( oldfolderstructure and dataset_to_run=="DataEGamma_2022" and sample.label =="DataEGammaC_2022"):continue
-        davixfolder = find_folder(remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+        davixfolder = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         file_sizes = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         print("Checking status for empty files in ", sample.label)
         print("Tier folder: ", davixfolder)

@@ -1,0 +1,40 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file127
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./d56df09a-eba3-49ed-af30-cde6f5a7c152_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 181879 entries out of 181879 (100.00%)
+Processed    10000/  181879 entries,  5.50% (elapsed time   242.8s, curr speed    0.041 kHz, avg speed    0.041 kHz), accepted     1553/   10001 events (15.53%)
+Processed    20000/  181879 entries, 11.00% (elapsed time   446.6s, curr speed    0.049 kHz, avg speed    0.045 kHz), accepted     3112/   20001 events (15.56%)
+Processed    30000/  181879 entries, 16.49% (elapsed time   592.6s, curr speed    0.068 kHz, avg speed    0.051 kHz), accepted     4655/   30001 events (15.52%)
+Processed    40000/  181879 entries, 21.99% (elapsed time   794.9s, curr speed    0.049 kHz, avg speed    0.050 kHz), accepted     6218/   40001 events (15.54%)
+Processed    50000/  181879 entries, 27.49% (elapsed time   957.0s, curr speed    0.062 kHz, avg speed    0.052 kHz), accepted     7734/   50001 events (15.47%)
+Processed    60000/  181879 entries, 32.99% (elapsed time  1157.2s, curr speed    0.050 kHz, avg speed    0.052 kHz), accepted     9267/   60001 events (15.44%)
+Processed    70000/  181879 entries, 38.49% (elapsed time  1363.8s, curr speed    0.048 kHz, avg speed    0.051 kHz), accepted    10825/   70001 events (15.46%)
+Processed    80000/  181879 entries, 43.99% (elapsed time  1511.5s, curr speed    0.068 kHz, avg speed    0.053 kHz), accepted    12360/   80001 events (15.45%)
+Processed    90000/  181879 entries, 49.48% (elapsed time  1709.9s, curr speed    0.050 kHz, avg speed    0.053 kHz), accepted    13963/   90001 events (15.51%)
+Processed   100000/  181879 entries, 54.98% (elapsed time  1865.8s, curr speed    0.064 kHz, avg speed    0.054 kHz), accepted    15460/  100001 events (15.46%)
+Processed   110000/  181879 entries, 60.48% (elapsed time  2058.5s, curr speed    0.052 kHz, avg speed    0.053 kHz), accepted    17004/  110001 events (15.46%)
+Processed   120000/  181879 entries, 65.98% (elapsed time  2260.8s, curr speed    0.049 kHz, avg speed    0.053 kHz), accepted    18517/  120001 events (15.43%)
+Processed   130000/  181879 entries, 71.48% (elapsed time  2410.5s, curr speed    0.067 kHz, avg speed    0.054 kHz), accepted    20026/  130001 events (15.40%)
+Processed   140000/  181879 entries, 76.97% (elapsed time  2607.4s, curr speed    0.051 kHz, avg speed    0.054 kHz), accepted    21557/  140001 events (15.40%)
+Processed   150000/  181879 entries, 82.47% (elapsed time  2767.4s, curr speed    0.063 kHz, avg speed    0.054 kHz), accepted    23120/  150001 events (15.41%)
+Processed   160000/  181879 entries, 87.97% (elapsed time  2965.4s, curr speed    0.050 kHz, avg speed    0.054 kHz), accepted    24660/  160001 events (15.41%)
+Processed   170000/  181879 entries, 93.47% (elapsed time  3185.5s, curr speed    0.045 kHz, avg speed    0.053 kHz), accepted    26189/  170001 events (15.41%)
+Processed   180000/  181879 entries, 98.97% (elapsed time  3327.9s, curr speed    0.070 kHz, avg speed    0.054 kHz), accepted    27779/  180001 events (15.43%)
+Processed 181879 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/40000/d56df09a-eba3-49ed-af30-cde6f5a7c152.root (181879 entries). Finally selected 28069 entries
+Done ./d56df09a-eba3-49ed-af30-cde6f5a7c152_Skim.root
+Total time 3413.3 sec. to process 181879 events. Rate = 53.3 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file127
+hadd Target file: tree_hadd_127.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_127.root:/
+hadd Target path: tree_hadd_127.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT100to200_2022/file127

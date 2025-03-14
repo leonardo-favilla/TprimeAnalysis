@@ -115,25 +115,25 @@ def fill_jets(year, jets_dnn, j0, j1, j2, sumjet, fj_phi, fj_eta, idx_top):
 # Leo's models #
 # path_to_model_folder    = "/afs/cern.ch/user/l/lfavilla/CMSSW_12_6_0/src/PhysicsTools/NanoAODTools/python/postprocessing/my_analysis/my_framework/MLstudies/Training/Train/saved_models"
 # path_to_model_folder    = "%s/src/PhysicsTools/NanoAODTools/python/postprocessing/my_analysis/my_framework/MLstudies/Training/Train/saved_models" % os.environ["CMSSW_BASE"]
-path_to_model_folder    = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
-folder_model_antimo     = "/afs/cern.ch/work/a/acagnott/Analysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+# path_to_model_folder    = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+# folder_model_antimo     = "/afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
 # antimo_model_name_H     = "DNN_phase2_test2.h5"#"DNN_withtopmass_phase2.h5"
 # antimo_model_name_L     = "DNN_phase1_test_lowpt_DNN.h5"
 
-TopMixed2022            = "model_TopMixed_2022_p2.h5"
-TopMixed2018            = "model_base2.h5"
-TopResolved2022         = "model_TopResolved_2022.h5"
-TopResolved2018         = "DNN_phase1_test_lowpt_DNN.h5"
+# TopMixed2022            = "model_TopMixed_2022_p2.h5"
+# TopMixed2018            = "model_base2.h5"
+# TopResolved2022         = "model_TopResolved_2022.h5"
+# TopResolved2018         = "DNN_phase1_test_lowpt_DNN.h5"
 
-keys                    = ["base2"]
+# keys                    = ["base2"]
 
-models                  = {}
+# models                  = {}
 # models["base"]          = tf.keras.models.load_model(f"{path_to_model_folder}/model_base.h5")
 # print(path_to_model_folder+"model_base2.h5")
-models["TopMixed_2018"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2018)
-models["TopMixed_2022"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2022)
-models["TopResolved_2018"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2018)
-models["TopResolved_2022"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2022)
+# models["TopMixed_2018"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2018)
+# models["TopMixed_2022"]         = tf.keras.models.load_model(path_to_model_folder+TopMixed2022)
+# models["TopResolved_2018"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2018)
+# models["TopResolved_2022"]      = tf.keras.models.load_model(path_to_model_folder+TopResolved2022)
 # models["score2"]        = tf.keras.models.load_model(folder_model_antimo+antimo_model_name_H)
 
 # for key in keys:
@@ -145,7 +145,11 @@ models["TopResolved_2022"]      = tf.keras.models.load_model(path_to_model_folde
 
 
 class nanoTopevaluate_MultiScore(Module):
-    def __init__(self, isMC=1, year=2018):
+    def __init__(self, modelMix_path, modelRes_path, isMC=1, year=2018):
+        self.modelMix_path = modelMix_path
+        self.modelRes_path = modelRes_path
+        self.modelMix      = tf.keras.models.load_model(modelMix_path)
+        self.modelRes      = tf.keras.models.load_model(modelRes_path)
         self.isMC = isMC
         self.year = year
         # print(self.year)  
@@ -225,12 +229,13 @@ class nanoTopevaluate_MultiScore(Module):
         scores = []
         if len(tophighpt)!=0:
             # top_score2      = models["score2"].predict({"fatjet":fj_dnn, "jet": jets_dnn,  "top_mass": mass_dnn[:,:2]}).flatten().tolist()
-            if self.year == 2018:
-                model = models["TopMixed_2018"]
-            elif self.year == 2022 or self.year == 2023:
-                model = models["TopMixed_2022"]
+            # if self.year == 2018:
+            #     model = models["TopMixed_2018"]
+            # elif self.year == 2022 or self.year == 2023:
+            #     model = models["TopMixed_2022"]
             # print(fj_dnn.shape, jets_dnn.shape, mass_dnn.shape)
-            scores = model({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy().flatten().tolist()
+            # scores = model({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy().flatten().tolist()
+            scores = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy().flatten().tolist()
         else:
             # top_score2  = []
             scores = []
@@ -250,11 +255,12 @@ class nanoTopevaluate_MultiScore(Module):
             sumjet = j0.p4()+j1.p4()+j2.p4()
             jets_dnn = fill_jets(self.year, jets_dnn, j0, j1, j2, sumjet, fj.Phi(), fj.Eta(), i)
         if len(toplowpt)!=0:
-            if self.year == 2018:
-                modelRes = models["TopResolved_2018"]
-            elif self.year == 2022 or self.year == 2023:
-                modelRes = models["TopResolved_2022"]
-            top_score_DNN = modelRes({"jet0": jets_dnn[:,0,:-2], "jet1": jets_dnn[:,1,:-2], "jet2": jets_dnn[:,2,:-2]}).numpy().flatten().tolist()
+            # if self.year == 2018:
+            #     modelRes = models["TopResolved_2018"]
+            # elif self.year == 2022 or self.year == 2023:
+            #     modelRes = models["TopResolved_2022"]
+            # top_score_DNN = modelRes({"jet0": jets_dnn[:,0,:-2], "jet1": jets_dnn[:,1,:-2], "jet2": jets_dnn[:,2,:-2]}).numpy().flatten().tolist()
+            top_score_DNN = self.modelRes({"jet0": jets_dnn[:,0,:-2], "jet1": jets_dnn[:,1,:-2], "jet2": jets_dnn[:,2,:-2]}).numpy().flatten().tolist()
         else:
             top_score_DNN = []
 

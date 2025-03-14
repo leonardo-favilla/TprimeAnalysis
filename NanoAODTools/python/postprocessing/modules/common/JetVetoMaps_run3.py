@@ -43,7 +43,7 @@ class JetVetoMaps_run3(Module):
             else:
                 phi = j.phi
             if j.eta>5.191 or j.eta<-5.191:
-                eta = 5.190
+                eta = (j.eta/abs(j.eta))*5.190
             else:
                 eta = j.eta
             flag += self.vetomap.evaluate("jetvetomap", eta, phi)

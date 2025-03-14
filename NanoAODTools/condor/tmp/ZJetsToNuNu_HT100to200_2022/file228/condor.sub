@@ -1,0 +1,13 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/l/lfavilla/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "testmatch"
+executable              = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/condor/tmp//ZJetsToNuNu_HT100to200_2022/file228/runner.sh
+arguments               = $(Proxy_path)
+output                  = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/condor/tmp//ZJetsToNuNu_HT100to200_2022/condor/output/ZJetsToNuNu_HT100to200_2022_file228.out
+error                   = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/condor/tmp//ZJetsToNuNu_HT100to200_2022/condor/error/ZJetsToNuNu_HT100to200_2022_file228.err
+log                     = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/condor/tmp//ZJetsToNuNu_HT100to200_2022/condor/log/ZJetsToNuNu_HT100to200_2022_file228.log
+queue

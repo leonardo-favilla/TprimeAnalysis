@@ -1,0 +1,28 @@
+Standalone environment set.
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file67
+hadd Target file: tree.root
+hadd compression setting for all output: 1
+hadd Source file 1: ./a9ae25b6-b917-460e-b066-23095d2034d4_Skim.root
+hadd Sources and Target have different compression levels
+hadd merging will be slower
+hadd Target path: tree.root:/
+Will write selected trees to .
+Pre-select 66537 entries out of 66537 (100.00%)
+Processed    10000/   66537 entries, 15.03% (elapsed time  1162.4s, curr speed    0.009 kHz, avg speed    0.009 kHz), accepted     9445/   10001 events (94.44%)
+Processed    20000/   66537 entries, 30.06% (elapsed time  2069.0s, curr speed    0.011 kHz, avg speed    0.010 kHz), accepted    18912/   20001 events (94.56%)
+Processed    30000/   66537 entries, 45.09% (elapsed time  3068.1s, curr speed    0.010 kHz, avg speed    0.010 kHz), accepted    28357/   30001 events (94.52%)
+Processed    40000/   66537 entries, 60.12% (elapsed time  3993.0s, curr speed    0.011 kHz, avg speed    0.010 kHz), accepted    37810/   40001 events (94.52%)
+Processed    50000/   66537 entries, 75.15% (elapsed time  5054.8s, curr speed    0.009 kHz, avg speed    0.010 kHz), accepted    47280/   50001 events (94.56%)
+Processed    60000/   66537 entries, 90.18% (elapsed time  5999.9s, curr speed    0.011 kHz, avg speed    0.010 kHz), accepted    56732/   60001 events (94.55%)
+Processed 66537 preselected entries from root://cms-xrd-global.cern.ch//store/mc/Run3Summer22NanoAODv12/Zto2Nu-4Jets_HT-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/2530000/a9ae25b6-b917-460e-b066-23095d2034d4.root (66537 entries). Finally selected 62943 entries
+Done ./a9ae25b6-b917-460e-b066-23095d2034d4_Skim.root
+Total time 7042.6 sec. to process 66537 events. Rate = 9.4 Hz.
+DONE
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file67
+hadd Target file: tree_hadd_67.root
+hadd compression setting for all output: 1
+hadd Source file 1: tree.root
+hadd Source file 2: hist.root
+hadd Target path: tree_hadd_67.root:/
+hadd Target path: tree_hadd_67.root:/plots
+/tmp/lfavilla/ZJetsToNuNu_HT400to800_2022/file67
