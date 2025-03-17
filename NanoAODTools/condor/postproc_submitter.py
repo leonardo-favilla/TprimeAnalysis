@@ -5,6 +5,7 @@ import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.get_file_fromdas import *
 from checkjobs import get_file_sizes, find_folder
+from config import models # import machine learning models dictionary from config.py
 
 usage = 'python3 postproc_submitter.py -d dataset_name'
 parser = optparse.OptionParser(usage)
@@ -31,18 +32,10 @@ calcualte_systematics = opt.syst
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
 inituser = str(os.environ.get('USER')[0])
-if username == 'adeiorio':
-    uid = 103214
-    workdir = "user"
-elif username == 'acagnott':
-    uid = 140541
-    workdir = "work"
-elif username == 'lfavilla':
-    uid = 159320
-    workdir = "user"
-elif username == 'bargient':
-    uid = 163926
-    workdir = "user"
+uid      = int(os.getuid())
+workdir  = "user" if "user" in os.environ.get('PWD') else "work"
+
+
 if(uid == 0):
     print("Please insert your uid")
     exit()
@@ -50,20 +43,6 @@ if not os.path.exists("/tmp/x509up_u" + str(uid)):
     os.system('voms-proxy-init --rfc --voms cms -valid 192:00')
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
 
-######## machine learning models ########
-path_to_model_folder        = "/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
-folder_model_antimo         = "/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
-
-TopMixed2022                = "model_TopMixed_2022_p2.h5"
-TopMixed2018                = "model_base2.h5"
-TopResolved2022             = "model_TopResolved_2022.h5"
-TopResolved2018             = "DNN_phase1_test_lowpt_DNN.h5"
-
-models                      = {}
-models["TopMixed_2018"]     = path_to_model_folder+TopMixed2018
-models["TopMixed_2022"]     = path_to_model_folder+TopMixed2022
-models["TopResolved_2018"]  = path_to_model_folder+TopResolved2018
-models["TopResolved_2022"]  = path_to_model_folder+TopResolved2022
 
 # insert here the name of output folder
 remote_folder_name = "Run3Analysis_Tprime"
