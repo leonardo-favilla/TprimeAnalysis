@@ -2,7 +2,7 @@ import os
 
 username        = str(os.environ.get("USER"))
 inituser        = str(os.environ.get("USER")[0])
-uid             = os.getuid()
+uid             = int(os.getuid())
 
 
 
