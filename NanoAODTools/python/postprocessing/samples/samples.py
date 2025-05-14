@@ -1314,6 +1314,935 @@ Zprime4top_2000_2022EE.dataset  = '/TopPhilic_ttzp_13p6TeV_m2000_relwidth4_TuneC
 Zprime4top_2000_2022EE.EE       = 1
 
 
+###############################################################################################################################
+##########################################                                           ##########################################
+##########################################                    2023                   ##########################################
+##########################################                                           ##########################################
+###############################################################################################################################
+# Per ora l'attributo EE viene usato anche per pre e post BPix, quindi se EE=0 è preBPix, se EE=1 è postBPix
+# 
+# 
+# 
+#
+################################ QCD ################################
+# QCD_HT40to70_2023               = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT40to70_2023")
+# QCD_HT40to70_2023.sigma         = 311.7*(10**6) #pb
+# QCD_HT40to70_2023.year          = 2023
+# QCD_HT40to70_2023.dataset       = "/QCD-4Jets_HT-40to70_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+# QCD_HT40to70_2023.process       = "QCD_2023"
+# QCD_HT40to70_2023.unix_code     = 31000
+# QCD_HT40to70_2023.EE            = 0
+QCD_HT70to100_2023              = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT70to100_2023")
+QCD_HT70to100_2023.sigma        = 58.6*(10**6) #pb
+QCD_HT70to100_2023.year         = 2023
+QCD_HT70to100_2023.dataset      = "/QCD-4Jets_HT-70to100_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT70to100_2023.process      = "QCD_2023"
+QCD_HT70to100_2023.unix_code    = 31001
+QCD_HT70to100_2023.EE           = 0
+QCD_HT100to200_2023             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT100to200_2023")
+QCD_HT100to200_2023.sigma       = 25.1*(10**6) #pb
+QCD_HT100to200_2023.year        = 2023
+QCD_HT100to200_2023.dataset     = "/QCD-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT100to200_2023.process     = "QCD_2023"
+QCD_HT100to200_2023.unix_code   = 31002
+QCD_HT100to200_2023.EE          = 0
+QCD_HT200to400_2023             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT200to400_2023")
+QCD_HT200to400_2023.sigma       = 1.96*(10**6) #pb
+QCD_HT200to400_2023.year        = 2023
+QCD_HT200to400_2023.dataset     = "/QCD-4Jets_HT-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT200to400_2023.process     = "QCD_2023"
+QCD_HT200to400_2023.unix_code   = 31003
+QCD_HT200to400_2023.EE          = 0
+QCD_HT400to600_2023             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT400to600_2023")
+QCD_HT400to600_2023.sigma       = 96.0*(10**3) #pb
+QCD_HT400to600_2023.year        = 2023
+QCD_HT400to600_2023.dataset     = "/QCD-4Jets_HT-400to600_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+QCD_HT400to600_2023.process     = "QCD_2023"
+QCD_HT400to600_2023.unix_code   = 31004
+QCD_HT400to600_2023.EE          = 0
+QCD_HT600to800_2023             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT600to800_2023")
+QCD_HT600to800_2023.sigma       = 13.5*(10**3) #pb
+QCD_HT600to800_2023.year        = 2023
+QCD_HT600to800_2023.dataset     = "/QCD-4Jets_HT-600to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT600to800_2023.process     = "QCD_2023"
+QCD_HT600to800_2023.unix_code   = 31005
+QCD_HT600to800_2023.EE          = 0
+QCD_HT800to1000_2023            = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT800to1000_2023")
+QCD_HT800to1000_2023.sigma      = 3.03*(10**3) #pb
+QCD_HT800to1000_2023.year       = 2023
+QCD_HT800to1000_2023.dataset    = "/QCD-4Jets_HT-800to1000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT800to1000_2023.process    = "QCD_2023"
+QCD_HT800to1000_2023.unix_code  = 31006
+QCD_HT800to1000_2023.EE         = 0
+QCD_HT1000to1200_2023           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1000to1200_2023")
+QCD_HT1000to1200_2023.sigma     = 884 #pb
+QCD_HT1000to1200_2023.year      = 2023
+QCD_HT1000to1200_2023.dataset   = "/QCD-4Jets_HT-1000to1200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT1000to1200_2023.process   = "QCD_2023"
+QCD_HT1000to1200_2023.unix_code = 31007
+QCD_HT1000to1200_2023.EE        = 0
+QCD_HT1200to1500_2023           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1200to1500_2023")
+QCD_HT1200to1500_2023.sigma     = 384 #pb 
+QCD_HT1200to1500_2023.year      = 2023
+QCD_HT1200to1500_2023.dataset   = "/QCD-4Jets_HT-1200to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT1200to1500_2023.process   = "QCD_2023"
+QCD_HT1200to1500_2023.unix_code = 31007
+QCD_HT1200to1500_2023.EE        = 0
+QCD_HT1500to2000_2023           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1500to2000_2023")
+QCD_HT1500to2000_2023.sigma     = 125 #pb
+QCD_HT1500to2000_2023.year      = 2023
+QCD_HT1500to2000_2023.dataset   = "/QCD-4Jets_HT-1500to2000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+QCD_HT1500to2000_2023.process   = "QCD_2023"
+QCD_HT1500to2000_2023.unix_code = 31008
+QCD_HT1500to2000_2023.EE        = 0
+QCD_HT2000_2023                 = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT2000_2023")
+QCD_HT2000_2023.sigma           = 26.5 #pb
+QCD_HT2000_2023.year            = 2023
+QCD_HT2000_2023.dataset         = "/QCD-4Jets_HT-2000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+QCD_HT2000_2023.process         = "QCD_2023"
+QCD_HT2000_2023.unix_code       = 31009
+QCD_HT2000_2023.EE              = 0
+QCD_2023                        = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_2023")
+QCD_2023.year                   = 2023
+QCD_2023.components             = [ 
+                                    # QCD_HT40to70_2023, 
+                                    QCD_HT70to100_2023, QCD_HT100to200_2023, QCD_HT200to400_2023,
+                                    QCD_HT400to600_2023, QCD_HT600to800_2023, QCD_HT800to1000_2023, 
+                                    QCD_HT1000to1200_2023, QCD_HT1200to1500_2023,
+                                    QCD_HT1500to2000_2023, QCD_HT2000_2023
+                                ]
+
+
+################################ TTbar ################################
+TT_semilep_2023             = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_semilep_2023")
+TT_semilep_2023.sigma       = 404.0 #pb
+TT_semilep_2023.year        = 2023
+TT_semilep_2023.dataset     = "/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+TT_semilep_2023.process     = 'TT_2023'
+TT_semilep_2023.unix_code   = 31100
+TT_semilep_2023.EE          = 0
+
+TT_hadr_2023                = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_hadr_2023")
+TT_hadr_2023.sigma          = 422.3
+TT_hadr_2023.year           = 2023
+TT_hadr_2023.dataset        = "/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+TT_hadr_2023.process        = 'TT_2023'
+TT_hadr_2023.unix_code      = 31101
+TT_hadr_2023.EE             = 0
+
+TT_2023                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2023")
+TT_2023.year                = 2023
+TT_2023.components          = [TT_semilep_2023, TT_hadr_2023]
+
+################################ ZJets ################################
+ZJetsToNuNu_HT100to200_2023             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT100to200_2023")
+ZJetsToNuNu_HT100to200_2023.sigma       = 273.7 #pb
+ZJetsToNuNu_HT100to200_2023.year        = 2023
+ZJetsToNuNu_HT100to200_2023.dataset     = "/Zto2Nu-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+ZJetsToNuNu_HT100to200_2023.process     = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT100to200_2023.unix_code   = 31200
+ZJetsToNuNu_HT100to200_2023.EE          = 0
+
+ZJetsToNuNu_HT200to400_2023             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT200to400_2023")
+ZJetsToNuNu_HT200to400_2023.sigma       = 75.96 #pb
+ZJetsToNuNu_HT200to400_2023.year        = 2023
+ZJetsToNuNu_HT200to400_2023.dataset     = "/Zto2Nu-4Jets_HT-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+ZJetsToNuNu_HT200to400_2023.process     = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT200to400_2023.unix_code   = 31201
+ZJetsToNuNu_HT200to400_2023.EE          = 0
+
+ZJetsToNuNu_HT400to800_2023             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT400to800_2023")
+ZJetsToNuNu_HT400to800_2023.sigma       = 13.19 #pb
+ZJetsToNuNu_HT400to800_2023.year        = 2023
+ZJetsToNuNu_HT400to800_2023.dataset     = "/Zto2Nu-4Jets_HT-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+ZJetsToNuNu_HT400to800_2023.process     = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT400to800_2023.unix_code   = 31202
+ZJetsToNuNu_HT400to800_2023.EE          = 0
+
+ZJetsToNuNu_HT800to1500_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT800to1500_2023")
+ZJetsToNuNu_HT800to1500_2023.sigma      = 1.364 #pb
+ZJetsToNuNu_HT800to1500_2023.year       = 2023
+ZJetsToNuNu_HT800to1500_2023.dataset    = "/Zto2Nu-4Jets_HT-800to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+ZJetsToNuNu_HT800to1500_2023.process    = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT800to1500_2023.unix_code  = 31203
+ZJetsToNuNu_HT800to1500_2023.EE         = 0
+
+ZJetsToNuNu_HT1500to2500_2023           = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT1500to2500_2023")
+ZJetsToNuNu_HT1500to2500_2023.sigma     = 0.09865 #pb
+ZJetsToNuNu_HT1500to2500_2023.year      = 2023
+ZJetsToNuNu_HT1500to2500_2023.dataset   = "/Zto2Nu-4Jets_HT-1500to2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+ZJetsToNuNu_HT1500to2500_2023.process   = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT1500to2500_2023.unix_code = 31204
+ZJetsToNuNu_HT1500to2500_2023.EE        = 0
+
+ZJetsToNuNu_HT2500_2023                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT2500_2023")
+ZJetsToNuNu_HT2500_2023.sigma           = 0.006699 #pb
+ZJetsToNuNu_HT2500_2023.year            = 2023
+ZJetsToNuNu_HT2500_2023.dataset         = "/Zto2Nu-4Jets_HT-2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_HT2500_2023.process         = 'ZJetsToNuNu_2023'
+ZJetsToNuNu_HT2500_2023.unix_code       = 31205
+ZJetsToNuNu_HT2500_2023.EE              = 0
+
+ZJetsToNuNu_2023                        = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2023")
+ZJetsToNuNu_2023.year                   = 2023
+ZJetsToNuNu_2023.components             = [
+                                            ZJetsToNuNu_HT100to200_2023,
+                                            ZJetsToNuNu_HT200to400_2023,
+                                            ZJetsToNuNu_HT400to800_2023,
+                                            ZJetsToNuNu_HT800to1500_2023,
+                                            ZJetsToNuNu_HT1500to2500_2023,
+                                            ZJetsToNuNu_HT2500_2023 
+                                            ]
+
+ZJetsToNuNu_2jets_PT40to100_1J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT40to100_1J_2023")
+ZJetsToNuNu_2jets_PT40to100_1J_2023.sigma      = 929.8	
+ZJetsToNuNu_2jets_PT40to100_1J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT40to100_1J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-40to100_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT40to100_1J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT40to100_1J_2023.unix_code  = 31206
+ZJetsToNuNu_2jets_PT40to100_1J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT100to200_1J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT100to200_1J_2023")
+ZJetsToNuNu_2jets_PT100to200_1J_2023.sigma      = 86.38
+ZJetsToNuNu_2jets_PT100to200_1J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT100to200_1J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-100to200_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT100to200_1J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT100to200_1J_2023.unix_code  = 31207
+ZJetsToNuNu_2jets_PT100to200_1J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT200to400_1J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT200to400_1J_2023")
+ZJetsToNuNu_2jets_PT200to400_1J_2023.sigma      = 6.354	
+ZJetsToNuNu_2jets_PT200to400_1J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT200to400_1J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT200to400_1J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT200to400_1J_2023.unix_code  = 31208
+ZJetsToNuNu_2jets_PT200to400_1J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT400to600_1J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT400to600_1J_2023")
+ZJetsToNuNu_2jets_PT400to600_1J_2023.sigma      = 0.2188
+ZJetsToNuNu_2jets_PT400to600_1J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT400to600_1J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT400to600_1J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT400to600_1J_2023.unix_code  = 31209
+ZJetsToNuNu_2jets_PT400to600_1J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT600_1J_2023                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT600_1J_2023")
+ZJetsToNuNu_2jets_PT600_1J_2023.sigma           = 0.02583
+ZJetsToNuNu_2jets_PT600_1J_2023.year            = 2023
+ZJetsToNuNu_2jets_PT600_1J_2023.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT600_1J_2023.process         = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT600_1J_2023.unix_code       = 31210
+ZJetsToNuNu_2jets_PT600_1J_2023.EE              = 0
+
+ZJetsToNuNu_2jets_PT40to100_2J_2023             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT40to100_2J_2023")
+ZJetsToNuNu_2jets_PT40to100_2J_2023.sigma       = 335.5
+ZJetsToNuNu_2jets_PT40to100_2J_2023.year        = 2023
+ZJetsToNuNu_2jets_PT40to100_2J_2023.dataset     = "/Zto2Nu-2Jets_PTNuNu-40to100_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT40to100_2J_2023.process     = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT40to100_2J_2023.unix_code   = 31211
+ZJetsToNuNu_2jets_PT40to100_2J_2023.EE          = 0
+
+ZJetsToNuNu_2jets_PT100to200_2J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT100to200_2J_2023")
+ZJetsToNuNu_2jets_PT100to200_2J_2023.sigma      = 100.4
+ZJetsToNuNu_2jets_PT100to200_2J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT100to200_2J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-100to200_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT100to200_2J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT100to200_2J_2023.unix_code  = 31212
+ZJetsToNuNu_2jets_PT100to200_2J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT200to400_2J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT200to400_2J_2023")
+ZJetsToNuNu_2jets_PT200to400_2J_2023.sigma      = 13.86
+ZJetsToNuNu_2jets_PT200to400_2J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT200to400_2J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT200to400_2J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT200to400_2J_2023.unix_code  = 31213
+ZJetsToNuNu_2jets_PT200to400_2J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT400to600_2J_2023            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT400to600_2J_2023")
+ZJetsToNuNu_2jets_PT400to600_2J_2023.sigma      = 0.7816
+ZJetsToNuNu_2jets_PT400to600_2J_2023.year       = 2023
+ZJetsToNuNu_2jets_PT400to600_2J_2023.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT400to600_2J_2023.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT400to600_2J_2023.unix_code  = 31214
+ZJetsToNuNu_2jets_PT400to600_2J_2023.EE         = 0
+
+ZJetsToNuNu_2jets_PT600_2J_2023                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT600_2J_2023")
+ZJetsToNuNu_2jets_PT600_2J_2023.sigma           = 0.1311
+ZJetsToNuNu_2jets_PT600_2J_2023.year            = 2023
+ZJetsToNuNu_2jets_PT600_2J_2023.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT600_2J_2023.process         = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT600_2J_2023.unix_code       = 31215
+ZJetsToNuNu_2jets_PT600_2J_2023.EE              = 0
+
+ZJetsToNuNu_2jets_2023 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_2023")
+ZJetsToNuNu_2jets_2023.year = 2023
+ZJetsToNuNu_2jets_2023.components = [
+                                        ZJetsToNuNu_2jets_PT40to100_1J_2023,
+                                        ZJetsToNuNu_2jets_PT100to200_1J_2023,
+                                        ZJetsToNuNu_2jets_PT200to400_1J_2023,
+                                        ZJetsToNuNu_2jets_PT400to600_1J_2023,
+                                        ZJetsToNuNu_2jets_PT600_1J_2023,
+                                        ZJetsToNuNu_2jets_PT40to100_2J_2023,
+                                        ZJetsToNuNu_2jets_PT100to200_2J_2023,
+                                        ZJetsToNuNu_2jets_PT200to400_2J_2023,
+                                        ZJetsToNuNu_2jets_PT400to600_2J_2023,
+                                        ZJetsToNuNu_2jets_PT600_2J_2023
+                                    ]
+
+################################ WJets ################################
+WJets_HT120to200_2023               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT120to200_2023") 
+WJets_HT120to200_2023.dataset       = "/WtoLNu-4Jets_MLNu-120to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v5/NANOAODSIM"
+WJets_HT120to200_2023.sigma         = 167
+WJets_HT120to200_2023.year          = 2023
+WJets_HT120to200_2023.process       = "WJets_2023"
+WJets_HT120to200_2023.unix_code     = 31300
+WJets_HT120to200_2023.EE            = 0
+
+WJets_HT200to400_2023               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT200to400_2023") 
+WJets_HT200to400_2023.dataset       = "/WtoLNu-4Jets_MLNu-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v5/NANOAODSIM"
+WJets_HT200to400_2023.sigma         = 20.3	
+WJets_HT200to400_2023.year          = 2023
+WJets_HT200to400_2023.process       = "WJets_2023"
+WJets_HT200to400_2023.unix_code     = 31301
+WJets_HT200to400_2023.EE            = 0
+
+WJets_HT400to800_2023               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT400to800_2023") 
+WJets_HT400to800_2023.dataset       = "/WtoLNu-4Jets_MLNu-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v4/NANOAODSIM"
+WJets_HT400to800_2023.sigma         = 1.596
+WJets_HT400to800_2023.year          = 2023
+WJets_HT400to800_2023.process       = "WJets_2023"
+WJets_HT400to800_2023.unix_code     = 31302
+WJets_HT400to800_2023.EE            = 0
+
+WJets_HT800to1500_2023              = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT800to1500_2023") 
+WJets_HT800to1500_2023.dataset      = "/WtoLNu-4Jets_MLNu-800to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v4/NANOAODSIM"
+WJets_HT800to1500_2023.sigma        = 0.1095	
+WJets_HT800to1500_2023.year         = 2023
+WJets_HT800to1500_2023.process      = "WJets_2023"
+WJets_HT800to1500_2023.unix_code    = 31303
+WJets_HT800to1500_2023.EE           = 0
+
+WJets_HT1500to2500_2023             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT1500to2500_2023") 
+WJets_HT1500to2500_2023.dataset     = "/WtoLNu-4Jets_MLNu-1500to2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+WJets_HT1500to2500_2023.sigma       = 0.006365
+WJets_HT1500to2500_2023.year        = 2023
+WJets_HT1500to2500_2023.process     = "WJets_2023"
+WJets_HT1500to2500_2023.unix_code   = 31304
+WJets_HT1500to2500_2023.EE          = 0
+
+WJets_HT2500to4000_2023             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT2500to4000_2023") 
+WJets_HT2500to4000_2023.dataset     = "/WtoLNu-4Jets_MLNu-2500to4000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v5/NANOAODSIM"
+WJets_HT2500to4000_2023.sigma       = 0.0003463
+WJets_HT2500to4000_2023.year        = 2023
+WJets_HT2500to4000_2023.process     = "WJets_2023"
+WJets_HT2500to4000_2023.unix_code   = 31305
+WJets_HT2500to4000_2023.EE          = 0
+
+WJets_HT4000to6000_2023             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT4000to6000_2023") 
+WJets_HT4000to6000_2023.dataset     = "/WtoLNu-4Jets_MLNu-4000to6000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v5/NANOAODSIM"
+WJets_HT4000to6000_2023.sigma       = 0.00001075
+WJets_HT4000to6000_2023.year        = 2023
+WJets_HT4000to6000_2023.process     = "WJets_2023"
+WJets_HT4000to6000_2023.unix_code   = 31306
+WJets_HT4000to6000_2023.EE          = 0
+
+WJets_HT6000_2023                   = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT6000_2023") 
+WJets_HT6000_2023.dataset           = "/WtoLNu-4Jets_MLNu-6000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v4/NANOAODSIM"
+WJets_HT6000_2023.sigma             = 4.182e-7	
+WJets_HT6000_2023.year              = 2023
+WJets_HT6000_2023.process           = "WJets_2023"
+WJets_HT6000_2023.unix_code         = 31307
+WJets_HT6000_2023.EE                = 0
+
+WJets_2023                  = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2023")
+WJets_2023.year             = 2023
+WJets_2023.components       = [WJets_HT120to200_2023, WJets_HT200to400_2023, WJets_HT400to800_2023, WJets_HT800to1500_2023, WJets_HT1500to2500_2023, WJets_HT2500to4000_2023, WJets_HT4000to6000_2023, WJets_HT6000_2023]
+
+WJets_2jets0J_2023           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets0J_2023")
+WJets_2jets0J_2023.dataset   = "/WtoLNu-2Jets_0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v3/NANOAODSIM"
+WJets_2jets0J_2023.sigma     = 55760 
+WJets_2jets0J_2023.year      = 2023
+WJets_2jets0J_2023.process   = "WJets_2jets_2023"
+WJets_2jets0J_2023.unix_code = 31308
+WJets_2jets0J_2023.EE        = 0
+
+WJets_2jets1J_2023           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets1J_2023")
+WJets_2jets1J_2023.dataset   = "/WtoLNu-2Jets_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+WJets_2jets1J_2023.sigma     = 9529 
+WJets_2jets1J_2023.year      = 2023
+WJets_2jets1J_2023.process   = "WJets_2jets_2023"
+WJets_2jets1J_2023.unix_code = 31309
+WJets_2jets1J_2023.EE        = 0
+
+WJets_2jets2J_2023           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets2J_2023")
+WJets_2jets2J_2023.dataset   = "/WtoLNu-2Jets_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+WJets_2jets2J_2023.sigma     = 3532 
+WJets_2jets2J_2023.year      = 2023
+WJets_2jets2J_2023.process   = "WJets_2jets_2023"
+WJets_2jets2J_2023.unix_code = 31310
+WJets_2jets2J_2023.EE        = 0
+
+WJets_2jets_2023             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_2023")
+WJets_2jets_2023.year        = 2023
+WJets_2jets_2023.components  = [WJets_2jets0J_2023, WJets_2jets1J_2023, WJets_2jets2J_2023]
+
+#######################################   VLQ T signals   #######################################
+TprimeToTZ_700_2023           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M700GeV", "TprimeToTZ_700_2023")
+TprimeToTZ_700_2023.sigma     = 0.07804 #pb  # questa è 2018 non 2023
+TprimeToTZ_700_2023.year      = 2023
+TprimeToTZ_700_2023.dataset   = '/TprimeBtoTZ_M-700_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM'
+TprimeToTZ_700_2023.unix_code = 32000
+TprimeToTZ_700_2023.EE        = 0
+
+TprimeToTZ_800_2023           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M800GeV", "TprimeToTZ_800_2023")
+TprimeToTZ_800_2023.sigma     = 0.04155 #pb  # questa è 2018 non 2023
+TprimeToTZ_800_2023.year      = 2023
+TprimeToTZ_800_2023.dataset   = '/TprimeBtoTZ_M-800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM'
+TprimeToTZ_800_2023.unix_code = 32001
+TprimeToTZ_800_2023.EE        = 0
+
+TprimeToTZ_900_2023           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M900GeV", "TprimeToTZ_900_2023")
+TprimeToTZ_900_2023.sigma     = 0.02335 #pb  # questa è 2018 non 2023
+TprimeToTZ_900_2023.year      = 2023
+TprimeToTZ_900_2023.dataset   = '/TprimeBtoTZ_M-900_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM'
+TprimeToTZ_900_2023.unix_code = 32002
+TprimeToTZ_900_2023.EE        = 0
+
+TprimeToTZ_1000_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1000GeV", "TprimeToTZ_1000_2023")
+TprimeToTZ_1000_2023.sigma     = 0.01362 #pb  # questa è 2018 non 2023
+TprimeToTZ_1000_2023.year      = 2023
+TprimeToTZ_1000_2023.dataset   = '/TprimeBtoTZ_M-1000_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1000_2023.unix_code = 32003
+TprimeToTZ_1000_2023.EE        = 0
+
+TprimeToTZ_1100_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1100GeV", "TprimeToTZ_1100_2023")
+TprimeToTZ_1100_2023.sigma     = 0.008228 #pb  # questa è 2018 non 2023
+TprimeToTZ_1100_2023.year      = 2023
+TprimeToTZ_1100_2023.dataset   = '/TprimeBtoTZ_M-1100_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1100_2023.unix_code = 32003
+TprimeToTZ_1100_2023.EE        = 0
+
+TprimeToTZ_1200_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1200GeV", "TprimeToTZ_1200_2023")
+TprimeToTZ_1200_2023.sigma     = 0.005113 #pb  # questa è 2018 non 2023
+TprimeToTZ_1200_2023.year      = 2023
+TprimeToTZ_1200_2023.dataset   = '/TprimeBtoTZ_M-1200_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1200_2023.unix_code = 32003
+TprimeToTZ_1200_2023.EE        = 0
+
+TprimeToTZ_1300_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1300GeV", "TprimeToTZ_1300_2023")
+TprimeToTZ_1300_2023.sigma     = 0.003256 #pb  # questa è 2018 non 2023
+TprimeToTZ_1300_2023.year      = 2023
+TprimeToTZ_1300_2023.dataset   = '/TprimeBtoTZ_M-1300_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1300_2023.unix_code = 32003
+TprimeToTZ_1300_2023.EE        = 0
+
+TprimeToTZ_1400_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1400GeV", "TprimeToTZ_1400_2023")
+TprimeToTZ_1400_2023.sigma     = 0.002121 #pb  # questa è 2018 non 2023
+TprimeToTZ_1400_2023.year      = 2023
+TprimeToTZ_1400_2023.dataset   = '/TprimeBtoTZ_M-1400_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1400_2023.unix_code = 32003
+TprimeToTZ_1400_2023.EE        = 0
+
+TprimeToTZ_1500_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1500GeV", "TprimeToTZ_1500_2023")
+TprimeToTZ_1500_2023.sigma     = 0.001407 #pb  # questa è 2018 non 2023
+TprimeToTZ_1500_2023.year      = 2023
+TprimeToTZ_1500_2023.dataset   = '/TprimeBtoTZ_M-1500_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1500_2023.unix_code = 32003
+TprimeToTZ_1500_2023.EE        = 0
+
+TprimeToTZ_1600_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1600GeV", "TprimeToTZ_1600_2023")
+TprimeToTZ_1600_2023.sigma     = 0.0009456 #pb  # questa è 2018 non 2023
+TprimeToTZ_1600_2023.year      = 2023
+TprimeToTZ_1600_2023.dataset   = '/TprimeBtoTZ_M-1600_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1600_2023.unix_code = 32003
+TprimeToTZ_1600_2023.EE        = 0
+
+TprimeToTZ_1700_2023           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1700GeV", "TprimeToTZ_1700_2023")
+TprimeToTZ_1700_2023.sigma     = 0.0006454 #pb  # questa è 2018 non 2023
+TprimeToTZ_1700_2023.year      = 2023
+TprimeToTZ_1700_2023.dataset   = '/TprimeBtoTZ_M-1700_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM' 
+TprimeToTZ_1700_2023.unix_code = 32003
+TprimeToTZ_1700_2023.EE        = 0
+
+TprimeToTZ_1800_2023           = sample(ROOT.kGreen+4, 1, 1001, "T#rightarrow tZ M1800GeV", "TprimeToTZ_1800_2023")
+TprimeToTZ_1800_2023.sigma     = 0.0004463 #pb
+TprimeToTZ_1800_2023.year      = 2023
+TprimeToTZ_1800_2023.dataset   = '/TprimeBtoTZ_M-1800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2023_realistic_v5-v4/NANOAODSIM'
+TprimeToTZ_1800_2023.unix_code = 22000
+TprimeToTZ_1800_2023.EE        = 0
+
+
+
+
+###############################################################################################################################
+##########################################                                           ##########################################
+##########################################                    2023postBPix           ##########################################
+##########################################                                           ##########################################
+###############################################################################################################################
+
+################################ QCD ################################
+# QCD_HT40to70_2023postBPix               = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT40to70_2023postBPix")
+# QCD_HT40to70_2023postBPix.sigma         = 311.7*(10**6) #pb
+# QCD_HT40to70_2023postBPix.year          = 2023
+# QCD_HT40to70_2023postBPix.dataset       = "/QCD-4Jets_HT-40to70_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+# QCD_HT40to70_2023postBPix.process       = "QCD_2023postBPix"
+# QCD_HT40to70_2023postBPix.unix_code     = 41000
+# QCD_HT40to70_2023postBPix.EE            = 1
+QCD_HT70to100_2023postBPix              = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT70to100_2023postBPix")
+QCD_HT70to100_2023postBPix.sigma        = 58.6*(10**6) #pb 3.117e+08
+QCD_HT70to100_2023postBPix.year         = 2023
+QCD_HT70to100_2023postBPix.dataset      = "/QCD-4Jets_HT-70to100_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+QCD_HT70to100_2023postBPix.process      = "QCD_2023postBPix"
+QCD_HT70to100_2023postBPix.unix_code    = 41001
+QCD_HT70to100_2023postBPix.EE           = 1
+
+QCD_HT100to200_2023postBPix             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT100to200_2023postBPix")
+QCD_HT100to200_2023postBPix.sigma       = 25.1*(10**6) #pb
+QCD_HT100to200_2023postBPix.year        = 2023
+QCD_HT100to200_2023postBPix.dataset     = "/QCD-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT100to200_2023postBPix.process     = "QCD_2023postBPix"
+QCD_HT100to200_2023postBPix.unix_code   = 41002
+QCD_HT100to200_2023postBPix.EE          = 1
+
+QCD_HT200to400_2023postBPix             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT200to400_2023postBPix")
+QCD_HT200to400_2023postBPix.sigma       = 1.96*(10**6) #pb
+QCD_HT200to400_2023postBPix.year        = 2023
+QCD_HT200to400_2023postBPix.dataset     = "/QCD-4Jets_HT-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+QCD_HT200to400_2023postBPix.process     = "QCD_2023postBPix"
+QCD_HT200to400_2023postBPix.unix_code   = 41003
+QCD_HT200to400_2023postBPix.EE          = 1
+
+QCD_HT400to600_2023postBPix             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT400to600_2023postBPix")
+QCD_HT400to600_2023postBPix.sigma       = 96.0*(10**3) #pb
+QCD_HT400to600_2023postBPix.year        = 2023
+QCD_HT400to600_2023postBPix.dataset     = "/QCD-4Jets_HT-400to600_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT400to600_2023postBPix.process     = "QCD_2023postBPix"
+QCD_HT400to600_2023postBPix.unix_code   = 41004
+QCD_HT400to600_2023postBPix.EE          = 1
+
+QCD_HT600to800_2023postBPix             = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT600to800_2023postBPix")
+QCD_HT600to800_2023postBPix.sigma       = 13.5*(10**3) #pb
+QCD_HT600to800_2023postBPix.year        = 2023
+QCD_HT600to800_2023postBPix.dataset     = "/QCD-4Jets_HT-600to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+QCD_HT600to800_2023postBPix.process     = "QCD_2023postBPix"
+QCD_HT600to800_2023postBPix.unix_code   = 41005
+QCD_HT600to800_2023postBPix.EE          = 1
+
+QCD_HT800to1000_2023postBPix            = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT800to1000_2023postBPix")
+QCD_HT800to1000_2023postBPix.sigma      = 3.03*(10**3) #pb
+QCD_HT800to1000_2023postBPix.year       = 2023
+QCD_HT800to1000_2023postBPix.dataset    = "/QCD-4Jets_HT-800to1000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT800to1000_2023postBPix.process    = "QCD_2023postBPix"
+QCD_HT800to1000_2023postBPix.unix_code  = 41006
+QCD_HT800to1000_2023postBPix.EE         = 1
+
+QCD_HT1000to1200_2023postBPix           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1000to1200_2023postBPix")
+QCD_HT1000to1200_2023postBPix.sigma     = 884 #pb
+QCD_HT1000to1200_2023postBPix.year      = 2023
+QCD_HT1000to1200_2023postBPix.dataset   = "/QCD-4Jets_HT-1000to1200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT1000to1200_2023postBPix.process   = "QCD_2023postBPix"
+QCD_HT1000to1200_2023postBPix.unix_code = 41007
+QCD_HT1000to1200_2023postBPix.EE        = 1
+
+QCD_HT1200to1500_2023postBPix           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1200to1500_2023postBPix")
+QCD_HT1200to1500_2023postBPix.sigma     = 384 #pb
+QCD_HT1200to1500_2023postBPix.year      = 2023
+QCD_HT1200to1500_2023postBPix.dataset   = "/QCD-4Jets_HT-1200to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT1200to1500_2023postBPix.process   = "QCD_2023postBPix"
+QCD_HT1200to1500_2023postBPix.unix_code = 41007
+QCD_HT1200to1500_2023postBPix.EE        = 1
+
+QCD_HT1500to2000_2023postBPix           = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT1500to2000_2023postBPix")
+QCD_HT1500to2000_2023postBPix.sigma     = 125 #pb
+QCD_HT1500to2000_2023postBPix.year      = 2023
+QCD_HT1500to2000_2023postBPix.dataset   = "/QCD-4Jets_HT-1500to2000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+QCD_HT1500to2000_2023postBPix.process   = "QCD_2023postBPix"
+QCD_HT1500to2000_2023postBPix.unix_code = 41008
+QCD_HT1500to2000_2023postBPix.EE        = 1
+
+QCD_HT2000_2023postBPix                 = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_HT2000_2023postBPix")
+QCD_HT2000_2023postBPix.sigma           = 26.5 #pb
+QCD_HT2000_2023postBPix.year            = 2023
+QCD_HT2000_2023postBPix.dataset         = "/QCD-4Jets_HT-2000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+QCD_HT2000_2023postBPix.process         = "QCD_2023postBPix"
+QCD_HT2000_2023postBPix.unix_code       = 41009
+QCD_HT2000_2023postBPix.EE              = 1
+
+QCD_2023postBPix                        = sample(ROOT.kGray, 1, 1001, "QCD", "QCD_2023postBPix")
+QCD_2023postBPix.year                   = 2023
+QCD_2023postBPix.components             = [ 
+                                    # QCD_HT40to70_2023postBPix, 
+                                    QCD_HT70to100_2023postBPix, QCD_HT100to200_2023postBPix, QCD_HT200to400_2023postBPix,
+                                    QCD_HT400to600_2023postBPix, QCD_HT600to800_2023postBPix, QCD_HT800to1000_2023postBPix, 
+                                    QCD_HT1000to1200_2023postBPix,QCD_HT1200to1500_2023postBPix,
+                                    QCD_HT1500to2000_2023postBPix, QCD_HT2000_2023postBPix
+                                ]
+
+
+# /QCD-4Jets_HT-1000to1200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-JMENano12p5_132X_mcRun3_2023_realistic_postEE_v4-v2/NANOAODSIM
+
+
+################################ TTbar ################################
+TT_semilep_2023postBPix             = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_semilep_2023postBPix")
+TT_semilep_2023postBPix.sigma       = 405.7 #pb 
+TT_semilep_2023postBPix.year        = 2023
+TT_semilep_2023postBPix.dataset     = "/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+TT_semilep_2023postBPix.process     = 'TT_2023postBPix'
+TT_semilep_2023postBPix.unix_code   = 41100
+TT_semilep_2023postBPix.EE          = 1
+
+TT_hadr_2023postBPix                = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_hadr_2023postBPix")
+TT_hadr_2023postBPix.sigma          = 419.8
+TT_hadr_2023postBPix.year           = 2023
+TT_hadr_2023postBPix.dataset        = "/TTto4Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+TT_hadr_2023postBPix.process        = 'TT_2023postBPix'
+TT_hadr_2023postBPix.unix_code      = 41101
+TT_hadr_2023postBPix.EE             = 1
+
+TT_2023postBPix                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2023postBPix")
+TT_2023postBPix.year                = 2023
+TT_2023postBPix.components          = [TT_semilep_2023postBPix, TT_hadr_2023postBPix]
+
+################################ ZJets ################################
+
+ZJetsToNuNu_HT100to200_2023postBPix             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT100to200_2023postBPix")
+ZJetsToNuNu_HT100to200_2023postBPix.sigma       = 273.6 #pb
+ZJetsToNuNu_HT100to200_2023postBPix.year        = 2023
+ZJetsToNuNu_HT100to200_2023postBPix.dataset     = "/Zto2Nu-4Jets_HT-100to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+ZJetsToNuNu_HT100to200_2023postBPix.process     = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT100to200_2023postBPix.unix_code   = 41200
+ZJetsToNuNu_HT100to200_2023postBPix.EE          = 1
+
+ZJetsToNuNu_HT200to400_2023postBPix             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT200to400_2023postBPix")
+ZJetsToNuNu_HT200to400_2023postBPix.sigma       = 76.14 #pb
+ZJetsToNuNu_HT200to400_2023postBPix.year        = 2023
+ZJetsToNuNu_HT200to400_2023postBPix.dataset     = "/Zto2Nu-4Jets_HT-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+ZJetsToNuNu_HT200to400_2023postBPix.process     = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT200to400_2023postBPix.unix_code   = 41201
+ZJetsToNuNu_HT200to400_2023postBPix.EE          = 1
+
+ZJetsToNuNu_HT400to800_2023postBPix             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT400to800_2023postBPix")
+ZJetsToNuNu_HT400to800_2023postBPix.sigma       = 13.18 #pb
+ZJetsToNuNu_HT400to800_2023postBPix.year        = 2023
+ZJetsToNuNu_HT400to800_2023postBPix.dataset     = "/Zto2Nu-4Jets_HT-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+ZJetsToNuNu_HT400to800_2023postBPix.process     = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT400to800_2023postBPix.unix_code   = 41202
+ZJetsToNuNu_HT400to800_2023postBPix.EE          = 1
+
+ZJetsToNuNu_HT800to1500_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT800to1500_2023postBPix")
+ZJetsToNuNu_HT800to1500_2023postBPix.sigma      = 1.366 #pb
+ZJetsToNuNu_HT800to1500_2023postBPix.year       = 2023
+ZJetsToNuNu_HT800to1500_2023postBPix.dataset    = "/Zto2Nu-4Jets_HT-800to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+ZJetsToNuNu_HT800to1500_2023postBPix.process    = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT800to1500_2023postBPix.unix_code  = 41203
+ZJetsToNuNu_HT800to1500_2023postBPix.EE         = 1
+
+ZJetsToNuNu_HT1500to2500_2023postBPix           = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT1500to2500_2023postBPix")
+ZJetsToNuNu_HT1500to2500_2023postBPix.sigma     = 0.09852 #pb
+ZJetsToNuNu_HT1500to2500_2023postBPix.year      = 2023
+ZJetsToNuNu_HT1500to2500_2023postBPix.dataset   = "/Zto2Nu-4Jets_HT-1500to2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+ZJetsToNuNu_HT1500to2500_2023postBPix.process   = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT1500to2500_2023postBPix.unix_code = 41204
+ZJetsToNuNu_HT1500to2500_2023postBPix.EE        = 1
+
+ZJetsToNuNu_HT2500_2023postBPix                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT2500_2023postBPix")
+ZJetsToNuNu_HT2500_2023postBPix.sigma           = 0.006699 #pb
+ZJetsToNuNu_HT2500_2023postBPix.year            = 2023
+ZJetsToNuNu_HT2500_2023postBPix.dataset         = "/Zto2Nu-4Jets_HT-2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_HT2500_2023postBPix.process         = 'ZJetsToNuNu_2023postBPix'
+ZJetsToNuNu_HT2500_2023postBPix.unix_code       = 41205
+ZJetsToNuNu_HT2500_2023postBPix.EE              = 1
+
+ZJetsToNuNu_2023postBPix                        = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2023postBPix")
+ZJetsToNuNu_2023postBPix.year                   = 2023
+ZJetsToNuNu_2023postBPix.components             = [
+                                            ZJetsToNuNu_HT100to200_2023postBPix, ZJetsToNuNu_HT200to400_2023postBPix, ZJetsToNuNu_HT400to800_2023postBPix,
+                                            ZJetsToNuNu_HT800to1500_2023postBPix, ZJetsToNuNu_HT1500to2500_2023postBPix, ZJetsToNuNu_HT2500_2023postBPix 
+                                            ]
+
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix")
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.sigma      = 929.8	
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-40to100_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023postBPix'
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.unix_code  = 41207
+ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix")
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.sigma      = 86.38
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-100to200_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023postBPix'
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.unix_code  = 41208
+ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix")
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.sigma      = 6.354	
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.unix_code  = 41209
+ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix")
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.sigma      = 0.2188
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.unix_code  = 41210
+ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT600_1J_2023postBPix")
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.sigma           = 0.02583
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.year            = 2023
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.process         = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.unix_code       = 41211
+ZJetsToNuNu_2jets_PT600_1J_2023postBPix.EE              = 1
+
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix")
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.sigma       = 335.5
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.year        = 2023
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.dataset     = "/Zto2Nu-2Jets_PTNuNu-40to100_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.process     = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.unix_code   = 41212
+ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix.EE          = 1
+
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix")
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.sigma      = 100.4
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-100to200_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.unix_code  = 41213
+ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix")
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.sigma      = 13.86
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.unix_code  = 41214
+ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix            = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix")
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.sigma      = 0.7816
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.year       = 2023
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.process    = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.unix_code  = 41215
+ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix.EE         = 1
+
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix                 = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_PT600_2J_2023postBPix")
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.sigma           = 0.1311
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.year            = 2023
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.process         = 'ZJetsToNuNu_2jets_2023'
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.unix_code       = 41216
+ZJetsToNuNu_2jets_PT600_2J_2023postBPix.EE              = 1
+
+ZJetsToNuNu_2jets_2023postBPix = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_2jets_2023postBPix")
+ZJetsToNuNu_2jets_2023postBPix.year = 2023
+ZJetsToNuNu_2jets_2023postBPix.components = [
+                                        ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT600_1J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix,
+                                        ZJetsToNuNu_2jets_PT600_2J_2023postBPix
+                                    ]
+################################ WJets ################################
+
+WJets_HT120to200_2023postBPix               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT120to200_2023postBPix") 
+WJets_HT120to200_2023postBPix.dataset       = "/WtoLNu-4Jets_MLNu-120to200_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+WJets_HT120to200_2023postBPix.sigma         = 167
+WJets_HT120to200_2023postBPix.year          = 2023
+WJets_HT120to200_2023postBPix.process       = "WJets_2023"
+WJets_HT120to200_2023postBPix.unix_code     = 41300
+WJets_HT120to200_2023postBPix.EE            = 1
+
+WJets_HT200to400_2023postBPix               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT200to400_2023postBPix") 
+WJets_HT200to400_2023postBPix.dataset       = "/WtoLNu-4Jets_MLNu-200to400_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+WJets_HT200to400_2023postBPix.sigma         = 20.3
+WJets_HT200to400_2023postBPix.year          = 2023
+WJets_HT200to400_2023postBPix.process       = "WJets_2023"
+WJets_HT200to400_2023postBPix.unix_code     = 41301
+WJets_HT200to400_2023postBPix.EE            = 1
+
+WJets_HT400to800_2023postBPix               = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT400to800_2023postBPix") 
+WJets_HT400to800_2023postBPix.dataset       = "/WtoLNu-4Jets_MLNu-400to800_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v5/NANOAODSIM"
+WJets_HT400to800_2023postBPix.sigma         = 1.596	
+WJets_HT400to800_2023postBPix.year          = 2023
+WJets_HT400to800_2023postBPix.process       = "WJets_2023"
+WJets_HT400to800_2023postBPix.unix_code     = 41302
+WJets_HT400to800_2023postBPix.EE            = 1
+
+WJets_HT800to1500_2023postBPix              = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT800to1500_2023postBPix") 
+WJets_HT800to1500_2023postBPix.dataset      = "/WtoLNu-4Jets_MLNu-800to1500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+WJets_HT800to1500_2023postBPix.sigma        = 0.1095
+WJets_HT800to1500_2023postBPix.year         = 2023
+WJets_HT800to1500_2023postBPix.process      = "WJets_2023"
+WJets_HT800to1500_2023postBPix.unix_code    = 41303
+WJets_HT800to1500_2023postBPix.EE           = 1
+
+WJets_HT1500to2500_2023postBPix             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT1500to2500_2023postBPix") 
+WJets_HT1500to2500_2023postBPix.dataset     = "/WtoLNu-4Jets_MLNu-1500to2500_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+WJets_HT1500to2500_2023postBPix.sigma       = 0.006365
+WJets_HT1500to2500_2023postBPix.year        = 2023
+WJets_HT1500to2500_2023postBPix.process     = "WJets_2023"
+WJets_HT1500to2500_2023postBPix.unix_code   = 41304
+WJets_HT1500to2500_2023postBPix.EE          = 1
+
+WJets_HT2500to4000_2023postBPix             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT2500to4000_2023postBPix") 
+WJets_HT2500to4000_2023postBPix.dataset     = "/WtoLNu-4Jets_MLNu-2500to4000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v5/NANOAODSIM"
+WJets_HT2500to4000_2023postBPix.sigma       = 0.0003463
+WJets_HT2500to4000_2023postBPix.year        = 2023
+WJets_HT2500to4000_2023postBPix.process     = "WJets_2023"
+WJets_HT2500to4000_2023postBPix.unix_code   = 41305
+WJets_HT2500to4000_2023postBPix.EE          = 1
+
+WJets_HT4000to6000_2023postBPix             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT4000to6000_2023postBPix") 
+WJets_HT4000to6000_2023postBPix.dataset     = "/WtoLNu-4Jets_MLNu-4000to6000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v4/NANOAODSIM"
+WJets_HT4000to6000_2023postBPix.sigma       = 0.00001075
+WJets_HT4000to6000_2023postBPix.year        = 2023
+WJets_HT4000to6000_2023postBPix.process     = "WJets_2023"
+WJets_HT4000to6000_2023postBPix.unix_code   = 41306
+WJets_HT4000to6000_2023postBPix.EE          = 1
+
+WJets_HT6000_2023postBPix                   = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_HT6000_2023postBPix") 
+WJets_HT6000_2023postBPix.dataset           = "/WtoLNu-4Jets_MLNu-6000_TuneCP5_13p6TeV_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v5/NANOAODSIM"
+WJets_HT6000_2023postBPix.sigma             = 4.182e-7
+WJets_HT6000_2023postBPix.year              = 2023
+WJets_HT6000_2023postBPix.process           = "WJets_2023"
+WJets_HT6000_2023postBPix.unix_code         = 41307
+WJets_HT6000_2023postBPix.EE                = 1
+
+WJets_2023postBPix                  = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2023postBPix")
+WJets_2023postBPix.year             = 2023
+WJets_2023postBPix.components       = [WJets_HT120to200_2023postBPix, WJets_HT200to400_2023postBPix, WJets_HT400to800_2023postBPix, WJets_HT800to1500_2023postBPix, WJets_HT1500to2500_2023postBPix, WJets_HT2500to4000_2023postBPix, WJets_HT4000to6000_2023postBPix, WJets_HT6000_2023postBPix]
+
+
+WJets_2jets0J_2023postBPix           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets0J_2023postBPix")
+WJets_2jets0J_2023postBPix.dataset   = "/WtoLNu-2Jets_0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+WJets_2jets0J_2023postBPix.sigma     = 55760
+WJets_2jets0J_2023postBPix.year      = 2023
+WJets_2jets0J_2023postBPix.process   = "WJets_2jets_2023"
+WJets_2jets0J_2023postBPix.unix_code = 41308
+WJets_2jets0J_2023postBPix.EE        = 1
+
+WJets_2jets1J_2023postBPix           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets1J_2023postBPix")
+WJets_2jets1J_2023postBPix.dataset   = "/WtoLNu-2Jets_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+WJets_2jets1J_2023postBPix.sigma     = 9529
+WJets_2jets1J_2023postBPix.year      = 2023
+WJets_2jets1J_2023postBPix.process   = "WJets_2jets_2023"
+WJets_2jets1J_2023postBPix.unix_code = 41309
+WJets_2jets1J_2023postBPix.EE        = 1
+
+WJets_2jets2J_2023postBPix           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets2J_2023postBPix")
+WJets_2jets2J_2023postBPix.dataset   = "/WtoLNu-2Jets_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v2/NANOAODSIM"
+WJets_2jets2J_2023postBPix.sigma     = 3532
+WJets_2jets2J_2023postBPix.year      = 2023
+WJets_2jets2J_2023postBPix.process   = "WJets_2jets_2023"
+WJets_2jets2J_2023postBPix.unix_code = 41310
+WJets_2jets2J_2023postBPix.EE        = 1
+
+WJets_2jets_2023postBPix             = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_2023postBPix")
+WJets_2jets_2023postBPix.year        = 2023
+WJets_2jets_2023postBPix.components  = [WJets_2jets0J_2023postBPix, WJets_2jets1J_2023postBPix, WJets_2jets2J_2023postBPix]
+
+#######################################   VLQ T signals   #######################################
+TprimeToTZ_700_2023postBPix           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M700GeV", "TprimeToTZ_700_2023postBPix")
+TprimeToTZ_700_2023postBPix.sigma     = 0.07804 #pb  # questa è 2018 non 2023
+TprimeToTZ_700_2023postBPix.year      = 2023
+TprimeToTZ_700_2023postBPix.dataset   = '/TprimeBtoTZ_M-700_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM'
+TprimeToTZ_700_2023postBPix.unix_code = 42000
+TprimeToTZ_700_2023postBPix.EE        = 1
+
+TprimeToTZ_800_2023postBPix           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M800GeV", "TprimeToTZ_800_2023postBPix")
+TprimeToTZ_800_2023postBPix.sigma     = 0.041545 #pb  # questa è 2018 non 2023
+TprimeToTZ_800_2023postBPix.year      = 2023
+TprimeToTZ_800_2023postBPix.dataset   = '/TprimeBtoTZ_M-800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM'
+TprimeToTZ_800_2023postBPix.unix_code = 42000
+TprimeToTZ_800_2023postBPix.EE        = 1
+
+TprimeToTZ_900_2023postBPix           = sample(ROOT.kGreen, 1, 1001, "T#rightarrow tZ M900GeV", "TprimeToTZ_900_2023postBPix")
+TprimeToTZ_900_2023postBPix.sigma     = 0.023345 #pb  # questa è 2018 non 2023
+TprimeToTZ_900_2023postBPix.year      = 2023
+TprimeToTZ_900_2023postBPix.dataset   = '/TprimeBtoTZ_M-900_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM'
+TprimeToTZ_900_2023postBPix.unix_code = 42000
+TprimeToTZ_900_2023postBPix.EE        = 1
+
+TprimeToTZ_1000_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1000GeV", "TprimeToTZ_1000_2023postBPix")
+TprimeToTZ_1000_2023postBPix.sigma     = 0.01362 #pb  # questa è 2018 non 2023
+TprimeToTZ_1000_2023postBPix.year      = 2023
+TprimeToTZ_1000_2023postBPix.dataset   = '/TprimeBtoTZ_M-1000_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1000_2023postBPix.unix_code = 42001
+TprimeToTZ_1000_2023postBPix.EE        = 1
+
+TprimeToTZ_1100_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1100GeV", "TprimeToTZ_1100_2023postBPix")
+TprimeToTZ_1100_2023postBPix.sigma     = 0.008228 #pb  # questa è 2018 non 2023
+TprimeToTZ_1100_2023postBPix.year      = 2023
+TprimeToTZ_1100_2023postBPix.dataset   = '/TprimeBtoTZ_M-1100_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1100_2023postBPix.unix_code = 42001
+TprimeToTZ_1100_2023postBPix.EE        = 1
+
+TprimeToTZ_1200_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1200GeV", "TprimeToTZ_1200_2023postBPix")
+TprimeToTZ_1200_2023postBPix.sigma     = 0.005113 #pb  # questa è 2018 non 2023
+TprimeToTZ_1200_2023postBPix.year      = 2023
+TprimeToTZ_1200_2023postBPix.dataset   = '/TprimeBtoTZ_M-1200_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1200_2023postBPix.unix_code = 42001
+TprimeToTZ_1200_2023postBPix.EE        = 1
+
+TprimeToTZ_1300_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1300GeV", "TprimeToTZ_1300_2023postBPix")
+TprimeToTZ_1300_2023postBPix.sigma     = 0.003256 #pb  # questa è 2018 non 2023
+TprimeToTZ_1300_2023postBPix.year      = 2023
+TprimeToTZ_1300_2023postBPix.dataset   = '/TprimeBtoTZ_M-1300_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1300_2023postBPix.unix_code = 42001
+TprimeToTZ_1300_2023postBPix.EE        = 1
+
+TprimeToTZ_1400_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1400GeV", "TprimeToTZ_1400_2023postBPix")
+TprimeToTZ_1400_2023postBPix.sigma     = 0.002121 #pb  # questa è 2018 non 2023
+TprimeToTZ_1400_2023postBPix.year      = 2023
+TprimeToTZ_1400_2023postBPix.dataset   = '/TprimeBtoTZ_M-1400_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1400_2023postBPix.unix_code = 42001
+TprimeToTZ_1400_2023postBPix.EE        = 1
+
+TprimeToTZ_1500_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1500GeV", "TprimeToTZ_1500_2023postBPix")
+TprimeToTZ_1500_2023postBPix.sigma     = 0.001407 #pb  # questa è 2018 non 2023
+TprimeToTZ_1500_2023postBPix.year      = 2023
+TprimeToTZ_1500_2023postBPix.dataset   = '/TprimeBtoTZ_M-1500_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1500_2023postBPix.unix_code = 42001
+TprimeToTZ_1500_2023postBPix.EE        = 1
+
+TprimeToTZ_1600_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1600GeV", "TprimeToTZ_1600_2023postBPix")
+TprimeToTZ_1600_2023postBPix.sigma     = 0.0008456 #pb  # questa è 2018 non 2023
+TprimeToTZ_1600_2023postBPix.year      = 2023
+TprimeToTZ_1600_2023postBPix.dataset   = '/TprimeBtoTZ_M-1600_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1600_2023postBPix.unix_code = 42001
+TprimeToTZ_1600_2023postBPix.EE        = 1
+
+TprimeToTZ_1700_2023postBPix           = sample(ROOT.kGreen+2, 1, 1001, "T#rightarrow tZ M1700GeV", "TprimeToTZ_1700_2023postBPix")
+TprimeToTZ_1700_2023postBPix.sigma     = 0.0006454 #pb  # questa è 2018 non 2023
+TprimeToTZ_1700_2023postBPix.year      = 2023
+TprimeToTZ_1700_2023postBPix.dataset   = '/TprimeBtoTZ_M-1700_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2023_realistic_postEE_v6-v4/NANOAODSIM' 
+TprimeToTZ_1700_2023postBPix.unix_code = 42001
+TprimeToTZ_1700_2023postBPix.EE        = 1
+
+TprimeToTZ_1800_2023postBPix           = sample(ROOT.kGreen+4, 1, 1001, "T#rightarrow tZ M1800GeV", "TprimeToTZ_1800_2023postBPix")
+TprimeToTZ_1800_2023postBPix.sigma     = 0.0004463 #pb
+TprimeToTZ_1800_2023postBPix.year      = 2023
+TprimeToTZ_1800_2023postBPix.dataset   = '/TprimeBtoTZ_M-1800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v4/NANOAODSIM'
+TprimeToTZ_1800_2023postBPix.unix_code = 42002
+TprimeToTZ_1800_2023postBPix.EE        = 1
+
+
+
+
+
+
 
 
 ###############################################################################################################################
@@ -1393,12 +2322,14 @@ DataJetMETC_2022            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC_
 DataJetMETC_2022.runP       = 'C'
 DataJetMETC_2022.year       = 2022
 DataJetMETC_2022.dataset    = '/JetMET/Run2022C-22Sep2023-v1/NANOAOD' #/JetMET/Run2022C-JMENano12p5-v1/NANOAOD da capire quale vogliono che usiamo
+DataJetMETC_2022.process    = "DataJetMET_2022"
 DataJetMETC_2022.unix_code  = 30000
 DataJetMETC_2022.EE         = 0
 DataJetMETD_2022            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETD_2022")
 DataJetMETD_2022.runP       = 'D'
 DataJetMETD_2022.year       = 2022
 DataJetMETD_2022.dataset    = '/JetMET/Run2022D-22Sep2023-v1/NANOAOD'
+DataJetMETD_2022.process    = "DataJetMET_2022"
 DataJetMETD_2022.unix_code  = 30001
 DataJetMETD_2022.EE         = 0
 DataJetMET_2022             = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMET_2022")
@@ -1409,18 +2340,21 @@ DataJetMETE_2022EE            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMET
 DataJetMETE_2022EE.runP       = 'E'
 DataJetMETE_2022EE.year       = 2022
 DataJetMETE_2022EE.dataset    = '/JetMET/Run2022E-22Sep2023-v1/NANOAOD'
+DataJetMETE_2022EE.process    = "DataJetMET_2022EE"
 DataJetMETE_2022EE.unix_code  = 30002
 DataJetMETE_2022EE.EE         = 1
 DataJetMETF_2022EE            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETF_2022EE")
 DataJetMETF_2022EE.runP       = 'F'
 DataJetMETF_2022EE.year       = 2022
 DataJetMETF_2022EE.dataset    = '/JetMET/Run2022F-22Sep2023-v2/NANOAOD'
+DataJetMETF_2022EE.process    = "DataJetMET_2022EE"
 DataJetMETF_2022EE.unix_code  = 30003
 DataJetMETF_2022EE.EE         = 1
 DataJetMETG_2022EE            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETG_2022EE")
 DataJetMETG_2022EE.runP       = 'G'
 DataJetMETG_2022EE.year       = 2022
 DataJetMETG_2022EE.dataset    = '/JetMET/Run2022G-22Sep2023-v2/NANOAOD'
+DataJetMETG_2022EE.process    = "DataJetMET_2022EE"
 DataJetMETG_2022EE.unix_code  = 30004
 DataJetMETG_2022EE.EE         = 1
 DataJetMET_2022EE             = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMET_2022EE")
@@ -1431,12 +2365,14 @@ DataMuonC_2022              = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC_20
 DataMuonC_2022.runP         = 'C'
 DataMuonC_2022.year         = 2022
 DataMuonC_2022.dataset      = '/Muon/Run2022C-22Sep2023-v1/NANOAOD'
+DataMuonC_2022.process     = "DataMuon_2022"
 DataMuonC_2022.unix_code    = 30100
 DataMuonC_2022.EE           = 0
 DataMuonD_2022              = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonD_2022")
 DataMuonD_2022.runP         = 'D'
 DataMuonD_2022.year         = 2022
 DataMuonD_2022.dataset      = '/Muon/Run2022C-22Sep2023-v1/NANOAOD'
+DataMuonD_2022.process     = "DataMuon_2022"
 DataMuonD_2022.unix_code    = 30101
 DataMuonD_2022.EE           = 0
 DataMuon_2022               = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuon_2022")
@@ -1447,18 +2383,21 @@ DataMuonE_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonE_
 DataMuonE_2022EE.runP         = 'E'
 DataMuonE_2022EE.year         = 2022
 DataMuonE_2022EE.dataset      = '/Muon/Run2022E-22Sep2023-v1/NANOAOD'
+DataMuonE_2022EE.process     = "DataMuon_2022EE"
 DataMuonE_2022EE.unix_code    = 30102
 DataMuonE_2022EE.EE           = 1
 DataMuonF_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonF_2022EE")
 DataMuonF_2022EE.runP         = 'F'
 DataMuonF_2022EE.year         = 2022
 DataMuonF_2022EE.dataset      = '/Muon/Run2022F-22Sep2023-v2/NANOAOD'
+DataMuonF_2022EE.process     = "DataMuon_2022EE"
 DataMuonF_2022EE.unix_code    = 30103
 DataMuonF_2022EE.EE           = 1
 DataMuonG_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonG_2022EE")
 DataMuonG_2022EE.runP         = 'G'
 DataMuonG_2022EE.year         = 2022
 DataMuonG_2022EE.dataset      = '/Muon/Run2022G-22Sep2023-v1/NANOAOD'
+DataMuonG_2022EE.process     = "DataMuon_2022EE"
 DataMuonG_2022EE.unix_code    = 30104
 DataMuonG_2022EE.EE           = 1
 DataMuon_2022EE               = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuon_2022EE")
@@ -1468,12 +2407,14 @@ DataMuon_2022EE.components    = [DataMuonE_2022EE, DataMuonF_2022EE, DataMuonG_2
 DataEGammaC_2022              = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC_2022")
 DataEGammaC_2022.year         = 2022
 DataEGammaC_2022.dataset      = "/EGamma/Run2022C-22Sep2023-v1/NANOAOD"
+DataEGammaC_2022.process     = "DataEGamma_2022"
 DataEGammaC_2022.runP         = 'C'
 DataEGammaC_2022.unix_code    = 30200
 DataEGammaC_2022.EE           = 0
 DataEGammaD_2022              = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaD_2022")
 DataEGammaD_2022.year         = 2022
 DataEGammaD_2022.dataset      = "/EGamma/Run2022D-22Sep2023-v1/NANOAOD"
+DataEGammaD_2022.process     = "DataEGamma_2022"
 DataEGammaD_2022.runP         = 'C'
 DataEGammaD_2022.unix_code    = 30201
 DataEGammaD_2022.EE           = 0
@@ -1484,18 +2425,21 @@ DataEGamma_2022.components    = [DataEGammaC_2022, DataEGammaD_2022]
 DataEGammaE_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaE_2022EE")
 DataEGammaE_2022EE.year         = 2022
 DataEGammaE_2022EE.dataset      = "/EGamma/Run2022E-22Sep2023-v1/NANOAOD"
+DataEGammaE_2022EE.process     = "DataEGamma_2022EE"
 DataEGammaE_2022EE.runP         = 'E'
 DataEGammaE_2022EE.unix_code    = 30202
 DataEGammaE_2022EE.EE           = 1
 DataEGammaF_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaF_2022EE")
 DataEGammaF_2022EE.year         = 2022
 DataEGammaF_2022EE.dataset      = "/EGamma/Run2022F-22Sep2023-v1/NANOAOD"
+DataEGammaF_2022EE.process     = "DataEGamma_2022EE"
 DataEGammaF_2022EE.runP         = 'F'
 DataEGammaF_2022EE.unix_code    = 30203
 DataEGammaF_2022EE.EE           = 1
 DataEGammaG_2022EE              = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaG_2022EE")
 DataEGammaG_2022EE.year         = 2022
 DataEGammaG_2022EE.dataset      = "/EGamma/Run2022G-22Sep2023-v2/NANOAOD"
+DataEGammaG_2022EE.process     = "DataEGamma_2022EE"
 DataEGammaG_2022EE.runP         = 'G'
 DataEGammaG_2022EE.unix_code    = 30204
 DataEGammaG_2022EE.EE           = 1
@@ -1503,6 +2447,312 @@ DataEGammaG_2022EE.EE           = 1
 DataEGamma_2022EE               = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGamma_2022EE")
 DataEGamma_2022EE.year          = 2022
 DataEGamma_2022EE.components    = [DataEGammaE_2022EE, DataEGammaF_2022EE, DataEGammaG_2022EE]
+
+
+########################### DATA 2023 ############################################
+DataJetMETC1_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC1_0_2023")
+DataJetMETC1_0_2023.runP       = 'C1'
+DataJetMETC1_0_2023.year       = 2023
+DataJetMETC1_0_2023.dataset    = '/JetMET0/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataJetMETC1_0_2023.process    = "DataJetMET_2023"
+DataJetMETC1_0_2023.unix_code  = 30000
+DataJetMETC1_0_2023.EE         = 0
+DataJetMETC1_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC1_1_2023")
+DataJetMETC1_1_2023.runP       = 'C1'
+DataJetMETC1_1_2023.year       = 2023
+DataJetMETC1_1_2023.dataset    = '/JetMET1/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataJetMETC1_1_2023.process    = "DataJetMET_2023"
+DataJetMETC1_1_2023.unix_code  = 30000
+DataJetMETC1_1_2023.EE         = 0
+DataJetMETC2_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC2_0_2023")
+DataJetMETC2_0_2023.runP       = 'C2'
+DataJetMETC2_0_2023.year       = 2023
+DataJetMETC2_0_2023.dataset    = '/JetMET0/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataJetMETC2_0_2023.process    = "DataJetMET_2023"
+DataJetMETC2_0_2023.unix_code  = 30000
+DataJetMETC2_0_2023.EE         = 0
+DataJetMETC2_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC2_1_2023")
+DataJetMETC2_1_2023.runP       = 'C2'
+DataJetMETC2_1_2023.year       = 2023
+DataJetMETC2_1_2023.dataset    = '/JetMET1/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataJetMETC2_1_2023.process    = "DataJetMET_2023"
+DataJetMETC2_1_2023.unix_code  = 30000
+DataJetMETC2_1_2023.EE         = 0
+DataJetMETC3_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC3_0_2023")
+DataJetMETC3_0_2023.runP       = 'C3'
+DataJetMETC3_0_2023.year       = 2023
+DataJetMETC3_0_2023.dataset    = '/JetMET0/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataJetMETC3_0_2023.process    = "DataJetMET_2023"
+DataJetMETC3_0_2023.unix_code  = 30000
+DataJetMETC3_0_2023.EE         = 0
+DataJetMETC3_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC3_1_2023")
+DataJetMETC3_1_2023.runP       = 'C3'
+DataJetMETC3_1_2023.year       = 2023
+DataJetMETC3_1_2023.dataset    = '/JetMET1/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataJetMETC3_1_2023.process    = "DataJetMET_2023"
+DataJetMETC3_1_2023.unix_code  = 30000
+DataJetMETC3_1_2023.EE         = 0
+DataJetMETC4_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC4_0_2023")
+DataJetMETC4_0_2023.runP       = 'C4'
+DataJetMETC4_0_2023.year       = 2023
+DataJetMETC4_0_2023.dataset    = '/JetMET0/Run2023C-22Sep2023_v4-v1/NANOAOD'
+DataJetMETC4_0_2023.process    = "DataJetMET_2023"
+DataJetMETC4_0_2023.unix_code  = 30000
+DataJetMETC4_0_2023.EE         = 0
+DataJetMETC4_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETC4_1_2023")
+DataJetMETC4_1_2023.runP       = 'C4'
+DataJetMETC4_1_2023.year       = 2023
+DataJetMETC4_1_2023.dataset    = '/JetMET1/Run2023C-22Sep2023_v4-v1/NANOAOD'
+DataJetMETC4_1_2023.process    = "DataJetMET_2023"
+DataJetMETC4_1_2023.unix_code  = 30000
+DataJetMETC4_1_2023.EE         = 0
+
+DataJetMET_2023                = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMET_2023")
+DataJetMET_2023.year           = 2023
+DataJetMET_2023.components     = [DataJetMETC1_0_2023, DataJetMETC1_1_2023,
+                                   DataJetMETC2_0_2023, DataJetMETC2_1_2023,
+                                   DataJetMETC3_0_2023, DataJetMETC3_1_2023,
+                                   DataJetMETC4_0_2023, DataJetMETC4_1_2023,
+                                  ]
+
+DataJetMETD1_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETD1_0_2023postBPix")
+DataJetMETD1_0_2023postBPix.runP       = 'D'
+DataJetMETD1_0_2023postBPix.year       = 2023
+DataJetMETD1_0_2023postBPix.dataset    = '/JetMET0/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataJetMETD1_0_2023postBPix.process    = "DataJetMET_2023postBPix"
+DataJetMETD1_0_2023postBPix.unix_code  = 30000
+DataJetMETD1_0_2023postBPix.EE         = 1
+DataJetMETD1_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETD1_1_2023postBPix")
+DataJetMETD1_1_2023postBPix.runP       = 'D'
+DataJetMETD1_1_2023postBPix.year       = 2023
+DataJetMETD1_1_2023postBPix.dataset    = '/JetMET1/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataJetMETD1_1_2023postBPix.process    = "DataJetMET_2023postBPix"
+DataJetMETD1_1_2023postBPix.unix_code  = 30000
+DataJetMETD1_1_2023postBPix.EE         = 1
+DataJetMETD2_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETD2_0_2023postBPix")
+DataJetMETD2_0_2023postBPix.runP       = 'D'
+DataJetMETD2_0_2023postBPix.year       = 2023
+DataJetMETD2_0_2023postBPix.dataset    = '/JetMET0/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataJetMETD2_0_2023postBPix.process    = "DataJetMET_2023postBPix"
+DataJetMETD2_0_2023postBPix.unix_code  = 30000
+DataJetMETD2_0_2023postBPix.EE         = 1
+DataJetMETD2_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMETD2_1_2023postBPix")
+DataJetMETD2_1_2023postBPix.runP       = 'D'
+DataJetMETD2_1_2023postBPix.year       = 2023
+DataJetMETD2_1_2023postBPix.dataset    = '/JetMET1/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataJetMETD2_1_2023postBPix.process    = "DataJetMET_2023postBPix"
+DataJetMETD2_1_2023postBPix.unix_code  = 30000
+DataJetMETD2_1_2023postBPix.EE         = 1
+
+DataJetMET_2023postBPix                = sample(ROOT.kBlack, 1, 1001, "Data", "DataJetMET_2023postBPix")
+DataJetMET_2023postBPix.year           = 2023
+DataJetMET_2023postBPix.components     = [DataJetMETD1_0_2023postBPix, DataJetMETD1_1_2023postBPix,
+                                          DataJetMETD2_0_2023postBPix, DataJetMETD2_1_2023postBPix,
+                                          ]
+
+
+
+DataMuonC1_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC1_0_2023")
+DataMuonC1_0_2023.runP       = 'C1'
+DataMuonC1_0_2023.year       = 2023
+DataMuonC1_0_2023.dataset    = '/Muon0/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataMuonC1_0_2023.process    = "DataMuon_2023"
+DataMuonC1_0_2023.unix_code  = 30000
+DataMuonC1_0_2023.EE         = 0
+DataMuonC1_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC1_1_2023")
+DataMuonC1_1_2023.runP       = 'C1'
+DataMuonC1_1_2023.year       = 2023
+DataMuonC1_1_2023.dataset    = '/Muon1/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataMuonC1_1_2023.process    = "DataMuon_2023"
+DataMuonC1_1_2023.unix_code  = 30000
+DataMuonC1_1_2023.EE         = 0
+DataMuonC2_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC2_0_2023")
+DataMuonC2_0_2023.runP       = 'C2'
+DataMuonC2_0_2023.year       = 2023
+DataMuonC2_0_2023.dataset    = '/Muon0/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataMuonC2_0_2023.process    = "DataMuon_2023"
+DataMuonC2_0_2023.unix_code  = 30000
+DataMuonC2_0_2023.EE         = 0
+DataMuonC2_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC2_1_2023")
+DataMuonC2_1_2023.runP       = 'C2'
+DataMuonC2_1_2023.year       = 2023
+DataMuonC2_1_2023.dataset    = '/Muon1/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataMuonC2_1_2023.process    = "DataMuon_2023"
+DataMuonC2_1_2023.unix_code  = 30000
+DataMuonC2_1_2023.EE         = 0
+DataMuonC3_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC3_0_2023")
+DataMuonC3_0_2023.runP       = 'C3'
+DataMuonC3_0_2023.year       = 2023
+DataMuonC3_0_2023.dataset    = '/Muon0/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataMuonC3_0_2023.process    = "DataMuon_2023"
+DataMuonC3_0_2023.unix_code  = 30000
+DataMuonC3_0_2023.EE         = 0
+DataMuonC3_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC3_1_2023")
+DataMuonC3_1_2023.runP       = 'C3'
+DataMuonC3_1_2023.year       = 2023
+DataMuonC3_1_2023.dataset    = '/Muon1/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataMuonC3_1_2023.process    = "DataMuon_2023"
+DataMuonC3_1_2023.unix_code  = 30000
+DataMuonC3_1_2023.EE         = 0
+DataMuonC4_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC4_0_2023")
+DataMuonC4_0_2023.runP       = 'C4'
+DataMuonC4_0_2023.year       = 2023
+DataMuonC4_0_2023.dataset    = '/Muon0/Run2023C-22Sep2023_v4-v1/NANOAOD'
+DataMuonC4_0_2023.process    = "DataMuon_2023"
+DataMuonC4_0_2023.unix_code  = 30000
+DataMuonC4_0_2023.EE         = 0
+DataMuonC4_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonC4_1_2023")
+DataMuonC4_1_2023.runP       = 'C4'
+DataMuonC4_1_2023.year       = 2023
+DataMuonC4_1_2023.dataset    = '/Muon1/Run2023C-22Sep2023_v4-v2/NANOAOD'
+DataMuonC4_1_2023.process    = "DataMuon_2023"
+DataMuonC4_1_2023.unix_code  = 30000
+DataMuonC4_1_2023.EE         = 0
+
+DataMuon_2023                = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuon_2023")
+DataMuon_2023.year           = 2023
+DataMuon_2023.components     = [DataMuonC1_0_2023, DataMuonC1_1_2023,
+                                   DataMuonC2_0_2023, DataMuonC2_1_2023,
+                                   DataMuonC3_0_2023, DataMuonC3_1_2023,
+                                   DataMuonC4_0_2023, DataMuonC4_1_2023
+                                  ]
+
+DataMuonD1_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonD1_0_2023postBPix")
+DataMuonD1_0_2023postBPix.runP       = 'D'
+DataMuonD1_0_2023postBPix.year       = 2023
+DataMuonD1_0_2023postBPix.dataset    = '/Muon0/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataMuonD1_0_2023postBPix.process    = "DataMuon_2023postBPix"
+DataMuonD1_0_2023postBPix.unix_code  = 30000
+DataMuonD1_0_2023postBPix.EE         = 1
+DataMuonD1_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonD1_1_2023postBPix")
+DataMuonD1_1_2023postBPix.runP       = 'D'
+DataMuonD1_1_2023postBPix.year       = 2023
+DataMuonD1_1_2023postBPix.dataset    = '/Muon1/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataMuonD1_1_2023postBPix.process    = "DataMuon_2023postBPix"
+DataMuonD1_1_2023postBPix.unix_code  = 30000
+DataMuonD1_1_2023postBPix.EE         = 1
+DataMuonD2_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonD2_0_2023postBPix")
+DataMuonD2_0_2023postBPix.runP       = 'D'
+DataMuonD2_0_2023postBPix.year       = 2023
+DataMuonD2_0_2023postBPix.dataset    = '/Muon0/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataMuonD2_0_2023postBPix.process    = "DataMuon_2023postBPix"
+DataMuonD2_0_2023postBPix.unix_code  = 30000
+DataMuonD2_0_2023postBPix.EE         = 1
+DataMuonD2_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuonD2_1_2023postBPix")
+DataMuonD2_1_2023postBPix.runP       = 'D'
+DataMuonD2_1_2023postBPix.year       = 2023
+DataMuonD2_1_2023postBPix.dataset    = '/Muon1/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataMuonD2_1_2023postBPix.process    = "DataMuon_2023postBPix"
+DataMuonD2_1_2023postBPix.unix_code  = 30000
+DataMuonD2_1_2023postBPix.EE         = 1
+
+DataMuon_2023postBPix                = sample(ROOT.kBlack, 1, 1001, "Data", "DataMuon_2023postBPix")
+DataMuon_2023postBPix.year           = 2023
+DataMuon_2023postBPix.components     = [DataMuonD1_0_2023postBPix, DataMuonD1_1_2023postBPix,
+                                          DataMuonD2_0_2023postBPix, DataMuonD2_1_2023postBPix,
+                                          ]
+
+
+
+DataEGammaC1_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC1_0_2023")
+DataEGammaC1_0_2023.runP       = 'C1'
+DataEGammaC1_0_2023.year       = 2023
+DataEGammaC1_0_2023.dataset    = '/EGamma0/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataEGammaC1_0_2023.process    = "DataEGamma_2023"
+DataEGammaC1_0_2023.unix_code  = 30000
+DataEGammaC1_0_2023.EE         = 0
+DataEGammaC1_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC1_1_2023")
+DataEGammaC1_1_2023.runP       = 'C1'
+DataEGammaC1_1_2023.year       = 2023
+DataEGammaC1_1_2023.dataset    = '/EGamma1/Run2023C-22Sep2023_v1-v1/NANOAOD'
+DataEGammaC1_1_2023.process    = "DataEGamma_2023"
+DataEGammaC1_1_2023.unix_code  = 30000
+DataEGammaC1_1_2023.EE         = 0
+DataEGammaC2_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC2_0_2023")
+DataEGammaC2_0_2023.runP       = 'C2'
+DataEGammaC2_0_2023.year       = 2023
+DataEGammaC2_0_2023.dataset    = '/EGamma0/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataEGammaC2_0_2023.process    = "DataEGamma_2023"
+DataEGammaC2_0_2023.unix_code  = 30000
+DataEGammaC2_0_2023.EE         = 0
+DataEGammaC2_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC2_1_2023")
+DataEGammaC2_1_2023.runP       = 'C2'
+DataEGammaC2_1_2023.year       = 2023
+DataEGammaC2_1_2023.dataset    = '/EGamma1/Run2023C-22Sep2023_v2-v1/NANOAOD'
+DataEGammaC2_1_2023.process    = "DataEGamma_2023"
+DataEGammaC2_1_2023.unix_code  = 30000
+DataEGammaC2_1_2023.EE         = 0
+DataEGammaC3_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC3_0_2023")
+DataEGammaC3_0_2023.runP       = 'C3'
+DataEGammaC3_0_2023.year       = 2023
+DataEGammaC3_0_2023.dataset    = '/EGamma0/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataEGammaC3_0_2023.process    = "DataEGamma_2023"
+DataEGammaC3_0_2023.unix_code  = 30000
+DataEGammaC3_0_2023.EE         = 0
+DataEGammaC3_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC3_1_2023")
+DataEGammaC3_1_2023.runP       = 'C3'
+DataEGammaC3_1_2023.year       = 2023
+DataEGammaC3_1_2023.dataset    = '/EGamma1/Run2023C-22Sep2023_v3-v1/NANOAOD'
+DataEGammaC3_1_2023.process    = "DataEGamma_2023"
+DataEGammaC3_1_2023.unix_code  = 30000
+DataEGammaC3_1_2023.EE         = 0
+DataEGammaC4_0_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC4_0_2023")
+DataEGammaC4_0_2023.runP       = 'C4'
+DataEGammaC4_0_2023.year       = 2023
+DataEGammaC4_0_2023.dataset    = '/EGamma0/Run2023C-22Sep2023_v4-v1/NANOAOD'
+DataEGammaC4_0_2023.process    = "DataEGamma_2023"
+DataEGammaC4_0_2023.unix_code  = 30000
+DataEGammaC4_0_2023.EE         = 0
+DataEGammaC4_1_2023            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaC4_1_2023")
+DataEGammaC4_1_2023.runP       = 'C4'
+DataEGammaC4_1_2023.year       = 2023
+DataEGammaC4_1_2023.dataset    = '/EGamma1/Run2023C-22Sep2023_v4-v1/NANOAOD'
+DataEGammaC4_1_2023.process    = "DataEGamma_2023"
+DataEGammaC4_1_2023.unix_code  = 30000
+DataEGammaC4_1_2023.EE         = 0
+
+DataEGamma_2023                = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGamma_2023")
+DataEGamma_2023.year           = 2023
+DataEGamma_2023.components     = [DataEGammaC1_0_2023, DataEGammaC1_1_2023,
+                                   DataEGammaC2_0_2023, DataEGammaC2_1_2023,
+                                   DataEGammaC3_0_2023, DataEGammaC3_1_2023,
+                                   DataEGammaC4_0_2023, DataEGammaC4_1_2023
+                                  ]
+
+DataEGammaD1_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaD1_0_2023postBPix")
+DataEGammaD1_0_2023postBPix.runP       = 'D'
+DataEGammaD1_0_2023postBPix.year       = 2023
+DataEGammaD1_0_2023postBPix.dataset    = '/EGamma0/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataEGammaD1_0_2023postBPix.process    = "DataEGamma_2023postBPix"
+DataEGammaD1_0_2023postBPix.unix_code  = 30000
+DataEGammaD1_0_2023postBPix.EE         = 1
+DataEGammaD1_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaD1_1_2023postBPix")
+DataEGammaD1_1_2023postBPix.runP       = 'D'
+DataEGammaD1_1_2023postBPix.year       = 2023
+DataEGammaD1_1_2023postBPix.dataset    = '/EGamma1/Run2023D-22Sep2023_v1-v1/NANOAOD'
+DataEGammaD1_1_2023postBPix.process    = "DataEGamma_2023postBPix"
+DataEGammaD1_1_2023postBPix.unix_code  = 30000
+DataEGammaD1_1_2023postBPix.EE         = 1
+DataEGammaD2_0_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaD2_0_2023postBPix")
+DataEGammaD2_0_2023postBPix.runP       = 'D'
+DataEGammaD2_0_2023postBPix.year       = 2023
+DataEGammaD2_0_2023postBPix.dataset    = '/EGamma0/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataEGammaD2_0_2023postBPix.process    = "DataEGamma_2023postBPix"
+DataEGammaD2_0_2023postBPix.unix_code  = 30000
+DataEGammaD2_0_2023postBPix.EE         = 1
+DataEGammaD2_1_2023postBPix            = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGammaD2_1_2023postBPix")
+DataEGammaD2_1_2023postBPix.runP       = 'D'
+DataEGammaD2_1_2023postBPix.year       = 2023
+DataEGammaD2_1_2023postBPix.dataset    = '/EGamma1/Run2023D-22Sep2023_v2-v1/NANOAOD'
+DataEGammaD2_1_2023postBPix.process    = "DataEGamma_2023postBPix"
+DataEGammaD2_1_2023postBPix.unix_code  = 30000
+DataEGammaD2_1_2023postBPix.EE         = 1
+
+DataEGamma_2023postBPix                = sample(ROOT.kBlack, 1, 1001, "Data", "DataEGamma_2023postBPix")
+DataEGamma_2023postBPix.year           = 2023
+DataEGamma_2023postBPix.components     = [DataEGammaD1_0_2023postBPix, DataEGammaD1_1_2023postBPix,
+                                          DataEGammaD2_0_2023postBPix, DataEGammaD2_1_2023postBPix,
+                                          ]
 
 
 ############### UNIX code meanings ################
@@ -1663,6 +2913,102 @@ sample_dict = {
     #####################Tagger studies 4 top samples
     "Zprime4top_500_2022EE" : Zprime4top_500_2022EE, "Zprime4top_1000_2022EE" : Zprime4top_1000_2022EE, "Zprime4top_2000_2022EE" : Zprime4top_2000_2022EE,
 
+    #####################2023
+    ############ QCD
+    "QCD_2023" : QCD_2023,
+    # "QCD_HT40to70_2023": QCD_HT40to70_2023, 
+    "QCD_HT70to100_2023": QCD_HT70to100_2023, 
+    "QCD_HT100to200_2023": QCD_HT100to200_2023, "QCD_HT200to400_2023": QCD_HT200to400_2023, 
+    "QCD_HT400to600_2023": QCD_HT400to600_2023, "QCD_HT600to800_2023": QCD_HT600to800_2023, 
+    "QCD_HT800to1000_2023": QCD_HT800to1000_2023, "QCD_HT1000to1200_2023": QCD_HT1000to1200_2023, 
+    "QCD_HT1200to1500_2023": QCD_HT1200to1500_2023, "QCD_HT1500to2000_2023": QCD_HT1500to2000_2023, "QCD_HT2000_2023": QCD_HT2000_2023,
+    ########### TT
+    "TT_2023": TT_2023, "TT_semilep_2023" : TT_semilep_2023, "TT_hadr_2023" : TT_hadr_2023,
+    ########## WJets
+    "WJets_2jets_2023": WJets_2jets_2023, 
+    "WJets_2jets0J_2023": WJets_2jets0J_2023, "WJets_2jets1J_2023": WJets_2jets1J_2023, "WJets_2jets2J_2023": WJets_2jets2J_2023,
+
+    "WJets_2023":WJets_2023, 
+    "WJets_HT120to200_2023":WJets_HT120to200_2023, "WJets_HT200to400_2023":WJets_HT200to400_2023, 
+    "WJets_HT400to800_2023":WJets_HT400to800_2023, "WJets_HT800to1500_2023":WJets_HT800to1500_2023, 
+    "WJets_HT1500to2500_2023":WJets_HT1500to2500_2023, "WJets_HT2500to4000_2023":WJets_HT2500to4000_2023, 
+    "WJets_HT4000to6000_2023":WJets_HT4000to6000_2023, "WJets_HT6000_2023":WJets_HT6000_2023,
+    ########## ZJetsToNuNu
+    "ZJetsToNuNu_2023":ZJetsToNuNu_2023, "ZJetsToNuNu_HT100to200_2023":ZJetsToNuNu_HT100to200_2023, 
+    "ZJetsToNuNu_HT200to400_2023":ZJetsToNuNu_HT200to400_2023, "ZJetsToNuNu_HT400to800_2023":ZJetsToNuNu_HT400to800_2023, 
+    "ZJetsToNuNu_HT800to1500_2023":ZJetsToNuNu_HT800to1500_2023, "ZJetsToNuNu_HT1500to2500_2023":ZJetsToNuNu_HT1500to2500_2023, 
+    "ZJetsToNuNu_HT2500_2023":ZJetsToNuNu_HT2500_2023,
+
+    "ZJetsToNuNu_2jets_2023":ZJetsToNuNu_2jets_2023,
+    "ZJetsToNuNu_2jets_PT40to100_1J_2023":ZJetsToNuNu_2jets_PT40to100_1J_2023, "ZJetsToNuNu_2jets_PT100to200_1J_2023":ZJetsToNuNu_2jets_PT100to200_1J_2023,
+    "ZJetsToNuNu_2jets_PT200to400_1J_2023":ZJetsToNuNu_2jets_PT200to400_1J_2023, "ZJetsToNuNu_2jets_PT400to600_1J_2023":ZJetsToNuNu_2jets_PT400to600_1J_2023,
+    "ZJetsToNuNu_2jets_PT600_1J_2023":ZJetsToNuNu_2jets_PT600_1J_2023, "ZJetsToNuNu_2jets_PT40to100_2J_2023":ZJetsToNuNu_2jets_PT40to100_2J_2023,
+    "ZJetsToNuNu_2jets_PT100to200_2J_2023":ZJetsToNuNu_2jets_PT100to200_2J_2023, "ZJetsToNuNu_2jets_PT200to400_2J_2023":ZJetsToNuNu_2jets_PT200to400_2J_2023,
+    "ZJetsToNuNu_2jets_PT400to600_2J_2023":ZJetsToNuNu_2jets_PT400to600_2J_2023, "ZJetsToNuNu_2jets_PT600_2J_2023":ZJetsToNuNu_2jets_PT600_2J_2023,
+                                    
+    ########## SIGNALS
+    # "TprimeToTZ_700_2023":TprimeToTZ_700_2023,
+    # "TprimeToTZ_800_2023":TprimeToTZ_800_2023,
+    # "TprimeToTZ_900_2023":TprimeToTZ_900_2023,
+    # "TprimeToTZ_1000_2023":TprimeToTZ_1000_2023,
+    # "TprimeToTZ_1100_2023":TprimeToTZ_1100_2023,
+    # "TprimeToTZ_1200_2023":TprimeToTZ_1200_2023,
+    # "TprimeToTZ_1300_2023":TprimeToTZ_1300_2023,
+    # "TprimeToTZ_1400_2023":TprimeToTZ_1400_2023,
+    # "TprimeToTZ_1500_2023":TprimeToTZ_1500_2023,
+    # "TprimeToTZ_1600_2023":TprimeToTZ_1600_2023,
+    # "TprimeToTZ_1700_2023":TprimeToTZ_1700_2023,
+    # "TprimeToTZ_1800_2023":TprimeToTZ_1800_2023,
+
+
+    #####################2023postBPix
+    ############ QCD
+    "QCD_2023postBPix" : QCD_2023postBPix,
+    # "QCD_HT40to70_2023postBPix": QCD_HT40to70_2023postBPix, 
+    "QCD_HT70to100_2023postBPix": QCD_HT70to100_2023postBPix, 
+    "QCD_HT100to200_2023postBPix": QCD_HT100to200_2023postBPix, "QCD_HT200to400_2023postBPix": QCD_HT200to400_2023postBPix, 
+    "QCD_HT400to600_2023postBPix": QCD_HT400to600_2023postBPix, "QCD_HT600to800_2023postBPix": QCD_HT600to800_2023postBPix, 
+    "QCD_HT800to1000_2023postBPix": QCD_HT800to1000_2023postBPix, "QCD_HT1000to1200_2023postBPix": QCD_HT1000to1200_2023postBPix, 
+    "QCD_HT1200to1500_2023postBPix": QCD_HT1200to1500_2023postBPix, "QCD_HT1500to2000_2023postBPix": QCD_HT1500to2000_2023postBPix, "QCD_HT2000_2023postBPix": QCD_HT2000_2023postBPix,
+    ########### TT
+    "TT_2023postBPix": TT_2023postBPix, "TT_semilep_2023postBPix" : TT_semilep_2023postBPix, "TT_hadr_2023postBPix" : TT_hadr_2023postBPix,
+    ########## WJets
+    "WJets_2jets_2023postBPix": WJets_2jets_2023postBPix, 
+    "WJets_2jets0J_2023postBPix": WJets_2jets0J_2023postBPix, "WJets_2jets1J_2023postBPix": WJets_2jets1J_2023postBPix, "WJets_2jets2J_2023postBPix": WJets_2jets2J_2023postBPix,
+
+    "WJets_2023postBPix":WJets_2023postBPix, 
+    "WJets_HT120to200_2023postBPix":WJets_HT120to200_2023postBPix, "WJets_HT200to400_2023postBPix":WJets_HT200to400_2023postBPix, 
+    "WJets_HT400to800_2023postBPix":WJets_HT400to800_2023postBPix, "WJets_HT800to1500_2023postBPix":WJets_HT800to1500_2023postBPix, 
+    "WJets_HT1500to2500_2023postBPix":WJets_HT1500to2500_2023postBPix, "WJets_HT2500to4000_2023postBPix":WJets_HT2500to4000_2023postBPix, 
+    "WJets_HT4000to6000_2023postBPix":WJets_HT4000to6000_2023postBPix, "WJets_HT6000_2023postBPix":WJets_HT6000_2023postBPix,
+    ########## ZJetsToNuNu
+    "ZJetsToNuNu_2023postBPix":ZJetsToNuNu_2023postBPix, "ZJetsToNuNu_HT100to200_2023postBPix":ZJetsToNuNu_HT100to200_2023postBPix, 
+    "ZJetsToNuNu_HT200to400_2023postBPix":ZJetsToNuNu_HT200to400_2023postBPix, "ZJetsToNuNu_HT400to800_2023postBPix":ZJetsToNuNu_HT400to800_2023postBPix, 
+    "ZJetsToNuNu_HT800to1500_2023postBPix":ZJetsToNuNu_HT800to1500_2023postBPix, "ZJetsToNuNu_HT1500to2500_2023postBPix":ZJetsToNuNu_HT1500to2500_2023postBPix, 
+    "ZJetsToNuNu_HT2500_2023postBPix":ZJetsToNuNu_HT2500_2023postBPix,
+
+    "ZJetsToNuNu_2jets_2023postBPix":ZJetsToNuNu_2jets_2023postBPix,
+    "ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix":ZJetsToNuNu_2jets_PT40to100_1J_2023postBPix, "ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix":ZJetsToNuNu_2jets_PT100to200_1J_2023postBPix,
+    "ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix":ZJetsToNuNu_2jets_PT200to400_1J_2023postBPix, "ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix":ZJetsToNuNu_2jets_PT400to600_1J_2023postBPix,
+    "ZJetsToNuNu_2jets_PT600_1J_2023postBPix":ZJetsToNuNu_2jets_PT600_1J_2023postBPix, "ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix":ZJetsToNuNu_2jets_PT40to100_2J_2023postBPix,
+    "ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix":ZJetsToNuNu_2jets_PT100to200_2J_2023postBPix, "ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix":ZJetsToNuNu_2jets_PT200to400_2J_2023postBPix,
+    "ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix":ZJetsToNuNu_2jets_PT400to600_2J_2023postBPix, "ZJetsToNuNu_2jets_PT600_2J_2023postBPix":ZJetsToNuNu_2jets_PT600_2J_2023postBPix,
+    ########## SIGNALS
+    # "TprimeToTZ_700_2023postBPix":TprimeToTZ_700_2023postBPix,
+    # "TprimeToTZ_800_2023postBPix":TprimeToTZ_800_2023postBPix,
+    # "TprimeToTZ_900_2023postBPix":TprimeToTZ_900_2023postBPix,
+    # "TprimeToTZ_1000_2023postBPix":TprimeToTZ_1000_2023postBPix,
+    # "TprimeToTZ_1100_2023postBPix":TprimeToTZ_1100_2023postBPix,
+    # "TprimeToTZ_1200_2023postBPix":TprimeToTZ_1200_2023postBPix,
+    # "TprimeToTZ_1300_2023postBPix":TprimeToTZ_1300_2023postBPix,
+    # "TprimeToTZ_1400_2023postBPix":TprimeToTZ_1400_2023postBPix,
+    # "TprimeToTZ_1500_2023postBPix":TprimeToTZ_1500_2023postBPix,
+    # "TprimeToTZ_1600_2023postBPix":TprimeToTZ_1600_2023postBPix,
+    # "TprimeToTZ_1700_2023postBPix":TprimeToTZ_1700_2023postBPix,
+    # "TprimeToTZ_1800_2023postBPix":TprimeToTZ_1800_2023postBPix,
+    
+    
+    
     ############################################# DATA 
     'DataJetMET_2022': DataJetMET_2022, 'DataJetMETC_2022':DataJetMETC_2022, 'DataJetMETD_2022':DataJetMETD_2022, 
     'DataJetMET_2022EE': DataJetMET_2022EE,
@@ -1675,4 +3021,35 @@ sample_dict = {
     "DataEGamma_2022":DataEGamma_2022, "DataEGammaC_2022":DataEGammaC_2022, "DataEGammaD_2022":DataEGammaD_2022,
     "DataEGamma_2022EE":DataEGamma_2022EE, 
     "DataEGammaE_2022EE":DataEGammaE_2022EE, "DataEGammaF_2022EE":DataEGammaF_2022EE, "DataEGammaG_2022EE":DataEGammaG_2022EE,
+
+    "DataJetMETC1_0_2023" : DataJetMETC1_0_2023, "DataJetMETC1_1_2023" : DataJetMETC1_1_2023,
+    "DataJetMETC2_0_2023" : DataJetMETC2_0_2023, "DataJetMETC2_1_2023" : DataJetMETC2_1_2023,
+    "DataJetMETC3_0_2023" : DataJetMETC3_0_2023, "DataJetMETC3_1_2023" : DataJetMETC3_1_2023,
+    "DataJetMETC4_0_2023" : DataJetMETC4_0_2023, "DataJetMETC4_1_2023" : DataJetMETC4_1_2023,
+    "DataJetMET_2023" : DataJetMET_2023,
+
+    "DataJetMETD1_0_2023postBPix" : DataJetMETD1_0_2023postBPix, "DataJetMETD1_1_2023postBPix" : DataJetMETD1_1_2023postBPix,
+    "DataJetMETD2_0_2023postBPix" : DataJetMETD2_0_2023postBPix, "DataJetMETD2_1_2023postBPix" : DataJetMETD2_1_2023postBPix,
+    "DataJetMET_2023postBPix" : DataJetMET_2023postBPix,
+
+    "DataMuonC1_0_2023" : DataMuonC1_0_2023, "DataMuonC1_1_2023" : DataMuonC1_1_2023,
+    "DataMuonC2_0_2023" : DataMuonC2_0_2023, "DataMuonC2_1_2023" : DataMuonC2_1_2023,
+    "DataMuonC3_0_2023" : DataMuonC3_0_2023, "DataMuonC3_1_2023" : DataMuonC3_1_2023,
+    "DataMuonC4_0_2023" : DataMuonC4_0_2023, "DataMuonC4_1_2023" : DataMuonC4_1_2023,
+    "DataMuon_2023" : DataMuon_2023,
+
+    "DataMuonD1_0_2023postBPix" : DataMuonD1_0_2023postBPix, "DataMuonD1_1_2023postBPix" : DataMuonD1_1_2023postBPix,
+    "DataMuonD2_0_2023postBPix" : DataMuonD2_0_2023postBPix, "DataMuonD2_1_2023postBPix" : DataMuonD2_1_2023postBPix,
+    "DataMuon_2023postBPix" : DataMuon_2023postBPix,
+
+    "DataEGammaC1_0_2023" : DataEGammaC1_0_2023, "DataEGammaC1_1_2023" : DataEGammaC1_1_2023,
+    "DataEGammaC2_0_2023" : DataEGammaC2_0_2023, "DataEGammaC2_1_2023" : DataEGammaC2_1_2023,
+    "DataEGammaC3_0_2023" : DataEGammaC3_0_2023, "DataEGammaC3_1_2023" : DataEGammaC3_1_2023,
+    "DataEGammaC4_0_2023" : DataEGammaC4_0_2023, "DataEGammaC4_1_2023" : DataEGammaC4_1_2023,
+    "DataEGamma_2023" : DataEGamma_2023,
+
+    "DataEGammaD1_0_2023postBPix" : DataEGammaD1_0_2023postBPix, "DataEGammaD1_1_2023postBPix" : DataEGammaD1_1_2023postBPix,
+    "DataEGammaD2_0_2023postBPix" : DataEGammaD2_0_2023postBPix, "DataEGammaD2_1_2023postBPix" : DataEGammaD2_1_2023postBPix,
+    "DataEGamma_2023postBPix" : DataEGamma_2023postBPix,
+
     }
