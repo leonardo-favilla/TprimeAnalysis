@@ -7,35 +7,189 @@ from variables import *
 import copy
 import json
 import numpy as np
+import shutil
 #import math
 #import pickle as pkl
 #from datetime import datetime
 ROOT.gROOT.SetBatch()
 
 ################## input parameters
+cut             = requirements  ### defined in variables.py
+blind           = False # Set to True if you want to blind the data
+year_tag        = "2023postBPix" # "2022", "2022EE", "2023", "2023postBPix"
+lumi_dict       = {
+                    "2018":         59.97,
+                    "2022":         7.87,
+                    "2022EE":       26.43,
+                    "2023":         17.794,
+                    "2023postBPix": 9.451,
+                }
+folder_dict     = {
+                    "2022":         "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_syst/",
+                    "2022EE":       "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_syst/",
 
-cut  = requirements  ### defined in variables.py 
-lumi = 7.87#34.3 (full2022) #59.97(2018) 
-run2 = False
-run3 = not run2
+                    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
+                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
+                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
+                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_puWeight/",
+
+                    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
+                }
+folder_www_dict = {
+                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
+                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
+                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
+                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
+
+                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
+
+                }
+
+lumi            = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
+run2            = False
+run3            = not run2
+
+
+# Specify the path to the JSON file
+json_file       = "samples/dict_samples_2023.json"
+
+############### out folders  
+# folder          = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_preselection/"
+# folder          = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
+# folder          = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_selection/"
+# folder          = "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/"
+# folder          = "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/"
+
+
+
+# folder_www      = "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/"
+# folder_www      = "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/"
+folder          = folder_dict[year_tag]
+folder_www      = folder_www_dict[year_tag]
+repohisto       = folder+"plots/"
+repostack       = folder+"stacks/"
+repostack_www   = folder_www+"stacks/"
+
+if not os.path.exists(folder):
+    os.mkdir(folder)
+if not os.path.exists(repohisto):
+    os.mkdir(repohisto)
+if not os.path.exists(repostack):
+    os.mkdir(repostack)
+if not os.path.exists(repostack+"/png"):
+    os.mkdir(repostack+"/png")
+if not os.path.exists(repostack+"/pdf"):
+    os.mkdir(repostack+"/pdf")
+if not os.path.exists(repostack+"/C"):
+    os.mkdir(repostack+"/C")
+
+
+if not os.path.exists(folder_www):
+    os.mkdir(folder_www)
+if not os.path.exists(repostack_www):
+    os.mkdir(repostack_www)
+if not os.path.exists(folder_www+"index.php"):
+    shutil.copy("/eos/user/l/lfavilla/www/index.php", folder_www)
+if not os.path.exists(repostack_www+"index.php"):
+    shutil.copy("/eos/user/l/lfavilla/www/index.php", repostack_www)
+
+
+print("Created folders 'plots' and 'stacks' at ", folder)
+print("Created folder 'stacks' at ", folder_www)
+
 # datasets = [
 #     DataHT_2018,
 #     TT_2018, ZJetsToNuNu_2018, QCD_2018, WJets_2018,   
 #     # TprimeToTZ_700_2018, TprimeToTZ_1000_2018, TprimeToTZ_1800_2018,
 #                ]
-datasets = [
-    # "DataMETA_2018",
-    # DataSingleMuA_2018,
-    # "TT_hadr_2018", "TT_semilep_2018", "TT_Mtt1000toInf_2018", "TT_Mtt700to1000_2018", 
-    # "QCDHT_100to200_2018", "QCDHT_200to300_2018","QCDHT_300to500_2018", "QCDHT_500to700_2018", "QCDHT_700to1000_2018", "QCDHT_1000to1500_2018", "QCDHT_1500to2000_2018", "QCDHT_2000toInf_2018", 
-    # "ZJetsToNuNu_HT100to200_2018", "ZJetsToNuNu_HT200to400_2018", "ZJetsToNuNu_HT400to600_2018", "ZJetsToNuNu_HT600to800_2018", "ZJetsToNuNu_HT800to1200_2018", "ZJetsToNuNu_HT1200to2500_2018", "ZJetsToNuNu_HT2500toInf_2018", 
-    # "WJetsHT100to200_2018", "WJetsHT200to400_2018", "WJetsHT400to600_2018", "WJetsHT600to800_2018", "WJetsHT800to1200_2018", "WJetsHT1200to2500_2018", "WJetsHT2500toInf_2018",   
-    # "TprimeToTZ_700_2018", "TprimeToTZ_1000_2018", "TprimeToTZ_1800_2018",
-    "DataJetMET_2022",# "DataEGamma_2022",#"DataMuon_2022", 
-    # "DataEGamma_2022", 
-    "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", "TprimeToTZ_700_2022", "TprimeToTZ_1000_2022", "TprimeToTZ_1800_2022",
-    # "WJets_2jets_2022"
-               ]
+
+
+datasets_dict = {
+                    "2022":
+                            [
+                                "DataJetMET_2022",
+                                "TT_2022",
+                                "QCD_2022",
+                                "ZJetsToNuNu_2jets_2022",
+                                "WJets_2jets_2022",
+                                "TprimeToTZ_700_2022",
+                                "TprimeToTZ_1000_2022",
+                                "TprimeToTZ_1800_2022"
+                            ],
+                    "2022EE":
+                            [
+                                "DataJetMET_2022EE",
+                                "TT_2022EE",
+                                "QCD_2022EE",
+                                "ZJetsToNuNu_2jets_2022EE",
+                                "WJets_2jets_2022EE",
+                                "TprimeToTZ_700_2022EE",
+                                "TprimeToTZ_1000_2022EE",
+                                "TprimeToTZ_1800_2022EE"
+                            ],
+                    "2023":
+                            [
+                                "DataJetMET_2023",
+                                "TT_2023",
+                                "QCD_2023",
+                                "ZJetsToNuNu_2jets_2023",
+                                "WJets_2jets_2023",
+                                "TprimeToTZ_700_2023",
+                                "TprimeToTZ_1000_2023",
+                                "TprimeToTZ_1800_2023"
+                            ],
+                    "2023postBPix":
+                            [
+                                "DataJetMET_2023postBPix",
+                                "TT_2023postBPix",
+                                "QCD_2023postBPix",
+                                "ZJetsToNuNu_2jets_2023postBPix",
+                                "WJets_2jets_2023postBPix",
+                                "TprimeToTZ_700_2023postBPix",
+                                "TprimeToTZ_1000_2023postBPix",
+                                "TprimeToTZ_1800_2023postBPix"
+                            ]
+                }
+datasets      = datasets_dict[year_tag]
+
+
+# datasets = [
+#     # "DataMETA_2018",
+#     # DataSingleMuA_2018,
+#     # "TT_hadr_2018", "TT_semilep_2018", "TT_Mtt1000toInf_2018", "TT_Mtt700to1000_2018", 
+#     # "QCDHT_100to200_2018", "QCDHT_200to300_2018","QCDHT_300to500_2018", "QCDHT_500to700_2018", "QCDHT_700to1000_2018", "QCDHT_1000to1500_2018", "QCDHT_1500to2000_2018", "QCDHT_2000toInf_2018", 
+#     # "ZJetsToNuNu_HT100to200_2018", "ZJetsToNuNu_HT200to400_2018", "ZJetsToNuNu_HT400to600_2018", "ZJetsToNuNu_HT600to800_2018", "ZJetsToNuNu_HT800to1200_2018", "ZJetsToNuNu_HT1200to2500_2018", "ZJetsToNuNu_HT2500toInf_2018", 
+#     # "WJetsHT100to200_2018", "WJetsHT200to400_2018", "WJetsHT400to600_2018", "WJetsHT600to800_2018", "WJetsHT800to1200_2018", "WJetsHT1200to2500_2018", "WJetsHT2500toInf_2018",   
+#     # "TprimeToTZ_700_2018", "TprimeToTZ_1000_2018", "TprimeToTZ_1800_2018",
+#     # "DataJetMET_2022",# "DataEGamma_2022",#"DataMuon_2022", 
+#     # "DataEGamma_2022", 
+#     # "TT_2022", "QCD_2022", "ZJetsToNuNu_2jets_2022", "WJets_2jets_2022", "TprimeToTZ_700_2022", "TprimeToTZ_1000_2022", "TprimeToTZ_1800_2022",
+#     # "WJets_2jets_2022"
+
+#     "DataJetMET_2023",
+#     "TT_2023",
+#     "QCD_2023",
+#     "ZJetsToNuNu_2jets_2023",
+#     "WJets_2jets_2023",
+#     "TprimeToTZ_700_2023",
+#     "TprimeToTZ_1000_2023",
+#     "TprimeToTZ_1800_2023",
+    
+#     # "DataJetMET_2023postBPix",
+#     # "TT_2023postBPix",
+#     # "QCD_2023postBPix",
+#     # "ZJetsToNuNu_2jets_2023postBPix",
+#     # "WJets_2jets_2023postBPix",
+#     # "TprimeToTZ_700_2023postBPix",
+#     # "TprimeToTZ_1000_2023postBPix",
+#     # "TprimeToTZ_1800_2023postBPix",
+#                ]
 
 for d in datasets:
     ### Extract Components ###
@@ -44,11 +198,6 @@ for d in datasets:
     else:
         components = [sample_dict[d]]
 
-blind = False # Set to True if you want to blind the data
-
-
-# Specify the path to the JSON file
-json_file = "samples/dict_samples_2022.json"
 
 # Load the JSON file
 with open(json_file, "r") as file:
@@ -64,27 +213,6 @@ print("blind            = {}".format(blind))
 print("Producing histos:  {}".format([v._name for v in vars[1:]]))
 print("Regions:           {}".format(regions.keys()))
 
-############### out folders  
-# folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_preselection/"
-# folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_selection/"
-
-if not os.path.exists(folder):
-    os.mkdir(folder)
-repohisto = folder+"plots/"
-if not os.path.exists(repohisto):
-    os.mkdir(repohisto)
-repostack = folder+"stacks/"
-if not os.path.exists(repostack):
-    os.mkdir(repostack)
-if not os.path.exists(repostack+"/png"):
-    os.mkdir(repostack+"/png")
-if not os.path.exists(repostack+"/pdf"):
-    os.mkdir(repostack+"/pdf")
-if not os.path.exists(repostack+"/C"):
-    os.mkdir(repostack+"/C")
-
-print("Created folders 'plots' and 'stacks' at ", folder)
 
 # ###########################################
 # TriggerSF regions stacks
@@ -150,12 +278,12 @@ for v in vars:
     for r in regions.keys():
         h_sign = []
         # print("Creating ..")
-        # print(v._name+"_"+r+"_"+cut_tag)
+        # print(v._name+"_"+r+"_"+"nominal")
         ROOT.gROOT.SetStyle('Plain')
         #ROOT.gStyle.SetPalette(1)
         ROOT.gStyle.SetOptStat(0)
         ROOT.TH1.SetDefaultSumw2()
-        stack = ROOT.THStack(v._name+"_"+r+"_"+cut_tag, v._name+"_"+r+"_"+cut_tag)
+        stack = ROOT.THStack(v._name+"_"+r+"_"+"nominal", v._name+"_"+r+"_"+"nominal")
 
         leg_stack = ROOT.TLegend(0.45,0.88,0.9,0.71)
         leg_stack.SetNColumns(2)
@@ -168,10 +296,10 @@ for v in vars:
         l = []
         for i, (f,s) in enumerate(zip(infile["signal"], insample["signal"])):
             # print(s.label)
-            print("Getting histo :", v._name+"_"+r+"_"+cut_tag)
-            print(" from:", f)
-            print(v._name+"_"+r+"_"+cut_tag)
-            tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+            # print("Getting histo :", v._name+"_"+r+"_"+"nominal")
+            # print(" from:", f)
+            # print(v._name+"_"+r+"_"+"nominal")
+            tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
             if len(samples[s.label][s.label]["ntot"]):
                 # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.process][s.label]["ntot"]))
                 tmp.Scale(lumi)
@@ -194,9 +322,9 @@ for v in vars:
 
         for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
             # print(s.label)
-            # print("Getting histo :", v._name+"_"+r+"_"+cut_tag)
+            # print("Getting histo :", v._name+"_"+r+"_"+"nominal")
             # print(" from:", f)
-            tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+            tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
             if len(samples[s.label][s.label]["ntot"]):
                 # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.process][s.label]["ntot"]))
                 tmp.Scale(lumi)
@@ -216,14 +344,14 @@ for v in vars:
                 leg_stack.AddEntry(tmp, s.leglabel, "f")
             #f.Close()
 
-        if (not blind and not "SR"in r):
+        if (not blind) and not ("SRTop" in r):
             h_data = None #ROOT.TH1D()
-            if not v._MConly :
+            if not v._MConly:
                 for f, s in zip(infile["Data"], insample["Data"]):
-                    # print("Getting histo :", v._name+"_"+r+"_"+cut_tag)
+                    # print("Getting histo :", v._name+"_"+r)
                     # print(" from:", f, s.label)
-                    #print(type(f)
-                    tmp = copy.deepcopy(f.Get(v._name+"_"+r+"_"+cut_tag))
+                    # print(type(f))
+                    tmp = copy.deepcopy(f.Get(v._name+"_"+r))
                     tmp.SetTitle("")
                     #tmp.SetLineColor(ROOT.kBlack)
                     if h_data==None:
@@ -241,7 +369,7 @@ for v in vars:
                 #stack.SetMaximum(10000)
 
         
-        canvasname = "canvas_"+v._name+"_"+r+"_"+cut_tag
+        canvasname = "canvas_"+v._name+"_"+r+"_"+"nominal"
         c1 = ROOT.TCanvas(canvasname,"c1",50,50,900,600)
         # c1 = ROOT.TCanvas(canvasname,"c1",50,50,1500,900)
         c1.SetFillColor(0)
@@ -273,7 +401,7 @@ for v in vars:
         pad1.SetTicky(1)
         pad1.Draw()
 
-        if (not blind and not "SR" in r and not v._MConly):
+        if (not blind) and not ("SRTop" in r) and (not v._MConly):
           maximum = max(stack.GetMaximum(),h_data.GetMaximum())
         #   minimum = min(stack.GetMinimum(),h_data.GetMinimum())
           if (len(h_sign) != 0 and h_sign[-1].GetMinimum()!= 0):
@@ -293,8 +421,10 @@ for v in vars:
           else:
               minimum = 1e-1  
           #minimum = 1e-4
-        
-        logscale = True
+        if "SR" in r:
+            logscale = False
+        else:
+            logscale = True
         pad1.cd()
         if(logscale):
             stack.SetMaximum(maximum*10000)
@@ -323,7 +453,7 @@ for v in vars:
         for h in h_sign: 
             # print(h.GetBinContent(1))
             h.Draw("hist same")
-        if (not blind and not "SR"in r and not v._MConly):
+        if (not blind and not "SRTop"in r and not v._MConly):
             h_data.SetTitle("")
             h_data.Draw("eSAMEpx0")
         
@@ -363,7 +493,7 @@ for v in vars:
         ROOT.gStyle.SetHatchesLineWidth(2)
         pad2.Draw()
         pad2.cd()
-        if (not blind and not "SR"in r and not v._MConly):
+        if (not blind) and not ("SRTop" in r) and (not v._MConly):
             ratio = h_data.Clone("ratio")
             ratio.SetLineColor(ROOT.kBlack)
             ratio.SetMaximum(2)
@@ -480,11 +610,15 @@ for v in vars:
         # pad2.RedrawAxis()
         # c1.Update()
 
-        c1.Print(repostack+"png/"+canvasname+".png")
-        c1.Print(repostack+"pdf/"+canvasname+".pdf")
-        c1.Print(repostack+"C/"+canvasname+".C")
+        # c1.Print(repostack+"png/"+canvasname+".png")
+        # c1.Print(repostack+"pdf/"+canvasname+".pdf")
+        # c1.Print(repostack+"C/"+canvasname+".C")
         # tmp.Delete()
         # h.Delete()
+
+        ########### SAVE FILES TO www FOLDER ###########
+        c1.Print(repostack_www+canvasname+".png") 
+        c1.Print(repostack_www+canvasname+".pdf") 
     
         os.system('set LD_PRELOAD=libtcmalloc.so')
         #####################################################

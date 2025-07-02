@@ -9,7 +9,7 @@ from CMSJMECalculators.utils import (
 )
 from CMSJMECalculators import config as calcConfigs
 
-loadJMESystematicsCalculators()
+loadJMESystematicsCalculators() # https://cms-jerc.web.cern.ch/Recommendations/
 
 cvmfsPOGpath = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/"
 versiontag = {
@@ -25,13 +25,15 @@ jestag = {
             '2018'      : 'Summer19UL18_V5_MC',
             '2022'      : 'Summer22_22Sep2023_V2_MC',
             '2022EE'    : 'Summer22EE_22Sep2023_V2_MC',
-            '2023'      : '.', 
+            '2023'      : 'Summer23Prompt23_V1_MC',
+            '2023BPix'  : 'Summer23BPixPrompt23_V1_MC',
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_V5_MC',
             '2022'      : 'Summer22_22Sep2023_V2_MC',
             '2022EE'    : 'Summer22EE_22Sep2023_V2_MC',
-            '2023'      : '.', # place holder still not available 
+            '2023'      : 'Summer23Prompt23_V1_MC',
+            '2023BPix'  : 'Summer23BPixPrompt23_V1_MC', # place holder still not available 
         }
     },
     "DATA":{
@@ -41,7 +43,11 @@ jestag = {
             '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V2_DATA',
             '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V2_DATA',
             '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V2_DATA',
-            '2023'          : '.', # place holder still not available
+            '2023_C1'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C2'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C3'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C4'       : 'Summer23Prompt23_RunCv4_V1_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_RunD_V1_DATA', # place holder still not available
         },
         'AK4PFPuppi':{
             '2018'          : 'Summer19UL18_V5_DATA',
@@ -49,7 +55,11 @@ jestag = {
             '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V2_DATA',
             '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V2_DATA',
             '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V2_DATA',
-            '2023'          : '.', # place holder still not available 
+            '2023_C1'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C2'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C3'       : 'Summer23Prompt23_RunCv123_V1_DATA',
+            '2023_C4'       : 'Summer23Prompt23_RunCv4_V1_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_RunD_V1_DATA', # place holder still not available
         }
     }
 }
@@ -57,19 +67,22 @@ jertag = {
     "MC":{
         'AK8PFPuppi':{
             '2018'      : 'Summer19UL18_JRV2_MC',
-            '2022'      : 'Summer22_22Sep2023_JRV1_MC', # place holder still not available 
-            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC', # place holder still not available
-            '2023'      : '.', # place holder still not available 
+            '2022'      : 'Summer22_22Sep2023_JRV1_MC', 
+            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC',
+            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', # Summer23Prompt23_RunCv1234_JRV1_MC, Summer23Prompt23_RunCv123_JRV1_MC , Summer23Prompt23_RunCv4_JRV1_MC
+            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC', # place holder still not available 
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_JRV2_MC',
-            '2022'      : 'Summer22_22Sep2023_JRV1_MC', # place holder still not available
-            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC', # place holder still not available
-            '2023'      : '.', # place holder still not available 
+            '2022'      : 'Summer22_22Sep2023_JRV1_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC',
+            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', 
+            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC', # place holder still not available
         }
     }
 }
 def configcreate(isMC=True, year=2022, EE=False, runPeriod="C", jetType="AK4PFPuppi", forMET=False, doJer=True):
+    print("isMC, year, EE, runPeriod, jetType, forMET, doJer:", isMC, year, EE, runPeriod, jetType, forMET, doJer)
     if forMET:
         configCls = calcConfigs.METVariations
     elif "AK4" in jetType:
@@ -80,11 +93,17 @@ def configcreate(isMC=True, year=2022, EE=False, runPeriod="C", jetType="AK4PFPu
         print("Unsupported configurationType")
 
     year_ = str(year)
-    if EE: year_ += "EE"
+    if year == 2022:
+        if EE: year_ += "EE"
+    elif year == 2023:
+        if EE: year_ += "BPix"
+    
     tagver = versiontag[year_]
+    print("tagver: ", tagver)
     if runPeriod != ".": 
-        if "2022EE" in year_:
-            year_ += "_"+runPeriod        
+        if ("2022EE" in year_) or ("2023" in year_):
+            year_ += "_"+runPeriod
+            print("year_ with runPeriod: ", year_)
     if (forMET or "AK4" in jetType):
         jsonFile = cvmfsPOGpath + tagver + "/jet_jerc.json.gz"
     else:

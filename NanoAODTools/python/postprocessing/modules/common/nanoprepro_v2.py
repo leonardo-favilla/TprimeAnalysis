@@ -186,12 +186,18 @@ class nanoprepro(Module):
                         tosave = True
                     if tosave:
                         #print("saving jet #", j, gen.pdgId)
-                        jets_topMother[j] = sgn_top*6
-                        jets_matched[j] += 1
-                        if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
-                        elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
-                        elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
-                        #ind_jets[j] = j
+                        if jets_topMother[j] == 0: 
+                            jets_topMother[j] = sgn_top*6
+                            jets_matched[j] += 1
+                            if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
+                            elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                            elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                        elif jets_topMother[j] == sgn_top*6:
+                            jets_matched[j] += 1
+                            if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
+                            elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                            elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                            #ind_jets[j] = j
 
                 elif (match and ntop == 2):
                     #print  sgn_top
@@ -210,12 +216,18 @@ class nanoprepro(Module):
                             dbar_matched = True
                             tosave = True
                         if tosave :
+                            if jets_topMother[j] == 0:
                             #print "...saving jet pgd"
-                            jets_topMother[j] = sgn_top*6
-                            jets_matched[j] += 1
-                            if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
-                            elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
-                            elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                                jets_topMother[j] = sgn_top*6
+                                jets_matched[j] += 1
+                                if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
+                                elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                                elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                            elif jets_topMother[j] == sgn_top*6:
+                                jets_matched[j] += 1
+                                if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
+                                elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                                elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
                             #ind_jets[-1] = j
                     elif(sgn_top == -1 and not bbar_matched*ubar_matched*d_matched):
                         #print "tbar"
@@ -233,12 +245,18 @@ class nanoprepro(Module):
                             tosave = True
                         if tosave:
                             #print "...saving jet pgd"
-                            jets_topMother[j] = sgn_top*6
-                            jets_matched[j]  += 1
-                            #print(jets_matched[j])
-                            if jets_matched[j]  ==1: jets_pdgId[j] = abs(gen.pdgId)
-                            elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
-                            elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                            if jets_topMother[j] == 0:
+                                jets_topMother[j] = sgn_top*6
+                                jets_matched[j]  += 1
+                                #print(jets_matched[j])
+                                if jets_matched[j]  ==1: jets_pdgId[j] = abs(gen.pdgId)
+                                elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                                elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
+                            elif jets_topMother[j] == sgn_top*6:
+                                jets_matched[j] += 1
+                                if jets_matched[j]==1: jets_pdgId[j] = abs(gen.pdgId)
+                                elif jets_matched[j]==2: jets_pdgId[j] += abs(gen.pdgId)*10
+                                elif jets_matched[j]==3: jets_pdgId[j] += abs(gen.pdgId)*100
                             #ind_jets[-1] = j
 
             for gen in genpart:
@@ -266,11 +284,17 @@ class nanoprepro(Module):
                         dquarkFJ_matched = True
                         tosave = True
                     if tosave:
-                        fatjets_topMother[j] = sgn_top*6
-                        fatjets_matched[j] += 1
-                        if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
-                        elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
-                        elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                        if fatjets_topMother[j] == 0:
+                            fatjets_topMother[j] = sgn_top*6
+                            fatjets_matched[j] += 1
+                            if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                            elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                            elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                        elif fatjets_topMother[j] == sgn_top*6:
+                            fatjets_matched[j] += 1
+                            if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                            elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                            elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
 
                 elif (match and ntop == 2):
                     #print  sgn_top
@@ -290,11 +314,17 @@ class nanoprepro(Module):
                             tosave = True
                         if tosave :
                             #print "...saving jet pgd"
-                            fatjets_topMother[j] = sgn_top*6
-                            fatjets_matched[j] += 1
-                            if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
-                            elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
-                            elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                            if fatjets_topMother[j] == 0:
+                                fatjets_topMother[j] = sgn_top*6
+                                fatjets_matched[j] += 1
+                                if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                                elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                                elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                            elif fatjets_topMother[j] == sgn_top*6:
+                                fatjets_matched[j] += 1
+                                if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                                elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                                elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
                         
                     elif(sgn_top == -1 and not bbarFJ_matched*ubarFJ_matched*dFJ_matched):
                         #print "tbar"
@@ -312,11 +342,17 @@ class nanoprepro(Module):
                             tosave = True
                         if tosave:
                             #print "...saving jet pgd"
-                            fatjets_topMother[j] = sgn_top*6
-                            fatjets_matched[j] += 1
-                            if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
-                            elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
-                            elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                            if fatjets_topMother[j] == 0:
+                                fatjets_topMother[j] = sgn_top*6
+                                fatjets_matched[j] += 1
+                                if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                                elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                                elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
+                            elif fatjets_topMother[j] == sgn_top*6:
+                                fatjets_matched[j] += 1
+                                if fatjets_matched[j]==1: fatjets_pdgId[j] = abs(gen.pdgId)
+                                elif fatjets_matched[j]==2: fatjets_pdgId[j] += abs(gen.pdgId)*10
+                                elif fatjets_matched[j]==3: fatjets_pdgId[j] += abs(gen.pdgId)*100
                             
                             
             # Filling TopGen branches

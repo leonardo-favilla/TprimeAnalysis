@@ -1,0 +1,14 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/l/lfavilla/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "nextweek"
++JobTag                 = "ZJetsToNuNu_2jets_PT600_2J_2023postBPix_syst_no_nloewcorrection"
+executable              = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/ZJetsToNuNu_2jets_PT600_2J_2023postBPix_syst_no_nloewcorrection/runner.sh
+arguments               = 
+output                  = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/ZJetsToNuNu_2jets_PT600_2J_2023postBPix_syst_no_nloewcorrection/condor/output/postSelector_ZJetsToNuNu_2jets_PT600_2J_2023postBPix.out
+error                   = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/ZJetsToNuNu_2jets_PT600_2J_2023postBPix_syst_no_nloewcorrection/condor/error/postSelector_ZJetsToNuNu_2jets_PT600_2J_2023postBPix.err
+log                     = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/ZJetsToNuNu_2jets_PT600_2J_2023postBPix_syst_no_nloewcorrection/condor/log/postSelector_ZJetsToNuNu_2jets_PT600_2J_2023postBPix.log
+queue

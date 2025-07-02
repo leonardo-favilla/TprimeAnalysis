@@ -36,10 +36,19 @@ def eta_jet(input_eta):
 
 class BTagSF(Module):
     def __init__(self, year, EE): # eratag from https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/BTV/
-        if year == 2022 and not EE:
-            eratag = "2022_Summer22"
-        elif EE:
-            eratag = "2022_Summer22EE"
+        if year == 2022:
+            if EE:
+                eratag          = "2022_Summer22EE"
+            else:
+                eratag          = "2022_Summer22"
+        elif year == 2023:
+            if EE:
+                eratag          = "2023_Summer23BPix"
+            else:
+                eratag          = "2023_Summer23"
+        else:
+            print("Please specify the correct era tag for the BTag SF. 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
+            print("Alternativly, find the era in the json file and modify PUreweight.py accordingly.")
         self.jsonfile = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/"+eratag+"/btagging.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
         self.tagger = 'particleNet_shape'
