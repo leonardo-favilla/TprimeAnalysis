@@ -1,9 +1,11 @@
 import ROOT
 import cmsstyle as CMS
 ROOT.gROOT.SetBatch(True)
+ROOT.gStyle.SetPalette(57)  # "DeepSea" palette
 
 
-def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None):
+def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals_dict=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None, colors_bkg=None, style_signals_dict=None):
+    ############ CREATE CANVAS AND PADS ############ 
     CMS.SetExtraText(extraText)
     CMS.SetLumi(lumi)
     CMS.SetEnergy("13.6")
@@ -39,31 +41,35 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
         pad1.SetLogy()
         pad1.Update()
 
-    leg     = CMS.cmsLeg(0.45, 0.88, 0.9, 0.67, textSize=0.045, columns=2)
+    leg     = CMS.cmsLeg(0.45, 0.88, 0.9, 0.67, textSize=0.025, columns=3)
     if region:
         latex   = ROOT.TLatex()
         latex.SetTextFont(52)
-        latex.SetTextSize(0.08)
-        latex.DrawLatexNDC(0.15, 0.8, f"{region}")
+        latex.SetTextSize(0.06)
+        latex.DrawLatexNDC(0.15, 0.83, f"{region}")
 
         # CMS.cmsHeader(leg, f"{region}", textSize=0.05)
 
-    stack           = ROOT.THStack("stack", "Stacked")
-    # CMS.cmsDrawStack(stack, leg, histo_bkg_dict)
-    CMS.cmsDrawStack(stack, leg, histo_bkg_dict, histo_data)
+    ##### Set graphics style for Backgrounds ##### 
+    if colors_bkg is not None:
+        palette     = colors_bkg
+    else:
+        palette     = None
+    stack           = ROOT.THStack("stack", "Stack Histogram")
+    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=histo_data, palette=palette)
     # CMS.cmsDraw(histo_data, "P", mcolor=ROOT.kBlack)
 
     h_bkg           = stack.GetStack().Last().Clone("h_bkg")
     CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
     leg.AddEntry(h_bkg, "Stat. Unc.", "F")
 
-
-    if histo_signals is not None:
-        print(histo_signals.keys())
-        for label, histo_signal in histo_signals.items():
-            CMS.cmsDraw(histo_signal, "hist same", lwidth=2, msize=0)
+    ##### Set graphics style for Signals #####
+    if histo_signals_dict is not None:
+        for label, histo_signal in histo_signals_dict.items():
+            CMS.cmsDraw(histo_signal, **style_signals_dict[label])
             leg.AddEntry(histo_signal, label, "l")
 
+    pad1.RedrawAxis()
 
     ################## PAD2 ##################
     pad2    = dicanv.cd(2)
@@ -106,6 +112,7 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
     CMS.cmsDrawLine(ref_line, lcolor=ROOT.kBlack, lstyle=ROOT.kDotted)
 
 
+    
     if repo is not None:
         if repo[-1] != "/":
             repo += "/"
@@ -164,11 +171,16 @@ if __name__ == "__main__":
     histo_signal3.FillRandom("expo_signal3", 400)
 
 
-    histo_signals = {
-                        "Signal1": histo_signal1,
-                        "Signal2": histo_signal2,
-                        "Signal3": histo_signal3,
-                    }
+    histo_signals_dict = {
+                            "Signal1": histo_signal1,
+                            "Signal2": histo_signal2,
+                            "Signal3": histo_signal3,
+                        }
+    style_signals_dict  = {
+                            "Signal1":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0},
+                            "Signal2":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0},
+                            "Signal3":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0},
+                        }
 
 
 
@@ -194,37 +206,35 @@ if __name__ == "__main__":
     iPos            = 0  # Position of the legend (0: top-right, 1: top-left, etc.)
     region          = "Signal Region"
     histo_bkg_dict  = {
-                        "QCD": histo_qcd,
                         "TT": histo_tt,
+                        "QCD": histo_qcd,
                         "ZJets": histo_zjets,
                         "WJets": histo_wjets,
                         }
-    # colors_dict = {
-    #                 "QCD": ROOT.kRed + 1,
-    #                 "TT": ROOT.kBlue + 1,
-    #                 "ZJets": ROOT.kGreen + 1,
-    #                 "WJets": ROOT.kMagenta + 1,
-    #                 # "Signal": ROOT.kOrange + 1,
-    #             }
+
+    colors_bkg      = ["#bd1f01", "#fdf7db", "#86c8dd", "#caeba5"]
+
     dicanv = make_stack_with_ratio(
-                                    canv_name       = canv_name,
-                                    histo_bkg_dict  = histo_bkg_dict,
-                                    histo_data      = histo_data,
-                                    histo_signals   = histo_signals,
-                                    region          = region,
-                                    xMin            = xMin,
-                                    xMax            = xMax,
-                                    yMin            = yMin,
-                                    yMax            = yMax,
-                                    rMin            = rMin,
-                                    rMax            = rMax,
-                                    xTitle          = xTitle,
-                                    yTitle          = yTitle,
-                                    rTitle          = rTitle,
-                                    extraText       = extraText,
-                                    lumi            = lumi,
-                                    extraSpace      = extraSpace,
-                                    iPos            = iPos,
-                                    logy            = logy,
-                                    repo            = ".",
+                                    canv_name               = canv_name,
+                                    histo_bkg_dict          = histo_bkg_dict,
+                                    histo_data              = histo_data,
+                                    histo_signals_dict      = histo_signals_dict,
+                                    region                  = region,
+                                    xMin                    = xMin,
+                                    xMax                    = xMax,
+                                    yMin                    = yMin,
+                                    yMax                    = yMax,
+                                    rMin                    = rMin,
+                                    rMax                    = rMax,
+                                    xTitle                  = xTitle,
+                                    yTitle                  = yTitle,
+                                    rTitle                  = rTitle,
+                                    extraText               = extraText,
+                                    lumi                    = lumi,
+                                    extraSpace              = extraSpace,
+                                    iPos                    = iPos,
+                                    logy                    = logy,
+                                    repo                    = ".",
+                                    colors_bkg              = colors_bkg,
+                                    style_signals_dict      = style_signals_dict,
                                     )

@@ -10,6 +10,7 @@ import json
 import numpy as np
 import shutil
 import cmsstyle as CMS
+import array
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 
@@ -19,7 +20,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2023"            # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2023postBPix"            # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":         59.97,
@@ -49,7 +50,8 @@ folder_www_dict = {
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
 
-                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
+                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_cmsstyle/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
@@ -110,7 +112,12 @@ json_file_dict  = {
                 }
 
 
-
+colors_bkg          = ["#bd1f01", "#fdf7db", "#86c8dd", "#caeba5"]
+style_signals_dict  = {
+                        "TprimeToTZ_700":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0},
+                        "TprimeToTZ_1000":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0},
+                        "TprimeToTZ_1800":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0},
+                    }
 
 
 
@@ -157,13 +164,6 @@ print("Created folder 'stacks' at ", folder_www)
 
 
 
-for d in datasets:
-    ### Extract Components ###
-    if hasattr(sample_dict[d], "components"):
-        components = sample_dict[d].components
-    else:
-        components = [sample_dict[d]]
-
 
 # Load the JSON file
 with open(json_file, "r") as file:
@@ -209,41 +209,51 @@ for dat in datasets:
             inSample["bkg"].append(s)
 
 
-print(inFile.keys())
-print("Number of input files:")
-for k in inFile.keys():
-    print("  {}: {}".format(k, len(inFile[k])))
+# print(inFile.keys())
+# print("Number of input files:")
+# for k in inFile.keys():
+#     print("  {}: {}".format(k, len(inFile[k])))
+
+### rebinning for MT ###
+MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1600, 2000])
 
 
-###### PreProcess Histograms [normalization (only to Lumi, because CrossSection normalization already applied into RDF step)] ######
-for v in vars[:1]:
-    # for r in regions.keys():
-    for r in ["SL"]:
+for v in vars:
+    for r in regions.keys():
+    # for r in ["AH"]:
+        ###############################################
+        ############ PreProcess Histograms ############
+        ############ normalization to Lumi ############
         ROOT.TH1.SetDefaultSumw2()
 
-        histo_bkg_dict = {
-                            "TT":           None,
-                            "QCD":          None,
-                            "ZJetsToNuNu":  None,
-                            "WJets":        None
-                        }
-        histo_data     = None
-        histo_signals  = {}
+        histo_bkg_dict      = {
+                                "TT":           None,
+                                "QCD":          None,
+                                "ZJetsToNuNu":  None,
+                                "WJets":        None
+                            }
+        histo_data          = None
+        histo_signals_dict  = {}
 
 
         ##### Normalize Signals (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
-            tmp                         = ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")).Clone(v._name+"_"+r+"_"+"nominal")
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            if v._name == "MT_T":
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
                 continue
-            ############# COMPLETE SIGNALS #############
-            histo_signals["_".join(s.label.split("_")[:2])] = tmp
+            # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(v._name+"_"+r+"_"+"nominal")
+            histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
+
 
         ##### Normalize Backgrounds (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
-            tmp                         = ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")).Clone(v._name+"_"+r+"_"+"nominal")
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            if v._name == "MT_T":
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
@@ -251,19 +261,21 @@ for v in vars[:1]:
 
             process                     = s.process.split("_")[0]
             if histo_bkg_dict[process] is None:
-                histo_bkg_dict[process] = tmp
+                histo_bkg_dict[process] = copy.deepcopy(tmp)
             else:
-                histo_bkg_dict[process].Add(tmp)
+                histo_bkg_dict[process].Add(copy.deepcopy(tmp))
             
         ##### Data #####
-        if (not blind) and not ("SRTop" in r):
+        if (not blind) and not ("SR" in r):
             if not v._MConly:
                 for f, s in zip(inFile["Data"], inSample["Data"]):
-                    tmp                 = ROOT.TH1D(f.Get(v._name+"_"+r)).Clone(v._name+"_"+r)
+                    tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
+                    if v._name == "MT_T":
+                        tmp             = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r, MT_T_xbins)
                     if histo_data is None:
-                        histo_data      = tmp
+                        histo_data      = copy.deepcopy(tmp)
                     else:
-                        histo_data.Add(tmp)
+                        histo_data.Add(copy.deepcopy(tmp))
 
 
         ###############################
@@ -277,17 +289,16 @@ for v in vars[:1]:
             logy = True
 
         ##### X-axis ######
-        xTitle          = v._title
-        xMin            = v._xmin
-        xMax            = v._xmax
-
+        xTitle              = v._title
+        xMin                = v._xmin
+        xMax                = v._xmax
 
         ##### Y-axis ######
-        yTitle          = "Events"
-        if (not blind) and not ("SRTop" in r) and (not v._MConly):
+        yTitle              = "Events"
+        if (not blind) and not ("SR" in r) and (not v._MConly):
             yMax            = max(sum([histo_bkg_dict[process].GetMaximum() for process in histo_bkg_dict]), histo_data.GetMaximum())
-            if len(histo_signals) != 0:
-                yMin        = min([h.GetMinimum() for label,h in histo_signals.items()])
+            if len(histo_signals_dict) != 0:
+                yMin        = min([h.GetMinimum() for label,h in histo_signals_dict.items()])
             else:
                 if logy:
                     yMin    = 1e-1
@@ -296,8 +307,8 @@ for v in vars[:1]:
         
         else:
             yMax            = sum([histo_bkg_dict[process].GetMaximum() for process in histo_bkg_dict])
-            if len(histo_signals) != 0:
-                yMin        = min([h.GetMinimum() for label,h in histo_signals.items()])
+            if len(histo_signals_dict) != 0:
+                yMin        = min([h.GetMinimum() for label,h in histo_signals_dict.items()])
             else:
                 if logy:
                     yMin    = 1e-1
@@ -320,24 +331,26 @@ for v in vars[:1]:
         ##### Drawing Stacks ######
         canv_name       = "canvas_"+v._name+"_"+r+"_"+"nominal"
         dicanv          = make_stack_with_ratio(
-                                                canv_name       = canv_name,
-                                                histo_bkg_dict  = histo_bkg_dict,
-                                                histo_data      = histo_data,
-                                                histo_signals   = histo_signals,
-                                                region          = r,
-                                                xMin            = xMin,
-                                                xMax            = xMax,
-                                                yMin            = yMin,
-                                                yMax            = yMax,
-                                                rMin            = rMin,
-                                                rMax            = rMax,
-                                                xTitle          = xTitle,
-                                                yTitle          = yTitle,
-                                                rTitle          = rTitle,
-                                                extraText       = extraText,
-                                                lumi            = lumi,
-                                                extraSpace      = extraSpace,
-                                                iPos            = iPos,
-                                                logy            = logy,
-                                                repo            = repostack_www,
+                                                canv_name           = canv_name,
+                                                histo_bkg_dict      = histo_bkg_dict,
+                                                histo_data          = histo_data,
+                                                histo_signals_dict  = histo_signals_dict,
+                                                region              = r,
+                                                xMin                = xMin,
+                                                xMax                = xMax,
+                                                yMin                = yMin,
+                                                yMax                = yMax,
+                                                rMin                = rMin,
+                                                rMax                = rMax,
+                                                xTitle              = xTitle,
+                                                yTitle              = yTitle,
+                                                rTitle              = rTitle,
+                                                extraText           = extraText,
+                                                lumi                = lumi,
+                                                extraSpace          = extraSpace,
+                                                iPos                = iPos,
+                                                logy                = logy,
+                                                repo                = repostack_www,
+                                                colors_bkg          = colors_bkg,
+                                                style_signals_dict  = style_signals_dict,
                                                 )

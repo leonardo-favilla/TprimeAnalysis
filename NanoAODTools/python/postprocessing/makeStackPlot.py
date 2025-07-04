@@ -8,6 +8,7 @@ import copy
 import json
 import numpy as np
 import shutil
+import array
 #import math
 #import pickle as pkl
 #from datetime import datetime
@@ -16,7 +17,7 @@ ROOT.gROOT.SetBatch()
 ################## input parameters
 cut             = requirements  ### defined in variables.py
 blind           = False # Set to True if you want to blind the data
-year_tag        = "2023postBPix" # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2023" # "2022", "2022EE", "2023", "2023postBPix"
 lumi_dict       = {
                     "2018":         59.97,
                     "2022":         7.87,
@@ -274,8 +275,12 @@ for dat in datasets:
 # print(infile)
 # print(infile.keys())
 # sys.exit()
-for v in vars:
-    for r in regions.keys():
+
+MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1600, 2000])
+
+for v in vars[:1]:
+    # for r in regions.keys():
+    for r in ["AH"]:
         h_sign = []
         # print("Creating ..")
         # print(v._name+"_"+r+"_"+"nominal")
@@ -295,16 +300,20 @@ for v in vars:
         
         l = []
         for i, (f,s) in enumerate(zip(infile["signal"], insample["signal"])):
-            # print(s.label)
+            print(s.label)
             # print("Getting histo :", v._name+"_"+r+"_"+"nominal")
             # print(" from:", f)
             # print(v._name+"_"+r+"_"+"nominal")
             tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            if v._name == "MT_T":
+                tmp = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
+            print(tmp.GetMaximum())
             if len(samples[s.label][s.label]["ntot"]):
                 # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.process][s.label]["ntot"]))
                 tmp.Scale(lumi)
             else:
                 continue
+            print(tmp.GetMaximum())
             # print("scaled lumi "+str(lumi)+" from ", f)
             tmp.GetXaxis().SetTitle(v._title)
             tmp.SetName(s.leglabel)
@@ -325,6 +334,8 @@ for v in vars:
             # print("Getting histo :", v._name+"_"+r+"_"+"nominal")
             # print(" from:", f)
             tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            if v._name == "MT_T":
+                tmp = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
             if len(samples[s.label][s.label]["ntot"]):
                 # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.process][s.label]["ntot"]))
                 tmp.Scale(lumi)
@@ -344,7 +355,8 @@ for v in vars:
                 leg_stack.AddEntry(tmp, s.leglabel, "f")
             #f.Close()
 
-        if (not blind) and not ("SRTop" in r):
+        # if (not blind) and not ("SRTop" in r):
+        if (not blind) and not ("SR" in r):
             h_data = None #ROOT.TH1D()
             if not v._MConly:
                 for f, s in zip(infile["Data"], insample["Data"]):
@@ -352,6 +364,8 @@ for v in vars:
                     # print(" from:", f, s.label)
                     # print(type(f))
                     tmp = copy.deepcopy(f.Get(v._name+"_"+r))
+                    if v._name == "MT_T":
+                        tmp = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
                     tmp.SetTitle("")
                     #tmp.SetLineColor(ROOT.kBlack)
                     if h_data==None:
@@ -401,25 +415,26 @@ for v in vars:
         pad1.SetTicky(1)
         pad1.Draw()
 
-        if (not blind) and not ("SRTop" in r) and (not v._MConly):
-          maximum = max(stack.GetMaximum(),h_data.GetMaximum())
+        # if (not blind) and not ("SRTop" in r) and (not v._MConly):
+        if (not blind) and not ("SR" in r) and (not v._MConly):
+            maximum = max(stack.GetMaximum(),h_data.GetMaximum())
         #   minimum = min(stack.GetMinimum(),h_data.GetMinimum())
-          if (len(h_sign) != 0 and h_sign[-1].GetMinimum()!= 0):
-              minimum = h_sign[-1].GetMinimum()
-          elif stack.GetMinimum()!= 0:
-              minimum = stack.GetMinimum()*1e-1
-          else:
-              minimum = 1e-1 #min(stack.GetMinimum(),1e-4)
+            if (len(h_sign) != 0 and h_sign[-1].GetMinimum()!= 0):
+                minimum = h_sign[-1].GetMinimum()
+            elif stack.GetMinimum()!= 0:
+                minimum = stack.GetMinimum()*1e-1
+            else:
+                minimum = 1e-1 #min(stack.GetMinimum(),1e-4)
         else:
-          maximum = stack.GetMaximum()
-          if (len(h_sign) != 0):
-              minimum = min([h.GetMaximum() for h in h_sign])
-              if minimum == 0: 
-                  minimum = 1e-1
-          elif stack.GetMinimum()!= 0: 
-              minimum = stack.GetMinimum()*1e-1
-          else:
-              minimum = 1e-1  
+            maximum = stack.GetMaximum()
+            if (len(h_sign) != 0):
+                minimum = min([h.GetMaximum() for h in h_sign])
+                if minimum == 0: 
+                    minimum = 1e-1
+            elif stack.GetMinimum()!= 0: 
+                minimum = stack.GetMinimum()*1e-1
+            else:
+                minimum = 1e-1  
           #minimum = 1e-4
         if "SR" in r:
             logscale = False
@@ -453,7 +468,8 @@ for v in vars:
         for h in h_sign: 
             # print(h.GetBinContent(1))
             h.Draw("hist same")
-        if (not blind and not "SRTop"in r and not v._MConly):
+        # if (not blind) and not ("SRTop" in r) and (not v._MConly):
+        if (not blind) and not ("SR" in r) and (not v._MConly):
             h_data.SetTitle("")
             h_data.Draw("eSAMEpx0")
         
@@ -493,7 +509,8 @@ for v in vars:
         ROOT.gStyle.SetHatchesLineWidth(2)
         pad2.Draw()
         pad2.cd()
-        if (not blind) and not ("SRTop" in r) and (not v._MConly):
+        # if (not blind) and not ("SRTop" in r) and (not v._MConly):
+        if (not blind) and not ("SR" in r) and (not v._MConly):
             ratio = h_data.Clone("ratio")
             ratio.SetLineColor(ROOT.kBlack)
             ratio.SetMaximum(2)
@@ -617,8 +634,8 @@ for v in vars:
         # h.Delete()
 
         ########### SAVE FILES TO www FOLDER ###########
-        c1.Print(repostack_www+canvasname+".png") 
-        c1.Print(repostack_www+canvasname+".pdf") 
+        # c1.Print(repostack_www+canvasname+".png") 
+        # c1.Print(repostack_www+canvasname+".pdf") 
     
         os.system('set LD_PRELOAD=libtcmalloc.so')
         #####################################################
