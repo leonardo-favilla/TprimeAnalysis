@@ -4,7 +4,7 @@
 void stack_example()
 {
 //=========Macro generated from canvas: stack_example/stack_example
-//=========  (Thu Jul  3 16:50:38 2025) by ROOT version 6.30/02
+//=========  (Fri Jul  4 16:06:29 2025) by ROOT version 6.30/02
    TCanvas *stack_example = new TCanvas("stack_example", "stack_example",0,0,800,648);
    gStyle->SetOptFit(1);
    gStyle->SetOptStat(0);
@@ -175,7 +175,7 @@ void stack_example()
    hframe_copy__4->GetZaxis()->SetTitleFont(42);
    hframe_copy__4->Draw("sameaxis");
    
-   TLegend *leg = new TLegend(0.45,0.67,0.9,0.88,NULL,"brNDC");
+   TLegend *leg = new TLegend(0.4,0.67,0.9,0.88,NULL,"brNDC");
    leg->SetBorderSize(0);
    leg->SetTextSize(0.025);
    leg->SetLineColor(1);
@@ -183,7 +183,7 @@ void stack_example()
    leg->SetLineWidth(1);
    leg->SetFillColor(0);
    leg->SetFillStyle(0);
-   TLegendEntry *entry=leg->AddEntry("histo_wjets","WJets","f");
+   TLegendEntry *entry=leg->AddEntry("histo_wjets","W (#it{l}#nu) + Jets","f");
 
    Int_t ci;      // for color index setting
    TColor *color; // for color definition with alpha
@@ -199,7 +199,7 @@ void stack_example()
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
-   entry=leg->AddEntry("histo_zjets","ZJets","f");
+   entry=leg->AddEntry("histo_zjets","Z (#nu#nu) + Jets","f");
 
    ci = TColor::GetColor("#86c8dd");
    entry->SetFillColor(ci);
@@ -214,26 +214,22 @@ void stack_example()
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
    entry=leg->AddEntry("histo_qcd","QCD","f");
-
-   ci = TColor::GetColor("#fdf7db");
-   entry->SetFillColor(ci);
+   entry->SetFillColor(203);
    entry->SetFillStyle(1001);
-
-   ci = TColor::GetColor("#fdf7db");
-   entry->SetLineColor(ci);
+   entry->SetLineColor(203);
    entry->SetLineStyle(1);
    entry->SetLineWidth(1);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
-   entry=leg->AddEntry("histo_tt","TT","f");
+   entry=leg->AddEntry("histo_tt","t#bar{t}","f");
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    entry->SetFillColor(ci);
    entry->SetFillStyle(1001);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    entry->SetLineColor(ci);
    entry->SetLineStyle(1);
    entry->SetLineWidth(1);
@@ -261,7 +257,7 @@ void stack_example()
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
-   entry=leg->AddEntry("histo_signal1","Signal1","l");
+   entry=leg->AddEntry("histo_signal1","T (0.7TeV) #rightarrow tZ [x10]","l");
 
    ci = TColor::GetColor("#00ff00");
    entry->SetLineColor(ci);
@@ -271,28 +267,28 @@ void stack_example()
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
-   entry=leg->AddEntry("histo_signal2","Signal2","l");
+   entry=leg->AddEntry("histo_signal2","T (1.0TeV) #rightarrow tZ [x10]","l");
 
    ci = TColor::GetColor("#00cc00");
    entry->SetLineColor(ci);
-   entry->SetLineStyle(1);
+   entry->SetLineStyle(2);
    entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
-   entry=leg->AddEntry("histo_signal3","Signal3","l");
+   entry=leg->AddEntry("histo_signal3","T (1.8TeV) #rightarrow tZ [x10]","l");
 
    ci = TColor::GetColor("#009900");
    entry->SetLineColor(ci);
-   entry->SetLineStyle(1);
+   entry->SetLineStyle(3);
    entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
    leg->Draw();
-      tex = new TLatex(0.15,0.83,"Signal Region");
+      tex = new TLatex(0.15,0.83,"MixSRatleast1fjets");
    tex->SetNDC();
    tex->SetTextFont(52);
    tex->SetTextSize(0.06);
@@ -354,10 +350,10 @@ void stack_example()
    histo_tt_stack_1->SetBinContent(20,14);
    histo_tt_stack_1->SetEntries(800);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetFillColor(ci);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetLineColor(ci);
    histo_tt_stack_1->GetXaxis()->SetLabelFont(42);
    histo_tt_stack_1->GetXaxis()->SetTitleOffset(1);
@@ -391,12 +387,8 @@ void stack_example()
    histo_qcd_stack_2->SetBinContent(19,11);
    histo_qcd_stack_2->SetBinContent(20,11);
    histo_qcd_stack_2->SetEntries(1000);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetFillColor(ci);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetLineColor(ci);
+   histo_qcd_stack_2->SetFillColor(203);
+   histo_qcd_stack_2->SetLineColor(203);
    histo_qcd_stack_2->GetXaxis()->SetLabelFont(42);
    histo_qcd_stack_2->GetXaxis()->SetTitleOffset(1);
    histo_qcd_stack_2->GetXaxis()->SetTitleFont(42);
@@ -539,10 +531,10 @@ void stack_example()
    histo_tt_stack_1->SetBinContent(20,14);
    histo_tt_stack_1->SetEntries(800);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetFillColor(ci);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetLineColor(ci);
    histo_tt_stack_1->GetXaxis()->SetLabelFont(42);
    histo_tt_stack_1->GetXaxis()->SetTitleOffset(1);
@@ -576,12 +568,8 @@ void stack_example()
    histo_qcd_stack_2->SetBinContent(19,11);
    histo_qcd_stack_2->SetBinContent(20,11);
    histo_qcd_stack_2->SetEntries(1000);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetFillColor(ci);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetLineColor(ci);
+   histo_qcd_stack_2->SetFillColor(203);
+   histo_qcd_stack_2->SetLineColor(203);
    histo_qcd_stack_2->GetXaxis()->SetLabelFont(42);
    histo_qcd_stack_2->GetXaxis()->SetTitleOffset(1);
    histo_qcd_stack_2->GetXaxis()->SetTitleFont(42);
@@ -724,10 +712,10 @@ void stack_example()
    histo_tt_stack_1->SetBinContent(20,14);
    histo_tt_stack_1->SetEntries(800);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetFillColor(ci);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetLineColor(ci);
    histo_tt_stack_1->GetXaxis()->SetLabelFont(42);
    histo_tt_stack_1->GetXaxis()->SetTitleOffset(1);
@@ -761,12 +749,8 @@ void stack_example()
    histo_qcd_stack_2->SetBinContent(19,11);
    histo_qcd_stack_2->SetBinContent(20,11);
    histo_qcd_stack_2->SetEntries(1000);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetFillColor(ci);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetLineColor(ci);
+   histo_qcd_stack_2->SetFillColor(203);
+   histo_qcd_stack_2->SetLineColor(203);
    histo_qcd_stack_2->GetXaxis()->SetLabelFont(42);
    histo_qcd_stack_2->GetXaxis()->SetTitleOffset(1);
    histo_qcd_stack_2->GetXaxis()->SetTitleFont(42);
@@ -909,10 +893,10 @@ void stack_example()
    histo_tt_stack_1->SetBinContent(20,14);
    histo_tt_stack_1->SetEntries(800);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetFillColor(ci);
 
-   ci = TColor::GetColor("#bd1f01");
+   ci = TColor::GetColor("#e42536");
    histo_tt_stack_1->SetLineColor(ci);
    histo_tt_stack_1->GetXaxis()->SetLabelFont(42);
    histo_tt_stack_1->GetXaxis()->SetTitleOffset(1);
@@ -946,12 +930,8 @@ void stack_example()
    histo_qcd_stack_2->SetBinContent(19,11);
    histo_qcd_stack_2->SetBinContent(20,11);
    histo_qcd_stack_2->SetEntries(1000);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetFillColor(ci);
-
-   ci = TColor::GetColor("#fdf7db");
-   histo_qcd_stack_2->SetLineColor(ci);
+   histo_qcd_stack_2->SetFillColor(203);
+   histo_qcd_stack_2->SetLineColor(203);
    histo_qcd_stack_2->GetXaxis()->SetLabelFont(42);
    histo_qcd_stack_2->GetXaxis()->SetTitleOffset(1);
    histo_qcd_stack_2->GetXaxis()->SetTitleFont(42);
@@ -1154,6 +1134,26 @@ void stack_example()
    histo_signal1__7->SetBinContent(18,4);
    histo_signal1__7->SetBinContent(19,3);
    histo_signal1__7->SetBinContent(20,5);
+   histo_signal1__7->SetBinError(1,8.774964);
+   histo_signal1__7->SetBinError(2,7.071068);
+   histo_signal1__7->SetBinError(3,7);
+   histo_signal1__7->SetBinError(4,6.480741);
+   histo_signal1__7->SetBinError(5,6.164414);
+   histo_signal1__7->SetBinError(6,5.09902);
+   histo_signal1__7->SetBinError(7,4.123106);
+   histo_signal1__7->SetBinError(8,4.795832);
+   histo_signal1__7->SetBinError(9,3.741657);
+   histo_signal1__7->SetBinError(10,4.123106);
+   histo_signal1__7->SetBinError(11,2.236068);
+   histo_signal1__7->SetBinError(12,3.162278);
+   histo_signal1__7->SetBinError(13,2.645751);
+   histo_signal1__7->SetBinError(14,2.236068);
+   histo_signal1__7->SetBinError(15,1.732051);
+   histo_signal1__7->SetBinError(16,1.414214);
+   histo_signal1__7->SetBinError(17,1.732051);
+   histo_signal1__7->SetBinError(18,2);
+   histo_signal1__7->SetBinError(19,1.732051);
+   histo_signal1__7->SetBinError(20,2.236068);
    histo_signal1__7->SetEntries(400);
 
    ci = TColor::GetColor("#cccc00");
@@ -1196,6 +1196,26 @@ void stack_example()
    histo_signal2__8->SetBinContent(18,3);
    histo_signal2__8->SetBinContent(19,3);
    histo_signal2__8->SetBinContent(20,1);
+   histo_signal2__8->SetBinError(1,9.055385);
+   histo_signal2__8->SetBinError(2,7.141428);
+   histo_signal2__8->SetBinError(3,7.071068);
+   histo_signal2__8->SetBinError(4,6.082763);
+   histo_signal2__8->SetBinError(5,5.830952);
+   histo_signal2__8->SetBinError(6,5.477226);
+   histo_signal2__8->SetBinError(7,4);
+   histo_signal2__8->SetBinError(8,4.242641);
+   histo_signal2__8->SetBinError(9,3.741657);
+   histo_signal2__8->SetBinError(10,4.242641);
+   histo_signal2__8->SetBinError(11,3.162278);
+   histo_signal2__8->SetBinError(12,2.44949);
+   histo_signal2__8->SetBinError(13,2.828427);
+   histo_signal2__8->SetBinError(14,3);
+   histo_signal2__8->SetBinError(15,2.236068);
+   histo_signal2__8->SetBinError(16,1.732051);
+   histo_signal2__8->SetBinError(17,1.414214);
+   histo_signal2__8->SetBinError(18,1.732051);
+   histo_signal2__8->SetBinError(19,1.732051);
+   histo_signal2__8->SetBinError(20,1);
    histo_signal2__8->SetEntries(400);
 
    ci = TColor::GetColor("#cccc00");
@@ -1204,6 +1224,7 @@ void stack_example()
 
    ci = TColor::GetColor("#00cc00");
    histo_signal2__8->SetLineColor(ci);
+   histo_signal2__8->SetLineStyle(2);
    histo_signal2__8->SetLineWidth(2);
    histo_signal2__8->SetMarkerStyle(20);
    histo_signal2__8->SetMarkerSize(0);
@@ -1237,6 +1258,25 @@ void stack_example()
    histo_signal3__9->SetBinContent(17,3);
    histo_signal3__9->SetBinContent(18,2);
    histo_signal3__9->SetBinContent(20,4);
+   histo_signal3__9->SetBinError(1,8.944272);
+   histo_signal3__9->SetBinError(2,8.3666);
+   histo_signal3__9->SetBinError(3,6.480741);
+   histo_signal3__9->SetBinError(4,6.164414);
+   histo_signal3__9->SetBinError(5,6.244998);
+   histo_signal3__9->SetBinError(6,4.795832);
+   histo_signal3__9->SetBinError(7,4.472136);
+   histo_signal3__9->SetBinError(8,4.123106);
+   histo_signal3__9->SetBinError(9,3.464102);
+   histo_signal3__9->SetBinError(10,4.123106);
+   histo_signal3__9->SetBinError(11,2.44949);
+   histo_signal3__9->SetBinError(12,2.236068);
+   histo_signal3__9->SetBinError(13,2.828427);
+   histo_signal3__9->SetBinError(14,2.236068);
+   histo_signal3__9->SetBinError(15,2.236068);
+   histo_signal3__9->SetBinError(16,2);
+   histo_signal3__9->SetBinError(17,1.732051);
+   histo_signal3__9->SetBinError(18,1.414214);
+   histo_signal3__9->SetBinError(20,2);
    histo_signal3__9->SetEntries(400);
 
    ci = TColor::GetColor("#cccc00");
@@ -1245,6 +1285,7 @@ void stack_example()
 
    ci = TColor::GetColor("#009900");
    histo_signal3__9->SetLineColor(ci);
+   histo_signal3__9->SetLineStyle(3);
    histo_signal3__9->SetLineWidth(2);
    histo_signal3__9->SetMarkerStyle(20);
    histo_signal3__9->SetMarkerSize(0);

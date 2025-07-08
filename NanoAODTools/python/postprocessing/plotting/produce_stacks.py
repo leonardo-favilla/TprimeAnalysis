@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import ROOT
 import os
 import sys
@@ -20,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2023postBPix"            # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2023postBPix"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":         59.97,
@@ -44,18 +45,15 @@ folder_dict     = {
                     # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
                 }
 folder_www_dict = {
-                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_cmsstyle/",
-                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
+                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
 
-                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_cmsstyle/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
+                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
-
                 }
 datasets_dict   = {
                     "2022":
@@ -112,13 +110,21 @@ json_file_dict  = {
                 }
 
 
-colors_bkg          = ["#bd1f01", "#fdf7db", "#86c8dd", "#caeba5"]
+colors_bkg          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict  = {
-                        "TprimeToTZ_700":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0},
-                        "TprimeToTZ_1000":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0},
-                        "TprimeToTZ_1800":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0},
+                        "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                        "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                        "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
                     }
-
+labels_dict         = {
+                        "TT":               "t#bar{t}",
+                        "QCD":              "QCD",
+                        "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
+                        "WJets":            "W (#it{l}#nu) + Jets",
+                        "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
+                        "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
+                        "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
+                    }
 
 
 
@@ -227,10 +233,10 @@ for v in vars:
         ROOT.TH1.SetDefaultSumw2()
 
         histo_bkg_dict      = {
-                                "TT":           None,
-                                "QCD":          None,
-                                "ZJetsToNuNu":  None,
-                                "WJets":        None
+                                "t#bar{t}":                 None,
+                                "QCD":                      None,
+                                "Z (#nu#nu) + Jets":        None,
+                                "W (#it{l}#nu) + Jets":     None
                             }
         histo_data          = None
         histo_signals_dict  = {}
@@ -246,7 +252,9 @@ for v in vars:
             else:
                 continue
             # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(v._name+"_"+r+"_"+"nominal")
-            histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
+            # histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
+            leg_label                   = labels_dict["_".join(s.label.split("_")[:2])]
+            histo_signals_dict[leg_label] = copy.deepcopy(tmp)
 
 
         ##### Normalize Backgrounds (Lumi) ######
@@ -260,10 +268,11 @@ for v in vars:
                 continue
 
             process                     = s.process.split("_")[0]
-            if histo_bkg_dict[process] is None:
-                histo_bkg_dict[process] = copy.deepcopy(tmp)
+            leg_label                   = labels_dict[process]
+            if histo_bkg_dict[leg_label] is None:
+                histo_bkg_dict[leg_label] = copy.deepcopy(tmp)
             else:
-                histo_bkg_dict[process].Add(copy.deepcopy(tmp))
+                histo_bkg_dict[leg_label].Add(copy.deepcopy(tmp))
             
         ##### Data #####
         if (not blind) and not ("SR" in r):

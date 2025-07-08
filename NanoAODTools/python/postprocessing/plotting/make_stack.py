@@ -34,16 +34,18 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
                             iPos=iPos,
                         )
     ################## PAD1 ##################
-    pad1    = dicanv.cd(1)
-    # hup     = CMS.GetcmsCanvasHist(pad1)
+    pad1                = dicanv.cd(1)
+    # hup                 = CMS.GetcmsCanvasHist(pad1)
     # hup.Draw("hist")
+    signals_factor      = 10
     if logy:
         pad1.SetLogy()
         pad1.Update()
+        signals_factor  = 1
 
-    leg     = CMS.cmsLeg(0.45, 0.88, 0.9, 0.67, textSize=0.025, columns=3)
+    leg                 = CMS.cmsLeg(0.4, 0.88, 0.9, 0.67, textSize=0.025, columns=3)
     if region:
-        latex   = ROOT.TLatex()
+        latex           = ROOT.TLatex()
         latex.SetTextFont(52)
         latex.SetTextSize(0.06)
         latex.DrawLatexNDC(0.15, 0.83, f"{region}")
@@ -66,7 +68,10 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
     ##### Set graphics style for Signals #####
     if histo_signals_dict is not None:
         for label, histo_signal in histo_signals_dict.items():
+            histo_signal.Scale(signals_factor)
             CMS.cmsDraw(histo_signal, **style_signals_dict[label])
+            if signals_factor != 1:
+                label = f"{label} [x{signals_factor}]"
             leg.AddEntry(histo_signal, label, "l")
 
     pad1.RedrawAxis()
@@ -159,28 +164,32 @@ if __name__ == "__main__":
     expo_signal1    = ROOT.TF1("expo_signal1", "expo", 0, 100)
     expo_signal1.SetParameters(1, -0.04)
     histo_signal1.FillRandom("expo_signal1", 400)
+    histo_signal1.Scale(0.1)
 
     histo_signal2   = ROOT.TH1F("histo_signal2", "Signal Histogram 2", 20, 0, 100)
     expo_signal2    = ROOT.TF1("expo_signal2", "expo", 0, 100)
     expo_signal2.SetParameters(1.2, -0.04)
     histo_signal2.FillRandom("expo_signal2", 400)
+    histo_signal2.Scale(0.1)
 
     histo_signal3   = ROOT.TH1F("histo_signal3", "Signal Histogram 3", 20, 0, 100)
     expo_signal3    = ROOT.TF1("expo_signal3", "expo", 0, 100)
     expo_signal3.SetParameters(1.2, -0.04)
     histo_signal3.FillRandom("expo_signal3", 400)
+    histo_signal3.Scale(0.1)
 
 
     histo_signals_dict = {
-                            "Signal1": histo_signal1,
-                            "Signal2": histo_signal2,
-                            "Signal3": histo_signal3,
+                            "T (0.7TeV) #rightarrow tZ": histo_signal1,
+                            "T (1.0TeV) #rightarrow tZ": histo_signal2,
+                            "T (1.8TeV) #rightarrow tZ": histo_signal3,
                         }
     style_signals_dict  = {
-                            "Signal1":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0},
-                            "Signal2":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0},
-                            "Signal3":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0},
+                            "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                            "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                            "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
                         }
+
 
 
 
@@ -204,21 +213,23 @@ if __name__ == "__main__":
     lumi            = 5  # in fb^-1
     extraSpace      = 0.1
     iPos            = 0  # Position of the legend (0: top-right, 1: top-left, etc.)
-    region          = "Signal Region"
+    region          = "MixSRatleast1fjets"
     histo_bkg_dict  = {
-                        "TT": histo_tt,
-                        "QCD": histo_qcd,
-                        "ZJets": histo_zjets,
-                        "WJets": histo_wjets,
+                        "t#bar{t}":                 histo_tt,
+                        "QCD":                      histo_qcd,
+                        "Z (#nu#nu) + Jets":        histo_zjets,
+                        "W (#it{l}#nu) + Jets":     histo_wjets,
                         }
 
-    colors_bkg      = ["#bd1f01", "#fdf7db", "#86c8dd", "#caeba5"]
+    colors_bkg      = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
 
     dicanv = make_stack_with_ratio(
                                     canv_name               = canv_name,
                                     histo_bkg_dict          = histo_bkg_dict,
                                     histo_data              = histo_data,
+                                    # histo_data              = None,
                                     histo_signals_dict      = histo_signals_dict,
+                                    # histo_signals_dict      = None,
                                     region                  = region,
                                     xMin                    = xMin,
                                     xMax                    = xMax,
