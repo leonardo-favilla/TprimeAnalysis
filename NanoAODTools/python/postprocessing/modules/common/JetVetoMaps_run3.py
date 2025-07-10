@@ -7,17 +7,27 @@ from correctionlib import _core
 
 
 class JetVetoMaps_run3(Module):
-    def __init__(self, year, EE): # eratag from https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME?ref_type=heads
-        if year == 2022 and not EE:
-            eratag = "2022_Summer22"
-        elif EE:
-            eratag = "2022_Summer22EE"
+    def __init__(self, year, EE): # eratag from https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME?ref_type=heads , command to check the json file: correction summary /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/eratag/jetvetomaps.json.gz
+        if year == 2022:
+            if EE:
+                eratag          = "2022_Summer22EE"
+                self.map_name   = "Summer22EE_23Sep2023_RunEFG_V1"
+            else:
+                eratag          = "2022_Summer22"
+                self.map_name   = "Summer22_23Sep2023_RunCD_V1"
+        elif year == 2023:
+            if EE:
+                eratag          = "2023_Summer23BPix"
+                self.map_name   = "Summer23BPixPrompt23_RunD_V1"
+            else:
+                eratag          = "2023_Summer23"
+                self.map_name   = "Summer23Prompt23_RunC_V1"
+        else:
+            print("Please specify the correct era tag for the JetVetoMaps. Possible choices are 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
+            print("Alternativly, find the era in the json file and modify JetVetoMaps.py accordingly.")
+                
         self.jsonfile = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/"+eratag+"/jetvetomaps.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
-        if(year == 2022 and EE):
-            self.map_name = "Summer22EE_23Sep2023_RunEFG_V1"
-        elif(year == 2022 and not EE):
-            self.map_name = "Summer22_23Sep2023_RunCD_V1"
         self.vetomap = self.evaluator[self.map_name]
         pass
 
@@ -34,7 +44,7 @@ class JetVetoMaps_run3(Module):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         jets   = Collection(event, "Jet")       
         muons  = Collection(event, "Muon")
-        jetSel = list(filter(lambda x: x.pt > 15 and x.jetId>=2  and list(closest(x, muons))[1]<0.2 , jets))
+        jetSel = list(filter(lambda x: x.pt > 15 and x.jetId>=2 and list(closest(x, muons))[1]<0.2 , jets))
         # print("vetomap, ", jets[0].pt)
         flag = 0
         for j in jetSel:

@@ -1,0 +1,14 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/l/lfavilla/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "nextweek"
++JobTag                 = "WJets_2jets2J_2023_syst_no_nloewcorrection"
+executable              = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/WJets_2jets2J_2023_syst_no_nloewcorrection/runner.sh
+arguments               = 
+output                  = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/WJets_2jets2J_2023_syst_no_nloewcorrection/condor/output/postSelector_WJets_2jets2J_2023.out
+error                   = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/WJets_2jets2J_2023_syst_no_nloewcorrection/condor/error/postSelector_WJets_2jets2J_2023.err
+log                     = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/WJets_2jets2J_2023_syst_no_nloewcorrection/condor/log/postSelector_WJets_2jets2J_2023.log
+queue

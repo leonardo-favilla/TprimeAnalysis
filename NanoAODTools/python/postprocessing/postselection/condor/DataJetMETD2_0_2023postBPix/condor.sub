@@ -1,0 +1,14 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/l/lfavilla/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "nextweek"
++JobTag                 = "DataJetMETD2_0_2023postBPix"
+executable              = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/DataJetMETD2_0_2023postBPix/runner.sh
+arguments               = 
+output                  = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/DataJetMETD2_0_2023postBPix/condor/output/postSelector_DataJetMETD2_0_2023postBPix.out
+error                   = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/DataJetMETD2_0_2023postBPix/condor/error/postSelector_DataJetMETD2_0_2023postBPix.err
+log                     = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/DataJetMETD2_0_2023postBPix/condor/log/postSelector_DataJetMETD2_0_2023postBPix.log
+queue

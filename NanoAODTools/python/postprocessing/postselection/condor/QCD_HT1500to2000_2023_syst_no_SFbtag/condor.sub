@@ -1,0 +1,14 @@
+Proxy_filename          = x509up
+Proxy_path              = /afs/cern.ch/user/l/lfavilla/private/$(Proxy_filename)
+universe                = vanilla
+x509userproxy           = $(Proxy_path)
+use_x509userproxy       = true
+transfer_input_files    = $(Proxy_path)
++JobFlavour             = "nextweek"
++JobTag                 = "QCD_HT1500to2000_2023_syst_no_SFbtag"
+executable              = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/QCD_HT1500to2000_2023_syst_no_SFbtag/runner.sh
+arguments               = 
+output                  = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/QCD_HT1500to2000_2023_syst_no_SFbtag/condor/output/postSelector_QCD_HT1500to2000_2023.out
+error                   = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/QCD_HT1500to2000_2023_syst_no_SFbtag/condor/error/postSelector_QCD_HT1500to2000_2023.err
+log                     = /afs/cern.ch/user/l/lfavilla/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/QCD_HT1500to2000_2023_syst_no_SFbtag/condor/log/postSelector_QCD_HT1500to2000_2023.log
+queue

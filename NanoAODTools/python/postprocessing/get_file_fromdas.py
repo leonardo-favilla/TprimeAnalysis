@@ -4,14 +4,7 @@ from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 def get_files_string(dataset):
     username = str(os.environ.get('USER'))
     inituser = str(os.environ.get('USER')[0])
-    if username == 'adeiorio':
-        uid = 103214
-    elif username == 'acagnott':
-        uid = 140541
-    elif username == 'lfavilla':
-        uid = 159320
-    elif username == 'bargient':
-    uid = 163926
+    uid      = int(os.getuid())
     if not hasattr(dataset, "dataset"): 
         return "ERROR: a sample with dataset method is required"
     else:
