@@ -21,10 +21,15 @@ using rvec_i = const RVec<int> &;
 using rvec_b = const RVec<bool> &;
 using rvec_rvec_i = const RVec<RVec<int>> &;
 
-const float TopRes_trs=  0.5411276;
-const float TopMix_trs=  0.7584613561630249;
-const float TopMer_trs=  0.8;//0.94; 0.8 for 2022 correspond to fpr 6% on ttbar
+const float TopRes_trs_5fpr=  0.29475874; // tight
+const float TopMix_trs_5fpr=  0.8474694490432739; // tight
+const float TopRes_trs_10fpr=  0.1422998; // loose
+const float TopMix_trs_10fpr=  0.7214655876159668; // loose
+const float TopMer_trs_loose=  0.8;//0.94; 0.8 for 2022 correspond to fpr 6% on ttbar
+const float TopMer_trs_tight=  0.9;//0.94; 0.8 for 2022 correspond to fpr 6% on ttbar
 const float dR=  0.8;
+//  Top Resolved threshold 2022 training { 'fpr 10': 0.1422998, 'fpr 5': 0.29475874, 'fpr 1': 0.59264845, 'fpr 01': 0.86580896}
+//  Top Mixed threshold 2022 training {"10%": {"thr": 0.7214655876159668,},"5%": {"thr": 0.8474694490432739,},"1%": {"thr": 0.9436638951301575,},"0.1%": {"thr": 0.9789741635322571,}}
 
 const float btagDeepB_mediumWP_2018         = 0.2783;
 const float btagPNet_mediumWP_2022          = 0.245 ;
@@ -38,8 +43,6 @@ const float btagPNet_looseWP_2022EE         = 0.0499;
 const float btagPNet_looseWP_2023           = 0.0358;
 const float btagPNet_looseWP_2023postBPix   = 0.0359;
 
-//  Top Resolved threshold {'fpr 10': 0.1334565, 'fpr 5': 0.24193972, 'fpr 1': 0.5411276, 'fpr 01': 0.77197933}
-//  Top Mixed threshold {'fpr 10': 0.13067308068275452, 'fpr 5': 0.2957885265350342, 'fpr 1': 0.7584613561630249, 'fpr 01': 0.9129540324211121}
 
 // ########################################################
 bool isMC(int SampleFlag){
@@ -813,7 +816,7 @@ RVec<int> select_TopMer(rvec_f FatJet_particleNet_TvsQCD, rvec_i GoodFatJet_idx)
   RVec<int> ids;
   for (int i = 0; i < GoodFatJet_idx.size(); i++)
   {
-    if(FatJet_particleNet_TvsQCD[GoodFatJet_idx[i]]>TopMer_trs){
+    if(FatJet_particleNet_TvsQCD[GoodFatJet_idx[i]]>TopMer_trs_tight){
       ids.emplace_back(GoodFatJet_idx[i]);
     }
   }
@@ -880,7 +883,7 @@ RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rve
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopMixed_idxJet1[i]) != GoodJet_idx.end() &&
         (std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopMixed_idxJet2[i]) != GoodJet_idx.end() || TopMixed_idxJet2[i] == -1) &&
         (std::find(GoodFatJet_idx.begin(), GoodFatJet_idx.end(), TopMixed_idxFatJet[i]) != GoodFatJet_idx.end() || TopMixed_idxFatJet[i] == -1)
-        && TopMixed_TopScore[i] > TopMix_trs)
+        && TopMixed_TopScore[i] > TopMix_trs_5fpr)
     {
       ids.emplace_back(i);
       scores.emplace_back(TopMixed_TopScore[i]);
@@ -923,7 +926,7 @@ RVec<int> select_TopRes(rvec_f TopResolved_TopScore, rvec_f TopResolved_idxJet0,
   RVec<int> ids_selected;
   for (int i = 0; i < TopResolved_TopScore.size(); i++)
   {
-	  if(TopResolved_TopScore[i]>TopRes_trs && 
+	  if(TopResolved_TopScore[i]>TopRes_trs_5fpr && 
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet0[i]) != GoodJet_idx.end() &&
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet1[i]) != GoodJet_idx.end() &&
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet2[i]) != GoodJet_idx.end())
@@ -1251,7 +1254,7 @@ RVec<int> RecoTaggedTopClusterMixed(rvec_rvec_i topcluster, rvec_i TopMixed_TopS
     int flag = 0;
     for(int j = 0; j < topcluster[i].size(); j++)
     {
-      if (TopMixed_TopScore[topcluster[i][j]] >= TopMix_trs)
+      if (TopMixed_TopScore[topcluster[i][j]] >= TopMix_trs_5fpr)
       {
         flag =1;
       }
@@ -1271,7 +1274,7 @@ RVec<int> RecoTaggedTopClusterResolved(rvec_rvec_i topcluster, rvec_i TopResolve
     int flag = 0;
     for(int j = 0; j < topcluster[i].size(); j++)
     {
-      if (TopResolved_TopScore[topcluster[i][j]] >= TopRes_trs)
+      if (TopResolved_TopScore[topcluster[i][j]] >= TopRes_trs_5fpr)
       {
         flag =1;
       }

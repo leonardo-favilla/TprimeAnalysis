@@ -14,8 +14,8 @@ sys.path.append('../')
 username = str(os.environ.get('USER'))
 inituser = str(os.environ.get('USER')[0])
 uid      = int(os.getuid())
-workdir  = "user" if "user" in os.environ.get('PWD') else "work"
-
+# workdir  = "user" if "user" in os.environ.get('PWD') else "work"
+WorkDir  = os.environ["PWD"]
 
 usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --nfiles_max <nfiles_max>'
 parser                  = optparse.OptionParser(usage)
@@ -64,7 +64,7 @@ branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT",
            }
 
 #### LOAD utils/postselection.h ####
-text_file = open("/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/postselection.h", "r")
+text_file = open(WorkDir+"/postselection.h", "r")
 data      = text_file.read()
 def my_initialization_function():
     print(ROOT.gInterpreter.ProcessLine(".O"))
