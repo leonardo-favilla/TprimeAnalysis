@@ -210,6 +210,9 @@ def trigger_filter(df, data, isMC):
 
 ############### top selection ########################
 def select_top(df, isMC):
+    # QUA da definire goodtopXX_idx --> per loose, tight e loossebutnottight
+    # pensare a passare i wp da qua e non metterli nell'header file così è più comodo
+
     # return indices of the FatJet with particleNet score over the thresholds 
     df_goodtopMer = df.Define("GoodTopMer_idx", "select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx)")
     # return indices of the TopMixed over the threshold with any object in common
