@@ -7,7 +7,7 @@ __init__.py
 __pycache__/
 *.pyc
 .vscode/
-condor/*.cc
+*.cc
 NanoAODTools/python/postprocessing/TopMassResolution.py
 NanoAODTools/python/postprocessing/TopMisId.py
 NanoAODTools/python/postprocessing/TopMixedScoreDistr.pdf
