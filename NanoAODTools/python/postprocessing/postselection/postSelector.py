@@ -64,7 +64,7 @@ branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT",
            }
 
 #### LOAD utils/postselection.h ####
-text_file = open("/afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/postselection.h", "r")
+text_file = open("/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/postselection.h", "r")
 data      = text_file.read()
 def my_initialization_function():
     print(ROOT.gInterpreter.ProcessLine(".O"))
