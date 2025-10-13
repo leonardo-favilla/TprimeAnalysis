@@ -50,6 +50,16 @@ bool isMC(int SampleFlag){
   else return true;
 }
 
+RVec<int> SubtractIntVectors(rvec_i vec1, rvec_i vec2) {
+  RVec<int> result;
+  for (auto v : vec1) {
+    if (std::find(vec2.begin(), vec2.end(), v) == vec2.end()) {
+      result.emplace_back(v);
+    }
+  }
+  return result;
+}
+
 // ############### from skimtree_utils
 
 float deltaPhi (float phi1, float phi2){
@@ -811,12 +821,12 @@ RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, bo
 // ########################################################
 
 // Top Merged, FatJet over threshold of particleNet_TvsQCD
-RVec<int> select_TopMer(rvec_f FatJet_particleNet_TvsQCD, rvec_i GoodFatJet_idx)
+RVec<int> select_TopMer(rvec_f FatJet_particleNet_TvsQCD, rvec_i GoodFatJet_idx, float wp)
 {
   RVec<int> ids;
   for (int i = 0; i < GoodFatJet_idx.size(); i++)
   {
-    if(FatJet_particleNet_TvsQCD[GoodFatJet_idx[i]]>TopMer_trs_tight){
+    if(FatJet_particleNet_TvsQCD[GoodFatJet_idx[i]]>wp){
       ids.emplace_back(GoodFatJet_idx[i]);
     }
   }
@@ -871,7 +881,7 @@ bool check_same_top_type2(int idx_fj_1, int idx_j0_1, int idx_j1_1, int idx_j2_1
 }
 
 // Top Mixed, candidates over threshold of TopScore and candidates not overlapping (do not share any abject)
-RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rvec_f TopMixed_idxJet0, rvec_f TopMixed_idxJet1, rvec_f TopMixed_idxJet2, rvec_i GoodJet_idx, rvec_i GoodFatJet_idx)
+RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rvec_f TopMixed_idxJet0, rvec_f TopMixed_idxJet1, rvec_f TopMixed_idxJet2, rvec_i GoodJet_idx, rvec_i GoodFatJet_idx, float wp)
 {
   RVec<int> ids;
   RVec<float> scores;
@@ -883,7 +893,7 @@ RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rve
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopMixed_idxJet1[i]) != GoodJet_idx.end() &&
         (std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopMixed_idxJet2[i]) != GoodJet_idx.end() || TopMixed_idxJet2[i] == -1) &&
         (std::find(GoodFatJet_idx.begin(), GoodFatJet_idx.end(), TopMixed_idxFatJet[i]) != GoodFatJet_idx.end() || TopMixed_idxFatJet[i] == -1)
-        && TopMixed_TopScore[i] > TopMix_trs_5fpr)
+        && TopMixed_TopScore[i] > wp)
     {
       ids.emplace_back(i);
       scores.emplace_back(TopMixed_TopScore[i]);
@@ -919,14 +929,14 @@ RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rve
   return ids_selected;
 }
 
-RVec<int> select_TopRes(rvec_f TopResolved_TopScore, rvec_f TopResolved_idxJet0, rvec_f TopResolved_idxJet1, rvec_f TopResolved_idxJet2, rvec_i GoodJet_idx)
+RVec<int> select_TopRes(rvec_f TopResolved_TopScore, rvec_f TopResolved_idxJet0, rvec_f TopResolved_idxJet1, rvec_f TopResolved_idxJet2, rvec_i GoodJet_idx, float wp)
 {
   RVec<int> ids;
   RVec<float> scores;
   RVec<int> ids_selected;
   for (int i = 0; i < TopResolved_TopScore.size(); i++)
   {
-	  if(TopResolved_TopScore[i]>TopRes_trs_5fpr && 
+	  if(TopResolved_TopScore[i]>wp && 
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet0[i]) != GoodJet_idx.end() &&
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet1[i]) != GoodJet_idx.end() &&
         std::find(GoodJet_idx.begin(), GoodJet_idx.end(), TopResolved_idxJet2[i]) != GoodJet_idx.end())
@@ -970,34 +980,36 @@ Int_t nTop(rvec_i ids)
   return ids.size();
 }
 
-Int_t select_TopCategory(rvec_i GoodTopMer_idx, rvec_i GoodTopMix_idx, rvec_i GoodTopRes_idx)
+Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i TightTopRes_idx, rvec_i LooseNotTightTopMer_idx, rvec_i LooseNotTightTopMix_idx, rvec_i LooseNotTightTopRes_idx)
 {
   //return:  1- Event Resolved, 2- Event Mixed, 3- Event Merged, 4- Event Nothing, ...
 
-  int nRes = GoodTopRes_idx.size();
-  int nMix = GoodTopMix_idx.size();
-  int nMer = GoodTopMer_idx.size();
-  
-  if (nRes==1 && nMix==0 && nMer==0){
+  int nTightRes = TightTopRes_idx.size();
+  int nTightMix = TightTopMix_idx.size();
+  int nTightMer = TightTopMer_idx.size();
+  int nLooseRes = LooseNotTightTopRes_idx.size();
+  int nLooseMix = LooseNotTightTopMix_idx.size();
+  int nLooseMer = LooseNotTightTopMer_idx.size();
+
+  // SRs with top tight 
+  if (nTightRes==1 && nTightMix==0 && nTightMer==0){
     return 1;
   }
-  else if (nRes<=1 && nMix==1 && nMer==0){
+  else if (nTightRes<=1 && nTightMix==1 && nTightMer==0){
     return 2;
   }
-  else if (nRes==0 && nMix<=1 && nMer==1){
+  else if (nTightRes==0 && nTightMix<=1 && nTightMer==1){
     return 3;
   }
-  // else return 4;
-  else if (nMer>=1)
-  {
-     return 4;
+
+  // da qua vanno sviluppate le CR quindi vanno definite 4,5,6 dove si chiedono 0 top tight ma ne esistono di loose 
+  else if (nLooseRes==1 && nLooseMix==0 && nLooseMer==0){
+    return 4;
   }
-  else if (nMix>=1) 
-  {
+  else if (nLooseRes<=1 && nLooseMix==1 && nLooseMer==0){
     return 5;
   }
-  else if (nRes>=1) 
-  {
+  else if (nLooseRes==0 && nLooseMix<=1 && nLooseMer==1){
     return 6;
   }
   else 
