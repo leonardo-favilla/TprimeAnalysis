@@ -14,7 +14,7 @@ def get_files_string(dataset):
             
         os.popen("export XRD_NETWORKSTACK=IPv4")
         command = 'dasgoclient -query="file dataset='+dataset.dataset#+'"'
-        if "Zprime" in dataset.label: 
+        if ("Zprime" in dataset.label) or ("tDM" in dataset.label) or ("Tprime" in dataset.label) or ("TprimeToTZ" in dataset.label): 
             command += ' instance=prod/phys03"'
             print(command)
         else:
