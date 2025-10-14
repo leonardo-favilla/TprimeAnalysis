@@ -10,23 +10,29 @@ class JetVetoMaps_run3(Module):
     def __init__(self, year, EE): # eratag from https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME?ref_type=heads , command to check the json file: correction summary /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/eratag/jetvetomaps.json.gz
         if year == 2022:
             if EE:
-                eratag          = "2022_Summer22EE"
+                eratag          = "Run3-22EFGSep23-Summer22EE-NanoAODv12"
+                self.CorrVersion= "2025-10-07"
                 self.map_name   = "Summer22EE_23Sep2023_RunEFG_V1"
             else:
-                eratag          = "2022_Summer22"
+                eratag          = "Run3-22CDSep23-Summer22-NanoAODv12"
+                self.CorrVersion = "2024-09-23"
                 self.map_name   = "Summer22_23Sep2023_RunCD_V1"
         elif year == 2023:
             if EE:
-                eratag          = "2023_Summer23BPix"
+                eratag          = "Run3-23DSep23-Summer23BPix-NanoAODv12"
                 self.map_name   = "Summer23BPixPrompt23_RunD_V1"
             else:
-                eratag          = "2023_Summer23"
+                eratag          = "Run3-23CSep23-Summer23-NanoAODv12"
                 self.map_name   = "Summer23Prompt23_RunC_V1"
+        elif year == 2024:
+            eratag              = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15"
+            self.CorrVersion    = "2025-07-17"
+            self.map_name       = "Summer24Prompt24_RunCDE_V1"
         else:
             print("Please specify the correct era tag for the JetVetoMaps. Possible choices are 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
             print("Alternativly, find the era in the json file and modify JetVetoMaps.py accordingly.")
                 
-        self.jsonfile = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/"+eratag+"/jetvetomaps.json.gz"
+        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/"+eratag+"/"+self.CorrVersion+"/jetvetomaps.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
         self.vetomap = self.evaluator[self.map_name]
         pass

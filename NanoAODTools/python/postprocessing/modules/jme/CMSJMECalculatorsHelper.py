@@ -11,55 +11,57 @@ from CMSJMECalculators import config as calcConfigs
 
 loadJMESystematicsCalculators() # https://cms-jerc.web.cern.ch/Recommendations/
 
-cvmfsPOGpath = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/"
+cvmfsPOGpath = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/"
+
 versiontag = {
     "2018"      :   "2018_UL",
-    "2022"      :   "2022_Summer22",
-    "2022EE"    :   "2022_Summer22EE",
-    "2023"      :   "2023_Summer23",
-    "2023BPix"  :   "2023_Summer23BPix",
+    "2022"      :   "Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23",
+    "2022EE"    :   "Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07",
+    "2023"      :   "Run3-23CSep23-Summer23-NanoAODv12/2025-10-07",
+    "2023BPix"  :   "Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07",
+    "2024"      :   "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-07-17",
 }
 jestag = {
     "MC":{
         'AK8PFPuppi':{
             '2018'      : 'Summer19UL18_V5_MC',
-            '2022'      : 'Summer22_22Sep2023_V2_MC',
-            '2022EE'    : 'Summer22EE_22Sep2023_V2_MC',
-            '2023'      : 'Summer23Prompt23_V1_MC',
-            '2023BPix'  : 'Summer23BPixPrompt23_V1_MC',
+            '2022'      : 'Summer22_22Sep2023_V3_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_V3_MC',
+            '2023'      : 'Summer23Prompt23_V2_MC', 
+            '2023BPix'  : 'Summer23BPixPrompt23_V3_MC',
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_V5_MC',
-            '2022'      : 'Summer22_22Sep2023_V2_MC',
-            '2022EE'    : 'Summer22EE_22Sep2023_V2_MC',
-            '2023'      : 'Summer23Prompt23_V1_MC',
-            '2023BPix'  : 'Summer23BPixPrompt23_V1_MC', # place holder still not available 
+            '2022'      : 'Summer22_22Sep2023_V3_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_V3_MC',
+            '2023'      : 'Summer23Prompt23_V2_MC',
+            '2023BPix'  : 'Summer23BPixPrompt23_V3_MC', # place holder still not available 
         }
     },
     "DATA":{
         'AK8PFPuppi':{
             '2018'          : 'Summer19UL18_V5_DATA',
-            '2022'          : 'Summer22_22Sep2023_RunCD_V2_DATA',
-            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V2_DATA',
-            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V2_DATA',
-            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V2_DATA',
-            '2023_C1'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C2'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C3'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C4'       : 'Summer23Prompt23_RunCv4_V1_DATA',
-            '2023BPix_D'    : 'Summer23BPixPrompt23_RunD_V1_DATA', # place holder still not available
+            '2022'          : 'Summer22_22Sep2023_RunCD_V3_DATA',
+            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V3_DATA',
+            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V3_DATA',
+            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V3_DATA',
+            '2023_C1'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C2'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C3'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C4'       : 'Summer23Prompt23_V2_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_V3_DATA', # place holder still not available
         },
         'AK4PFPuppi':{
             '2018'          : 'Summer19UL18_V5_DATA',
-            '2022'          : 'Summer22_22Sep2023_RunCD_V2_DATA',
-            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V2_DATA',
-            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V2_DATA',
-            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V2_DATA',
-            '2023_C1'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C2'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C3'       : 'Summer23Prompt23_RunCv123_V1_DATA',
-            '2023_C4'       : 'Summer23Prompt23_RunCv4_V1_DATA',
-            '2023BPix_D'    : 'Summer23BPixPrompt23_RunD_V1_DATA', # place holder still not available
+            '2022'          : 'Summer22_22Sep2023_RunCD_V3_DATA',
+            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V3_DATA',
+            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V3_DATA',
+            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V3_DATA',
+            '2023_C1'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C2'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C3'       : 'Summer23Prompt23_V2_DATA',
+            '2023_C4'       : 'Summer23Prompt23_V2_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_V3_DATA', # place holder still not available
         }
     }
 }
@@ -69,8 +71,8 @@ jertag = {
             '2018'      : 'Summer19UL18_JRV2_MC',
             '2022'      : 'Summer22_22Sep2023_JRV1_MC', 
             '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC',
-            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', # Summer23Prompt23_RunCv1234_JRV1_MC, Summer23Prompt23_RunCv123_JRV1_MC , Summer23Prompt23_RunCv4_JRV1_MC
-            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC', # place holder still not available 
+            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', 
+            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC', 
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_JRV2_MC',
