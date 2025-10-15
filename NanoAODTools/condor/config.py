@@ -4,12 +4,12 @@ username        = str(os.environ.get("USER"))
 inituser        = str(os.environ.get("USER")[0])
 uid             = int(os.getuid())
 workdir         = "user" if "user" in os.environ.get('PWD') else "work"
-
+name_main_folder = "TprimeAnalysis" if "TprimeAnalysis" in os.environ.get('PWD') else "Analysis"
 
 
 
 ######## machine learning models ########
-path_to_model_folder        = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/data/dict_tresholds/"
+path_to_model_folder        = f"/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/python/postprocessing/data/dict_tresholds/"
 
 TopMixed2023                = "model_TopMixed_2022_p2.h5"
 TopMixed2022                = "model_TopMixed_2022_p2.h5"

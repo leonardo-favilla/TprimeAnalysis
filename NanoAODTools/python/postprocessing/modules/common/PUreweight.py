@@ -8,26 +8,28 @@ from correctionlib import _core
 
 class PUreweight(Module):
     def __init__(self, year, EE): # eratag from https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/LUM/2022_Summer22 , correction summary /cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/eratag/puWeights.json.gz
+        self.CorrVersion = "2024-01-31"
         if year == 2022:
             if EE:
-                eratag          = "2022_Summer22EE"
-                self.key        = "Collisions2022_359022_362760_eraEFG_GoldenJson"
+                eratag          = "Run3-22EFGSep23-Summer22EE-NanoAODv12"
+                self.key        = "Collisions2022_359022_362760_eraEFG_GoldenJson "
             else:
-                eratag          = "2022_Summer22"
+                eratag          = "Run3-22CDSep23-Summer22-NanoAODv12"
                 self.key        = "Collisions2022_355100_357900_eraBCD_GoldenJson"
         elif year == 2023:
             if EE:
-                eratag          = "2023_Summer23BPix"
+                eratag          = "Run3-23DSep23-Summer23BPix-NanoAODv12"
                 self.key        = "Collisions2023_369803_370790_eraD_GoldenJson"
             else:
-                eratag          = "2023_Summer23"
+                eratag          = "Run3-23CSep23-Summer23-NanoAODv12"
                 self.key        = "Collisions2023_366403_369802_eraBC_GoldenJson"
         else:
             print("Please specify the correct era tag for the PU weights. 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
             print("Alternativly, find the era in the json file and modify PUreweight.py accordingly.")
         
-        self.jsonfile = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/"+eratag+"/puWeights.json.gz"
+        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/"+eratag+"/"+ self.CorrVersion +"/puWeights.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
+        print("PU json file: ", self.jsonfile, self.key)
         self.puWeig = self.evaluator[self.key]
         pass
 
