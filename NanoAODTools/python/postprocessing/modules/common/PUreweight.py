@@ -12,7 +12,7 @@ class PUreweight(Module):
         if year == 2022:
             if EE:
                 eratag          = "Run3-22EFGSep23-Summer22EE-NanoAODv12"
-                self.key        = "Collisions2022_359022_362760_eraEFG_GoldenJson"
+                self.key        = "Collisions2022_359022_362760_eraEFG_GoldenJson "
             else:
                 eratag          = "Run3-22CDSep23-Summer22-NanoAODv12"
                 self.key        = "Collisions2022_355100_357900_eraBCD_GoldenJson"
@@ -27,8 +27,9 @@ class PUreweight(Module):
             print("Please specify the correct era tag for the PU weights. 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
             print("Alternativly, find the era in the json file and modify PUreweight.py accordingly.")
         
-        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22CDSep23-Summer22-NanoAODv12/"+ self.CorrVersion +"/puWeights.json.gz"
+        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/"+eratag+"/"+ self.CorrVersion +"/puWeights.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
+        print("PU json file: ", self.jsonfile, self.key)
         self.puWeig = self.evaluator[self.key]
         pass
 

@@ -53,7 +53,7 @@ class BTagSF(Module):
         else:
             print("Please specify the correct era tag for the BTag SF. 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")
             print("Alternativly, find the era in the json file and modify PUreweight.py accordingly.")
-        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/"+eratag+"/"+self.CorrVersion+"btagging.json.gz"
+        self.jsonfile = "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/"+eratag+"/"+self.CorrVersion+"/btagging.json.gz"
         self.evaluator = _core.CorrectionSet.from_file(self.jsonfile)
         self.tagger = 'particleNet_shape'
         # if(year == 2022 and "22EE" in eratag):
