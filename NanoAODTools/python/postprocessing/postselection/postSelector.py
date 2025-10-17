@@ -59,7 +59,7 @@ if not os.path.exists(repohisto):
 branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
             "Top_mass", "Top_pt", "Top_score", "Top_isolationPtJetsdR04", "Top_isolationPtJetsdR06", "Top_isolationPtJetsdR08", "Top_isolationPtJetsdR12", "Top_isolationNJetsdR04", "Top_isolationNJetsdR06", "Top_isolationNJetsdR08", "Top_isolationNJetsdR12",
             "nVetoMuon", "nVetoElectron", "nJetBtagLoose", "nJetBtagMedium", 
-            "nGoodJet", "nTightElectron", "nTightMuon", "MT", "MT_T"
+            "nGoodJet", "nTightElectron", "nTightMuon", "MT", "MT_T",
            }
 
 #### LOAD utils/postselection.h ####
@@ -130,7 +130,7 @@ for d in datasets:
     for s in samples_list:
         nfiles              = nfiles_max
         for i, string in enumerate(samples[d.label][s.label]['strings']):
-            samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
+            samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
         chain[d.label][s.label] = samples[d.label][s.label]['strings'][:nfiles]
         if not "Data" in s.label:
             ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][:nfiles])
@@ -182,6 +182,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("LeadingFatJetPt_eta", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")
     df = df.Define("LeadingFatJetPt_phi", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")
     df = df.Define("LeadingFatJetPt_mass", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_mass_nominal)")
+    df = df.Define("LeadingFatJetPt_msoftdrop", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_msoftdrop_nominal)")
     df = df.Define("LeadingMuonPt_idx", "GetLeadingPtLep(Muon_pt, Muon_eta, Muon_looseId)")
     df = df.Define("LeadingMuonPt_pt", "GetLeadingJetVar(LeadingMuonPt_idx, Muon_pt)")
     df = df.Define("LeadingMuonPt_eta", "GetLeadingJetVar(LeadingMuonPt_idx, Muon_eta)")
@@ -499,8 +500,8 @@ for d in datasets:
             df_hlt = df_hlt.Define("w_nominal", "1")
             
         if sampleflag:
-            df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
-            # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')                # no SFbtag
+            # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
+            df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')                # no SFbtag
             # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
         else:
             df_wnom = df_hlt.Redefine('w_nominal', '1')

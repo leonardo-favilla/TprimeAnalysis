@@ -21,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "Full2022_Full2023"    # "2022", "2022EE", "2023", "2023postBPix", "Full2022", "Full2023", "Full2022_Full2023"
+year_tag        = "2023"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":                 59.97,
@@ -83,6 +83,10 @@ datasets_dict   = {
                                 "QCD_2022",
                                 "ZJetsToNuNu_2jets_2022",
                                 "WJets_2jets_2022",
+                                # "tDM_mPhi50_mChi1_2022",
+                                # "tDM_mPhi200_mChi1_2022",
+                                # "tDM_mPhi500_mChi1_2022",
+                                # "tDM_mPhi1000_mChi1_2022",
                                 "TprimeToTZ_700_2022",
                                 "TprimeToTZ_1000_2022",
                                 "TprimeToTZ_1800_2022"
@@ -142,6 +146,10 @@ style_signals_dict  = {
                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
                         "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
                     }
 labels_dict         = {
                         "TT":               "t#bar{t}",
@@ -151,6 +159,10 @@ labels_dict         = {
                         "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
                         "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
                         "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
+                        "tDM_mPhi50":    "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi200":   "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi500":   "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi1000":  "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
                     }
 
 
@@ -251,6 +263,8 @@ MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000
 
 for v in vars:
     for r in regions.keys():
+        if year_tag in ["2022", "2022EE"] and ("Loose" in r):
+            continue
     # for r in ["AH"]:
         ###############################################
         ############ PreProcess Histograms ############
@@ -269,21 +283,20 @@ for v in vars:
 
 
         ##### Normalize Signals (Lumi) ######
-        for i, (fname,f,s) in enumerate(zip(inFilePath["signal"], inFile["signal"], inSample["signal"])):
-            year_tag_tmp                    = os.path.basename(fname).replace(".root","").split("_")[-1]
-            label                           = s.label
-            process                         = "_".join(s.label.split("_")[:2])
-            leg_label                       = labels_dict[process]
-            lumi_tmp                        = lumi_dict[year_tag_tmp]
-
-
-
-            # print(f"Processing Signal {label} [{process}][{year_tag_tmp}]: ", fname)
-            tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+        for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
+            # print(s.label)
+            histo_name = v._name+"_"+r+"_"+"nominal"
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                         = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
-            tmp.Scale(lumi_tmp)
-            # print("Entries in the histogram: ", tmp.GetEntries())
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
+            if len(samples[s.label][s.label]["ntot"]):
+                tmp.Scale(lumi)
+            else:
+                continue
+            # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(histo_name)
+            # histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
+            leg_label                   = labels_dict["_".join(s.label.split("_")[:2])]
+            histo_signals_dict[leg_label] = copy.deepcopy(tmp)
 
 
             if leg_label not in histo_signals_dict:
@@ -292,23 +305,17 @@ for v in vars:
                 histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
 
         ##### Normalize Backgrounds (Lumi) ######
-        for i, (fname,f,s) in enumerate(zip(inFilePath["bkg"], inFile["bkg"], inSample["bkg"])):
-            year_tag_tmp                    = os.path.basename(fname).replace(".root","").split("_")[-1]
-            lumi_tmp                        = lumi_dict[year_tag_tmp]
-            label                           = s.label
-            process                         = s.process.split("_")[0]
-            leg_label                       = labels_dict[process]
-
-
-
-            # print(f"Processing Background {label} [{process}][{year_tag_tmp}]: ", fname)
-            tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+        for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
+            print(s.label)
+            histo_name = v._name+"_"+r+"_"+"nominal"
+            print(histo_name)
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                         = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
-            tmp.Scale(lumi_tmp)
-            # print("Entries in the histogram: ", tmp.GetEntries())
-
-
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
+            if len(samples[s.label][s.label]["ntot"]):
+                tmp.Scale(lumi)
+            else:
+                continue
 
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
@@ -319,24 +326,15 @@ for v in vars:
         ##### Data #####
         if (not blind) and not ("SR" in r):
             if not v._MConly:
-                for fname,f,s in zip(inFilePath["Data"], inFile["Data"], inSample["Data"]):
-                    year_tag_tmp            = os.path.basename(fname).replace(".root","").split("_")[-1]
-                    label                   = s.label
-                    process                 = s.process.split("_")[0]
-
-
-
-                    # print(f"Processing Data {label} [{process}][{year_tag_tmp}]: ", fname)
-                    if year_tag_tmp in ["2022","2022EE"]:
-                        tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_")))
-                    else:
-                        tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
+                # print(v._name+"_"+r)
+                histo_name = v._name+"_"+r
+                if year_tag in ["2022", "2022EE"]:
+                    histo_name += "_"
+                for f, s in zip(inFile["Data"], inSample["Data"]):
+                    # print(s.label)
+                    tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
                     if v._name == "MT_T":
-                        tmp                 = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r, MT_T_xbins)
-                    # print("Entries in the histogram: ", tmp.GetEntries())
-
-
-
+                        tmp             = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
                     if histo_data is None:
                         histo_data          = copy.deepcopy(tmp)
                     else:
