@@ -24,45 +24,57 @@ blind           = False             # Set to True if you want to blind the data
 year_tag        = "2023"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
-                    "2018":         59.97,
-                    "2022":         7.87,
-                    "2022EE":       26.43,
-                    "2023":         17.794,
-                    "2023postBPix": 9.451,
+                    "2018":                 59.97,
+                    "2022":                 7.87,
+                    "2022EE":               26.43,
+                    "2023":                 17.794,
+                    "2023postBPix":         9.451,
                 }
+lumi_dict["Full2022"]          = lumi_dict["2022"] + lumi_dict["2022EE"]
+lumi_dict["Full2023"]          = lumi_dict["2023"] + lumi_dict["2023postBPix"]
+lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
+
+
 folder_dict     = {
-                    # "2022":         "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_systematics/",
-                    "2022":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst/", # temporary only for tDM
-                    "2022EE":       "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_systematics/",
+                    "2022":                     "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_systematics/",
+                    "2022EE":                   "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_systematics/",
 
-                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
-                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
-                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
-                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_puWeight/",
-                    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
+                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
+                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
+                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_puWeight/",
 
-                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
-                    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
+
+                    "Full2022":                 ".", # Placeholder
+                    "Full2023":                 ".", # Placeholder
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst/",
                 }
+
+
 folder_www_dict = {
-                    "2022":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst/",
+                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst/",
+                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst/",
 
+                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
+                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
+                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
+                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
 
-                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
-                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
-                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
-                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
-                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
+                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
 
-                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
-                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
-                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+                    "Full2022":                 "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_syst/",
+                    "Full2023":                 "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2023_syst/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst/",
                 }
+
+
 datasets_dict   = {
                     "2022":
                             [
@@ -111,14 +123,21 @@ datasets_dict   = {
                                 "TprimeToTZ_700_2023postBPix",
                                 "TprimeToTZ_1000_2023postBPix",
                                 "TprimeToTZ_1800_2023postBPix"
-                            ]
+                            ],
                 }
+datasets_dict["Full2022"]          = datasets_dict["2022"] + datasets_dict["2022EE"]
+datasets_dict["Full2023"]          = datasets_dict["2023"] + datasets_dict["2023postBPix"]
+datasets_dict["Full2022_Full2023"] = datasets_dict["Full2022"] + datasets_dict["Full2023"]
+
 json_file_dict  = {
-                    "2018":         "../samples/dict_samples.json",
-                    "2022":         "../samples/dict_samples_2022.json",
-                    "2022EE":       "../samples/dict_samples_2022.json",
-                    "2023":         "../samples/dict_samples_2023.json",
-                    "2023postBPix": "../samples/dict_samples_2023.json",
+                    "2018":                 "../samples/dict_samples.json",
+                    "2022":                 "../samples/dict_samples_2022.json",
+                    "2022EE":               "../samples/dict_samples_2022.json",
+                    "2023":                 "../samples/dict_samples_2023.json",
+                    "2023postBPix":         "../samples/dict_samples_2023.json",
+                    "Full2022":             ".", # Placeholder
+                    "Full2023":             ".", # Placeholder
+                    "Full2022_Full2023":    "../samples/dict_samples_2023.json"
                 }
 
 
@@ -157,16 +176,14 @@ run2            = False
 run3            = not run2
 folder          = folder_dict[year_tag]
 folder_www      = folder_www_dict[year_tag]
-repohisto       = folder+"plots/"
 repostack       = folder+"stacks/"
 repostack_www   = folder_www+"stacks/"
 
 if not os.path.exists(folder):
     os.mkdir(folder)
-if not os.path.exists(repohisto):
-    os.mkdir(repohisto)
 if not os.path.exists(repostack):
     os.mkdir(repostack)
+    print("Created folders 'stacks' at ", folder)
 if not os.path.exists(repostack+"/png"):
     os.mkdir(repostack+"/png")
 if not os.path.exists(repostack+"/pdf"):
@@ -179,24 +196,23 @@ if not os.path.exists(folder_www):
     os.mkdir(folder_www)
 if not os.path.exists(repostack_www):
     os.mkdir(repostack_www)
+    print("Created folder 'stacks' at ", folder_www)
 if not os.path.exists(folder_www+"index.php"):
     shutil.copy("/eos/user/l/lfavilla/www/index.php", folder_www)
 if not os.path.exists(repostack_www+"index.php"):
     shutil.copy("/eos/user/l/lfavilla/www/index.php", repostack_www)
 
 
-print("Created folders 'plots' and 'stacks' at ", folder)
-print("Created folder 'stacks' at ", folder_www)
 
 
 
 
 # Load the JSON file
-with open(json_file, "r") as file:
+with open(json_file, "r") as file:     ##### Questo non ho capito a cosa serva
     samples = json.load(file)
 
-print("Paremeters setted") 
-print("cut              = {}".format(cut))      
+print("Parameters setted")
+print("cut              = {}".format(cut))
 print("lumi (fb)        = {}".format(str(lumi)))
 print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 print("blind            = {}".format(blind))
@@ -211,34 +227,35 @@ def cut_string(cut):
 
 
 ################## MAIN CODE ##################
-inFile          = {"Data": [], "signal": [], "bkg": []}
-inSample        = {"Data": [], "signal": [], "bkg": []}
-
-cut_tag         = cut_string(cut)
+inFilePath          = {"Data": [], "signal": [], "bkg": []}
+inFile              = {"Data": [], "signal": [], "bkg": []}
+inSample            = {"Data": [], "signal": [], "bkg": []}
+cut_tag             = cut_string(cut)
 
 for dat in datasets:
-    d           = sample_dict[dat]
-    # print(repohisto + d.label + ".root")
+    year_tag        = dat.split("_")[-1]
+    folder_tmp      = folder_dict[year_tag]
+    repohisto_tmp   = folder_tmp + "plots/"
+    # repohisto_tmp   = folder_tmp + "plots_rescaled_to_lumi/"
+    d               = sample_dict[dat]
     if hasattr(d, "components"):
-        s_list  = d.components
+        s_list      = d.components
     else:
-        s_list  = [d]
+        s_list      = [d]
     for s in s_list:
         if "Data" in s.label:
-            inFile["Data"].append(ROOT.TFile.Open(repohisto + s.label + ".root"))
+            inFilePath["Data"].append(repohisto_tmp + s.label + ".root")
+            inFile["Data"].append(ROOT.TFile.Open(repohisto_tmp + s.label + ".root"))
             inSample["Data"].append(s)
         elif "tDM" in s.label or "Tp" in s.label:
-            inFile["signal"].append(ROOT.TFile.Open(repohisto + s.label + ".root"))
+            inFilePath["signal"].append(repohisto_tmp + s.label + ".root")
+            inFile["signal"].append(ROOT.TFile.Open(repohisto_tmp + s.label + ".root"))
             inSample["signal"].append(s)
         else:
-            inFile["bkg"].append(ROOT.TFile.Open(repohisto + s.label + ".root"))
+            inFilePath["bkg"].append(repohisto_tmp + s.label + ".root")
+            inFile["bkg"].append(ROOT.TFile.Open(repohisto_tmp + s.label + ".root"))
             inSample["bkg"].append(s)
 
-
-# print(inFile.keys())
-# print("Number of input files:")
-# for k in inFile.keys():
-#     print("  {}: {}".format(k, len(inFile[k])))
 
 ### rebinning for MT ###
 MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1600, 2000])
@@ -252,6 +269,7 @@ for v in vars:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
+        ###############################################
         ROOT.TH1.SetDefaultSumw2()
 
         histo_bkg_dict      = {
@@ -281,6 +299,11 @@ for v in vars:
             histo_signals_dict[leg_label] = copy.deepcopy(tmp)
 
 
+            if leg_label not in histo_signals_dict:
+                histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
+            else:
+                histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
+
         ##### Normalize Backgrounds (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             print(s.label)
@@ -294,13 +317,12 @@ for v in vars:
             else:
                 continue
 
-            process                     = s.process.split("_")[0]
-            leg_label                   = labels_dict[process]
             if histo_bkg_dict[leg_label] is None:
-                histo_bkg_dict[leg_label] = copy.deepcopy(tmp)
+                histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_bkg_dict[leg_label].Add(copy.deepcopy(tmp))
-            
+
+        
         ##### Data #####
         if (not blind) and not ("SR" in r):
             if not v._MConly:
@@ -314,10 +336,17 @@ for v in vars:
                     if v._name == "MT_T":
                         tmp             = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
                     if histo_data is None:
-                        histo_data      = copy.deepcopy(tmp)
+                        histo_data          = copy.deepcopy(tmp)
                     else:
                         histo_data.Add(copy.deepcopy(tmp))
 
+
+        # for label,h in histo_signals_dict.items():
+        #     print(f"Signal {label} has {h.GetEntries()} entries")
+        # for label,h in histo_bkg_dict.items():
+        #     print(f"Background {label} has {h.GetEntries()} entries")
+        # if histo_data is not None:
+        #     print(f"Data has {histo_data.GetEntries()} entries")
 
         ###############################
         ########## DRAW STEP ##########
@@ -325,7 +354,8 @@ for v in vars:
 
         ##### Drawing Options ######
         if "SR" in r:
-            logy = False
+            # logy = False
+            logy = True
         else:
             logy = True
 

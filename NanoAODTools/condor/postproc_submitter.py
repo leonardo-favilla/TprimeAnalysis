@@ -32,7 +32,7 @@ username = str(os.environ.get('USER'))
 inituser = str(os.environ.get('USER')[0])
 uid      = int(os.getuid())
 workdir  = "user" if "user" in os.environ.get('PWD') else "work"
-
+name_main_folder = "TprimeAnalysis" if "TprimeAnalysis" in os.environ.get('PWD') else "Analysis"
 
 if(uid == 0):
     print("Please insert your uid")
@@ -60,7 +60,7 @@ if submit:
             os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name)
         print("root://eosuser.cern.ch//eos/user/l/lfavilla/xAnimo/{} created".format(remote_folder_name))
 
-def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, year):
+def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, year, debug):
     f = open(run_folder+"/crab_script.py", "w")
     f.write("#!/usr/bin/env python3\n")
     f.write("import os\n")
@@ -109,13 +109,17 @@ def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, 
             year_tag = "\""+year+"\""
     else:
         year_tag = year
+    
+    if debug:
+        extra_str=",maxEntries=100"
+    else:
+        extra_str=""
     if isMC:
-        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/scripts/keep_and_drop.txt')\n")# haddFileName='"+sample.label+".root'
-        
+        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")# haddFileName='"+sample.label+".root'
 
-    else: 
-        f.write("p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/"+file+"'], '', modules=["+modules+"], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/scripts/keep_and_drop.txt')\n")#
-        
+    else:
+        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")#
+
     f.write("p.run()\n")
     f.write("print('DONE')\n")
     f.close()
@@ -178,7 +182,7 @@ elif dataset_to_run in sample_dict.keys():
         print("---------- Running sample: ", dataset_to_run)
         samples = [sample_dict[dataset_to_run]]
 
-running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/condor/tmp/"
+running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/Analysis/NanoAODTools/condor/tmp/"
 if not os.path.exists(running_folder):
     os.makedirs(running_folder)
 
@@ -257,10 +261,10 @@ if submit:
             print("....submitting file", i, end='\r')
             outfolder_crabscript_i = outfolder_tmp+sample.label+"/file"+str(i)+"/"
             running_subfolder_file = running_subfolder + "/file" + str(i)
+            print("Running subfolder: ", running_subfolder_file)
             if not os.path.exists(running_subfolder_file):
                 os.makedirs(running_subfolder_file)
-            print("created folder: ", running_subfolder_file)
-            write_crab_script(sample, f, modules, running_subfolder_file, calcualte_systematics, sample.year)
+            write_crab_script(sample, f, modules, running_subfolder_file, calcualte_systematics, sample.year, debug)
             runner_writer(running_subfolder_file, i, remote_folder_name, sample_folder, launchtime, outfolder_crabscript_i)
             sub_writer(running_subfolder_file, running_subfolder+"/condor", sample.label+"_file"+str(i), sample.label)
             if not debug :

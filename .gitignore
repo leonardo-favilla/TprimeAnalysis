@@ -8,6 +8,7 @@ __pycache__/
 *.pyc
 .vscode/
 *.cc
+__pycache__/
 NanoAODTools/python/postprocessing/TopMassResolution.py
 NanoAODTools/python/postprocessing/TopMisId.py
 NanoAODTools/python/postprocessing/TopMixedScoreDistr.pdf
