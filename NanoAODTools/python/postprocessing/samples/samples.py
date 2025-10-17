@@ -455,6 +455,14 @@ TT_hadr_2022.process        = 'TT_2022'
 TT_hadr_2022.unix_code      = 31101
 TT_hadr_2022.EE             = 0
 
+TT_dilep_2022               = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_dilep_2022")
+TT_dilep_2022.sigma         = 96.9
+TT_dilep_2022.year          = 2022
+TT_dilep_2022.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM"
+TT_dilep_2022.process       = 'TT_2022'
+TT_dilep_2022.unix_code     = 31102
+TT_dilep_2022.EE            = 0
+
 TT_2022                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2022")
 TT_2022.year                = 2022
 TT_2022.components          = [TT_semilep_2022, TT_hadr_2022]
@@ -796,6 +804,66 @@ TprimeToTZ_1800_2022.year      = 2022
 TprimeToTZ_1800_2022.dataset   = '/TprimeBtoTZ_M-1800_LH_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v4/NANOAODSIM'
 TprimeToTZ_1800_2022.unix_code = 22000
 TprimeToTZ_1800_2022.EE        = 0
+
+
+#######################################   t+DM   #######################################
+tDM_mPhi50_mChi1_2022               = sample(ROOT.kGreen, 1, 1001, "DM (m_{#Phi}=50)", "tDM_mPhi50_mChi1_2022")
+tDM_mPhi50_mChi1_2022.year          = 2022
+tDM_mPhi50_mChi1_2022.sigma         = 0.07454  #pb
+tDM_mPhi50_mChi1_2022.dataset       = '/tDM_Mchi1MPhi50_total/oiorio-tDM_Mchi1MPhi50Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+tDM_mPhi50_mChi1_2022.EE            = 0
+tDM_mPhi50_mChi1_2022.unix_code     = 22102
+
+tDM_mPhi200_mChi1_2022              = sample(ROOT.kGreen, 1, 1001, "DM (m_{#Phi}=200)", "tDM_mPhi200_mChi1_2022")
+tDM_mPhi200_mChi1_2022.year         = 2022
+tDM_mPhi200_mChi1_2022.sigma        = 0.07662  #pb
+tDM_mPhi200_mChi1_2022.dataset      = '/tDM_Mchi1MPhi200_total/oiorio-tDM_Mchi1MPhi200Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+tDM_mPhi200_mChi1_2022.EE           = 0
+tDM_mPhi200_mChi1_2022.unix_code    = 22102
+
+tDM_mPhi500_mChi1_2022              = sample(ROOT.kGreen+2, 1, 1001, "DM (m_{#Phi}=1000)", "tDM_mPhi500_mChi1_2022")
+tDM_mPhi500_mChi1_2022.sigma        = 0.004427 #pb
+tDM_mPhi500_mChi1_2022.year         = 2022
+tDM_mPhi500_mChi1_2022.dataset      = '/tDM_Mchi1MPhi500_total/oiorio-tDM_Mchi1MPhi500Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+tDM_mPhi500_mChi1_2022.EE           = 0
+tDM_mPhi500_mChi1_2022.unix_code    = 22101
+
+tDM_mPhi1000_mChi1_2022             = sample(ROOT.kGreen+2, 1, 1001, "DM (m_{#Phi}=1000)", "tDM_mPhi1000_mChi1_2022")
+tDM_mPhi1000_mChi1_2022.sigma       = 0.0002494 #pb
+tDM_mPhi1000_mChi1_2022.year        = 2022
+tDM_mPhi1000_mChi1_2022.dataset     = '/tDM_Mchi1MPhi1000_total/oiorio-tDM_Mchi1MPhi1000Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+tDM_mPhi1000_mChi1_2022.EE          = 0
+tDM_mPhi1000_mChi1_2022.unix_code   = 22100
+
+#######################################   tt+DM   #######################################
+ttDM_mPhi50_mChi1_2022              = sample(ROOT.kGreen, 1, 1001, "DM (m_{#Phi}=50)", "ttDM_mPhi50_mChi1_2022")
+ttDM_mPhi50_mChi1_2022.year         = 2022
+ttDM_mPhi50_mChi1_2022.sigma        = 3.0655 #pb
+ttDM_mPhi50_mChi1_2022.dataset      = '/ttDM_Mchi1MPhi50_total/oiorio-ttDM_Mchi1MPhi50Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+ttDM_mPhi50_mChi1_2022.EE           = 0
+ttDM_mPhi50_mChi1_2022.unix_code    = 22106
+
+ttDM_mPhi200_mChi1_2022             = sample(ROOT.kGreen, 1, 1001, "DM (m_{#Phi}=200)", "ttDM_mPhi200_mChi1_2022")
+ttDM_mPhi200_mChi1_2022.year        = 2022
+ttDM_mPhi200_mChi1_2022.sigma       = 0.10425  #pb
+ttDM_mPhi200_mChi1_2022.dataset     = '/ttDM_Mchi1MPhi200_total/oiorio-ttDM_Mchi1MPhi200Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+ttDM_mPhi200_mChi1_2022.EE          = 0
+ttDM_mPhi200_mChi1_2022.unix_code   = 22105
+
+ttDM_mPhi500_mChi1_2022             = sample(ROOT.kGreen+2, 1, 1001, "DM (m_{#Phi}=500)", "ttDM_mPhi500_mChi1_2022")
+ttDM_mPhi500_mChi1_2022.sigma       = 0.005585 #pb
+ttDM_mPhi500_mChi1_2022.year        = 2022
+ttDM_mPhi500_mChi1_2022.dataset     = '/ttDM_Mchi1MPhi1000_total/oiorio-ttDM_Mchi1MPhi1000Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+ttDM_mPhi500_mChi1_2022.EE          = 0
+ttDM_mPhi500_mChi1_2022.unix_code   = 22104
+
+ttDM_mPhi1000_mChi1_2022            = sample(ROOT.kGreen+2, 1, 1001, "DM (m_{#Phi}=1000)", "ttDM_mPhi1000_mChi1_2022")
+ttDM_mPhi1000_mChi1_2022.sigma      = 0.00065 #pb
+ttDM_mPhi1000_mChi1_2022.year       = 2022
+ttDM_mPhi1000_mChi1_2022.dataset    = '/ttDM_Mchi1MPhi1000_total/oiorio-ttDM_Mchi1MPhi1000Run3_NANOAOD_F-00000000000000000000000000000000/USER'
+ttDM_mPhi1000_mChi1_2022.EE         = 0
+ttDM_mPhi1000_mChi1_2022.unix_code  = 22103
+
 
 
 ###############################################################################################################################
@@ -2824,7 +2892,7 @@ sample_dict = {
     "QCD_HT800to1000_2022": QCD_HT800to1000_2022, "QCD_HT1000to1200_2022": QCD_HT1000to1200_2022, 
     "QCD_HT1200to1500_2022": QCD_HT1200to1500_2022, "QCD_HT1500to2000_2022": QCD_HT1500to2000_2022, "QCD_HT2000_2022": QCD_HT2000_2022,
     ########### TT
-    'TT_2022': TT_2022, 'TT_semilep_2022' : TT_semilep_2022, 'TT_hadr_2022' : TT_hadr_2022,
+    'TT_2022': TT_2022, 'TT_semilep_2022' : TT_semilep_2022, 'TT_hadr_2022' : TT_hadr_2022, 'TT_dilep_2022' : TT_dilep_2022,
     ########## WJets
     "WJets_2jets_2022": WJets_2jets_2022, 
     "WJets_2jets0J_2022": WJets_2jets0J_2022, "WJets_2jets1J_2022": WJets_2jets1J_2022, "WJets_2jets2J_2022": WJets_2jets2J_2022,
@@ -2847,7 +2915,7 @@ sample_dict = {
     "ZJetsToNuNu_2jets_PT100to200_2J_2022":ZJetsToNuNu_2jets_PT100to200_2J_2022, "ZJetsToNuNu_2jets_PT200to400_2J_2022":ZJetsToNuNu_2jets_PT200to400_2J_2022,
     "ZJetsToNuNu_2jets_PT400to600_2J_2022":ZJetsToNuNu_2jets_PT400to600_2J_2022, "ZJetsToNuNu_2jets_PT600_2J_2022":ZJetsToNuNu_2jets_PT600_2J_2022,
                                     
-    ########## SIGNALS
+    ########## SIGNALS tDM or Tprime
     "TprimeToTZ_700_2022":TprimeToTZ_700_2022,
     "TprimeToTZ_800_2022":TprimeToTZ_800_2022,
     "TprimeToTZ_900_2022":TprimeToTZ_900_2022,
@@ -2860,6 +2928,15 @@ sample_dict = {
     "TprimeToTZ_1600_2022":TprimeToTZ_1600_2022,
     "TprimeToTZ_1700_2022":TprimeToTZ_1700_2022,
     "TprimeToTZ_1800_2022":TprimeToTZ_1800_2022,
+
+    "tDM_mPhi50_mChi1_2022": tDM_mPhi50_mChi1_2022,
+    "tDM_mPhi200_mChi1_2022": tDM_mPhi200_mChi1_2022,
+    "tDM_mPhi500_mChi1_2022": tDM_mPhi500_mChi1_2022,
+    "tDM_mPhi1000_mChi1_2022": tDM_mPhi1000_mChi1_2022,
+    "ttDM_mPhi50_mChi1_2022": ttDM_mPhi50_mChi1_2022,
+    "ttDM_mPhi200_mChi1_2022": ttDM_mPhi200_mChi1_2022,
+    "ttDM_mPhi500_mChi1_2022": ttDM_mPhi500_mChi1_2022,
+    "ttDM_mPhi1000_mChi1_2022": ttDM_mPhi1000_mChi1_2022,
 
     #####################Tagger studies 4 top samples
     "Zprime4top_500_2022" : Zprime4top_500_2022, "Zprime4top_1000_2022" : Zprime4top_1000_2022, "Zprime4top_2000_2022" : Zprime4top_2000_2022,

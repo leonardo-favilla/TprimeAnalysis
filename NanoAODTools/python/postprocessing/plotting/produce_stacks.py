@@ -21,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2023postBPix"    # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2023"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":         59.97,
@@ -31,29 +31,37 @@ lumi_dict       = {
                     "2023postBPix": 9.451,
                 }
 folder_dict     = {
-                    "2022":         "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_syst/",
-                    "2022EE":       "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_syst/",
+                    # "2022":         "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_systematics/",
+                    "2022":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst/", # temporary only for tDM
+                    "2022EE":       "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_systematics/",
 
-                    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
+                    # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
                     # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
                     # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
                     # "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_puWeight/",
+                    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
 
-                    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
                     # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
                     # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
                     # "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
+                    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
                 }
 folder_www_dict = {
-                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
+                    "2022":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst/",
+
+
+                    # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
                     # "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
+                    "2023":         "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
 
-                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
+                    # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
                     # "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
+                    "2023postBPix": "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
                 }
 datasets_dict   = {
                     "2022":
@@ -63,6 +71,10 @@ datasets_dict   = {
                                 "QCD_2022",
                                 "ZJetsToNuNu_2jets_2022",
                                 "WJets_2jets_2022",
+                                # "tDM_mPhi50_mChi1_2022",
+                                # "tDM_mPhi200_mChi1_2022",
+                                # "tDM_mPhi500_mChi1_2022",
+                                # "tDM_mPhi1000_mChi1_2022",
                                 "TprimeToTZ_700_2022",
                                 "TprimeToTZ_1000_2022",
                                 "TprimeToTZ_1800_2022"
@@ -115,6 +127,10 @@ style_signals_dict  = {
                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
                         "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
                     }
 labels_dict         = {
                         "TT":               "t#bar{t}",
@@ -124,6 +140,10 @@ labels_dict         = {
                         "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
                         "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
                         "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
+                        "tDM_mPhi50":    "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi200":   "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi500":   "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
+                        "tDM_mPhi1000":  "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
                     }
 
 
@@ -226,6 +246,8 @@ MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000
 
 for v in vars:
     for r in regions.keys():
+        if year_tag in ["2022", "2022EE"] and ("Loose" in r):
+            continue
     # for r in ["AH"]:
         ###############################################
         ############ PreProcess Histograms ############
@@ -244,14 +266,16 @@ for v in vars:
 
         ##### Normalize Signals (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
-            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            # print(s.label)
+            histo_name = v._name+"_"+r+"_"+"nominal"
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
                 continue
-            # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(v._name+"_"+r+"_"+"nominal")
+            # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(histo_name)
             # histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
             leg_label                   = labels_dict["_".join(s.label.split("_")[:2])]
             histo_signals_dict[leg_label] = copy.deepcopy(tmp)
@@ -259,9 +283,12 @@ for v in vars:
 
         ##### Normalize Backgrounds (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
-            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+"nominal")))
+            print(s.label)
+            histo_name = v._name+"_"+r+"_"+"nominal"
+            print(histo_name)
+            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r+"_"+"nominal", MT_T_xbins)
+                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
@@ -277,10 +304,15 @@ for v in vars:
         ##### Data #####
         if (not blind) and not ("SR" in r):
             if not v._MConly:
+                # print(v._name+"_"+r)
+                histo_name = v._name+"_"+r
+                if year_tag in ["2022", "2022EE"]:
+                    histo_name += "_"
                 for f, s in zip(inFile["Data"], inSample["Data"]):
-                    tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
+                    # print(s.label)
+                    tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
                     if v._name == "MT_T":
-                        tmp             = tmp.Rebin(len(MT_T_xbins)-1, v._name+"_"+r, MT_T_xbins)
+                        tmp             = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
                     if histo_data is None:
                         histo_data      = copy.deepcopy(tmp)
                     else:

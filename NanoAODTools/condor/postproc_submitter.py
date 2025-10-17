@@ -250,8 +250,8 @@ if submit:
                     modules = "lumiMask(year = "+str(sample.year)+"),MET_Filter(year = "+str(sample.year)+"),JetVetoMaps_run3(year="+str(sample.year)+",EE="+str(sample.EE)+"),preselection(),nanoTopcand(isMC=False),globalvar(), nanoTopevaluate_MultiScore(isMC=0,year = "+str(sample.year)+", modelMix_path='"+modelMix_path+"', modelRes_path='"+modelRes_path+"')"
 
         files = get_files_string(sample)
-        # print(files)
         if debug: files = files[:1] 
+        print(len(files))
 
         for i, f in enumerate(files):
             print("....submitting file", i, end='\r')
@@ -259,10 +259,11 @@ if submit:
             running_subfolder_file = running_subfolder + "/file" + str(i)
             if not os.path.exists(running_subfolder_file):
                 os.makedirs(running_subfolder_file)
+            print("created folder: ", running_subfolder_file)
             write_crab_script(sample, f, modules, running_subfolder_file, calcualte_systematics, sample.year)
             runner_writer(running_subfolder_file, i, remote_folder_name, sample_folder, launchtime, outfolder_crabscript_i)
             sub_writer(running_subfolder_file, running_subfolder+"/condor", sample.label+"_file"+str(i), sample.label)
-            if not debug : 
+            if not debug :
                 out = os.popen("condor_submit " + running_subfolder_file + "/condor.sub")
                 with open(running_subfolder+"/jobsId.txt", "a") as file:
                     file.write("\n file "+str(i)+"\n"+ out.read())

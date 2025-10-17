@@ -8,7 +8,7 @@ sys.path.append('../')
 
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name -o output_folder"
+usage               = "python3 postSelector_submitter.py -d dataset_name --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --syst --dryrun"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
 parser.add_option(      "--dict_samples_file",      dest="dict_samples_file",   type=str,               default = "../samples/dict_samples_2023.json",          help="Please enter a samples dictionary file, e.g. ../samples/dict_samples_2023.json")
@@ -25,7 +25,7 @@ dryrun              = opt.dryrun
 if not syst:
     syst_suffix     = ""
 else:
-    syst_suffix     = "_syst_no_SFbtag"
+    syst_suffix     = "_syst_noSFbtag"
 
 results_folder      = "/eos/user/l/lfavilla/RDF_DManalysis/results/"
 outFolder_path      = results_folder + hist_folder
@@ -104,7 +104,7 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    condor_folder           = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/"
+    condor_folder           = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/"
     condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
