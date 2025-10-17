@@ -4,7 +4,6 @@ import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 sys.path.append('../')
 
-
 components_to_run   = ["QCD_HT70to100_2022", "QCD_HT100to200_2022", "QCD_HT200to400_2022", "QCD_HT400to600_2022", "QCD_HT600to800_2022", "QCD_HT800to1000_2022", "QCD_HT1000to1200_2022", "QCD_HT1200to1500_2022", "QCD_HT1500to2000_2022", "QCD_HT2000_2022"]
 # components_to_run   = ["TT_semilep_2022"]
 # components_to_run   = ["DataJetMETD_2022"]
