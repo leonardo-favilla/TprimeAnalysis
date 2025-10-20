@@ -20,7 +20,7 @@ usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-d', '--datasets',           dest='datasets',            type=str,               default="QCD_2023",                             help='Datasets to process, in the form: QCD_2023,TT_2023...')
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
-parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="run2023/",                             help='Folder where to save the histograms')
+parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
 parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
@@ -48,11 +48,12 @@ else :
     variations          = ["nominal"]
 
 remote_folder_name      = "Snapshots"
-results_folder          = "/eos/user/l/lfavilla/RDF_DManalysis/results/" # "./results/"
-folder                  = results_folder+hist_folder+"/"
+if hist_folder=="":
+    print("Please provide a valid hist_folder name")
+    sys.exit(1)
+folder                  = hist_folder
 repohisto               = folder+"plots/"
-if not os.path.exists(results_folder):
-    os.mkdir(results_folder)
+
 if not os.path.exists(folder):
     os.mkdir(folder)
 if not os.path.exists(repohisto):
