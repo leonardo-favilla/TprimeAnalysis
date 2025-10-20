@@ -28,11 +28,11 @@ noSFbtag            = opt.noSFbtag
 
 if not syst:
     syst_suffix     = ""
-else if syst and not noSFbtag:
+elif (syst and not noSFbtag):
     syst_suffix     = "_syst"
-else if noSFbtag and not syst:
+elif (noSFbtag and not syst):
     syst_suffix     = "_noSFbtag"
-else if noSFbtag and syst:
+elif (noSFbtag and syst):
     syst_suffix     = "_syst_noSFbtag"
 
 results_folder      = "/eos/user/l/lfavilla/RDF_DManalysis/results/" # da spostare in opt parser
