@@ -1,0 +1,12 @@
+outputfolder:
+  postselector_results: { 
+    "2022": "/eos/user/l/lfavilla/RDF_DManalysis/results/2022ATM/",
+    "2022EE": "/eos/user/l/lfavilla/RDF_DManalysis/results/2022EERM/",
+    "2023": "/eos/user/l/lfavilla/RDF_DManalysis/results/2023NAVOT/",
+    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/2023postBPixetiempbell/",
+    }
+
+dict_samples:
+  2022: "../samples/dict_samples_2022.json"
+  2023: "../samples/dict_samples_2023.json"
+
