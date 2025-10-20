@@ -8,13 +8,15 @@ sys.path.append('../')
 
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --syst --dryrun"
+usage               = "python3 postSelector_submitter.py -d dataset_name --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --syst --dryrun --noSFbtag"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
 parser.add_option(      "--dict_samples_file",      dest="dict_samples_file",   type=str,               default = "../samples/dict_samples_2023.json",          help="Please enter a samples dictionary file, e.g. ../samples/dict_samples_2023.json")
 parser.add_option(      '--hist_folder',            dest='hist_folder',         type=str,               default = "run2023/",                                   help='Folder where to save the histograms, e.g. run2023/')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
+parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
+
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
 dict_samples_file   = opt.dict_samples_file
@@ -22,12 +24,18 @@ hist_folder         = opt.hist_folder
 syst                = opt.syst
 nfiles_max          = 1000 # opt.nfiles_max
 dryrun              = opt.dryrun
+noSFbtag            = opt.noSFbtag
+
 if not syst:
     syst_suffix     = ""
-else:
+else if syst and not noSFbtag:
+    syst_suffix     = "_syst"
+else if noSFbtag and not syst:
+    syst_suffix     = "_noSFbtag"
+else if noSFbtag and syst:
     syst_suffix     = "_syst_noSFbtag"
 
-results_folder      = "/eos/user/l/lfavilla/RDF_DManalysis/results/"
+results_folder      = "/eos/user/l/lfavilla/RDF_DManalysis/results/" # da spostare in opt parser
 outFolder_path      = results_folder + hist_folder
 if not os.path.exists(outFolder_path):
     os.makedirs(outFolder_path)
@@ -70,12 +78,13 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
     f.write("source analysis_TPrime.sh\n")
     f.write("cd python/postprocessing/postselection/\n")
+    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max}"
     if syst:
-        f.write("python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --syst"+"\n")
-    else:
-        f.write("python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max}"+"\n")
+        pycommand += " --syst"
+    if noSFbtag:
+        pycommand += " --noSFbtag"
 
-
+    f.write(pycommand+"\n")
 
 
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
@@ -104,7 +113,10 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    condor_folder           = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/"
+    if noSFbtag:
+        condor_folder       = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/"
+    else:
+        condor_folder       = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor/"
     condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
