@@ -1,9 +1,9 @@
 outputfolder:
   postselector_results: { 
-    "2022": "/eos/user/l/lfavilla/RDF_DManalysis/results/2022ATM/",
-    "2022EE": "/eos/user/l/lfavilla/RDF_DManalysis/results/2022EERM/",
-    "2023": "/eos/user/l/lfavilla/RDF_DManalysis/results/2023NAVOT/",
-    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/2023postBPixetiempbell/",
+    "2022": "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_test/",
+    "2022EE": "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_test/",
+    "2023": "/eos/home-a/acagnott/DarkMatter/nosynch/run2023_test/",
+    "2023postBPix": "/eos/home-a/acagnott/DarkMatter/nosynch/run2023postBPix_test/",
     }
 
 dict_samples:

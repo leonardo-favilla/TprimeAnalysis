@@ -6,6 +6,7 @@ import optparse
 import json
 import numpy as np
 import math
+import shutil
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.variables import *
@@ -58,6 +59,14 @@ if not os.path.exists(folder):
     os.mkdir(folder)
 if not os.path.exists(repohisto):
     os.mkdir(repohisto)
+
+try:
+    f = open(repohisto+"/test.txt", "w")
+    f.write("This folder contains the output histograms from the postSelector step.\n")
+    f.close()
+    os.remove(repohisto+"/test.txt")
+except:
+    sys.exit(1)
 
 
 branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
@@ -442,6 +451,7 @@ if do_variations:
     h_varied                = {}
 
 for d in datasets:
+
     s_list                  = []
     if hasattr(d, "components"):
         s_list              = d.components
@@ -457,6 +467,9 @@ for d in datasets:
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
+        if os.path.exists(repohisto+s.label+'.root'):
+            os.remove(repohisto+s.label+'.root')
+        print("Processing dataset: ", s.label)
         #------------------------------------------------------------------------------
         ############# Fixing variables for 2018-2022-2023 #############################
         #------------------------------------------------------------------------------

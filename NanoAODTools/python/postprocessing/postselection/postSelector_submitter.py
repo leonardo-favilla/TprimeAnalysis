@@ -18,22 +18,25 @@ else:
     sys.exit(1)
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --syst --dryrun --noSFbtag"
+usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
-parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
+# parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
-period              = opt.period
 syst                = opt.syst
-nfiles_max          = 1000 # opt.nfiles_max
+nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
 noSFbtag            = opt.noSFbtag
 
+period              = dataset_to_run.split("_")[-1]
+if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
+    print("Please select a valid period among: 2022, 2022EE, 2023, 2023postBPix")
+    sys.exit(1)
 year                = 0
 if "2022" in period:
     year            = 2022
@@ -51,13 +54,19 @@ elif (noSFbtag and not syst):
 elif (noSFbtag and syst):
     syst_suffix     = "_syst_noSFbtag"
 
-print(config)
 outFolder_path      = config["outputfolder"]["postselector_results"][period]
-if not os.path.exists(outFolder_path):
-    os.makedirs(outFolder_path)
-    print(f"Creating output folder:     {outFolder_path}")
+# if not os.path.exists(outFolder_path):
+#     os.makedirs(outFolder_path)
+#     print(f"Creating output folder:     {outFolder_path}")
 
-
+# try:
+#     test_folder = open(outFolder_path+"README.txt", "w")
+#     test_folder.write("This folder contains the output histograms from the postSelector step.\n")
+#     test_folder.close()
+#     os.remove(outFolder_path+"README.txt")
+# except:
+#     print("You don't have write permissions in the output folder, please check: ", outFolder_path)
+#     sys.exit(1)
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])
@@ -152,14 +161,14 @@ for sample in samples:
         os.makedirs(log_folder+"log/")
 
 
-    outSubFolder_path       = outFolder_path+"/plots/"
+    # outSubFolder_path       = outFolder_path+"/plots/"
     run_folder              = condor_subfolder
-    if not os.path.exists(run_folder):
-        os.makedirs(run_folder)
-        print(f"Creating run folder:        {run_folder}")
-    if not os.path.exists(outSubFolder_path):
-        os.makedirs(outSubFolder_path)
-        print(f"Creating out subfolder:     {outSubFolder_path}")
+    # if not os.path.exists(run_folder):
+    #     os.makedirs(run_folder)
+    #     print(f"Creating run folder:        {run_folder}")
+    # if not os.path.exists(outSubFolder_path):
+    #     os.makedirs(outSubFolder_path)
+    #     print(f"Creating out subfolder:     {outSubFolder_path}")
 
     runner_writer(run_folder, sample.label, dict_samples_file, outFolder_path, nfiles_max, syst)
     sub_writer(run_folder, log_folder, sample.label, syst_suffix)
