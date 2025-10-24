@@ -21,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2023"    # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2022"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":                 59.97,
@@ -36,42 +36,24 @@ lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
 
 
 folder_dict     = {
-                    "2022":                     "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_systematics/",
-                    "2022EE":                   "/eos/home-a/acagnott/DarkMatter/nosynch/run2022EE_systematics/",
-
-                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst/",
-                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
-                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
-                    # "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_no_puWeight/",
-
-                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
-
+                    "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results//run2022_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
                     "Full2022":                 ".", # Placeholder
                     "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
                 }
 
 
 folder_www_dict = {
-                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst/",
-                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst/",
-
-                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst/",
-                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_nloewcorrection/",
-                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_SFbtag/",
-                    # "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_no_puWeight/",
-
-                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_nloewcorrection/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_SFbtag/",
-                    # "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_no_puWeight/",
-
-                    "Full2022":                 "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_syst/",
-                    "Full2023":                 "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2023_syst/",
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst/",
+                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+                    "Full2022":                 ".", # Placeholder
+                    "Full2023":                 ".", # Placeholder
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
                 }
 
 
@@ -262,10 +244,10 @@ MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000
 
 
 for v in vars:
+# for v in [var for var in vars if var._name == "MT_T"]:
+# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
     for r in regions.keys():
-        if year_tag in ["2022", "2022EE"] and ("Loose" in r):
-            continue
-    # for r in ["AH"]:
+    # for r in ["SRTop"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
@@ -285,38 +267,44 @@ for v in vars:
         ##### Normalize Signals (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
             # print(s.label)
-            histo_name = v._name+"_"+r+"_"+"nominal"
-            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            # print(f.GetName())
+            histo_name                          = v._name+"_"+r+"_"+"nominal"
+            tmp                                 = None
+            tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
+                tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
+                tmp                             = copy.deepcopy(tmp_)
+                tmp.SetName(histo_name)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
+                tmp                             = copy.deepcopy(tmp)
             else:
                 continue
-            # histo_signals_dict["_".join(s.label.split("_")[:2])] = tmp.Clone(histo_name)
-            # histo_signals_dict["_".join(s.label.split("_")[:2])] = copy.deepcopy(tmp)
-            leg_label                   = labels_dict["_".join(s.label.split("_")[:2])]
-            histo_signals_dict[leg_label] = copy.deepcopy(tmp)
 
-
+            leg_label                           = labels_dict["_".join(s.label.split("_")[:2])]
+            histo_signals_dict[leg_label]       = copy.deepcopy(tmp)
             if leg_label not in histo_signals_dict:
                 histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
 
+
         ##### Normalize Backgrounds (Lumi) ######
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
-            print(s.label)
-            histo_name = v._name+"_"+r+"_"+"nominal"
-            print(histo_name)
-            tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            # print(f"s.label:                    {s.label}")
+            histo_name                      = v._name+"_"+r+"_"+"nominal"
+            # print(f"histo_name:                 {histo_name}")
+            tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             if v._name == "MT_T":
-                tmp                     = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
+                tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
+                tmp                         = copy.deepcopy(tmp_)
+                tmp.SetName(histo_name)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
                 continue
 
+            leg_label                       = labels_dict[s.label.split("_")[0]]
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
             else:
@@ -324,19 +312,18 @@ for v in vars:
 
         
         ##### Data #####
-        if (not blind) and not ("SR" in r):
+        if (not blind) and ((not ("SR" in r) or ("SRTopLoose" in r)) or (("SR" in r) and not ("SRTop" in r))):
             if not v._MConly:
-                # print(v._name+"_"+r)
-                histo_name = v._name+"_"+r
-                if year_tag in ["2022", "2022EE"]:
-                    histo_name += "_"
+                histo_name                          = v._name+"_"+r
                 for f, s in zip(inFile["Data"], inSample["Data"]):
                     # print(s.label)
-                    tmp                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+                    tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
                     if v._name == "MT_T":
-                        tmp             = tmp.Rebin(len(MT_T_xbins)-1, histo_name, MT_T_xbins)
+                        tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
+                        tmp                         = copy.deepcopy(tmp_)
+                        tmp.SetName(histo_name)
                     if histo_data is None:
-                        histo_data          = copy.deepcopy(tmp)
+                        histo_data                  = copy.deepcopy(tmp)
                     else:
                         histo_data.Add(copy.deepcopy(tmp))
 
@@ -353,11 +340,13 @@ for v in vars:
         ###############################
 
         ##### Drawing Options ######
-        if "SR" in r:
+        if v._name == "LeadingFatJetPt_msoftdrop":
+            logy    = False
+        elif "SR" in r:
             # logy = False
-            logy = True
+            logy    = True
         else:
-            logy = True
+            logy    = True
 
         ##### X-axis ######
         xTitle              = v._title
