@@ -458,14 +458,18 @@ TT_hadr_2022.EE             = 0
 TT_dilep_2022               = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_dilep_2022")
 TT_dilep_2022.sigma         = 96.9
 TT_dilep_2022.year          = 2022
-TT_dilep_2022.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM"
+TT_dilep_2022.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5_ext1-v2/NANOAODSIM"
 TT_dilep_2022.process       = 'TT_2022'
 TT_dilep_2022.unix_code     = 31102
 TT_dilep_2022.EE            = 0
 
 TT_2022                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2022")
 TT_2022.year                = 2022
-TT_2022.components          = [TT_semilep_2022, TT_hadr_2022]
+TT_2022.components          = [
+                                TT_semilep_2022,
+                                TT_hadr_2022,
+                                # TT_dilep_2022
+                                ]
 
 ################################ ZJets ################################
 
@@ -1019,9 +1023,21 @@ TT_hadr_2022EE.process        = 'TT_2022EE'
 TT_hadr_2022EE.unix_code      = 41101
 TT_hadr_2022EE.EE             = 1
 
+TT_dilep_2022EE               = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_dilep_2022EE")
+TT_dilep_2022EE.sigma         = 96.9
+TT_dilep_2022EE.year          = 2022
+TT_dilep_2022EE.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6_ext1-v2/NANOAODSIM"
+TT_dilep_2022EE.process       = 'TT_2022EE'
+TT_dilep_2022EE.unix_code     = 41102
+TT_dilep_2022EE.EE            = 1
+
 TT_2022EE                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2022EE")
 TT_2022EE.year                = 2022
-TT_2022EE.components          = [TT_semilep_2022EE, TT_hadr_2022EE]
+TT_2022EE.components          = [
+                                    TT_semilep_2022EE,
+                                    TT_hadr_2022EE,
+                                    # TT_dilep_2022EE
+                                    ]
 
 ################################ ZJets ################################
 
@@ -1498,9 +1514,21 @@ TT_hadr_2023.process        = 'TT_2023'
 TT_hadr_2023.unix_code      = 31101
 TT_hadr_2023.EE             = 0
 
+TT_dilep_2023               = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_dilep_2023")
+TT_dilep_2023.sigma         = 96.9
+TT_dilep_2023.year          = 2023
+TT_dilep_2023.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v14-v2/NANOAODSIM"
+TT_dilep_2023.process       = 'TT_2023'
+TT_dilep_2023.unix_code     = 31102
+TT_dilep_2023.EE            = 0
+
 TT_2023                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2023")
 TT_2023.year                = 2023
-TT_2023.components          = [TT_semilep_2023, TT_hadr_2023]
+TT_2023.components          = [
+                                TT_semilep_2023,
+                                TT_hadr_2023,
+                                # TT_dilep_2023
+                                ]
 
 ################################ ZJets ################################
 ZJetsToNuNu_HT100to200_2023             = sample(ROOT.kAzure+6, 1, 1001, "ZJets #rightarrow #nu#nu", "ZJetsToNuNu_HT100to200_2023")
@@ -1967,9 +1995,21 @@ TT_hadr_2023postBPix.process        = 'TT_2023postBPix'
 TT_hadr_2023postBPix.unix_code      = 41101
 TT_hadr_2023postBPix.EE             = 1
 
+TT_dilep_2023postBPix               = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_dilep_2023postBPix")
+TT_dilep_2023postBPix.sigma         = 96.9
+TT_dilep_2023postBPix.year          = 2023
+TT_dilep_2023postBPix.dataset       = "/TTto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v2-v3/NANOAODSIM"
+TT_dilep_2023postBPix.process       = 'TT_2023postBPix'
+TT_dilep_2023postBPix.unix_code     = 41102
+TT_dilep_2023postBPix.EE            = 1
+
 TT_2023postBPix                     = sample(ROOT.kRed, 1, 1001, "t#bar{t}", "TT_2023postBPix")
 TT_2023postBPix.year                = 2023
-TT_2023postBPix.components          = [TT_semilep_2023postBPix, TT_hadr_2023postBPix]
+TT_2023postBPix.components          = [
+                                        TT_semilep_2023postBPix,
+                                        TT_hadr_2023postBPix,
+                                        # TT_dilep_2023postBPix
+                                        ]
 
 ################################ ZJets ################################
 
@@ -2951,7 +2991,7 @@ sample_dict = {
     "QCD_HT800to1000_2022EE": QCD_HT800to1000_2022EE, "QCD_HT1000to1200_2022EE": QCD_HT1000to1200_2022EE, 
     "QCD_HT1200to1500_2022EE": QCD_HT1200to1500_2022EE, "QCD_HT1500to2000_2022EE": QCD_HT1500to2000_2022EE, "QCD_HT2000_2022EE": QCD_HT2000_2022EE,
     ########### TT
-    'TT_2022EE': TT_2022EE, 'TT_semilep_2022EE' : TT_semilep_2022EE, 'TT_hadr_2022EE' : TT_hadr_2022EE,
+    'TT_2022EE': TT_2022EE, 'TT_semilep_2022EE' : TT_semilep_2022EE, 'TT_hadr_2022EE' : TT_hadr_2022EE, 'TT_dilep_2022EE' : TT_dilep_2022EE,
     ########## WJets
     "WJets_2jets_2022EE": WJets_2jets_2022EE, 
     "WJets_2jets0J_2022EE": WJets_2jets0J_2022EE, "WJets_2jets1J_2022EE": WJets_2jets1J_2022EE, "WJets_2jets2J_2022EE": WJets_2jets2J_2022EE,
@@ -3000,7 +3040,7 @@ sample_dict = {
     "QCD_HT800to1000_2023": QCD_HT800to1000_2023, "QCD_HT1000to1200_2023": QCD_HT1000to1200_2023, 
     "QCD_HT1200to1500_2023": QCD_HT1200to1500_2023, "QCD_HT1500to2000_2023": QCD_HT1500to2000_2023, "QCD_HT2000_2023": QCD_HT2000_2023,
     ########### TT
-    "TT_2023": TT_2023, "TT_semilep_2023" : TT_semilep_2023, "TT_hadr_2023" : TT_hadr_2023,
+    "TT_2023": TT_2023, "TT_semilep_2023" : TT_semilep_2023, "TT_hadr_2023" : TT_hadr_2023, "TT_dilep_2023" : TT_dilep_2023,
     ########## WJets
     "WJets_2jets_2023": WJets_2jets_2023, 
     "WJets_2jets0J_2023": WJets_2jets0J_2023, "WJets_2jets1J_2023": WJets_2jets1J_2023, "WJets_2jets2J_2023": WJets_2jets2J_2023,
@@ -3048,7 +3088,7 @@ sample_dict = {
     "QCD_HT800to1000_2023postBPix": QCD_HT800to1000_2023postBPix, "QCD_HT1000to1200_2023postBPix": QCD_HT1000to1200_2023postBPix, 
     "QCD_HT1200to1500_2023postBPix": QCD_HT1200to1500_2023postBPix, "QCD_HT1500to2000_2023postBPix": QCD_HT1500to2000_2023postBPix, "QCD_HT2000_2023postBPix": QCD_HT2000_2023postBPix,
     ########### TT
-    "TT_2023postBPix": TT_2023postBPix, "TT_semilep_2023postBPix" : TT_semilep_2023postBPix, "TT_hadr_2023postBPix" : TT_hadr_2023postBPix,
+    "TT_2023postBPix": TT_2023postBPix, "TT_semilep_2023postBPix" : TT_semilep_2023postBPix, "TT_hadr_2023postBPix" : TT_hadr_2023postBPix, "TT_dilep_2023postBPix" : TT_dilep_2023postBPix,
     ########## WJets
     "WJets_2jets_2023postBPix": WJets_2jets_2023postBPix, 
     "WJets_2jets0J_2023postBPix": WJets_2jets0J_2023postBPix, "WJets_2jets1J_2023postBPix": WJets_2jets1J_2023postBPix, "WJets_2jets2J_2023postBPix": WJets_2jets2J_2023postBPix,
