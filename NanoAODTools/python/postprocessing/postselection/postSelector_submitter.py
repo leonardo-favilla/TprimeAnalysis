@@ -2,6 +2,7 @@ import os
 import optparse
 import sys
 import time
+import shutil
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 sys.path.append('../')
 
@@ -68,7 +69,9 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     f = open(run_folder+"runner.sh", "w")
     f.write("#!/usr/bin/bash\n")
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
-    f.write("source analysis_TPrime.sh\n")
+    # f.write("source analysis_TPrime.sh\n")
+    f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/\n")
+    f.write("source standalone/env_standalone.sh\n")
     f.write("cd python/postprocessing/postselection/\n")
     if syst:
         f.write("python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --syst"+"\n")
@@ -118,9 +121,18 @@ for sample in samples:
         print(f"Creating log folder:        {log_folder}")
     if not os.path.exists(log_folder+"output/"):
         os.makedirs(log_folder+"output/")
+    else:
+        shutil.rmtree(log_folder+"output/")
+        os.makedirs(log_folder+"output/")
     if not os.path.exists(log_folder+"error/"):
         os.makedirs(log_folder+"error/")
+    else:
+        shutil.rmtree(log_folder+"error/")
+        os.makedirs(log_folder+"error/")
     if not os.path.exists(log_folder+"log/"):
+        os.makedirs(log_folder+"log/")
+    else:
+        shutil.rmtree(log_folder+"log/")
         os.makedirs(log_folder+"log/")
 
 

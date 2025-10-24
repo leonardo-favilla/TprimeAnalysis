@@ -117,6 +117,11 @@ for in_d in in_dataset:
         datasets.append(sample_dict[in_d])
 print("Datasets to process: ", [d.label for d in datasets])
 
+for d in datasets:
+    if os.path.exists(repohisto+d.label+".root"):
+        os.remove(repohisto+d.label+".root")
+        print("Removing old histograms file: ", repohisto+d.label+".root")
+
 
 chain                       = {}
 ntot_events                 = {}
