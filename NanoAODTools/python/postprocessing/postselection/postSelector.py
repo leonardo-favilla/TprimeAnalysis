@@ -6,6 +6,7 @@ import optparse
 import json
 import numpy as np
 import math
+import shutil
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.variables import *
@@ -16,20 +17,25 @@ inituser = str(os.environ.get('USER')[0])
 uid      = int(os.getuid())
 WorkDir  = os.environ["PWD"]
 
-usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --nfiles_max <nfiles_max>'
+usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --nfiles_max <nfiles_max> --noSFbtag --syst'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-d', '--datasets',           dest='datasets',            type=str,               default="QCD_2023",                             help='Datasets to process, in the form: QCD_2023,TT_2023...')
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
-parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="run2023/",                             help='Folder where to save the histograms')
+parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
 parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
+parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
+parser.add_option(      '--tmpfold',           dest='tmpfold',            action='store_true',    default=False,                                  help='test tmp folder for out file')
+
 
 (opt, args)             = parser.parse_args()
 in_dataset              = opt.datasets.split(",")
 nfiles_max              = opt.nfiles_max
 do_variations           = opt.syst
+noSFbtag                = opt.noSFbtag
 dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
+tmpfold                 = opt.tmpfold
 do_histos               = True
 do_snapshot             = False
 if do_variations:
@@ -45,15 +51,24 @@ else :
     variations          = ["nominal"]
 
 remote_folder_name      = "Snapshots"
-results_folder          = "/eos/user/l/lfavilla/RDF_DManalysis/results/" # "./results/"
-folder                  = results_folder+hist_folder+"/"
+if hist_folder=="":
+    print("Please provide a valid hist_folder name")
+    sys.exit(1)
+folder                  = hist_folder
 repohisto               = folder+"plots/"
-if not os.path.exists(results_folder):
-    os.mkdir(results_folder)
+
 if not os.path.exists(folder):
     os.mkdir(folder)
 if not os.path.exists(repohisto):
     os.mkdir(repohisto)
+
+try:
+    f = open(repohisto+"/test.txt", "w")
+    f.write("This folder contains the output histograms from the postSelector step.\n")
+    f.close()
+    os.remove(repohisto+"/test.txt")
+except:
+    sys.exit(1)
 
 
 branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
@@ -323,7 +338,16 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
         s_list = [d]
     
     for s in s_list:
-        outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
+        if tmpfold:
+            repohisto_tmp = "/tmp/"+username+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            repohisto_tmp = "/tmp/"+username+"/"+s.label+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            outfile = ROOT.TFile.Open(repohisto_tmp+s.label+'.root', "RECREATE")
+        else:
+            outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
 
         for n, vari in enumerate(variations):
             for reg in regions_def.keys():
@@ -438,6 +462,7 @@ if do_variations:
     h_varied                = {}
 
 for d in datasets:
+
     s_list                  = []
     if hasattr(d, "components"):
         s_list              = d.components
@@ -453,6 +478,9 @@ for d in datasets:
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
+        if os.path.exists(repohisto+s.label+'.root'):
+            os.remove(repohisto+s.label+'.root')
+        print("Processing dataset: ", s.label)
         #------------------------------------------------------------------------------
         ############# Fixing variables for 2018-2022-2023 #############################
         #------------------------------------------------------------------------------
@@ -500,8 +528,10 @@ for d in datasets:
             df_hlt = df_hlt.Define("w_nominal", "1")
             
         if sampleflag:
-            # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
-            df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')                # no SFbtag
+            if noSFbtag:
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')                # no SFbtag
+            else:   
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
             # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
         else:
             df_wnom = df_hlt.Redefine('w_nominal', '1')
