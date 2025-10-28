@@ -25,6 +25,7 @@ parser.add_option(      '--hist_folder',        dest='hist_folder',         type
 parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
+parser.add_option(      '--tmpfold',           dest='tmpfold',            action='store_true',    default=False,                                  help='test tmp folder for out file')
 
 
 (opt, args)             = parser.parse_args()
@@ -34,6 +35,7 @@ do_variations           = opt.syst
 noSFbtag                = opt.noSFbtag
 dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
+tmpfold                 = opt.tmpfold
 do_histos               = True
 do_snapshot             = False
 if do_variations:
@@ -336,7 +338,16 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
         s_list = [d]
     
     for s in s_list:
-        outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
+        if tmpfold:
+            repohisto_tmp = "/tmp/"+username+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            repohisto_tmp = "/tmp/"+username+"/"+s.label+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            outfile = ROOT.TFile.Open(repohisto_tmp+s.label+'.root', "RECREATE")
+        else:
+            outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
 
         for n, vari in enumerate(variations):
             for reg in regions_def.keys():

@@ -5,6 +5,7 @@ import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 from pathlib import Path
+import shutil
 sys.path.append('../')
 
 config = {}
@@ -91,13 +92,16 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
     f.write("source analysis_TPrime.sh\n")
     f.write("cd python/postprocessing/postselection/\n")
-    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max}"
+    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --tmpfold"
     if syst:
         pycommand += " --syst"
     if noSFbtag:
         pycommand += " --noSFbtag"
 
     f.write(pycommand+"\n")
+    f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/.\n")
+    f.write("ls -lthra "+hist_folder+"plots/.\n")
+    f.close()
 
 
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
@@ -143,9 +147,18 @@ for sample in samples:
         print(f"Creating log folder:        {log_folder}")
     if not os.path.exists(log_folder+"output/"):
         os.makedirs(log_folder+"output/")
+    else:
+        shutil.rmtree(log_folder+"output/")
+        os.makedirs(log_folder+"output/")
     if not os.path.exists(log_folder+"error/"):
         os.makedirs(log_folder+"error/")
+    else:
+        shutil.rmtree(log_folder+"error/")
+        os.makedirs(log_folder+"error/")
     if not os.path.exists(log_folder+"log/"):
+        os.makedirs(log_folder+"log/")
+    else:
+        shutil.rmtree(log_folder+"log/")
         os.makedirs(log_folder+"log/")
 
     run_folder              = condor_subfolder
