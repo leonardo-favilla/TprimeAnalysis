@@ -3,6 +3,16 @@ Analysis code for T'→tZ search, where t→bqq' and Z→νν
 
 ## Overview
 This repository contains the analysis code for the B2G-25-006 analysis, focusing on the T'→tZ decay channel with hadronic top quark decay and invisible Z boson decay.
+CMS Internal links
+[CADI line](https://cms.cern.ch/iCMS/analysisadmin/cadilines?line=B2G-25-006)
+[Analysis Note](https://cms.cern.ch/iCMS/jsp/db_notes/noteInfo.jsp?cmsnoteid=CMS%20AN-2024/018)
+[PubTalk discussion](https://cms-pub-talk.web.cern.ch/c/b2g/b2g-25-006/828)
+[Twiki](https://twiki.cern.ch/twiki/bin/viewauth/CMS/B2G25006Review)
+### Most relevant talks
+- [27th October 2025](https://indico.cern.ch/event/1588426/#68-b2g-25-006-status-update-of) 
+- [23rd June 2025](https://indico.cern.ch/event/1557401/#66-t-tz-update)
+- [30th Sept 2024](https://indico.cern.ch/event/1459687/#66-update-on-t-tz-z-vv)
+- [22nd Jan 2024](https://indico.cern.ch/event/1355727/#42-update-on-the-preselection)
 
 ## Analysis Workflow
 1. **Skimming**: Central NanoAOD skimming + top quark candidate score evaluation with TROTA
