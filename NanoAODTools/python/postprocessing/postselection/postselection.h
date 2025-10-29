@@ -552,7 +552,7 @@ RVec<int> GetGoodJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   for(int i = 0; i<Jet_pt.size(); i++)
   {
     // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
-      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]>1)
+      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
       {
         ids.emplace_back(i);
       }
@@ -566,7 +566,7 @@ RVec<int> GetGoodFatJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   for(int i = 0; i<Jet_pt.size(); i++)
   {
     // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
-      if (Jet_pt[i]>150 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]>1)
+      if (Jet_pt[i]>150 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
       {
         ids.emplace_back(i);
       }
@@ -748,7 +748,7 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
   int nfwdjet = 0;
   for(int i = 0; i < Jet_pt.size(); i++)
   {
-    if (Jet_pt[i]>30 && Jet_jetId[i] && abs(Jet_eta[i])>2.4)
+    if (Jet_pt[i]>30 && Jet_jetId[i]==6 && abs(Jet_eta[i])>2.4)
     {
       nfwdjet += 1;
     }
@@ -1380,7 +1380,7 @@ Float_t TopIsolation_NJets( int EventTopCategory, int Top_idx, rvec_i TopMixed_i
   {
     for(int i = 0; i<Jet_pt.size(); i++)
     {
-      if((Jet_pt[i]>30 && Jet_jetId[i]) && deltaR(Jet_eta[i], Jet_phi[i], TopResolved_eta[Top_idx], TopResolved_phi[Top_idx])<valR)
+      if((Jet_pt[i]>30 && Jet_jetId[i]==6) && deltaR(Jet_eta[i], Jet_phi[i], TopResolved_eta[Top_idx], TopResolved_phi[Top_idx])<valR)
       {
         if(i!=TopResolved_idxJet0[Top_idx] && i!=TopResolved_idxJet1[Top_idx] && i!=TopResolved_idxJet2[Top_idx])
         {
@@ -1395,7 +1395,7 @@ Float_t TopIsolation_NJets( int EventTopCategory, int Top_idx, rvec_i TopMixed_i
   {
     for(int i = 0; i<Jet_pt.size(); i++)
     {
-      if((Jet_pt[i]>30 && Jet_jetId[i]) && deltaR(Jet_eta[i], Jet_phi[i], TopMixed_eta[Top_idx], TopMixed_phi[Top_idx])<valR)
+      if((Jet_pt[i]>30 && Jet_jetId[i]==6) && deltaR(Jet_eta[i], Jet_phi[i], TopMixed_eta[Top_idx], TopMixed_phi[Top_idx])<valR)
       {
         if(i!=TopMixed_idxJet0[Top_idx] && i!=TopMixed_idxJet1[Top_idx] && i!=TopMixed_idxJet2[Top_idx])
         {
@@ -1406,7 +1406,7 @@ Float_t TopIsolation_NJets( int EventTopCategory, int Top_idx, rvec_i TopMixed_i
     }
     for(int i = 0; i<FatJet_pt.size(); i++)
     {
-      if((FatJet_pt[i]>30 && FatJet_jetId[i]) && deltaR(FatJet_eta[i], FatJet_phi[i], TopMixed_eta[Top_idx], TopMixed_phi[Top_idx])<valR)
+      if((FatJet_pt[i]>30 && FatJet_jetId[i]==6) && deltaR(FatJet_eta[i], FatJet_phi[i], TopMixed_eta[Top_idx], TopMixed_phi[Top_idx])<valR)
       {
         if(i!=TopMixed_idxFatJet[Top_idx])
         {
@@ -1421,7 +1421,7 @@ Float_t TopIsolation_NJets( int EventTopCategory, int Top_idx, rvec_i TopMixed_i
   {
     for(int i = 0; i<FatJet_pt.size(); i++)
     {
-      if((FatJet_pt[i]>30 && FatJet_jetId[i]) && deltaR(FatJet_eta[i], FatJet_phi[i], FatJet_eta[Top_idx], FatJet_phi[Top_idx])<valR)
+      if((FatJet_pt[i]>30 && FatJet_jetId[i]==6) && deltaR(FatJet_eta[i], FatJet_phi[i], FatJet_eta[Top_idx], FatJet_phi[Top_idx])<valR)
       {
         if(i!=TopMixed_idxFatJet[Top_idx])
         {

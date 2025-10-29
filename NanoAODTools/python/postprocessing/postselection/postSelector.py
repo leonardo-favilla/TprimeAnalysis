@@ -171,9 +171,9 @@ def cut_string(cut):
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
     
-    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)")
-    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)")
-    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)")
+    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)") #richiesto jetId==6
+    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)") 
+    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") #richiesto jetId==6
     df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
@@ -207,7 +207,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("LeadingElectronPt_eta", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_eta)")
     df = df.Define("LeadingElectronPt_phi", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_phi)")
     
-    df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)")
+    df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)") #richiesto jetId==6
     df = df.Define("MHT","MHT(GoodJet_idx, Jet_pt_nominal, Jet_phi, Jet_eta, Jet_mass_nominal)")
     df = df.Define("JetBTagLoose_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 0)")\
                 .Define("nJetBtagLoose", "static_cast<int>(JetBTagLoose_idx.size());")
