@@ -4,37 +4,59 @@ import sys
 import time
 import shutil
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
+import yaml
+from pathlib import Path
+import shutil
 sys.path.append('../')
 
+config = {}
+config_paths = os.environ.get('PWD')+'/../config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
 
 
-
-usage               = "python3 postSelector_submitter.py -d dataset_name --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --syst --dryrun"
+usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
-parser.add_option(      "--dict_samples_file",      dest="dict_samples_file",   type=str,               default = "../samples/dict_samples_2023.json",          help="Please enter a samples dictionary file, e.g. ../samples/dict_samples_2023.json")
-parser.add_option(      '--hist_folder',            dest='hist_folder',         type=str,               default = "run2023/",                                   help='Folder where to save the histograms, e.g. run2023/')
+# parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
+parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
+
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
-dict_samples_file   = opt.dict_samples_file
-hist_folder         = opt.hist_folder
 syst                = opt.syst
-nfiles_max          = 1000 # opt.nfiles_max
+nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
+noSFbtag            = opt.noSFbtag
+
+period              = dataset_to_run.split("_")[-1]
+if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
+    print("Please select a valid period among: 2022, 2022EE, 2023, 2023postBPix")
+    sys.exit(1)
+year                = 0
+if "2022" in period:
+    year            = 2022
+elif "2023" in period:
+    year            = 2023
+
+dict_samples_file   = config["dict_samples"][year]
+
 if not syst:
     syst_suffix     = ""
-else:
+elif (syst and not noSFbtag):
+    syst_suffix     = "_syst"
+elif (noSFbtag and not syst):
+    syst_suffix     = "_noSFbtag"
+elif (noSFbtag and syst):
     syst_suffix     = "_syst_noSFbtag"
 
-results_folder      = "/eos/user/l/lfavilla/RDF_DManalysis/results/"
-outFolder_path      = results_folder + hist_folder
-if not os.path.exists(outFolder_path):
-    os.makedirs(outFolder_path)
-    print(f"Creating output folder:     {outFolder_path}")
-
-
+outFolder_path      = config["outputfolder"]["postselector_results"][period]
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])
@@ -73,12 +95,16 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/\n")
     f.write("source standalone/env_standalone.sh\n")
     f.write("cd python/postprocessing/postselection/\n")
+    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --tmpfold"
     if syst:
-        f.write("python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --syst"+"\n")
-    else:
-        f.write("python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max}"+"\n")
+        pycommand += " --syst"
+    if noSFbtag:
+        pycommand += " --noSFbtag"
 
-
+    f.write(pycommand+"\n")
+    f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/.\n")
+    f.write("ls -lthra "+hist_folder+"plots/.\n")
+    f.close()
 
 
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
@@ -107,7 +133,10 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    condor_folder           = "/afs/cern.ch/" + workdir + "/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/"
+    if noSFbtag:
+        condor_folder       = os.environ.get('PWD') + "/condor_noSFbtag/"
+    else:
+        condor_folder       = os.environ.get('PWD') + "/condor/"
     condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
@@ -135,17 +164,9 @@ for sample in samples:
         shutil.rmtree(log_folder+"log/")
         os.makedirs(log_folder+"log/")
 
-
-    outSubFolder_path       = outFolder_path+"/plots/"
     run_folder              = condor_subfolder
-    if not os.path.exists(run_folder):
-        os.makedirs(run_folder)
-        print(f"Creating run folder:        {run_folder}")
-    if not os.path.exists(outSubFolder_path):
-        os.makedirs(outSubFolder_path)
-        print(f"Creating out subfolder:     {outSubFolder_path}")
 
-    runner_writer(run_folder, sample.label, dict_samples_file, hist_folder, nfiles_max, syst)
+    runner_writer(run_folder, sample.label, dict_samples_file, outFolder_path, nfiles_max, syst)
     sub_writer(run_folder, log_folder, sample.label, syst_suffix)
     if not dryrun:
         os.popen("condor_submit " + run_folder + "condor.sub")
