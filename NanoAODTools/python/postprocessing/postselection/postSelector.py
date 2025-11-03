@@ -135,6 +135,7 @@ print("Datasets to process: ", [d.label for d in datasets])
 
 chain                       = {}
 ntot_events                 = {}
+tchains                     = {}
 for d in datasets:
     if hasattr(d, "components"):
         samples_list        = d.components
@@ -142,10 +143,12 @@ for d in datasets:
         samples_list        = [d]
     chain[d.label]          = {}
     ntot_events[d.label]    = {}
+    tchains[d.label]        = {}
     for s in samples_list:
         nfiles              = nfiles_max
         for i, string in enumerate(samples[d.label][s.label]['strings']):
-            samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
+            # samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
+            samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://xrootd-cms.infn.it/") # root://stormgf2.pi.infn.it/
         chain[d.label][s.label] = samples[d.label][s.label]['strings'][:nfiles]
         if not "Data" in s.label:
             ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][:nfiles])
@@ -159,9 +162,18 @@ for d in datasets:
             print("files strings :\n  {}".format(chain[d.label][s.label][0]))
         print("# of total events in the files to process (MC only, if Data the number is None): ", ntot_events[d.label][s.label])
 
-
-
-
+        #### tchain def
+        tchains[d.label][s.label] = ROOT.TChain("Events")
+        for i, f in enumerate(chain[d.label][s.label]):
+            try:
+                TFile = ROOT.TFile.Open(f)
+                tchains[d.label][s.label].Add(f)
+            except:
+                ntot_events[d.label][s.label] -= samples[d.label][s.label]['ntot'][i]
+                print("Could not add file: ", f)
+                continue
+        print("Number of events in the TChain: ", tchains[d.label][s.label].GetEntries())
+        print("Number of total events in the TChain (MC only, if Data the number is None): ", ntot_events[d.label][s.label])
 
 
 ################### utils ###################
@@ -171,9 +183,9 @@ def cut_string(cut):
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
     
-    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)")
-    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)")
-    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)")
+    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)") #richiesto jetId==6
+    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)") 
+    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") #richiesto jetId==6
     df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
@@ -207,7 +219,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("LeadingElectronPt_eta", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_eta)")
     df = df.Define("LeadingElectronPt_phi", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_phi)")
     
-    df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)")
+    df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)") #richiesto jetId==6
     df = df.Define("MHT","MHT(GoodJet_idx, Jet_pt_nominal, Jet_phi, Jet_eta, Jet_mass_nominal)")
     df = df.Define("JetBTagLoose_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 0)")\
                 .Define("nJetBtagLoose", "static_cast<int>(JetBTagLoose_idx.size());")
@@ -499,7 +511,8 @@ for d in datasets:
         print("Initializing DataFrame for "+ s.label +" chain len = ", len(chain[d.label][s.label]))
         if len(chain[d.label][s.label])==1:
             print(chain[d.label][s.label])
-        df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
+        # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
+        df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
 
 
