@@ -67,10 +67,18 @@ When jobs are successfull ended, you need to include the file to the dict_file.j
 python3 getoutputs -d *dataset_name*
 ```
 ### Step 2: Histogram Production
+In order to produce the histograms, you can run the `postSelector_submitter.py` script as follows:
 ```bash
-cd ..../TprimeAnalysis//NanoAODTools/python/postprocessing/postselection/
+cd ..../TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/
 python3 postSelector_submitter.py -d *dataset_name* --syst
 ```
+
+If you want to check if the output files have been correctly produced, i.e. they contain the histograms in the right format, for all component and so on, you can run:
+```bash
+cd ..../TprimeAnalysis/NanoAODTools/python/postprocessing/postselection/
+python3 jobChecker.py -d *plots_folder* --year *era*
+```
+where *plots_folder* is the folder where all the output histograms are stored and *era* can be something like `2022`, `2022EE`, etc.
 
 ### Step 3: Statistical Analysis
 For the statistical analysis, please refer to the [TprimeStats repository](https://github.com/acagnotta/TprimeStats).
