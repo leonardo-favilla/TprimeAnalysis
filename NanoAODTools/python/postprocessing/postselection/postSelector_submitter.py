@@ -2,6 +2,7 @@ import os
 import optparse
 import sys
 import time
+import shutil
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 from pathlib import Path
