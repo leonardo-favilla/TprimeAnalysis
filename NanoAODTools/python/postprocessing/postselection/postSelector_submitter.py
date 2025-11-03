@@ -91,9 +91,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     f = open(run_folder+"runner.sh", "w")
     f.write("#!/usr/bin/bash\n")
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
-    # f.write("source analysis_TPrime.sh\n")
-    f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/TprimeAnalysis/NanoAODTools/\n")
-    f.write("source standalone/env_standalone.sh\n")
+    f.write("source analysis_TPrime.sh\n")
     f.write("cd python/postprocessing/postselection/\n")
     pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --tmpfold"
     if syst:
