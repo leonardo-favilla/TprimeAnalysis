@@ -468,7 +468,7 @@ TT_2022.year                = 2022
 TT_2022.components          = [
                                 TT_semilep_2022,
                                 TT_hadr_2022,
-                                TT_dilep_2022
+                                # TT_dilep_2022
                                 ]
 
 ################################ SingleTop ################################
@@ -1090,7 +1090,7 @@ TT_2022EE.year                = 2022
 TT_2022EE.components          = [
                                     TT_semilep_2022EE,
                                     TT_hadr_2022EE,
-                                    TT_dilep_2022EE
+                                    # TT_dilep_2022EE
                                     ]
 
 ################################ SingleTop ################################
@@ -1635,7 +1635,7 @@ TT_2023.year                = 2023
 TT_2023.components          = [
                                 TT_semilep_2023,
                                 TT_hadr_2023,
-                                TT_dilep_2023
+                                # TT_dilep_2023
                                 ]
 
 ################################ SingleTop ################################
@@ -2170,7 +2170,7 @@ TT_2023postBPix.year                = 2023
 TT_2023postBPix.components          = [
                                         TT_semilep_2023postBPix,
                                         TT_hadr_2023postBPix,
-                                        TT_dilep_2023postBPix
+                                        # TT_dilep_2023postBPix
                                         ]
 
 ################################ SingleTop ################################

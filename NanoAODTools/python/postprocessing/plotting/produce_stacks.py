@@ -21,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2022"    # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "2022EE"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":                 59.97,
@@ -37,23 +37,23 @@ lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
 
 folder_dict     = {
                     "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_noSFbtag_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/",
                     "Full2022":                 ".", # Placeholder
                     "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_noSFbtag_310725/",
                 }
 
 
 folder_www_dict = {
                     "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_noSFbtag_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/",
                     "Full2022":                 ".", # Placeholder
                     "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_noSFbtag_310725/",
                 }
 
 
