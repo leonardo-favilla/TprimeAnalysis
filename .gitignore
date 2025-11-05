@@ -26,3 +26,4 @@ NanoAODTools/python/postprocessing/trial_canvas.png
 NanoAODTools/python/postprocessing/postselection/condor/
 NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/
 NanoAODTools/python/postprocessing/postselection_xTopSF/condor_preprocess/
+NanoAODTools/python/postprocessing/postselection_xTopSF/condor_postSel/
