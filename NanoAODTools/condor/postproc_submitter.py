@@ -261,7 +261,6 @@ if submit:
             print("....submitting file", i, end='\r')
             outfolder_crabscript_i = outfolder_tmp+sample.label+"/file"+str(i)+"/"
             running_subfolder_file = running_subfolder + "/file" + str(i)
-            print("Running subfolder: ", running_subfolder_file)
             if not os.path.exists(running_subfolder_file):
                 os.makedirs(running_subfolder_file)
             write_crab_script(sample, f, modules, running_subfolder_file, calcualte_systematics, sample.year, debug)
