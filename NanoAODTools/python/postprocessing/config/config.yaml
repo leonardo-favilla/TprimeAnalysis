@@ -6,6 +6,14 @@ outputfolder:
     "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/", #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
     }
 
+TopSF:
+  preprocessed_files:
+    2022:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/preprocessed_ntuples/"
+    2023:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/preprocessed_ntuples/"
+  postprocessed_files:
+    2022:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
+    2023:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
+
 dict_samples:
   2022: "../samples/dict_samples_2022.json"
   2023: "../samples/dict_samples_2023.json"
