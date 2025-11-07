@@ -4,29 +4,37 @@ import os, sys
 import optparse
 import json
 import numpy as np
+import yaml
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 sys.path.append('../')
 
 # inFilePath                  = "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/QCD_HT200to400_2022/20240704_122343/tree_hadd_67.root"
 # chain                       = [inFilePath]
 # year                        = 2022
+config = {}
+config_paths = os.environ.get('PWD')+'/../config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
 
 
-usage                   = 'python3 preprocess_ntuples.py -c <component> --dict_samples_file <dict_samples_file> --nfiles_max <nfiles_max>'
+usage                   = 'python3 preprocess_ntuples.py -c <component> --nfiles_max <nfiles_max>'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-c', '--component',          dest='component',           type=str,               default="QCD_HT400to600_2022",                      help='Single component to process, in the form: QCD_HT400to600_2022')
-parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2022.json",        help='Path to the JSON file containing the sample definitions')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                          help='Max number of files to process per sample')
 parser.add_option(      '--certpath',           dest='certpath',            type=str,               default="/tmp/x509up_u{}".format(str(os.getuid())), help='Path to the certificate file')
 (opt, args)             = parser.parse_args()
 in_dataset              = opt.component
-dict_samples_file       = opt.dict_samples_file
 year                    = int(in_dataset.split("_")[-1][:4])
 EE                      = 1 if len(in_dataset.split("_")[-1])>4 else 0
 nfiles_max              = opt.nfiles_max
 certpath                = opt.certpath
-where_to_write          = "tier" # options are "tier" or "eos"
-
+where_to_write          = "eos" # options are "tier" or "eos"
+dict_samples_file       = config["dict_samples"][year]
 
 #### LOAD samples.py ####
 with open(dict_samples_file, "rb") as sample_file:
@@ -54,8 +62,11 @@ print(chain[0])
 
 #### Define output files and folders ####
 if where_to_write == "eos":
-    outFolder                       = "/eos/user/l/lfavilla/RDF_DManalysis_xTopSF/preprocessed_ntuples/"
+    remote_folder_name              = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF"
+    outFolder                       = remote_folder_name+"/preprocessed_ntuples/"
     outSubFolder                    = outFolder+in_dataset+"/"
+    if not os.path.exists(remote_folder_name):
+        os.makedirs(remote_folder_name)
     if not os.path.exists(outFolder):
         os.makedirs(outFolder)
     if not os.path.exists(outSubFolder):
@@ -64,37 +75,38 @@ elif where_to_write == "tier":
     remote_folder_name              = "TopSF"
     outFolder                       = remote_folder_name+"/preprocessed_ntuples/"
     outSubFolder                    = outFolder+in_dataset+"/"
-    # subprocess.run(
-    #     ["davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    #     ],
-    #     check=True
-    # )
 
-    # subprocess.run(
-    #     ["davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    #     ],
-    #     check=True
-    # )
-
-    # subprocess.run(
-    #     ["davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    #     ],
-    #     check=True
-    # )
     print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
-    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
-    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
-    outFolder_tmp                   = "/tmp/{}/".format(username)
+    subprocess.run(
+        ["davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ],
+        check=True
+    )
 
+    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
+    subprocess.run(
+        ["davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ],
+        check=True
+    )
+
+    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
+    subprocess.run(
+        ["davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ],
+        check=True
+    )
+
+    outFolder_tmp                   = "/tmp/{}/".format(username)
     if not os.path.exists(outFolder_tmp):
         os.makedirs(outFolder_tmp)
     outFilePath_nominal_tmp         = outFolder_tmp+in_dataset+"_nominal.root"
@@ -175,6 +187,11 @@ eventWeights            = ["SFbtag", "puWeight", "puWeightDown", "puWeightUp", "
 branches_to_save        = [
                             *hlt[year],
 
+                            "TopGenTopPart_pt",
+                            "TopGenTopPart_eta",
+                            "TopGenTopPart_phi",
+                            "TopGenTopPart_mass",
+
                             "Electron_pt",
                             "Electron_eta",
                             "Electron_phi",
@@ -186,6 +203,7 @@ branches_to_save        = [
                             "Muon_looseId", 
                             "Muon_tightId",
 
+                            "FatJet_jetId",
                             "FatJet_mass",
                             "FatJet_msoftdrop",
                             "FatJet_pt",
@@ -193,7 +211,9 @@ branches_to_save        = [
                             "FatJet_eta",
                             "FatJet_particleNetWithMass_WvsQCD",
                             "FatJet_particleNetWithMass_TvsQCD",
+                            "FatJet_matched",
 
+                            "Jet_jetId",
                             "Jet_mass",
                             "Jet_pt",
                             "Jet_phi",
@@ -208,12 +228,22 @@ branches_to_save        = [
                             "TopResolved_eta",
                             "TopResolved_phi",
                             "TopResolved_TopScore",
+                            "TopResolved_idxJet0",
+                            "TopResolved_idxJet1",
+                            "TopResolved_idxJet2",
+                            "TopResolved_truth",
 
                             "TopMixed_mass",
                             "TopMixed_pt",
                             "TopMixed_eta",
                             "TopMixed_phi",
                             "TopMixed_TopScore",
+                            "TopMixed_idxFatJet",
+                            "TopMixed_idxJet0",
+                            "TopMixed_idxJet1",
+                            "TopMixed_idxJet2",
+                            "TopMixed_truth"
+
                             ]
 
 if not "Data" in in_dataset:
@@ -268,7 +298,7 @@ if where_to_write == "tier":
         df_jesTotalup           = df_jesTotalup.Snapshot("Events", outFilePath_jesUp_tmp, branches_to_save, opts)
         df_jesTotaldown         = df_jesTotaldown.Snapshot("Events", outFilePath_jesDown_tmp, branches_to_save, opts)
 else:
-    df_nominal              = df_nominal.Snapshot("Events", outFilePath_nominal, branches_to_save, opts)
+    df_nominal                  = df_nominal.Snapshot("Events", outFilePath_nominal, branches_to_save, opts)
     if not "Data" in in_dataset:
         df_jerup                = df_jerup.Snapshot("Events", outFilePath_jerUp, branches_to_save, opts)
         df_jerdown              = df_jerdown.Snapshot("Events", outFilePath_jerDown, branches_to_save, opts)
@@ -285,32 +315,32 @@ print("Snapshot done!")
 
 if where_to_write == "tier":
     print("Copying files to tier...")
-    # subprocess.run(
-    #     [
-    #         "davix-put", outFilePath_nominal_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_nominal}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    #     ],
-    #     check=True
-    # )
+    subprocess.run(
+        [
+            "davix-put", outFilePath_nominal_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_nominal}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ],
+        check=True
+    )
     print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_nominal_tmp, username, outFilePath_nominal, certpath))
     if not "Data" in in_dataset:
-        # subprocess.run(
-        #     ["davix-put", outFilePath_jerUp_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jerUp}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
-        #     check=True
-        # )
-        # subprocess.run(
-        #     ["davix-put", outFilePath_jerDown_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jerDown}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
-        #     check=True
-        # )
-        # subprocess.run(
-        #     ["davix-put", outFilePath_jesUp_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jesUp}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
-        #     check=True
-        # )
-        # subprocess.run(
-        #     ["davix-put", outFilePath_jesDown_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jesDown}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
-        #     check=True
-        # )
         print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_jerUp_tmp, username, outFilePath_jerUp, certpath))
+        subprocess.run(
+            ["davix-put", outFilePath_jerUp_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jerUp}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
+            check=True
+        )
         print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_jerDown_tmp, username, outFilePath_jerDown, certpath))
+        subprocess.run(
+            ["davix-put", outFilePath_jerDown_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jerDown}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
+            check=True
+        )
         print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_jesUp_tmp, username, outFilePath_jesUp, certpath))
+        subprocess.run(
+            ["davix-put", outFilePath_jesUp_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jesUp}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
+            check=True
+        )
         print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_jesDown_tmp, username, outFilePath_jesDown, certpath))
+        subprocess.run(
+            ["davix-put", outFilePath_jesDown_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_jesDown}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"],
+            check=True
+        )
     print("Done!")

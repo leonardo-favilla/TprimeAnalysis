@@ -4,13 +4,12 @@ import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 sys.path.append('../')
 
-components_to_run   = ["QCD_HT70to100_2022", "QCD_HT100to200_2022", "QCD_HT200to400_2022", "QCD_HT400to600_2022", "QCD_HT600to800_2022", "QCD_HT800to1000_2022", "QCD_HT1000to1200_2022", "QCD_HT1200to1500_2022", "QCD_HT1500to2000_2022", "QCD_HT2000_2022"]
-# components_to_run   = ["TT_semilep_2022"]
-# components_to_run   = ["DataJetMETD_2022"]
-dict_samples_file   = "../samples/dict_samples_2022.json"
 year                = 2022
+components_to_run   = ["QCD_HT70to100_2022", "QCD_HT100to200_2022", "QCD_HT200to400_2022", "QCD_HT400to600_2022", "QCD_HT600to800_2022", "QCD_HT800to1000_2022", "QCD_HT1000to1200_2022", "QCD_HT1200to1500_2022", "QCD_HT1500to2000_2022", "QCD_HT2000_2022", "TT_semilep_2022", "DataJetMETC_2022", "DataJetMETD_2022"]
+# components_to_run   = ["TT_semilep_2022"]
+# components_to_run   = ["DataJetMETC_2022"]
 nfiles_max          = 1
-dryrun              = False
+dryrun              = False  # if True, condor jobs are not submitted
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])
@@ -45,13 +44,13 @@ def sub_writer(run_folder, log_folder, component):
     f.write("queue\n")
     f.close()
 
-def runner_writer(run_folder, component, dict_samples_file, nfiles_max):
+def runner_writer(run_folder, component, nfiles_max):
     f = open(run_folder+"runner.sh", "w")
     f.write("#!/usr/bin/bash\n")
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
     f.write("source analysis_TPrime.sh\n")
     f.write("cd python/postprocessing/postselection_xTopSF/\n")
-    f.write(f"python3 preprocess_ntuples.py -c {component} --dict_samples_file {dict_samples_file} --nfiles_max {nfiles_max} --certpath $1"+"\n")
+    f.write(f"python3 preprocess_ntuples.py -c {component} --nfiles_max {nfiles_max} --certpath $1"+"\n")
 
 
 
@@ -83,7 +82,7 @@ for component_to_run in components_to_run:
         print(f"Creating run folder:        {run_folder}")
 
 
-    runner_writer(run_folder, component_to_run, dict_samples_file, nfiles_max)
+    runner_writer(run_folder, component_to_run, nfiles_max)
     sub_writer(run_folder, log_folder, component_to_run)
     if not dryrun:
         os.popen("condor_submit " + run_folder + "condor.sub")
