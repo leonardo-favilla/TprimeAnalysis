@@ -23,6 +23,7 @@ parser.add_option('-c', '--component',          dest='component',           type
 parser.add_option(      '--inFilePath',         dest='inFilePath',          type=str,                                                                   help='Path to the input preprocessed .root file')
 parser.add_option(      '--certpath',           dest='certpath',            type=str,               default="/tmp/x509up_u{}".format(str(os.getuid())), help='Path to the certificate file')
 
+
 (opt, args)             = parser.parse_args()
 in_dataset              = opt.component
 year                    = int(in_dataset.split("_")[-1][:4])
@@ -44,7 +45,7 @@ print(f"Processing component {in_dataset}, year {year}, with file {inFilePath}")
 
 #### Define output files and folders ####
 if where_to_write == "eos":
-    outFolder                       = "/eos/user/l/lfavilla/RDF_DManalysis_xTopSF/ntuples_ready_for_TopSF_Framework/"
+    outFolder                       = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
     outSubFolder                    = outFolder+in_dataset+"/"
     if not os.path.exists(outFolder):
         os.makedirs(outFolder)
@@ -54,26 +55,26 @@ elif where_to_write == "tier":
     remote_folder_name              = "TopSF"
     outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
     outSubFolder                    = outFolder+in_dataset+"/"
-    # subprocess.run([
-    #     "davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    # ])
+    subprocess.run([
+        "davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])
 
-    # subprocess.run([
-    #     "davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}/",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    # ])
+    subprocess.run([
+        "davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}/",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])
 
-    # subprocess.run([
-    #     "davix-mkdir",
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}/",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    # ])    
+    subprocess.run([
+        "davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}/",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])    
     outFolder_tmp                   = "/tmp/{}/".format(username)
 
     if not os.path.exists(outFolder_tmp):
@@ -89,13 +90,13 @@ print("Output will be written to: ", outFilePath)
 if where_to_write == "tier":
     print("Copying files to tier...")
     print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_tmp, username, outFilePath, certpath))
-    # subprocess.run([
-    #     "davix-put",
-    #     outFilePath_tmp,
-    #     f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath}",
-    #     "-E", certpath,
-    #     "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    # ])
+    subprocess.run([
+        "davix-put",
+        outFilePath_tmp,
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath}",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])
     print("Done!")
 
 
@@ -116,7 +117,6 @@ my_initialization_function()
 
 
 # inFile          = ROOT.TFile.Open(inFilePath)
-sys.exit()
 cut         = requirements  # ---> see variables.py
 regions_def = regions       # ---> see variables.py
 
@@ -141,7 +141,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
-    df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
+    df = df.Define("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
     df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta)")
@@ -215,7 +215,7 @@ def trigger_filter(df, data, isMC, year):
 
 ############### top selection ########################
 def select_top(df, isMC):
-    
+
     Top_Resolved_wp = {"10%": 0.1422998, "5%": 0.29475874, "1%": 0.59264845, "0.1%": 0.86580896}
     # Top_Resolved_wp = { "10%": 0.1, "5%": 0.3, "1%": 0.59264845, "0.1%": 0.86580896}
     Top_Mixed_wp    = {"10%": 0.7214655876159668, "5%": 0.8474694490432739, "1%" : 0.9436638951301575, "0.1%": 0.9789741635322571}
@@ -246,7 +246,7 @@ def select_top(df, isMC):
     df_topcategory = df_nTops.Define("EventTopCategory", "select_TopCategory(TightTopMer_idx, TightTopMix_idx, TightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx)")
     if isMC:
         df_topcategory = df_topcategory.Define("EventTopCategoryWithTruth", "select_TopCategoryWithTruth(EventTopCategory, FatJet_matched, LooseTopMer_idx, TopMixed_truth, LooseTopMix_idx, TopResolved_truth, LooseTopRes_idx)")
-    
+                                    
     # df_topselected = df_topcategory.Define("Top_idx",
     #                                        "select_bestTop(EventTopCategory, FatJet_particleNetWithMass_TvsQCD, TopMixed_TopScore, TopResolved_TopScore)")
     # # return best top idx wrt category --> the idx is referred to the list of candidates fixed by the EventTopCategory
@@ -259,39 +259,32 @@ def select_top(df, isMC):
     #     df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
-    
-    
-    df_topselected = df_topcategory.Define("BestTopResolved_idx", "TopResolved_TopScore.size()==0? -1 : ArgMax(TopResolved_TopScore)")\
-                                    .Define("BestTopMixed_idx", "TopMixed_TopScore.size()==0? -1 : ArgMax(TopMixed_TopScore)")\
-                                    .Define("BestTopMerged_idx", "FatJet_particleNetWithMass_TvsQCD.size()==0? -1 : ArgMax(FatJet_particleNetWithMass_TvsQCD)")
-                                    
-    ###### AGGIUSTA QUA ######
-    df_topvariables = df_topselected.Define("BestTopResolved_pt", "BestTopResolved_idx!=-1?  TopResolved_pt[BestTopResolved_idx] : -1")\
-                        .Define("BestTopResolved_eta", "BestTopResolved_idx!=-1?  TopResolved_eta[BestTopResolved_idx] : -1")\
-                        .Define("BestTopResolved_phi", "BestTopResolved_idx!=-1?  TopResolved_phi[BestTopResolved_idx] : -1")\
-                        .Define("BestTopResolved_mass", "BestTopResolved_idx!=-1?  TopResolved_mass[BestTopResolved_idx] : -1")\
-                        .Define("BestTopResolved_score", "BestTopResolved_idx!=-1?  TopResolved_TopScore[BestTopResolved_idx] : -1")\
-
-                        .Define("BestTopMixed_pt", "BestTopMixed_idx!=-1?  TopMixed_pt[BestTopMixed_idx] : -1")\
-                        .Define("BestTopMixed_eta", "BestTopMixed_idx!=-1?  TopMixed_eta[BestTopMixed_idx] : -1")\
-                        .Define("BestTopMixed_phi", "BestTopMixed_idx!=-1?  TopMixed_phi[BestTopMixed_idx] : -1")\
-                        .Define("BestTopMixed_mass", "BestTopMixed_idx!=-1?  TopMixed_mass[BestTopMixed_idx] : -1")\
-                        .Define("BestTopMixed_score", "BestTopMixed_idx!=-1?  TopMixed_TopScore[BestTopMixed_idx] : -1")\
-
-                        .Define("BestTopMerged_pt", "BestTopMerged_idx!=-1?  FatJet_pt[BestTopMerged_idx] : -1")\
-                        .Define("BestTopMerged_eta", "BestTopMerged_idx!=-1?  FatJet_eta[BestTopMerged_idx] : -1")\
-                        .Define("BestTopMerged_phi", "BestTopMerged_idx!=-1?  FatJet_phi[BestTopMerged_idx] : -1")\
-                        .Define("BestTopMerged_mass", "BestTopMerged_idx!=-1?  FatJet_mass[BestTopMerged_idx] : -1")\
-                        .Define("BestTopMerged_score", "BestTopMerged_idx!=-1?  FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx] : -1")
 
 
-    return df_topvariables
+    df_topselected = df_topcategory.Define("BestTopResolved_idx", "TopResolved_TopScore.size() == 0 ? -1 : ArgMax(TopResolved_TopScore)")\
+                                    .Define("BestTopMixed_idx",    "TopMixed_TopScore.size() == 0 ? -1 : ArgMax(TopMixed_TopScore)")\
+                                    .Define("BestTopMerged_idx",   "FatJet_particleNetWithMass_TvsQCD.size() == 0 ? -1 : ArgMax(FatJet_particleNetWithMass_TvsQCD)")
 
+    df_topvariables = df_topselected.Define("BestTopResolved_pt",   "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_pt.size() ? TopResolved_pt[BestTopResolved_idx] : -1.")\
+        .Define("BestTopResolved_eta",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_eta.size() ? TopResolved_eta[BestTopResolved_idx] : -1.")\
+        .Define("BestTopResolved_phi",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_phi.size() ? TopResolved_phi[BestTopResolved_idx] : -1.")\
+        .Define("BestTopResolved_mass", "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_mass.size() ? TopResolved_mass[BestTopResolved_idx] : -1.")\
+        .Define("BestTopResolved_score","BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_TopScore.size() ? TopResolved_TopScore[BestTopResolved_idx] : -1.")\
+        .Define("BestTopMixed_pt",   "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_pt.size() ? TopMixed_pt[BestTopMixed_idx] : -1.")\
+        .Define("BestTopMixed_eta",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_eta.size() ? TopMixed_eta[BestTopMixed_idx] : -1.")\
+        .Define("BestTopMixed_phi",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_phi.size() ? TopMixed_phi[BestTopMixed_idx] : -1.")\
+        .Define("BestTopMixed_mass", "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_mass.size() ? TopMixed_mass[BestTopMixed_idx] : -1.")\
+        .Define("BestTopMixed_score","BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_TopScore.size() ? TopMixed_TopScore[BestTopMixed_idx] : -1.")\
+        .Define("BestTopMerged_pt",   "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_pt.size() ? FatJet_pt[BestTopMerged_idx] : -1.")\
+        .Define("BestTopMerged_eta",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_eta.size() ? FatJet_eta[BestTopMerged_idx] : -1.")\
+        .Define("BestTopMerged_phi",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_phi.size() ? FatJet_phi[BestTopMerged_idx] : -1.")\
+        .Define("BestTopMerged_mass", "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_mass.size() ? FatJet_mass[BestTopMerged_idx] : -1.")\
+        .Define("BestTopMerged_score","BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_particleNetWithMass_TvsQCD.size() ? FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx] : -1.")
 
+    if isMC:
+        df_toptruth    = df_topvariables.Define("TopRes_isMatchedToGenTop_dR0p2", "TopGenTopPart_pt.size() > 0 ? deltaR(TopGenTopPart_eta[0], TopGenTopPart_phi[0], BestTopResolved_eta, BestTopResolved_phi) < 0.2 : 0.")
 
-
-
-
+    return df_toptruth
 
 
 ######## MAIN CODE ########
@@ -299,7 +292,9 @@ t0 = datetime.now()
 print("Local time :", t0)
 
 df                  = ROOT.RDataFrame("Events", inFilePath)
-df_trigger          = trigger_filter(df, None, None)
+df                  = df.Define("PuppiMET_T1_pt_vec", "RVec<float>{ (float) PuppiMET_T1_pt}")\
+                        .Define("PuppiMET_T1_phi_vec", "RVec<float>{ (float) PuppiMET_T1_phi}")
+df_trigger          = trigger_filter(df, None, None, year)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_topselected      = select_top(df_presel, isMC)
 
@@ -318,12 +313,12 @@ print("Snapshot done!")
 
 if where_to_write == "tier":
     print("Copying files to tier...")
-    # subprocess.run(
-    #     [
-    #         "davix-put", outFilePath_nominal_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_nominal}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    #     ],
-    #     check=True
-    # )
+    subprocess.run(
+        [
+            "davix-put", outFilePath_nominal_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_nominal}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ],
+        check=True
+    )
     print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_nominal_tmp, username, outFilePath_nominal, certpath))
 
 
