@@ -21,7 +21,7 @@ extraSpace      = 0.1
 iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
 cut             = requirements      # defined in variables.py
 blind           = False             # Set to True if you want to blind the data
-year_tag        = "2022EE"    # "2022", "2022EE", "2023", "2023postBPix"
+year_tag        = "Full2022_Full2023"    # "2022", "2022EE", "2023", "2023postBPix"
 
 lumi_dict       = {
                     "2018":                 59.97,
@@ -36,24 +36,24 @@ lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
 
 
 folder_dict     = {
-                    "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_noSFbtag_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/",
+                    "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
                     "Full2022":                 ".", # Placeholder
                     "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_noSFbtag_310725/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
                 }
 
 
 folder_www_dict = {
-                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_noSFbtag_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/",
+                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_310725/",
+                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
+                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
+                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
                     "Full2022":                 ".", # Placeholder
                     "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_noSFbtag_310725/",
+                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
                 }
 
 
@@ -117,10 +117,10 @@ json_file_dict  = {
                     "2022EE":               "../samples/dict_samples_2022.json",
                     "2023":                 "../samples/dict_samples_2023.json",
                     "2023postBPix":         "../samples/dict_samples_2023.json",
-                    "Full2022":             ".", # Placeholder
-                    "Full2023":             ".", # Placeholder
-                    "Full2022_Full2023":    "../samples/dict_samples_2023.json"
                 }
+json_file_dict["Full2022"]          = ".", # Placeholder
+json_file_dict["Full2023"]          = ".", # Placeholder
+json_file_dict["Full2022_Full2023"] = ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
 
 
 colors_bkg          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
@@ -190,8 +190,14 @@ if not os.path.exists(repostack_www+"index.php"):
 
 
 # Load the JSON file
-with open(json_file, "r") as file:     ##### Questo non ho capito a cosa serva
-    samples = json.load(file)
+if isinstance(json_file, list):                 # multiple json files, when combining years
+    samples = {}
+    for jf in json_file:
+        with open(jf, "r") as file:
+            samples.update(json.load(file))
+elif isinstance(json_file, str):                # single json file, when running on a single era/year
+    with open(json_file, "r") as file:
+        samples = json.load(file)
 
 print("Parameters setted")
 print("cut              = {}".format(cut))
