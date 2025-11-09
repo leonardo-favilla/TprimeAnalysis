@@ -70,8 +70,8 @@ datasets_dict   = {
                                 # "tDM_mPhi500_mChi1_2022",
                                 # "tDM_mPhi1000_mChi1_2022",
                                 "TprimeToTZ_700_2022",
-                                # "TprimeToTZ_1000_2022",
-                                # "TprimeToTZ_1800_2022"
+                                "TprimeToTZ_1000_2022",
+                                "TprimeToTZ_1800_2022"
                             ],
                     "2022EE":
                             [
@@ -81,8 +81,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2022EE",
                                 "WJets_2jets_2022EE",
                                 "TprimeToTZ_700_2022EE",
-                                # "TprimeToTZ_1000_2022EE",
-                                # "TprimeToTZ_1800_2022EE"
+                                "TprimeToTZ_1000_2022EE",
+                                "TprimeToTZ_1800_2022EE"
                             ],
                     "2023":
                             [
@@ -92,8 +92,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2023",
                                 "WJets_2jets_2023",
                                 "TprimeToTZ_700_2023",
-                                # "TprimeToTZ_1000_2023",
-                                # "TprimeToTZ_1800_2023"
+                                "TprimeToTZ_1000_2023",
+                                "TprimeToTZ_1800_2023"
                             ],
                     "2023postBPix":
                             [
@@ -103,8 +103,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2023postBPix",
                                 "WJets_2jets_2023postBPix",
                                 "TprimeToTZ_700_2023postBPix",
-                                # "TprimeToTZ_1000_2023postBPix",
-                                # "TprimeToTZ_1800_2023postBPix"
+                                "TprimeToTZ_1000_2023postBPix",
+                                "TprimeToTZ_1800_2023postBPix"
                             ],
                 }
 datasets_dict["Full2022"]          = datasets_dict["2022"] + datasets_dict["2022EE"]
