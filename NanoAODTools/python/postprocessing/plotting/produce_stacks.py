@@ -70,8 +70,8 @@ datasets_dict   = {
                                 # "tDM_mPhi500_mChi1_2022",
                                 # "tDM_mPhi1000_mChi1_2022",
                                 "TprimeToTZ_700_2022",
-                                "TprimeToTZ_1000_2022",
-                                "TprimeToTZ_1800_2022"
+                                # "TprimeToTZ_1000_2022",
+                                # "TprimeToTZ_1800_2022"
                             ],
                     "2022EE":
                             [
@@ -81,8 +81,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2022EE",
                                 "WJets_2jets_2022EE",
                                 "TprimeToTZ_700_2022EE",
-                                "TprimeToTZ_1000_2022EE",
-                                "TprimeToTZ_1800_2022EE"
+                                # "TprimeToTZ_1000_2022EE",
+                                # "TprimeToTZ_1800_2022EE"
                             ],
                     "2023":
                             [
@@ -92,8 +92,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2023",
                                 "WJets_2jets_2023",
                                 "TprimeToTZ_700_2023",
-                                "TprimeToTZ_1000_2023",
-                                "TprimeToTZ_1800_2023"
+                                # "TprimeToTZ_1000_2023",
+                                # "TprimeToTZ_1800_2023"
                             ],
                     "2023postBPix":
                             [
@@ -103,8 +103,8 @@ datasets_dict   = {
                                 "ZJetsToNuNu_2jets_2023postBPix",
                                 "WJets_2jets_2023postBPix",
                                 "TprimeToTZ_700_2023postBPix",
-                                "TprimeToTZ_1000_2023postBPix",
-                                "TprimeToTZ_1800_2023postBPix"
+                                # "TprimeToTZ_1000_2023postBPix",
+                                # "TprimeToTZ_1800_2023postBPix"
                             ],
                 }
 datasets_dict["Full2022"]          = datasets_dict["2022"] + datasets_dict["2022EE"]
@@ -151,7 +151,7 @@ labels_dict         = {
 
 
 ############### SETTINGS ############### 
-lumi            = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
+tot_lumi        = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
 json_file       = json_file_dict[year_tag]
 datasets        = datasets_dict[year_tag]
 run2            = False
@@ -201,7 +201,7 @@ elif isinstance(json_file, str):                # single json file, when running
 
 print("Parameters setted")
 print("cut              = {}".format(cut))
-print("lumi (fb)        = {}".format(str(lumi)))
+print("lumi (fb)        = {}".format(str(tot_lumi)))
 print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 print("blind            = {}".format(blind))
 
@@ -251,9 +251,9 @@ MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
 PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
 
 
-for v in vars:
+# for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
-# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
+for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
     for r in regions.keys():
     # for r in ["SRTop"]:
@@ -273,14 +273,22 @@ for v in vars:
         histo_data          = None
         histo_signals_dict  = {}
 
+        print(f"Processing variable {v._name} in region {r}")
 
         ##### Normalize Signals (Lumi) ######
+        print("Processing Signals")
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
-            # print(s.label)
-            # print(f.GetName())
+            print(f"s.label:                    {s.label}")
+            print(f"f.GetName():                {f.GetName()}")
             histo_name                          = v._name+"_"+r+"_"+"nominal"
+            print(f"histo_name:                 {histo_name}")
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            year_tag                            = s.label.split("_")[-1]
+            lumi                                = lumi_dict[year_tag]
+            print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
+            print(f"year_tag:                   {year_tag}")
+            print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
@@ -289,26 +297,35 @@ for v in vars:
                 tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
+            print(f"After rebinning, signal {s.label} has {tmp.GetEntries()} entries")
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
                 tmp                             = copy.deepcopy(tmp)
             else:
                 continue
-
+            print(f"Signal {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                           = labels_dict["_".join(s.label.split("_")[:2])]
-            histo_signals_dict[leg_label]       = copy.deepcopy(tmp)
+            print(f"leg_label:                  {leg_label}")
             if leg_label not in histo_signals_dict:
                 histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
-
+            print(f"Signal {leg_label} has {histo_signals_dict[leg_label].GetEntries()} entries after scaling\n")
+        print("Finished Processing Signals\n")
 
         ##### Normalize Backgrounds (Lumi) ######
+        print("Processing Backgrounds")
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
-            # print(f"s.label:                    {s.label}")
+            print(f"s.label:                    {s.label}")
+            print(f"f.GetName():                {f.GetName()}")
             histo_name                      = v._name+"_"+r+"_"+"nominal"
-            # print(f"histo_name:                 {histo_name}")
+            print(f"histo_name:                 {histo_name}")
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            year_tag                        = s.label.split("_")[-1]
+            lumi                            = lumi_dict[year_tag]
+            print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
+            print(f"year_tag:                   {year_tag}")
+            print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
@@ -321,21 +338,26 @@ for v in vars:
                 tmp.Scale(lumi)
             else:
                 continue
-
+            print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                       = labels_dict[s.label.split("_")[0]]
+            print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_bkg_dict[leg_label].Add(copy.deepcopy(tmp))
-
+            print(f"Background {leg_label} has {histo_bkg_dict[leg_label].GetEntries()} entries after scaling\n")
+        print("Finished Processing Backgrounds\n")
         
         ##### Data #####
+        print("Processing Data")
         if (not blind) and ((not ("SR" in r) or ("SRTopLoose" in r)) or (("SR" in r) and not ("SRTop" in r))):
             if not v._MConly:
                 histo_name                          = v._name+"_"+r
                 for f, s in zip(inFile["Data"], inSample["Data"]):
-                    # print(s.label)
+                    print(f"s.label:                    {s.label}")
+                    print(f"f.GetName():                {f.GetName()}")
                     tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+                    print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
                     if v._name == "MT_T":
                         tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                         tmp                         = copy.deepcopy(tmp_)
@@ -348,6 +370,9 @@ for v in vars:
                         histo_data                  = copy.deepcopy(tmp)
                     else:
                         histo_data.Add(copy.deepcopy(tmp))
+                    print(f"Data {s.label} has {tmp.GetEntries()} entries")
+                    print(f"Data has {histo_data.GetEntries()} entries after summing\n")
+        print("Finished Processing Data\n")
 
 
         # for label,h in histo_signals_dict.items():
@@ -446,7 +471,7 @@ for v in vars:
                                                 yTitle              = yTitle,
                                                 rTitle              = rTitle,
                                                 extraText           = extraText,
-                                                lumi                = lumi,
+                                                lumi                = tot_lumi,
                                                 extraSpace          = extraSpace,
                                                 iPos                = iPos,
                                                 logy                = logy,
