@@ -256,6 +256,7 @@ for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
 # for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
+# for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
     for r in regions.keys():
     # for r in ["SRTop"]:
     # for r in ["AH"]:
