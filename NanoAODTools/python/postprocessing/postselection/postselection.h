@@ -1484,3 +1484,24 @@ float genpartTopPt(rvec_f GenPart_pt, rvec_i GenPart_pdgId, rvec_i GenPart_genPa
 
   return top_pt;
 }
+
+
+////// Matching between Top Candidates and Gen Tops requiring their deltaR to be below a certain threshold
+Int_t TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPart_phi, float BestTopCand_eta, float BestTopCand_phi, float deltaR_thr)
+{
+  if(TopGenTopPart_eta.size()==0) // no gen tops in the event (QCD, etc.)
+  {
+    return -1;
+  }
+  
+  Int_t matched = 0;
+  for(int i = 0; i < TopGenTopPart_eta.size(); i++)
+  {
+    if(deltaR(TopGenTopPart_eta[i], TopGenTopPart_phi[i], BestTopCand_eta, BestTopCand_phi) < deltaR_thr)
+    {
+      matched = 1;
+      break;
+    }
+  }
+  return matched;
+}

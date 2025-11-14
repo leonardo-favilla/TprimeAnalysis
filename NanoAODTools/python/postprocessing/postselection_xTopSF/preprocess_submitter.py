@@ -5,10 +5,10 @@ from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 sys.path.append('../')
 
 year                = 2022
-components_to_run   = ["QCD_HT70to100_2022", "QCD_HT100to200_2022", "QCD_HT200to400_2022", "QCD_HT400to600_2022", "QCD_HT600to800_2022", "QCD_HT800to1000_2022", "QCD_HT1000to1200_2022", "QCD_HT1200to1500_2022", "QCD_HT1500to2000_2022", "QCD_HT2000_2022", "TT_semilep_2022", "DataJetMETC_2022", "DataJetMETD_2022"]
-# components_to_run   = ["TT_semilep_2022"]
+# components_to_run   = ["QCD_HT70to100_2022", "QCD_HT100to200_2022", "QCD_HT200to400_2022", "QCD_HT400to600_2022", "QCD_HT600to800_2022", "QCD_HT800to1000_2022", "QCD_HT1000to1200_2022", "QCD_HT1200to1500_2022", "QCD_HT1500to2000_2022", "QCD_HT2000_2022", "TT_semilep_2022", "DataJetMETC_2022", "DataJetMETD_2022"]
+components_to_run   = ["TT_semilep_2022"]
 # components_to_run   = ["DataJetMETC_2022"]
-nfiles_max          = 1
+nfiles_max          = 5
 dryrun              = False  # if True, condor jobs are not submitted
 
 username        = str(os.environ.get('USER'))
