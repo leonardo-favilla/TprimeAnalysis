@@ -51,8 +51,8 @@ print("Launching crab script for dataset: ", opt.dat)
 if submit:
     if where_to_write == 'tier':
         print("\nRemote folder name (tier): ", remote_folder_name)
-        if not debug: os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, str(uid)))
-        print("          davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} CREATED".format(username, remote_folder_name))
+        if not debug: os.popen("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, str(uid)))
+        print("          davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{} CREATED".format(username, remote_folder_name))
 
     elif where_to_write == 'eos':
         print("Remote folder name (eos): ", remote_folder_name)
@@ -161,7 +161,7 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     if where_to_write == 'eos':
         f.write("mv tree_hadd_{}.root /eos/home-l/lfavilla/xAnimo/{}/{}/{}/.\n".format(str(i), remote_folder_name, sample_folder, launchtime))
     elif where_to_write == 'tier':
-        f.write("davix-put tree_hadd_{}.root davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), username, remote_folder_name, sample_folder, launchtime, str(i)))
+        f.write("davix-put tree_hadd_{}.root davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), username, remote_folder_name, sample_folder, launchtime, str(i)))
     f.close()
 
 dataset_to_run = opt.dat
@@ -182,7 +182,7 @@ elif dataset_to_run in sample_dict.keys():
         print("---------- Running sample: ", dataset_to_run)
         samples = [sample_dict[dataset_to_run]]
 
-running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/Analysis/NanoAODTools/condor/tmp/"
+running_folder = os.environ.get('PWD')+"/tmp/"
 if not os.path.exists(running_folder):
     os.makedirs(running_folder)
 
@@ -204,22 +204,22 @@ if submit:
         sample_folder = sample.label    
         if where_to_write == 'tier':
             if not debug: 
-                command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, str(uid)))
+                command1 = os.popen("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, str(uid)))
                 res1 = command1.read()
                 if "Error:" in res1:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/   NOT CREATED".format(username, remote_folder_name, sample_folder))
+                    print("Folder : davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/   NOT CREATED".format(username, remote_folder_name, sample_folder))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ created".format(username, remote_folder_name, sample_folder))
-                command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, launchtime, str(uid)))
+                    print("Folder : davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/ created".format(username, remote_folder_name, sample_folder))
+                command2 = os.popen("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, launchtime, str(uid)))
                 res2 = command2.read()
                 if "Error:" in res2:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}   NOT CREATED".format(username, remote_folder_name, sample_folder, launchtime))
+                    print("Folder : davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/{}   NOT CREATED".format(username, remote_folder_name, sample_folder, launchtime))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{} created".format(username, remote_folder_name, sample_folder, launchtime))
+                    print("Folder : davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/{}/{} created".format(username, remote_folder_name, sample_folder, launchtime))
         elif where_to_write == 'eos':
             if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder):
                 os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder)

@@ -32,14 +32,14 @@ running_folder                      = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+u
 remote_folder_name                  = "Run3Analysis_Tprime"
 
 # def find_folder_8(folder, sample, cert_path, ca_path):
-#     command = "davix-ls -E "+cert_path+" --capath "+ca_path+" davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"
+#     command = "davix-ls -E "+cert_path+" --capath "+ca_path+" davs://webdav.recas.ba.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"
 #     print(command)
 #     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 #     output, error = process.communicate()
 #     subfold = output.decode('utf-8').splitlines()
 #     subfold.sort()
 
-#     return "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"+subfold[-1]
+#     return "davs://webdav.recas.ba.infn.it:8443/cms/store/user/"+username+"/"+folder+"/"+sample+"/"+subfold[-1]
 
 # def get_file_sizes_8(directory_url, cert_path, ca_path):
 #     command = "davix-ls -l -E "+cert_path+" --capath "+ca_path+" "+directory_url
@@ -149,7 +149,7 @@ for sample in samples:
     #         print(f"Error with file {file_name} [job_exit_code = {exit_code}] - skipping")
     #         continue
 
-    path_file = "root://cms-xrd-global.cern.ch/"+folder.replace("davs://stwebdav.pi.infn.it:8443/cms", "")
+    path_file = "root://cms-xrd-global.cern.ch/"+folder.replace("davs://webdav.recas.ba.infn.it:8443/cms", "")
     ntot = []
     out_strings = []
     for f in tqdm(files_strings): 

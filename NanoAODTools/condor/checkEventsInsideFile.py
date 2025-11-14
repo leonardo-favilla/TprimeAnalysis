@@ -53,7 +53,7 @@ for sample in samples:
     file_sizes                      = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     print(len(file_sizes))
     for file_name, file_size in file_sizes.items():
-        path_file = "root://cms-xrd-global.cern.ch/"+davixfolder.replace("davs://stwebdav.pi.infn.it:8443/cms", "")
+        path_file = "root://cms-xrd-global.cern.ch/"+davixfolder.replace("davs://webdav.recas.ba.infn.it:8443/cms", "")
         f         = path_file+"/"+file_name
         if not key_exists_in_root_file(f, "Events"):
             print(f"File {f} does not contain 'Events' tree...")
