@@ -14,138 +14,74 @@ import cmsstyle as CMS
 import array
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
+import yaml
+
+config = {}
+config_paths = os.environ.get('PWD')+'/../config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
 
 ################## input parameters
-extraText       = "Work in Progress"
-extraSpace      = 0.1
-iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
-cut             = requirements      # defined in variables.py
-blind           = False             # Set to True if you want to blind the data
-year_tag        = "Full2022_Full2023"    # "2022", "2022EE", "2023", "2023postBPix"
+extraText                           = "Work in Progress"
+extraSpace                          = 0.1
+iPos                                = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
+cut                                 = requirements      # defined in variables.py
+blind                               = False             # Set to True if you want to blind the data
+scale_signals                       = config["plotting"]["scale_signals"]                # Scaling factor for the signals
+year_tag                            = config["plotting"]["year_tag"]
 
-lumi_dict       = {
-                    "2018":                 59.97,
-                    "2022":                 7.980,
-                    "2022EE":               26.672,
-                    "2023":                 18.063,
-                    "2023postBPix":         9.693,
-                }
-lumi_dict["Full2022"]          = lumi_dict["2022"] + lumi_dict["2022EE"]
-lumi_dict["Full2023"]          = lumi_dict["2023"] + lumi_dict["2023postBPix"]
-lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
+lumi_dict                           = config["plotting"]["lumi_dict"]
+lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]
+lumi_dict["Full2023"]               = lumi_dict["2023"] + lumi_dict["2023postBPix"]
+lumi_dict["Full2022_Full2023"]      = lumi_dict["Full2022"] + lumi_dict["Full2023"]
 
 
-folder_dict     = {
-                    "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
-                    "Full2022":                 ".", # Placeholder
-                    "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
-                }
+folder_dict                         = config["plotting"]["folder_dict"]
+folder_www_dict                     = config["plotting"]["folder_www_dict"] 
 
 
-folder_www_dict = {
-                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
-                    "Full2022":                 ".", # Placeholder
-                    "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
-                }
+datasets_dict                       = config["plotting"]["datasets_to_plot"]
+datasets_dict["Full2022"]           = datasets_dict["2022"] + datasets_dict["2022EE"]
+datasets_dict["Full2023"]           = datasets_dict["2023"] + datasets_dict["2023postBPix"]
+datasets_dict["Full2022_Full2023"]  = datasets_dict["Full2022"] + datasets_dict["Full2023"]
+
+json_file_dict                      = config["dict_samples"]
 
 
-datasets_dict   = {
-                    "2022":
-                            [
-                                "DataJetMET_2022",
-                                "TT_2022",
-                                "QCD_2022",
-                                "ZJetsToNuNu_2jets_2022",
-                                "WJets_2jets_2022",
-                                # "tDM_mPhi50_mChi1_2022",
-                                # "tDM_mPhi200_mChi1_2022",
-                                # "tDM_mPhi500_mChi1_2022",
-                                # "tDM_mPhi1000_mChi1_2022",
-                                "TprimeToTZ_700_2022",
-                                "TprimeToTZ_1000_2022",
-                                "TprimeToTZ_1800_2022"
-                            ],
-                    "2022EE":
-                            [
-                                "DataJetMET_2022EE",
-                                "TT_2022EE",
-                                "QCD_2022EE",
-                                "ZJetsToNuNu_2jets_2022EE",
-                                "WJets_2jets_2022EE",
-                                "TprimeToTZ_700_2022EE",
-                                "TprimeToTZ_1000_2022EE",
-                                "TprimeToTZ_1800_2022EE"
-                            ],
-                    "2023":
-                            [
-                                "DataJetMET_2023",
-                                "TT_2023",
-                                "QCD_2023",
-                                "ZJetsToNuNu_2jets_2023",
-                                "WJets_2jets_2023",
-                                "TprimeToTZ_700_2023",
-                                "TprimeToTZ_1000_2023",
-                                "TprimeToTZ_1800_2023"
-                            ],
-                    "2023postBPix":
-                            [
-                                "DataJetMET_2023postBPix",
-                                "TT_2023postBPix",
-                                "QCD_2023postBPix",
-                                "ZJetsToNuNu_2jets_2023postBPix",
-                                "WJets_2jets_2023postBPix",
-                                "TprimeToTZ_700_2023postBPix",
-                                "TprimeToTZ_1000_2023postBPix",
-                                "TprimeToTZ_1800_2023postBPix"
-                            ],
-                }
-datasets_dict["Full2022"]          = datasets_dict["2022"] + datasets_dict["2022EE"]
-datasets_dict["Full2023"]          = datasets_dict["2023"] + datasets_dict["2023postBPix"]
-datasets_dict["Full2022_Full2023"] = datasets_dict["Full2022"] + datasets_dict["Full2023"]
+colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+style_signals_dict                  = {
+                                        "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                                        "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                                        "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
+                                    }
+labels_dict                         = {
+                                        "TT":               "t#bar{t}",
+                                        "QCD":              "QCD",
+                                        "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
+                                        "WJets":            "W (#it{l}#nu) + Jets",
+                                        "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
+                                        "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
+                                        "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
+                                        "tDM_mPhi50":       "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi200":      "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi500":      "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi1000":     "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
+                                    }
+if scale_signals != 1:
+    style_signals_dict = {key+f" x{scale_signals}": style_signals_dict[key] for key in style_signals_dict}
+    for key in labels_dict:
+        if ("Tprime" in key) or ("tDM" in key):
+            labels_dict[key] = labels_dict[key] + f" x{scale_signals}"
 
-json_file_dict  = {
-                    "2018":                 "../samples/dict_samples.json",
-                    "2022":                 "../samples/dict_samples_2022.json",
-                    "2022EE":               "../samples/dict_samples_2022.json",
-                    "2023":                 "../samples/dict_samples_2023.json",
-                    "2023postBPix":         "../samples/dict_samples_2023.json",
-                }
-json_file_dict["Full2022"]          = ".", # Placeholder
-json_file_dict["Full2023"]          = ".", # Placeholder
-json_file_dict["Full2022_Full2023"] = ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
-
-
-colors_bkg          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
-style_signals_dict  = {
-                        "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
-                        "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
-                        "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
-                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
-                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
-                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
-                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
-                    }
-labels_dict         = {
-                        "TT":               "t#bar{t}",
-                        "QCD":              "QCD",
-                        "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
-                        "WJets":            "W (#it{l}#nu) + Jets",
-                        "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
-                        "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
-                        "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
-                        "tDM_mPhi50":    "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi200":   "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi500":   "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi1000":  "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
-                    }
 
 
 
@@ -308,6 +244,8 @@ for v in vars:
             # print(f"Signal {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                           = labels_dict["_".join(s.label.split("_")[:2])]
             # print(f"leg_label:                  {leg_label}")
+            if scale_signals != 1:
+                tmp.Scale(scale_signals)                                        # scale signals for better visibility in the stack plots
             if leg_label not in histo_signals_dict:
                 histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
             else:

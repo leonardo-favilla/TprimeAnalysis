@@ -7,6 +7,95 @@ outputfolder:
     }
 
 dict_samples:
-  2022: "../samples/dict_samples_2022.json"
-  2023: "../samples/dict_samples_2023.json"
+  2022:             "../samples/dict_samples_2022.json"
+  2022EE:           "../samples/dict_samples_2022.json"
+  2023:             "../samples/dict_samples_2023.json"
+  2023postBPix:     "../samples/dict_samples_2023.json"
+  Full2022:         "."
+  Full2023:         "."
+  Full2022_Full2023: ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
 
+plotting:
+  year_tag: "Full2022_Full2023" # "2022", "2022EE", "2023", "2023postBPix", "Full2022", "Full2023", "Full2022_Full2023"
+  lumi_dict:
+    {
+      "2022":           7.980,
+      "2022EE":         26.672,
+      "2023":           18.063,
+      "2023postBPix":   9.693
+    }
+  folder_dict:
+    {
+      "2022":               "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
+      "2022EE":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
+      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+      "2023postBPix":       "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+      "Full2022":           ".",
+      "Full2023":           ".",
+      "Full2022_Full2023":  "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/"
+    }
+
+  folder_www_dict:
+    {
+      "2022":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_310725/",
+      "2022EE":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
+      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
+      "2023postBPix":       "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
+      "Full2022":           ".",
+      "Full2023":           ".",
+      "Full2022_Full2023":  "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/"
+    }
+
+  datasets_to_plot:
+    {
+      "2022":
+              [
+                  "DataJetMET_2022",
+                  "TT_semilep_2022",
+                  "TT_hadr_2022",
+                  "QCD_2022",
+                  "ZJetsToNuNu_2jets_2022",
+                  "WJets_2jets_2022",
+                  "TprimeToTZ_700_2022",
+                  "TprimeToTZ_1000_2022",
+                  "TprimeToTZ_1800_2022"
+              ],
+      "2022EE":
+              [
+                  "DataJetMET_2022EE",
+                  "TT_semilep_2022EE",
+                  "TT_hadr_2022EE",
+                  "QCD_2022EE",
+                  "ZJetsToNuNu_2jets_2022EE",
+                  "WJets_2jets_2022EE",
+                  "TprimeToTZ_700_2022EE",
+                  "TprimeToTZ_1000_2022EE",
+                  "TprimeToTZ_1800_2022EE"
+              ],
+      "2023":
+              [
+                  "DataJetMET_2023",
+                  "TT_semilep_2023",
+                  "TT_hadr_2023",
+                  "QCD_2023",
+                  "ZJetsToNuNu_2jets_2023",
+                  "WJets_2jets_2023",
+                  "TprimeToTZ_700_2023",
+                  "TprimeToTZ_1000_2023",
+                  "TprimeToTZ_1800_2023"
+              ],
+      "2023postBPix":
+              [
+                  "DataJetMET_2023postBPix",
+                  "TT_semilep_2023postBPix",
+                  "TT_hadr_2023postBPix",
+                  "QCD_2023postBPix",
+                  "ZJetsToNuNu_2jets_2023postBPix",
+                  "WJets_2jets_2023postBPix",
+                  "TprimeToTZ_700_2023postBPix",
+                  "TprimeToTZ_1000_2023postBPix",
+                  "TprimeToTZ_1800_2023postBPix"
+              ],
+    }
+
+  scale_signals: 100
