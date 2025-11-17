@@ -41,7 +41,7 @@ elif dataset_to_run in sample_dict.keys():
         print("---------- Running sample: ", dataset_to_run)
         samples = [sample_dict[dataset_to_run]]
 
-running_folder                      = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/condor/tmp/"
+running_folder                      = os.environ.get('PWD') + "/tmp/"
 remote_folder_name                  = "Run3Analysis_Tprime"
 if not os.path.exists(running_folder):
     os.makedirs(running_folder)
