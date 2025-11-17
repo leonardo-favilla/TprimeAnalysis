@@ -47,16 +47,32 @@ uid             = int(os.getuid())
 
 
 #### Retrieve files to process for the given component and ntot ####
-chain                                               = []
-samples_list                                        = samples[in_dataset][in_dataset]
-for i, string in enumerate(samples[in_dataset][in_dataset]['strings']):
-    samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
-chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
-if not "Data" in in_dataset:
-    ntot_events                                     = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
-else:
-    ntot_events                                     = None
+# samples_list                                        = samples[in_dataset][in_dataset] #### THIS I SUSELESS
 
+# if not "Data" in in_dataset:
+#     ntot_events                                     = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
+# else:
+#     ntot_events                                     = None
+
+# chain                                               = []
+# tchain                                              = ROOT.TChain("Events")
+# for i, string in enumerate(samples[in_dataset][in_dataset]['strings']):
+#     samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
+#     f                                               = samples[in_dataset][in_dataset]['strings'][i]
+#     try:
+#         TFile                                       = ROOT.TFile.Open(f)
+#         tchain.Add(f)
+#     except:
+#         ntot_events -= samples[in_dataset][in_dataset]['ntot'][i]
+#         print("Could not add file: ", f)
+#         continue
+# chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
+
+inFilePath                                          = "davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/Run3Analysis_Tprime/TT_semilep_2022/20251114_145029/tree_hadd_0.root"
+chain                                               = [inFilePath]
+ntot_events                                         = 170916
+tchain                                              = ROOT.TChain("Events")
+tchain.Add(inFilePath)
 print(f"Processing component {in_dataset}, year {year}, with {len(chain)} files")
 print(chain[0])
 
@@ -142,7 +158,8 @@ if not "Data" in in_dataset:
 
 
 
-df                      = ROOT.RDataFrame("Events", chain)
+# df                      = ROOT.RDataFrame("Events", chain)
+df                      = ROOT.RDataFrame(tchain)
 branches                = list(map(str, df.GetColumnNames()))
 if not "Data" in in_dataset:
     df                  = df.Define("SFbtag", "SFbtag_nominal")
