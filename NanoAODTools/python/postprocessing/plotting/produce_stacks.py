@@ -57,7 +57,8 @@ datasets_dict["Full2023"]           = datasets_dict["2023"] + datasets_dict["202
 datasets_dict["Full2022_Full2023"]  = datasets_dict["Full2022"] + datasets_dict["Full2023"]
 
 json_file_dict                      = config["dict_samples"]
-
+json_file_dict["2022EE"]            = json_file_dict["2022"]
+json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
 colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
