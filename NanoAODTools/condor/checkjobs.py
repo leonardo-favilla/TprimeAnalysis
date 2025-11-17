@@ -1,5 +1,6 @@
 import subprocess
 import re
+import os
 import pandas as pd
 
 def get_file_sizes(directory_url, cert_path, ca_path):
@@ -151,10 +152,27 @@ def summarize_job_status(username, uid, samples, running_folder, remote_folder_n
     df = pd.DataFrame(summary)
     return df
 
-
-
-
-
+def check_errors_fromcondor(dataset, resubmit=False):
+    err_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/error/"
+    log_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/log/"
+    output_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/output/"
+    listoffile = os.listdir(err_folder)
+    list_of_job_errors = subprocess.run(f"grep -l '(Davix::HttpRequest) Error' {err_folder}/*.err", shell=True, capture_output=True, text=True)
+    jobs_with_errors = list_of_job_errors.stdout.split('\n')
+    jobs_with_errors_numbers = [e.split("_")[-1].replace(".err","") for e in jobs_with_errors[:-1]]
+    str_resubmit = ""
+    for e in jobs_with_errors_numbers:
+        str_resubmit += f"condor_submit tmp/{dataset}/{e}/condor.sub; "
+    if not resubmit:
+        print(f"Found {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}. To resubmit them, run:\n{str_resubmit}")
+    else:
+        print(f"Resubmitting {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}...")
+        for n in jobs_with_errors_numbers:
+            subprocess.run(f"rm {err_folder}/{dataset}_{n}.err", shell=True, capture_output=True, text=True)
+            subprocess.run(f"rm {output_folder}/{dataset}_{n}.out", shell=True, capture_output=True, text=True)
+            subprocess.run(f"rm {log_folder}/{dataset}_{n}.log", shell=True, capture_output=True, text=True)
+        print("REMOVED condor log, err and out files ")
+        subprocess.run(str_resubmit, shell=True, capture_output=True, text=True)
 
 
 

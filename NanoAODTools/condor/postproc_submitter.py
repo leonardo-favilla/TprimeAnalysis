@@ -4,7 +4,7 @@ import sys
 import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.get_file_fromdas import *
-from checkjobs import get_file_sizes, find_folder
+from checkjobs import get_file_sizes, find_folder, check_errors_fromcondor
 from config import models # import machine learning models dictionary from config.py
 
 usage = 'python3 postproc_submitter.py -d dataset_name'
@@ -182,7 +182,7 @@ elif dataset_to_run in sample_dict.keys():
         print("---------- Running sample: ", dataset_to_run)
         samples = [sample_dict[dataset_to_run]]
 
-running_folder = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/Analysis/NanoAODTools/condor/tmp/"
+running_folder = os.environ.get('PWD')+"/tmp/"
 if not os.path.exists(running_folder):
     os.makedirs(running_folder)
 
@@ -330,6 +330,10 @@ if resubmit:
         print(f"Number of jobs not found on tier:   {njobs_notFoundOnTier}")
         print(f"Number of empty files:              {njobs_emptyFile}")
         print("\n")
+        print("#######################################################################################")
+        print("Resubmitting jobs that have errors according to condor logs")
+        print("#######################################################################################\n")
+        check_errors_fromcondor(sample.label, resubmit=True)
 
 if status:
     print("\n################################################ STATUS mode")
@@ -355,10 +359,12 @@ if status:
                 job_failed += 1
             else:
                 job_success += 1
+        
         print("--------------------------------------------------------------------------------\n")
         print("dataset: ", sample.label)
         print("Total jobs: ", jobs_total)
         print("\033[91mJobs failed: {} ({:.2f}%)\033[0m".format(job_failed, (job_failed/jobs_total)*100))
         print("\033[92mJobs succeeded: {} ({:.2f}%)\033[0m\n".format(job_success, (job_success/jobs_total)*100))
-        print("running jobs: {} ({:.2f}%)".format(jobs_total-(job_failed+job_success), ((jobs_total-(job_failed+job_success))/jobs_total)*100))
-        print("--------------------------------------------------------------------------------")
+        print("running jobs: {} ({:.2f}%)\n".format(jobs_total-(job_failed+job_success), ((jobs_total-(job_failed+job_success))/jobs_total)*100))
+        check_errors_fromcondor(sample.label, resubmit=False)
+        print("\n--------------------------------------------------------------------------------")

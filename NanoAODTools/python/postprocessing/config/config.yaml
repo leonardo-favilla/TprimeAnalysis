@@ -1,7 +1,7 @@
 outputfolder:
   postselector_results: { 
     "2022":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
-    "2022EE":       "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/"      , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
+    "2022EE":       /eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_noSFbtag_310725/"       , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
     "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_noSFbtag_310725/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
     "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_noSFbtag_310725/", #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
     }
