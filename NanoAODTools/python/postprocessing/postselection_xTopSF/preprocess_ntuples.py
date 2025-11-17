@@ -68,9 +68,13 @@ uid             = int(os.getuid())
 #         continue
 # chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
 
-inFilePath                                          = "davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/Run3Analysis_Tprime/TT_semilep_2022/20251114_145029/tree_hadd_0.root"
+# inFilePath                                          = "davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/Run3Analysis_Tprime/TT_semilep_2022/20251114_145029/tree_hadd_0.root"
+# ntot_events                                         = 170916
+# inFilePath                                          = "davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/Run3Analysis_Tprime/TT_semilep_2022/20251114_145029/tree_hadd_0.root"
+# ntot_events                                         = 170916
+inFilePath                                          = "davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/Run3Analysis_Tprime/DataJetMETC_2022/20251117_142619/tree_hadd_0.root"
+ntot_events                                         = None
 chain                                               = [inFilePath]
-ntot_events                                         = 170916
 tchain                                              = ROOT.TChain("Events")
 tchain.Add(inFilePath)
 print(f"Processing component {in_dataset}, year {year}, with {len(chain)} files")
@@ -200,14 +204,9 @@ hlt                     = {
                                 ]
                             }
 eventWeights            = ["SFbtag", "puWeight", "puWeightDown", "puWeightUp", "LHEWeight_originalXWGTUP"]
-
+mcVariables             = ["TopGenTopPart_pt", "TopGenTopPart_eta", "TopGenTopPart_phi", "TopGenTopPart_mass", "FatJet_matched", "TopResolved_truth", "TopMixed_truth"]
 branches_to_save        = [
                             *hlt[year],
-
-                            "TopGenTopPart_pt",
-                            "TopGenTopPart_eta",
-                            "TopGenTopPart_phi",
-                            "TopGenTopPart_mass",
 
                             "Electron_pt",
                             "Electron_eta",
@@ -228,7 +227,6 @@ branches_to_save        = [
                             "FatJet_eta",
                             "FatJet_particleNetWithMass_WvsQCD",
                             "FatJet_particleNetWithMass_TvsQCD",
-                            "FatJet_matched",
 
                             "Jet_jetId",
                             "Jet_mass",
@@ -248,7 +246,6 @@ branches_to_save        = [
                             "TopResolved_idxJet0",
                             "TopResolved_idxJet1",
                             "TopResolved_idxJet2",
-                            "TopResolved_truth",
 
                             "TopMixed_mass",
                             "TopMixed_pt",
@@ -259,12 +256,12 @@ branches_to_save        = [
                             "TopMixed_idxJet0",
                             "TopMixed_idxJet1",
                             "TopMixed_idxJet2",
-                            "TopMixed_truth"
 
                             ]
 
 if not "Data" in in_dataset:
     branches_to_save    += eventWeights
+    branches_to_save    += mcVariables
 
 print("Total number of branches in the input file:  ", len(branches))
 print("Number of common branches:                   ", len(branches_common))
