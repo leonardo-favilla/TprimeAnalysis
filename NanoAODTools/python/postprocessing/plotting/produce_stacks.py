@@ -14,144 +14,87 @@ import cmsstyle as CMS
 import array
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
+import yaml
+import optparse
 
+config = {}
+config_paths = os.environ.get('PWD')+'/../config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
+
+
+usage                   = 'python3 produce_stacks.py --year_tag <year_tag>'
+parser                  = optparse.OptionParser(usage)
+parser.add_option("--year_tag",          dest="year_tag",         help="Year tag: 2022, 2022EE, 2023, 2023postBPix, Full2022, Full2023, Full2022_Full2023",       type="string")
+(opt, args)             = parser.parse_args()
 ################## input parameters
-extraText       = "Work in Progress"
-extraSpace      = 0.1
-iPos            = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
-cut             = requirements      # defined in variables.py
-blind           = False             # Set to True if you want to blind the data
-year_tag        = "2022"    # "2022", "2022EE", "2023", "2023postBPix"
+extraText                           = "Work in Progress"
+extraSpace                          = 0.1
+iPos                                = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
+cut                                 = requirements      # defined in variables.py
+blind                               = False             # Set to True if you want to blind the data
+scale_signals                       = config["plotting"]["scale_signals"]                # Scaling factor for the signals
+year_tag                            = opt.year_tag
 
-lumi_dict       = {
-                    "2018":                 59.97,
-                    "2022":                 7.980,
-                    "2022EE":               26.672,
-                    "2023":                 18.063,
-                    "2023postBPix":         9.693,
-                }
-lumi_dict["Full2022"]          = lumi_dict["2022"] + lumi_dict["2022EE"]
-lumi_dict["Full2023"]          = lumi_dict["2023"] + lumi_dict["2023postBPix"]
-lumi_dict["Full2022_Full2023"] = lumi_dict["Full2022"] + lumi_dict["Full2023"]
+lumi_dict                           = config["plotting"]["lumi_dict"]
+lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]
+lumi_dict["Full2023"]               = lumi_dict["2023"] + lumi_dict["2023postBPix"]
+lumi_dict["Full2022_Full2023"]      = lumi_dict["Full2022"] + lumi_dict["Full2023"]
 
 
-folder_dict     = {
-                    "2022":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
-                    "Full2022":                 ".", # Placeholder
-                    "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
-                }
+folder_dict                         = config["plotting"]["folder_dict"]
+folder_www_dict                     = config["plotting"]["folder_www_dict"] 
 
 
-folder_www_dict = {
-                    "2022":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_noSFbtag_310725/",
-                    "2022EE":                   "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
-                    "2023":                     "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
-                    "2023postBPix":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
-                    "Full2022":                 ".", # Placeholder
-                    "Full2023":                 ".", # Placeholder
-                    "Full2022_Full2023":        "/eos/user/l/lfavilla/www/RDF_DManalysis/results/Full2022_Full2023_syst_310725/",
-                }
+datasets_dict                       = config["plotting"]["datasets_to_plot"]
+datasets_dict["Full2022"]           = datasets_dict["2022"] + datasets_dict["2022EE"]
+datasets_dict["Full2023"]           = datasets_dict["2023"] + datasets_dict["2023postBPix"]
+datasets_dict["Full2022_Full2023"]  = datasets_dict["Full2022"] + datasets_dict["Full2023"]
 
+json_file_dict                      = config["dict_samples"]
+json_file_dict["2022EE"]            = json_file_dict["2022"]
+json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
-datasets_dict   = {
-                    "2022":
-                            [
-                                "DataJetMET_2022",
-                                "TT_2022",
-                                "QCD_2022",
-                                "ZJetsToNuNu_2jets_2022",
-                                "WJets_2jets_2022",
-                                # "tDM_mPhi50_mChi1_2022",
-                                # "tDM_mPhi200_mChi1_2022",
-                                # "tDM_mPhi500_mChi1_2022",
-                                # "tDM_mPhi1000_mChi1_2022",
-                                "TprimeToTZ_700_2022",
-                                "TprimeToTZ_1000_2022",
-                                "TprimeToTZ_1800_2022"
-                            ],
-                    "2022EE":
-                            [
-                                "DataJetMET_2022EE",
-                                "TT_2022EE",
-                                "QCD_2022EE",
-                                "ZJetsToNuNu_2jets_2022EE",
-                                "WJets_2jets_2022EE",
-                                "TprimeToTZ_700_2022EE",
-                                "TprimeToTZ_1000_2022EE",
-                                "TprimeToTZ_1800_2022EE"
-                            ],
-                    "2023":
-                            [
-                                "DataJetMET_2023",
-                                "TT_2023",
-                                "QCD_2023",
-                                "ZJetsToNuNu_2jets_2023",
-                                "WJets_2jets_2023",
-                                "TprimeToTZ_700_2023",
-                                "TprimeToTZ_1000_2023",
-                                "TprimeToTZ_1800_2023"
-                            ],
-                    "2023postBPix":
-                            [
-                                "DataJetMET_2023postBPix",
-                                "TT_2023postBPix",
-                                "QCD_2023postBPix",
-                                "ZJetsToNuNu_2jets_2023postBPix",
-                                "WJets_2jets_2023postBPix",
-                                "TprimeToTZ_700_2023postBPix",
-                                "TprimeToTZ_1000_2023postBPix",
-                                "TprimeToTZ_1800_2023postBPix"
-                            ],
-                }
-datasets_dict["Full2022"]          = datasets_dict["2022"] + datasets_dict["2022EE"]
-datasets_dict["Full2023"]          = datasets_dict["2023"] + datasets_dict["2023postBPix"]
-datasets_dict["Full2022_Full2023"] = datasets_dict["Full2022"] + datasets_dict["Full2023"]
+colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+style_signals_dict                  = {
+                                        "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                                        "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                                        "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
+                                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
+                                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
+                                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
+                                    }
+labels_dict                         = {
+                                        "TT":               "t#bar{t}",
+                                        "QCD":              "QCD",
+                                        "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
+                                        "WJets":            "W (#it{l}#nu) + Jets",
+                                        "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
+                                        "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
+                                        "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
+                                        "tDM_mPhi50":       "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi200":      "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi500":      "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
+                                        "tDM_mPhi1000":     "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
+                                    }
+if scale_signals != 1:
+    style_signals_dict = {key+f" x{scale_signals}": style_signals_dict[key] for key in style_signals_dict}
+    for key in labels_dict:
+        if ("Tprime" in key) or ("tDM" in key):
+            labels_dict[key] = labels_dict[key] + f" x{scale_signals}"
 
-json_file_dict  = {
-                    "2018":                 "../samples/dict_samples.json",
-                    "2022":                 "../samples/dict_samples_2022.json",
-                    "2022EE":               "../samples/dict_samples_2022.json",
-                    "2023":                 "../samples/dict_samples_2023.json",
-                    "2023postBPix":         "../samples/dict_samples_2023.json",
-                    "Full2022":             ".", # Placeholder
-                    "Full2023":             ".", # Placeholder
-                    "Full2022_Full2023":    "../samples/dict_samples_2023.json"
-                }
-
-
-colors_bkg          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
-style_signals_dict  = {
-                        "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
-                        "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
-                        "T (1.8TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+2,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
-                        "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)":    {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
-                        "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+1,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
-                        "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)":   {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+2,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDotted},
-                        "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kMagenta+3,  "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashDotted},
-                    }
-labels_dict         = {
-                        "TT":               "t#bar{t}",
-                        "QCD":              "QCD",
-                        "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
-                        "WJets":            "W (#it{l}#nu) + Jets",
-                        "TprimeToTZ_700":   "T (0.7TeV) #rightarrow tZ",
-                        "TprimeToTZ_1000":  "T (1.0TeV) #rightarrow tZ",
-                        "TprimeToTZ_1800":  "T (1.8TeV) #rightarrow tZ",
-                        "tDM_mPhi50":    "tDM (m_{#phi}=50 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi200":   "tDM (m_{#phi}=200 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi500":   "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
-                        "tDM_mPhi1000":  "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
-                    }
 
 
 
 
 ############### SETTINGS ############### 
-lumi            = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
+tot_lumi        = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
 json_file       = json_file_dict[year_tag]
 datasets        = datasets_dict[year_tag]
 run2            = False
@@ -190,12 +133,19 @@ if not os.path.exists(repostack_www+"index.php"):
 
 
 # Load the JSON file
-with open(json_file, "r") as file:     ##### Questo non ho capito a cosa serva
-    samples = json.load(file)
+if isinstance(json_file, list):                 # multiple json files, when combining years
+    samples = {}
+    for jf in json_file:
+        with open(jf, "r") as file:
+            samples.update(json.load(file))
+elif isinstance(json_file, str):                # single json file, when running on a single era/year
+    with open(json_file, "r") as file:
+        samples = json.load(file)
 
 print("Parameters setted")
+print("year_tag         = {}".format(year_tag))
 print("cut              = {}".format(cut))
-print("lumi (fb)        = {}".format(str(lumi)))
+print("lumi (fb)        = {}".format(str(tot_lumi)))
 print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 print("blind            = {}".format(blind))
 
@@ -249,6 +199,7 @@ for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
 # for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
+# for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
     for r in regions.keys():
     # for r in ["SRTop"]:
     # for r in ["AH"]:
@@ -267,14 +218,22 @@ for v in vars:
         histo_data          = None
         histo_signals_dict  = {}
 
+        # print(f"Processing variable {v._name} in region {r}")
 
         ##### Normalize Signals (Lumi) ######
+        # print("Processing Signals")
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
-            # print(s.label)
-            # print(f.GetName())
+            # print(f"s.label:                    {s.label}")
+            # print(f"f.GetName():                {f.GetName()}")
             histo_name                          = v._name+"_"+r+"_"+"nominal"
+            # print(f"histo_name:                 {histo_name}")
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            year_tag                            = s.label.split("_")[-1]
+            lumi                                = lumi_dict[year_tag]
+            # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
+            # print(f"year_tag:                   {year_tag}")
+            # print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
@@ -283,26 +242,37 @@ for v in vars:
                 tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
+            # print(f"After rebinning, signal {s.label} has {tmp.GetEntries()} entries")
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
                 tmp                             = copy.deepcopy(tmp)
             else:
                 continue
-
+            # print(f"Signal {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                           = labels_dict["_".join(s.label.split("_")[:2])]
-            histo_signals_dict[leg_label]       = copy.deepcopy(tmp)
+            # print(f"leg_label:                  {leg_label}")
+            if scale_signals != 1:
+                tmp.Scale(scale_signals)                                        # scale signals for better visibility in the stack plots
             if leg_label not in histo_signals_dict:
                 histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
-
+            # print(f"Signal {leg_label} has {histo_signals_dict[leg_label].GetEntries()} entries after scaling\n")
+        # print("Finished Processing Signals\n")
 
         ##### Normalize Backgrounds (Lumi) ######
+        # print("Processing Backgrounds")
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             # print(f"s.label:                    {s.label}")
+            # print(f"f.GetName():                {f.GetName()}")
             histo_name                      = v._name+"_"+r+"_"+"nominal"
             # print(f"histo_name:                 {histo_name}")
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+            year_tag                        = s.label.split("_")[-1]
+            lumi                            = lumi_dict[year_tag]
+            # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
+            # print(f"year_tag:                   {year_tag}")
+            # print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
@@ -315,21 +285,26 @@ for v in vars:
                 tmp.Scale(lumi)
             else:
                 continue
-
+            # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                       = labels_dict[s.label.split("_")[0]]
+            # print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_bkg_dict[leg_label].Add(copy.deepcopy(tmp))
-
+            # print(f"Background {leg_label} has {histo_bkg_dict[leg_label].GetEntries()} entries after scaling\n")
+        # print("Finished Processing Backgrounds\n")
         
         ##### Data #####
+        # print("Processing Data")
         if (not blind) and ((not ("SR" in r) or ("SRTopLoose" in r)) or (("SR" in r) and not ("SRTop" in r))):
             if not v._MConly:
                 histo_name                          = v._name+"_"+r
                 for f, s in zip(inFile["Data"], inSample["Data"]):
-                    # print(s.label)
+                    # print(f"s.label:                    {s.label}")
+                    # print(f"f.GetName():                {f.GetName()}")
                     tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+                    # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
                     if v._name == "MT_T":
                         tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                         tmp                         = copy.deepcopy(tmp_)
@@ -342,6 +317,9 @@ for v in vars:
                         histo_data                  = copy.deepcopy(tmp)
                     else:
                         histo_data.Add(copy.deepcopy(tmp))
+                    # print(f"Data {s.label} has {tmp.GetEntries()} entries")
+                    # print(f"Data has {histo_data.GetEntries()} entries after summing\n")
+        # print("Finished Processing Data\n")
 
 
         # for label,h in histo_signals_dict.items():
@@ -440,7 +418,7 @@ for v in vars:
                                                 yTitle              = yTitle,
                                                 rTitle              = rTitle,
                                                 extraText           = extraText,
-                                                lumi                = lumi,
+                                                lumi                = tot_lumi,
                                                 extraSpace          = extraSpace,
                                                 iPos                = iPos,
                                                 logy                = logy,
