@@ -15,6 +15,7 @@ import array
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 import yaml
+import optparse
 
 config = {}
 config_paths = os.environ.get('PWD')+'/../config/config.yaml'
@@ -26,6 +27,11 @@ else:
     print(f"Config file not found in {config_paths}, exiting")
     sys.exit(1)
 
+
+usage                   = 'python3 produce_stacks.py --year_tag <year_tag>'
+parser                  = optparse.OptionParser(usage)
+parser.add_option("--year_tag",          dest="year_tag",         help="Year tag: 2022, 2022EE, 2023, 2023postBPix, Full2022, Full2023, Full2022_Full2023",       type="string")
+(opt, args)             = parser.parse_args()
 ################## input parameters
 extraText                           = "Work in Progress"
 extraSpace                          = 0.1
@@ -33,7 +39,7 @@ iPos                                = 0                 # Position of the legend
 cut                                 = requirements      # defined in variables.py
 blind                               = False             # Set to True if you want to blind the data
 scale_signals                       = config["plotting"]["scale_signals"]                # Scaling factor for the signals
-year_tag                            = config["plotting"]["year_tag"]
+year_tag                            = opt.year_tag
 
 lumi_dict                           = config["plotting"]["lumi_dict"]
 lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]

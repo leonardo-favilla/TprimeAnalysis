@@ -16,7 +16,6 @@ dict_samples:
   Full2022_Full2023: ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
 
 plotting:
-  year_tag: "Full2022_Full2023" # "2022", "2022EE", "2023", "2023postBPix", "Full2022", "Full2023", "Full2022_Full2023"
   lumi_dict:
     {
       "2022":           7.980,
