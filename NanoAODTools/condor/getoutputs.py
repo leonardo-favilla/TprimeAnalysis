@@ -12,7 +12,17 @@ usage = 'python3 getoutputs.py -d dataset_name'
 parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dat', dest='dat', type=str, default = '', help='Please enter a dataset name')
 parser.add_option('-o', '--output', dest='output', type=str, default = 'dict_samples_2022.json', help='Please enter a json output file')
+parser.add_option('--tier', dest='tier', type=str, default = 'pisa', help='Please enter location where to write the output file (tier pisa or bari)')
+where_to_read = opt.tier
 (opt, args) = parser.parse_args()
+
+if where_to_read.lower() =='pisa':
+    redirector = "davs://stwebdav.pi.infn.it:8443/cms"
+elif where_to_read.lower() =='bari':
+    redirector = "davs://webdav.recas.ba.infn.it:8443/cms"
+else:
+    print("Please select a valid tier (pisa or bari) OTHERWISE add the correct redirector in the code")
+    exit()
 
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
@@ -131,7 +141,7 @@ for sample in samples:
         out_dict[sample.label] = {}
         out_dict[sample.label][sample.label] = {}
     print("---------- Running sample: ", sample.label)
-    folder = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+    folder = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     print("Folder: ", folder)
     
     files_strings   = get_files_on_tier(folder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")

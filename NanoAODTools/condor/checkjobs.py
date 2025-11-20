@@ -33,15 +33,15 @@ def get_file_sizes(directory_url, cert_path, ca_path):
         print(f"Errore nell'esecuzione di davix-ls: {e}")
         return {}
 
-def find_folder(username, remote_dir, dataset_label, cert_path, ca_path):
+def find_folder(redirector, username, remote_dir, dataset_label, cert_path, ca_path):
     results = subprocess.run([
-        'davix-ls', '-E', cert_path, '--capath', ca_path, "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"
+        'davix-ls', '-E', cert_path, '--capath', ca_path, redirector+"/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"
     ], capture_output=True, text=True, check=True)
     subfold = results.stdout.splitlines()
     subfold.sort()
     subfold = subfold[-1]
 
-    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"+subfold
+    return redirector+"/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"+subfold
 
 def job_exit_code(job_logFile):
     exit_code = None

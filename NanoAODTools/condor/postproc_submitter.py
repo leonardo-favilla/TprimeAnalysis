@@ -10,6 +10,7 @@ from config import models # import machine learning models dictionary from confi
 usage = 'python3 postproc_submitter.py -d dataset_name'
 parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dat', dest='dat', type=str, default = '', help='Please enter a dataset name')
+parser.add_option('--tier', dest='tier', type=str, default = 'pisa', help='Please enter location where to write the output file (tier pisa or bari)')
 parser.add_option('--syst', dest='syst', action='store_true', default=False, help='calculate jerc')
 parser.add_option('--dryrun', dest='debug', action='store_true', default=False, help='dryrun')
 # parser.add_option('-w', '--write', dest='write', type=str, default = 'tier', help='Please enter location where to write the output file (eos or tier)')
@@ -24,8 +25,15 @@ submit = opt.submit
 resubmit = opt.resubmit
 status = opt.status
 calcualte_systematics = opt.syst
+where_to_write = opt.tier
 
-
+if where_to_write.lower() =='pisa':
+    redirector = "davs://stwebdav.pi.infn.it:8443/cms"
+elif where_to_write.lower() =='bari':
+    redirector = "davs://webdav.recas.ba.infn.it:8443/cms"
+else:
+    print("Please select a valid tier (pisa or bari) OTHERWISE add the correct redirector in the code")
+    exit()
 
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
@@ -51,8 +59,8 @@ print("Launching crab script for dataset: ", opt.dat)
 if submit:
     if where_to_write == 'tier':
         print("\nRemote folder name (tier): ", remote_folder_name)
-        if not debug: os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, str(uid)))
-        print("          davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} CREATED".format(username, remote_folder_name))
+        if not debug: os.popen("davix-mkdir {}/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, str(uid)))
+        print("          {}/store/user/{}/{} CREATED".format(redirector, username, remote_folder_name))
 
     elif where_to_write == 'eos':
         print("Remote folder name (eos): ", remote_folder_name)
@@ -161,7 +169,7 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     if where_to_write == 'eos':
         f.write("mv tree_hadd_{}.root /eos/home-l/lfavilla/xAnimo/{}/{}/{}/.\n".format(str(i), remote_folder_name, sample_folder, launchtime))
     elif where_to_write == 'tier':
-        f.write("davix-put tree_hadd_{}.root davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), username, remote_folder_name, sample_folder, launchtime, str(i)))
+        f.write("davix-put tree_hadd_{}.root {}/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), redirector, username, remote_folder_name, sample_folder, launchtime, str(i)))
     f.close()
 
 dataset_to_run = opt.dat
@@ -204,22 +212,22 @@ if submit:
         sample_folder = sample.label    
         if where_to_write == 'tier':
             if not debug: 
-                command1 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, str(uid)))
+                command1 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, str(uid)))
                 res1 = command1.read()
                 if "Error:" in res1:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/   NOT CREATED".format(username, remote_folder_name, sample_folder))
+                    print("Folder : {}/store/user/{}/{}/{}/   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/ created".format(username, remote_folder_name, sample_folder))
-                command2 = os.popen("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, sample_folder, launchtime, str(uid)))
+                    print("Folder : {}/store/user/{}/{}/{}/ created".format(redirector, username, remote_folder_name, sample_folder))
+                command2 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, launchtime, str(uid)))
                 res2 = command2.read()
                 if "Error:" in res2:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{}   NOT CREATED".format(username, remote_folder_name, sample_folder, launchtime))
+                    print("Folder : {}/store/user/{}/{}/{}/{}   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder, launchtime))
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 else:
-                    print("Folder : davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/{}/{} created".format(username, remote_folder_name, sample_folder, launchtime))
+                    print("Folder : {}/store/user/{}/{}/{}/{} created".format(redirector, username, remote_folder_name, sample_folder, launchtime))
         elif where_to_write == 'eos':
             if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder):
                 os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder)
@@ -291,7 +299,7 @@ if resubmit:
 
 
         # check number of files that have been actually created
-        davixfolder                     = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+        davixfolder                     = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         file_sizes                      = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         total_files_onTier              = len(file_sizes)
         fileNumbers_onTier              = [int(file_name.split("_")[-1].split(".")[0]) for file_name, file_size in file_sizes.items()]
@@ -339,7 +347,7 @@ if status:
     print("\n################################################ STATUS mode")
     print("Do NOT resubmit jobs before they're finished")
     for sample in samples:
-        davixfolder = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+        davixfolder = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         file_sizes = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
         print("Checking status for empty files in ", sample.label)
         print("Tier folder: ", davixfolder)
