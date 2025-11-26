@@ -337,8 +337,17 @@ def select_top(df, isMC):
 
     return df_topvariables
 
-def TopLepTag(df):
-    return df
+def tag_toplep(df):
+    df_toplep   = df.Define("Muon_px",                          "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                    .Define("Muon_py",                          "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*cos(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                    .Define("MET_px",                           "MET_pt*sin(MET_phi)")\
+                    .Define("MET_py",                           "MET_pt*cos(MET_phi)")\
+                    .Define("W_pt",                             "(int)nTightMuon > 0 ? sqrt(pow(Muon_px+MET_px, 2)+pow(Muon_py+MET_py, 2)) : -9999.")\
+                    .Define("bJetsMatched_to_GoodMuon_idx",     "(int)nTightMuon > 0 ? idx_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0) : -9999.")\
+                    .Define("bJetsMatched_to_GoodMuon_dR",      "(int)nTightMuon > 0 ? dR_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0) : -9999.")\
+                    .Define("nTopLep",                          "(int)nTightMuon > 0 ? (int)bJetsMatched_to_GoodMuon_idx.size() : 0.")
+
+    return df_toplep
 
 
 ######## MAIN CODE ########
@@ -378,7 +387,8 @@ df                  = df.Define("PuppiMET_T1_pt_vec", "RVec<float>{ (float) Pupp
                         .Define("PuppiMET_T1_phi_vec", "RVec<float>{ (float) PuppiMET_T1_phi}")
 df_trigger          = trigger_filter(df, None, None, year)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
-df_topselected      = select_top(df_presel, isMC)
+df_toplep           = tag_toplep(df_presel)
+df_topselected      = select_top(df_toplep, isMC)
 
 
 

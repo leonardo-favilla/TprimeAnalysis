@@ -1505,3 +1505,53 @@ Int_t TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPar
   }
   return matched;
 }
+
+////// Return indexes of b-jets that are matched to good muons within deltaR < 2.0
+RVec<int> idx_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+{
+  RVec<int> b;
+  for(int i=0; i < JetBTag_idx.size(); i++)
+  {
+    bool alreadycounted = false;
+    
+    for(int m=0; m < GoodMu_idx.size(); m++)
+    {
+      if(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]) < deltaR_thr) 
+      {
+        b.emplace_back(JetBTag_idx[i]);
+        alreadycounted = true;
+      }
+      if(alreadycounted) 
+      {
+          break;
+      }
+    }
+    
+  }
+  return b;
+}
+
+////// Return dR(bjet,mu) of b-jets that are matched to good muons within deltaR < 2.0
+RVec<float> dR_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi,  rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+{
+  RVec<float> b;
+  for(int i=0; i < JetBTag_idx.size(); i++)
+  {
+    bool alreadycounted = false;
+    
+    for(int m=0; m < GoodMu_idx.size(); m++)
+    {
+      if(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]) < deltaR_thr) 
+      {
+        b.emplace_back(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]));
+        alreadycounted = true;
+      }
+      if(alreadycounted) 
+      {
+          break;
+      }
+    }
+    
+  }
+  return b;
+}
