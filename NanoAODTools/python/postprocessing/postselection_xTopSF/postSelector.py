@@ -8,7 +8,19 @@ import numpy as np
 import math
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.variables import *
+import yaml
 sys.path.append('../')
+
+
+config = {}
+config_paths = os.environ.get('PWD')+'/../config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
 
 #### User info ####
 username = str(os.environ.get('USER'))
@@ -17,10 +29,11 @@ uid      = int(os.getuid())
 WorkDir  = os.environ["PWD"]
 
 
-usage                   = 'python3 postSelector.py -c <component> --inFilePath <path_to_input_file> [--certpath <path_to_certificate_file>]'
+usage                   = 'python3 postSelector.py -c <component> --scenario <scenario> --nfiles_max <nfiles_max> [--certpath <path_to_certificate_file>]'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-c', '--component',          dest='component',           type=str,               default="QCD_HT400to600_2022",                      help='Single component to process, in the form: QCD_HT400to600_2022')
-parser.add_option(      '--inFilePath',         dest='inFilePath',          type=str,                                                                   help='Path to the input preprocessed .root file')
+parser.add_option(      '--scenario',           dest='scenario',            type=str,               default="nominal",                                  help='Systematic scenario to process: nominal, jerUp, jerDown, jesUp, jesDown')
+parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                          help='Max number of files to process per sample')
 parser.add_option(      '--certpath',           dest='certpath',            type=str,               default="/tmp/x509up_u{}".format(str(os.getuid())), help='Path to the certificate file')
 
 
@@ -28,25 +41,40 @@ parser.add_option(      '--certpath',           dest='certpath',            type
 in_dataset              = opt.component
 year                    = int(in_dataset.split("_")[-1][:4])
 EE                      = 1 if len(in_dataset.split("_")[-1])>4 else 0
-inFilePath              = opt.inFilePath
+scenario                = opt.scenario
+nfiles_max              = opt.nfiles_max
 certpath                = opt.certpath
 where_to_write          = "eos" # options are "tier" or "eos"
+dict_samples_file       = config["dict_samples"][year]
+scenario_tag            = {
+                            "nominal":  "nominal",
+                            "jerUp":    "jerup",
+                            "jerDown":  "jerdown",
+                            "jesUp":    "jesTotalup",
+                            "jesDown":  "jesTotaldown"
+                        }
+
 if "Data" not in in_dataset:
-    isMC = True
+    isMC                = True
+    scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
 else:
-    isMC = False
+    isMC                = False
+    scenarios           = ["nominal"]
 if year == 2018:
     bTagAlg = "Jet_btagDeepB"
 elif year in [2022,2023]:
     bTagAlg = "Jet_btagPNetB"
 
 
-print(f"Processing component {in_dataset}, year {year}, with file {inFilePath}")
+print(f"Processing component {in_dataset}, year {year}, scenario {scenario}")
 
 #### Define output files and folders ####
 if where_to_write == "eos":
-    outFolder                       = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
+    remote_folder_name              = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF"
+    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
     outSubFolder                    = outFolder+in_dataset+"/"
+    if not os.path.exists(remote_folder_name):
+        os.makedirs(remote_folder_name)
     if not os.path.exists(outFolder):
         os.makedirs(outFolder)
     if not os.path.exists(outSubFolder):
@@ -55,32 +83,43 @@ elif where_to_write == "tier":
     remote_folder_name              = "TopSF"
     outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
     outSubFolder                    = outFolder+in_dataset+"/"
-    subprocess.run([
-        "davix-mkdir",
+
+    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
+    subprocess.run(
+        ["davix-mkdir",
         f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    ])
+        ],
+        check=True
+    )
 
-    subprocess.run([
-        "davix-mkdir",
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}/",
+    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
+    subprocess.run(
+        ["davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    ])
+        ],
+        check=True
+    )
 
-    subprocess.run([
-        "davix-mkdir",
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}/",
+    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
+    subprocess.run(
+        ["davix-mkdir",
+        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    ])    
-    outFolder_tmp                   = "/tmp/{}/".format(username)
+        ],
+        check=True
+    )
 
+    outFolder_tmp                       = "/tmp/{}/".format(username)
     if not os.path.exists(outFolder_tmp):
         os.makedirs(outFolder_tmp)
-    outFilePath_tmp         = outFolder_tmp+inFilePath.split("/")[-1]
-outFilePath                 = outSubFolder+inFilePath.split("/")[-1]
+    outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+".root"
+    
+outFilePath                             = outSubFolder+in_dataset+"_"+scenario+".root"
 
 
 print("Output tmp (if needed) will be written to: ", outFilePath_tmp if where_to_write=="tier" else "no tmp folder needed")
@@ -101,7 +140,9 @@ if where_to_write == "tier":
 
 
 
-
+#### LOAD samples.py ####
+with open(dict_samples_file, "rb") as sample_file:
+    samples = json.load(sample_file)
 
 #### LOAD utils/postselection.h ####
 text_file           = open(WorkDir+"/../postselection/postselection.h", "r")
@@ -113,10 +154,34 @@ def my_initialization_function():
 my_initialization_function()
 
 
+#### Retrieve files to process for the given component and ntot ####
+if not "Data" in in_dataset:
+    ntot_events                                     = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
+else:
+    ntot_events                                     = None
+
+chain                                               = []
+tchain                                              = ROOT.TChain("Events")
+nfiles_opened                                       = 0
+for i, string in enumerate(samples[in_dataset][in_dataset]['strings']):
+    if i >= nfiles_max:
+        break
+    samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
+    f                                               = samples[in_dataset][in_dataset]['strings'][i]
+    try:
+        TFile                                       = ROOT.TFile.Open(f)
+        tchain.Add(f)
+        nfiles_opened += 1
+    except:
+        ntot_events -= samples[in_dataset][in_dataset]['ntot'][i]
+        print("Could not add file: ", f)
+        continue
+chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
+print(f"Opened {nfiles_opened} files out of {nfiles_max} requested for sample {in_dataset}")
 
 
 
-# inFile          = ROOT.TFile.Open(inFilePath)
+#### Define cuts and regions ####
 cut         = requirements  # ---> see variables.py
 regions_def = regions.keys()       # ---> see variables.py
 
@@ -141,7 +206,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
-    df = df.Define("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
+    df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
     df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta)")
@@ -244,23 +309,7 @@ def select_top(df, isMC):
     
     # return:  1- Event Resolved, 2- Event Mixed, 3- Event Merged, 4- Event Nothing, ...
     df_topcategory = df_nTops.Define("EventTopCategory", "select_TopCategory(TightTopMer_idx, TightTopMix_idx, TightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx)")
-    # if isMC:
-        # df_topcategory = df_topcategory.Define("EventTopCategoryWithTruth", "select_TopCategoryWithTruth(EventTopCategory, FatJet_matched, LooseTopMer_idx, TopMixed_truth, LooseTopMix_idx, TopResolved_truth, LooseTopRes_idx)")
-                                    
-    # df_topselected = df_topcategory.Define("Top_idx",
-    #                                        "select_bestTop(EventTopCategory, FatJet_particleNetWithMass_TvsQCD, TopMixed_TopScore, TopResolved_TopScore)")
-    # # return best top idx wrt category --> the idx is referred to the list of candidates fixed by the EventTopCategory
-    # df_topvariables = df_topselected.Define("Top_pt", "select_TopVar(EventTopCategory, Top_idx, FatJet_pt, TopMixed_pt, TopResolved_pt)")\
-    #                     .Define("Top_eta", "select_TopVar(EventTopCategory, Top_idx, FatJet_eta, TopMixed_eta, TopResolved_eta)")\
-    #                     .Define("Top_phi", "select_TopVar(EventTopCategory, Top_idx, FatJet_phi, TopMixed_phi, TopResolved_phi)")\
-    #                     .Define("Top_mass", "select_TopVar(EventTopCategory, Top_idx, FatJet_mass, TopMixed_mass, TopResolved_mass)")\
-    #                     .Define("Top_score", "select_TopVar(EventTopCategory, Top_idx, FatJet_particleNetWithMass_TvsQCD, TopMixed_TopScore, TopResolved_TopScore)")
-    # if isMC:
-    #     df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
-    # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
-    # where 3 means true end less than 3 means false 
-
-
+    
     df_topselected = df_topcategory.Define("BestTopResolved_idx", "TopResolved_TopScore.size() == 0 ? -1 : (int)ArgMax(TopResolved_TopScore)")\
                                     .Define("BestTopMixed_idx",    "TopMixed_TopScore.size() == 0 ? -1 : (int)ArgMax(TopMixed_TopScore)")\
                                     .Define("BestTopMerged_idx",   "FatJet_particleNetWithMass_TvsQCD.size() == 0 ? -1 : (int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
@@ -288,12 +337,43 @@ def select_top(df, isMC):
 
     return df_topvariables
 
+def TopLepTag(df):
+    return df
+
 
 ######## MAIN CODE ########
 t0 = datetime.now()
 print("Local time :", t0)
 
-df                  = ROOT.RDataFrame("Events", inFilePath)
+# df                  = ROOT.RDataFrame("Events", inFilePath)
+df                      = ROOT.RDataFrame(tchain)
+branches                = list(map(str, df.GetColumnNames()))
+branches_dict           = {}
+if not "Data" in in_dataset:
+    df                  = df.Define("SFbtag", "SFbtag_nominal")
+    branches.remove("SFbtag_nominal")
+if "ZJets" in in_dataset: 
+    df = df.Define("nloewcorrection", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")                                                                                         # no nloewcorrection
+elif "WJets" in in_dataset:
+    df = df.Define("nloewcorrection", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")                                                                                         # no nloewcorrection
+else:
+    df = df.Define("nloewcorrection", "1")
+
+
+for scenario in scenarios:
+    branches_dict[scenario] = [b for b in branches if b.endswith(f"_{scenario_tag[scenario]}")]
+branches_common             = [b for b in branches if not any(b in branches_dict[sc] for sc in scenarios)]
+
+
+
+opts            = ROOT.RDF.RSnapshotOptions()
+opts.fLazy      = True
+
+for b in branches_dict[scenario]:
+    try:
+        df          = df.Redefine(b.replace(f"_{scenario_tag[scenario]}", ""), b)
+    except:
+        df          = df.Define(b.replace(f"_{scenario_tag[scenario]}", ""), b)
 df                  = df.Define("PuppiMET_T1_pt_vec", "RVec<float>{ (float) PuppiMET_T1_pt}")\
                         .Define("PuppiMET_T1_phi_vec", "RVec<float>{ (float) PuppiMET_T1_phi}")
 df_trigger          = trigger_filter(df, None, None, year)
@@ -304,6 +384,8 @@ df_topselected      = select_top(df_presel, isMC)
 
 
 branches_to_save    = list(map(str, df_topselected.GetColumnNames()))
+if not "Data" in in_dataset:
+    branches_to_save.remove("SFbtag_nominal")
 opts                = ROOT.RDF.RSnapshotOptions()
 opts.fLazy          = True
 if where_to_write == "tier":
