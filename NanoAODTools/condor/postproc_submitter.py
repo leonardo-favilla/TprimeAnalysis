@@ -17,6 +17,7 @@ parser.add_option('--dryrun', dest='debug', action='store_true', default=False, 
 parser.add_option('-s', '--submit', dest='submit', action='store_true', default=False, help='submit jobs')
 parser.add_option('-r', '--resubmit', dest='resubmit', action='store_true', default=False, help='resubmit failed jobs')
 parser.add_option('--status', dest='status', action='store_true', default=False, help='check jobs status')
+parser.add_option('--delete', dest='delete_files', action='store_true', default=False, help='delete files from tier for jobs with davix errors during resubmission')
 (opt, args) = parser.parse_args()
 debug = opt.debug 
 # where_to_write = opt.write
@@ -26,6 +27,7 @@ resubmit = opt.resubmit
 status = opt.status
 calcualte_systematics = opt.syst
 where_to_write = opt.tier
+delete_files = opt.delete_files
 
 if where_to_write.lower() =='pisa':
     redirector = "davs://stwebdav.pi.infn.it:8443/cms"
@@ -341,7 +343,7 @@ if resubmit:
         print("#######################################################################################")
         print("Resubmitting jobs that have errors according to condor logs")
         print("#######################################################################################\n")
-        check_errors_fromcondor(sample.label, resubmit=True)
+        check_errors_fromcondor(sample.label, username, uid, remote_folder_name, redirector, resubmit=True, delete_files_fromtier=False)
 
 if status:
     print("\n################################################ STATUS mode")
@@ -374,5 +376,5 @@ if status:
         print("\033[91mJobs failed: {} ({:.2f}%)\033[0m".format(job_failed, (job_failed/jobs_total)*100))
         print("\033[92mJobs succeeded: {} ({:.2f}%)\033[0m\n".format(job_success, (job_success/jobs_total)*100))
         print("running jobs: {} ({:.2f}%)\n".format(jobs_total-(job_failed+job_success), ((jobs_total-(job_failed+job_success))/jobs_total)*100))
-        check_errors_fromcondor(sample.label, resubmit=False)
+        check_errors_fromcondor(sample.label, username, uid, remote_folder_name, redirector, resubmit=False, delete_files_fromtier=delete_files)
         print("\n--------------------------------------------------------------------------------")

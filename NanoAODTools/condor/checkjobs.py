@@ -63,7 +63,7 @@ def job_exit_code(job_logFile):
 
     return exit_code
 
-def checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name):
+def checkSubmitStatus(redirector, username, uid, sample, running_folder, remote_folder_name):
     import os
     # print("Sample: ", sample.label)
     listoffile = os.listdir(running_folder+"/"+sample.label)
@@ -78,7 +78,7 @@ def checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name)
 
 
     # check number of files that have been actually created
-    davixfolder                     = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+    davixfolder                     = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     # print("davixfolder: ", davixfolder)
     file_sizes                      = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     total_files_onTier              = len(file_sizes)
@@ -152,10 +152,11 @@ def summarize_job_status(username, uid, samples, running_folder, remote_folder_n
     df = pd.DataFrame(summary)
     return df
 
-def check_errors_fromcondor(dataset, resubmit=False):
+def check_errors_fromcondor(dataset, username, uid, remote_folder_name, redirector, resubmit=False, delete_files_fromtier=False):
     err_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/error/"
     log_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/log/"
     output_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/output/"
+    tmp_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/"
     listoffile = os.listdir(err_folder)
     list_of_job_errors = subprocess.run(f"grep -l '(Davix::HttpRequest) Error' {err_folder}/*.err", shell=True, capture_output=True, text=True)
     jobs_with_errors = list_of_job_errors.stdout.split('\n')
@@ -173,7 +174,25 @@ def check_errors_fromcondor(dataset, resubmit=False):
             subprocess.run(f"rm {log_folder}/{dataset}_{n}.log", shell=True, capture_output=True, text=True)
         print("REMOVED condor log, err and out files ")
         subprocess.run(str_resubmit, shell=True, capture_output=True, text=True)
-
+    if delete_files_fromtier:
+        print(f"Deleting files from tier for {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}...")
+        jobs_to_delete = [n.replace("file", "") for n in jobs_with_errors_numbers]
+        print("Files to be deleted:\n "+str(jobs_to_delete))
+        for n in jobs_to_delete:
+            davixfolder = find_folder(redirector, username, remote_folder_name, dataset, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+            file_name = f"tree_hadd_{n}.root"
+            print(f"davix-rm {davixfolder}/{file_name} -E /tmp/x509up_u{uid} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+            result = subprocess.run(f"davix-rm {davixfolder}/{file_name} -E /tmp/x509up_u{uid} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/", shell=True, capture_output=True, text=True)
+            print(result.stdout)
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            else:
+                subprocess.run(f"rm {err_folder}/{dataset}_{n}.err", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm {output_folder}/{dataset}_{n}.out", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm {log_folder}/{dataset}_{n}.log", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm -r {tmp_folder}/file{n}", shell=True, capture_output=True, text=True)
+                
+        print("Deleted files from tier.")
 
 
 

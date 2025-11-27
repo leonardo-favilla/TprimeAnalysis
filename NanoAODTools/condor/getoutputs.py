@@ -13,8 +13,8 @@ parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dat', dest='dat', type=str, default = '', help='Please enter a dataset name')
 parser.add_option('-o', '--output', dest='output', type=str, default = 'dict_samples_2022.json', help='Please enter a json output file')
 parser.add_option('--tier', dest='tier', type=str, default = 'pisa', help='Please enter location where to write the output file (tier pisa or bari)')
-where_to_read = opt.tier
 (opt, args) = parser.parse_args()
+where_to_read = opt.tier
 
 if where_to_read.lower() =='pisa':
     redirector = "davs://stwebdav.pi.infn.it:8443/cms"
@@ -148,7 +148,7 @@ for sample in samples:
     file_sizes      = get_file_sizes(folder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     files_strings   = []
 
-    jobs_total, total_on_tier, to_resubmit, not_found, empty, jobs_toResubmit_notFoundOnTier, jobs_toResubmit_emptyFile = checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name)
+    jobs_total, total_on_tier, to_resubmit, not_found, empty, jobs_toResubmit_notFoundOnTier, jobs_toResubmit_emptyFile = checkSubmitStatus(redirector, username, uid, sample, running_folder, remote_folder_name)
     for file_name, file_size in file_sizes.items():
         jobNumber        = int(file_name.split("_")[-1].split(".")[0])
         if jobNumber in jobs_toResubmit_emptyFile:
@@ -217,7 +217,9 @@ for sample in samples:
     if json_out.get(sample.label) is None:
         json_out[sample.label] = {}
     json_out[sample.label][sample.label] = out_dict[sample.process][sample.label]
-
+    print(f"Sample {sample.label} done!")
+    print("-----------------------------------------------------")
+    print(out_dict[sample.process][sample.label])
     with open('../python/postprocessing/samples/'+outjson, 'w') as json_output:
         json.dump(json_out, json_output, indent = 2)
-
+print(f"Output written to ../python/postprocessing/samples/{outjson}")
