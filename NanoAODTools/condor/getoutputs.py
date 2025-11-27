@@ -12,7 +12,17 @@ usage = 'python3 getoutputs.py -d dataset_name'
 parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dat', dest='dat', type=str, default = '', help='Please enter a dataset name')
 parser.add_option('-o', '--output', dest='output', type=str, default = 'dict_samples_2022.json', help='Please enter a json output file')
+parser.add_option('--tier', dest='tier', type=str, default = 'pisa', help='Please enter location where to write the output file (tier pisa or bari)')
 (opt, args) = parser.parse_args()
+where_to_read = opt.tier
+
+if where_to_read.lower() =='pisa':
+    redirector = "davs://stwebdav.pi.infn.it:8443/cms"
+elif where_to_read.lower() =='bari':
+    redirector = "davs://webdav.recas.ba.infn.it:8443/cms"
+else:
+    print("Please select a valid tier (pisa or bari) OTHERWISE add the correct redirector in the code")
+    exit()
 
 #Insert here your uid... you can see it typing echo $uid
 username = str(os.environ.get('USER'))
@@ -28,7 +38,7 @@ if not os.path.exists("/tmp/x509up_u" + str(uid)):
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
 
 # insert here the name of output folder
-running_folder                      = "/afs/cern.ch/"+workdir+"/"+inituser+"/"+username+"/TprimeAnalysis/NanoAODTools/condor/tmp/"
+running_folder                      = os.environ.get('PWD') + "/tmp/"
 remote_folder_name                  = "Run3Analysis_Tprime"
 
 # def find_folder_8(folder, sample, cert_path, ca_path):
@@ -101,28 +111,44 @@ elif dataset in sample_dict.keys():
         samples = [sample_dict[dataset]]
 
 out_dict = {}
+if hasattr(sample_dict[dataset], "process"):
+    out_dict[sample_dict[dataset].process] = {}
+else:
+    out_dict[dataset] = {}
 out_dict[dataset] = {}
 
-# if 'lxplus9' in os.environ['HOSTNAME']:
-#     print("ERROR: Please run this script from lxplus8")
-#     exit()
+outjson = opt.output
 
+if os.path.exists('../python/postprocessing/samples/'+outjson):
+    with open('../python/postprocessing/samples/'+outjson, 'r') as json_input:
+        json_out = json.load(json_input)
+        if hasattr(sample_dict[dataset], "process"):
+            if json_out.get(sample_dict[dataset].process) is None:
+                json_out[sample_dict[dataset].process] = {}
+        elif json_out.get(dataset) is None and not hasattr(sample_dict[dataset], "process"):
+            json_out[dataset] = {}
+else:
+    json_out = {}
+    if hasattr(sample_dict[dataset], "process"):
+        json_out[sample_dict[dataset].process] = {}
+    else:
+        json_out[dataset] = {}
 
 for sample in samples:
     print("---------- Running dataset: ", dataset)
-    out_dict[dataset][sample.label] = {}
+    out_dict[sample.process][sample.label] = {}
     if dataset!=sample.label: 
         out_dict[sample.label] = {}
         out_dict[sample.label][sample.label] = {}
     print("---------- Running sample: ", sample.label)
-    folder = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+    folder = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     print("Folder: ", folder)
     
     files_strings   = get_files_on_tier(folder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     file_sizes      = get_file_sizes(folder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     files_strings   = []
 
-    jobs_total, total_on_tier, to_resubmit, not_found, empty, jobs_toResubmit_notFoundOnTier, jobs_toResubmit_emptyFile = checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name)
+    jobs_total, total_on_tier, to_resubmit, not_found, empty, jobs_toResubmit_notFoundOnTier, jobs_toResubmit_emptyFile = checkSubmitStatus(redirector, username, uid, sample, running_folder, remote_folder_name)
     for file_name, file_size in file_sizes.items():
         jobNumber        = int(file_name.split("_")[-1].split(".")[0])
         if jobNumber in jobs_toResubmit_emptyFile:
@@ -149,42 +175,51 @@ for sample in samples:
     #         print(f"Error with file {file_name} [job_exit_code = {exit_code}] - skipping")
     #         continue
 
-    path_file = "root://cms-xrd-global.cern.ch/"+folder.replace("davs://stwebdav.pi.infn.it:8443/cms", "")
+    # path_file = "root://cms-xrd-global.cern.ch/"+folder.replace("davs://stwebdav.pi.infn.it:8443/cms", "")
+    path_file = folder
     ntot = []
     out_strings = []
     for f in tqdm(files_strings): 
         f = path_file+"/"+f
-        out_strings.append(f)
         if not "Data" in sample.label:
-            rootfile = ROOT.TFile.Open(f)
-            runstree = rootfile.Get("Runs")
-            runstree.GetEntry(0)
-            geneventSumw = runstree.genEventSumw
-            tree = rootfile.Get("Events")
-            tree.GetEntry(0)
-            eventweight = abs(tree.Generator_weight)
-            n = round(abs(geneventSumw/eventweight))
+            try:
+                rootfile = ROOT.TFile.Open(f)
+                out_strings.append(f)
+                runstree = rootfile.Get("Runs")
+                runstree.GetEntry(0)
+                geneventSumw = runstree.genEventSumw
+                tree = rootfile.Get("Events")
+                tree.GetEntry(0)
+                eventweight = abs(tree.Generator_weight)
+                n = round(abs(geneventSumw/eventweight))
+                ntot.append(n)
+            except:
+                print("Could not open file: ", f)
+                ntot.append(None)
+                continue
             # histo = rootfile.Get("plots/h_genweight")
             # ntot.append(histo.GetBinContent(2))
-            ntot.append(n)
         else:
-            ntot.append(None)
-    out_dict[dataset][sample.label] = {'strings': out_strings, "ntot": ntot}
-    if dataset!=sample.label: out_dict[sample.label][sample.label] = {'strings': out_strings, "ntot": ntot}
-# print(out_dict)
-# 
-
-outjson = opt.output
-
-if os.path.exists('../python/postprocessing/samples/'+outjson):
-    with open('../python/postprocessing/samples/'+outjson, 'r') as json_input:
-        json_out = json.load(json_input)
-else:
-    json_out = {}
-json_out[dataset] = out_dict[dataset]
-if dataset != sample.label: 
-    for sample in samples:
-        json_out[sample.label] = out_dict[sample.label]
-
-with open('../python/postprocessing/samples/'+outjson, 'w') as json_output:
-    json.dump(json_out, json_output, indent = 2)
+            try:
+                rootfile = ROOT.TFile.Open(f)
+                if rootfile.IsZombie():
+                    print("Could not open file (zombie): ", f)
+                    ntot.append(None)
+                    continue
+                out_strings.append(f)
+                ntot.append(None)
+            except:
+                print("Could not open file: ", f)
+                ntot.append(None)
+                continue
+    out_dict[sample.process][sample.label] = {'strings': out_strings, "ntot": ntot}
+    json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
+    if json_out.get(sample.label) is None:
+        json_out[sample.label] = {}
+    json_out[sample.label][sample.label] = out_dict[sample.process][sample.label]
+    print(f"Sample {sample.label} done!")
+    print("-----------------------------------------------------")
+    print(out_dict[sample.process][sample.label])
+    with open('../python/postprocessing/samples/'+outjson, 'w') as json_output:
+        json.dump(json_out, json_output, indent = 2)
+print(f"Output written to ../python/postprocessing/samples/{outjson}")

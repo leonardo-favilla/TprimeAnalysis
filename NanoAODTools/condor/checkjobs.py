@@ -1,5 +1,6 @@
 import subprocess
 import re
+import os
 import pandas as pd
 
 def get_file_sizes(directory_url, cert_path, ca_path):
@@ -32,15 +33,15 @@ def get_file_sizes(directory_url, cert_path, ca_path):
         print(f"Errore nell'esecuzione di davix-ls: {e}")
         return {}
 
-def find_folder(username, remote_dir, dataset_label, cert_path, ca_path):
+def find_folder(redirector, username, remote_dir, dataset_label, cert_path, ca_path):
     results = subprocess.run([
-        'davix-ls', '-E', cert_path, '--capath', ca_path, "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"
+        'davix-ls', '-E', cert_path, '--capath', ca_path, redirector+"/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"
     ], capture_output=True, text=True, check=True)
     subfold = results.stdout.splitlines()
     subfold.sort()
     subfold = subfold[-1]
 
-    return "davs://stwebdav.pi.infn.it:8443/cms/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"+subfold
+    return redirector+"/store/user/"+username+"/"+remote_dir+"/"+dataset_label+"/"+subfold
 
 def job_exit_code(job_logFile):
     exit_code = None
@@ -62,7 +63,7 @@ def job_exit_code(job_logFile):
 
     return exit_code
 
-def checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name):
+def checkSubmitStatus(redirector, username, uid, sample, running_folder, remote_folder_name):
     import os
     # print("Sample: ", sample.label)
     listoffile = os.listdir(running_folder+"/"+sample.label)
@@ -77,7 +78,7 @@ def checkSubmitStatus(username, uid, sample, running_folder, remote_folder_name)
 
 
     # check number of files that have been actually created
-    davixfolder                     = find_folder(username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+    davixfolder                     = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     # print("davixfolder: ", davixfolder)
     file_sizes                      = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
     total_files_onTier              = len(file_sizes)
@@ -151,11 +152,47 @@ def summarize_job_status(username, uid, samples, running_folder, remote_folder_n
     df = pd.DataFrame(summary)
     return df
 
-
-
-
-
-
+def check_errors_fromcondor(dataset, username, uid, remote_folder_name, redirector, resubmit=False, delete_files_fromtier=False):
+    err_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/error/"
+    log_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/log/"
+    output_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/condor/output/"
+    tmp_folder = os.environ.get('PWD')+ f"/tmp/{dataset}/"
+    listoffile = os.listdir(err_folder)
+    list_of_job_errors = subprocess.run(f"grep -l '(Davix::HttpRequest) Error' {err_folder}/*.err", shell=True, capture_output=True, text=True)
+    jobs_with_errors = list_of_job_errors.stdout.split('\n')
+    jobs_with_errors_numbers = [e.split("_")[-1].replace(".err","") for e in jobs_with_errors[:-1]]
+    str_resubmit = ""
+    for e in jobs_with_errors_numbers:
+        str_resubmit += f"condor_submit tmp/{dataset}/{e}/condor.sub; "
+    if not resubmit:
+        print(f"Found {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}. To resubmit them, run:\n{str_resubmit}")
+    else:
+        print(f"Resubmitting {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}...")
+        for n in jobs_with_errors_numbers:
+            subprocess.run(f"rm {err_folder}/{dataset}_{n}.err", shell=True, capture_output=True, text=True)
+            subprocess.run(f"rm {output_folder}/{dataset}_{n}.out", shell=True, capture_output=True, text=True)
+            subprocess.run(f"rm {log_folder}/{dataset}_{n}.log", shell=True, capture_output=True, text=True)
+        print("REMOVED condor log, err and out files ")
+        subprocess.run(str_resubmit, shell=True, capture_output=True, text=True)
+    if delete_files_fromtier:
+        print(f"Deleting files from tier for {len(jobs_with_errors_numbers)} jobs with Davix errors in dataset {dataset}...")
+        jobs_to_delete = [n.replace("file", "") for n in jobs_with_errors_numbers]
+        print("Files to be deleted:\n "+str(jobs_to_delete))
+        for n in jobs_to_delete:
+            davixfolder = find_folder(redirector, username, remote_folder_name, dataset, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+            file_name = f"tree_hadd_{n}.root"
+            print(f"davix-rm {davixfolder}/{file_name} -E /tmp/x509up_u{uid} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
+            result = subprocess.run(f"davix-rm {davixfolder}/{file_name} -E /tmp/x509up_u{uid} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/", shell=True, capture_output=True, text=True)
+            print(result.stdout)
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            else:
+                subprocess.run(f"rm {err_folder}/{dataset}_{n}.err", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm {output_folder}/{dataset}_{n}.out", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm {log_folder}/{dataset}_{n}.log", shell=True, capture_output=True, text=True)
+                subprocess.run(f"rm -r {tmp_folder}/file{n}", shell=True, capture_output=True, text=True)
+                
+        print("Deleted files from tier.")
 
 
 
