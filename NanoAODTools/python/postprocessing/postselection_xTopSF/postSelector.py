@@ -199,10 +199,11 @@ def cut_string(cut):
 
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
-    
-    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt, Jet_eta, Jet_jetId)")
+    df = df.Define("Jet_passJetIdTight", "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)")
+    df = df.Define("Jet_passJetIdTightLepVeto", "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")
+    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt, Jet_eta, Jet_passJetIdTightLepVeto)")
     df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)")
-    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt, FatJet_eta, FatJet_jetId)")
+    df = df.Define("GoodFatJet_idx", "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)")
     df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
@@ -237,7 +238,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("LeadingElectronPt_eta", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_eta)")
     df = df.Define("LeadingElectronPt_phi", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_phi)")
     
-    df = df.Define("nForwardJet", "nForwardJet(Jet_pt, Jet_jetId, Jet_eta)")
+    df = df.Define("nForwardJet", "nForwardJet(Jet_pt, Jet_passJetIdTight, Jet_eta)")
     df = df.Define("MHT","MHT(GoodJet_idx, Jet_pt, Jet_phi, Jet_eta, Jet_mass)")
     df = df.Define("JetBTagLoose_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 0)")\
                 .Define("nJetBtagLoose", "static_cast<int>(JetBTagLoose_idx.size());")
@@ -338,14 +339,16 @@ def select_top(df, isMC):
     return df_topvariables
 
 def tag_toplep(df):
-    df_toplep   = df.Define("Muon_px",                          "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
-                    .Define("Muon_py",                          "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*cos(Muon_phi[TightMuon_idx[0]]) : -9999.")\
-                    .Define("MET_px",                           "MET_pt*sin(MET_phi)")\
-                    .Define("MET_py",                           "MET_pt*cos(MET_phi)")\
-                    .Define("W_pt",                             "(int)nTightMuon > 0 ? sqrt(pow(Muon_px+MET_px, 2)+pow(Muon_py+MET_py, 2)) : -9999.")\
-                    .Define("bJetsMatched_to_GoodMuon_idx",     "(int)nTightMuon > 0 ? idx_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0) : -9999.")\
-                    .Define("bJetsMatched_to_GoodMuon_dR",      "(int)nTightMuon > 0 ? dR_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0) : -9999.")\
-                    .Define("nTopLep",                          "(int)nTightMuon > 0 ? (int)bJetsMatched_to_GoodMuon_idx.size() : 0.")
+    df_toplep   = df.Define("Muon_px",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                    .Define("Muon_py",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*cos(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                    .Define("MET_px",                                   "MET_pt*sin(MET_phi)")\
+                    .Define("MET_py",                                   "MET_pt*cos(MET_phi)")\
+                    .Define("W_pt",                                     "(int)nTightMuon > 0 ? sqrt(pow(Muon_px+MET_px, 2)+pow(Muon_py+MET_py, 2)) : -9999.")\
+                    .Define("bJetsMatched_to_GoodMuon_idx",             "idx_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                    .Define("bJetsMatched_to_GoodMuon_dR",              "dR_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                    .Define("nearest_bJetMatched_to_GoodMuon_idx",      "bJetsMatched_to_GoodMuon_idx.size() == 0 ? -1 : (int)ArgMin(bJetsMatched_to_GoodMuon_dR)")\
+                    .Define("nearest_bJetMatched_to_GoodMuon_dR",       "bJetsMatched_to_GoodMuon_idx.size() == 0 ? -9999 : (float)Min(bJetsMatched_to_GoodMuon_dR)")\
+                    .Define("nTopLep",                                  "(int)nTightMuon > 0 ? (int)bJetsMatched_to_GoodMuon_idx.size() : 0.")
 
     return df_toplep
 
@@ -362,15 +365,15 @@ if not "Data" in in_dataset:
     df                  = df.Define("SFbtag", "SFbtag_nominal")
     branches.remove("SFbtag_nominal")
 if "ZJets" in in_dataset: 
-    df = df.Define("nloewcorrection", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")                                                                                         # no nloewcorrection
+    df = df.Define("nloewcorrection", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
 elif "WJets" in in_dataset:
-    df = df.Define("nloewcorrection", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")                                                                                         # no nloewcorrection
+    df = df.Define("nloewcorrection", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
 else:
     df = df.Define("nloewcorrection", "1")
 
 
-for scenario in scenarios:
-    branches_dict[scenario] = [b for b in branches if b.endswith(f"_{scenario_tag[scenario]}")]
+for sc in scenarios:
+    branches_dict[sc]       = [b for b in branches if b.endswith(f"_{scenario_tag[sc]}")]
 branches_common             = [b for b in branches if not any(b in branches_dict[sc] for sc in scenarios)]
 
 
