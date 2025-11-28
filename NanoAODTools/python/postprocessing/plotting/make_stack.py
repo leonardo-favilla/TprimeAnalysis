@@ -58,8 +58,10 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
     else:
         palette     = None
     stack           = ROOT.THStack("stack", "Stack Histogram")
-    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=histo_data, palette=palette)
-    # CMS.cmsDraw(histo_data, "P", mcolor=ROOT.kBlack)
+    # CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=histo_data, palette=palette)
+    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=None, palette=palette)
+    if histo_data is not None:
+        CMS.cmsDraw(histo_data, "PE", mcolor=ROOT.kBlack)
 
     h_bkg           = stack.GetStack().Last().Clone("h_bkg")
     CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)

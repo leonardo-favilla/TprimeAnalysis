@@ -1224,7 +1224,7 @@ ZJetsToNuNu_2jets_PT200to400_1J_2022EE            = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT200to400_1J_2022EE.sigma      = 6.354	
 ZJetsToNuNu_2jets_PT200to400_1J_2022EE.year       = 2022
 ZJetsToNuNu_2jets_PT200to400_1J_2022EE.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM"
-ZJetsToNuNu_2jets_PT200to400_1J_2022EE.process    = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT200to400_1J_2022EE.process    = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT200to400_1J_2022EE.unix_code  = 41209
 ZJetsToNuNu_2jets_PT200to400_1J_2022EE.EE         = 1
 
@@ -1232,7 +1232,7 @@ ZJetsToNuNu_2jets_PT400to600_1J_2022EE            = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT400to600_1J_2022EE.sigma      = 0.2188
 ZJetsToNuNu_2jets_PT400to600_1J_2022EE.year       = 2022
 ZJetsToNuNu_2jets_PT400to600_1J_2022EE.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v4/NANOAODSIM"
-ZJetsToNuNu_2jets_PT400to600_1J_2022EE.process    = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT400to600_1J_2022EE.process    = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT400to600_1J_2022EE.unix_code  = 41210
 ZJetsToNuNu_2jets_PT400to600_1J_2022EE.EE         = 1
 
@@ -1240,7 +1240,7 @@ ZJetsToNuNu_2jets_PT600_1J_2022EE                 = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT600_1J_2022EE.sigma           = 0.02583
 ZJetsToNuNu_2jets_PT600_1J_2022EE.year            = 2022
 ZJetsToNuNu_2jets_PT600_1J_2022EE.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM"
-ZJetsToNuNu_2jets_PT600_1J_2022EE.process         = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT600_1J_2022EE.process         = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT600_1J_2022EE.unix_code       = 41211
 ZJetsToNuNu_2jets_PT600_1J_2022EE.EE              = 1
 
@@ -1248,7 +1248,7 @@ ZJetsToNuNu_2jets_PT40to100_2J_2022EE             = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT40to100_2J_2022EE.sigma       = 335.5
 ZJetsToNuNu_2jets_PT40to100_2J_2022EE.year        = 2022
 ZJetsToNuNu_2jets_PT40to100_2J_2022EE.dataset     = "/Zto2Nu-2Jets_PTNuNu-40to100_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM"
-ZJetsToNuNu_2jets_PT40to100_2J_2022EE.process     = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT40to100_2J_2022EE.process     = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT40to100_2J_2022EE.unix_code   = 41212
 ZJetsToNuNu_2jets_PT40to100_2J_2022EE.EE          = 1
 
@@ -1256,7 +1256,7 @@ ZJetsToNuNu_2jets_PT100to200_2J_2022EE            = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT100to200_2J_2022EE.sigma      = 100.4
 ZJetsToNuNu_2jets_PT100to200_2J_2022EE.year       = 2022
 ZJetsToNuNu_2jets_PT100to200_2J_2022EE.dataset    = "/Zto2Nu-2Jets_PTNuNu-100to200_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v1/NANOAODSIM"
-ZJetsToNuNu_2jets_PT100to200_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT100to200_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT100to200_2J_2022EE.unix_code  = 41213
 ZJetsToNuNu_2jets_PT100to200_2J_2022EE.EE         = 1
 
@@ -1264,7 +1264,7 @@ ZJetsToNuNu_2jets_PT200to400_2J_2022EE            = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT200to400_2J_2022EE.sigma      = 13.86
 ZJetsToNuNu_2jets_PT200to400_2J_2022EE.year       = 2022
 ZJetsToNuNu_2jets_PT200to400_2J_2022EE.dataset    = "/Zto2Nu-2Jets_PTNuNu-200to400_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v1/NANOAODSIM"
-ZJetsToNuNu_2jets_PT200to400_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT200to400_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT200to400_2J_2022EE.unix_code  = 41214
 ZJetsToNuNu_2jets_PT200to400_2J_2022EE.EE         = 1
 
@@ -1272,7 +1272,7 @@ ZJetsToNuNu_2jets_PT400to600_2J_2022EE            = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT400to600_2J_2022EE.sigma      = 0.7816
 ZJetsToNuNu_2jets_PT400to600_2J_2022EE.year       = 2022
 ZJetsToNuNu_2jets_PT400to600_2J_2022EE.dataset    = "/Zto2Nu-2Jets_PTNuNu-400to600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM"
-ZJetsToNuNu_2jets_PT400to600_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT400to600_2J_2022EE.process    = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT400to600_2J_2022EE.unix_code  = 41215
 ZJetsToNuNu_2jets_PT400to600_2J_2022EE.EE         = 1
 
@@ -1280,7 +1280,7 @@ ZJetsToNuNu_2jets_PT600_2J_2022EE                 = sample(ROOT.kAzure+6, 1, 100
 ZJetsToNuNu_2jets_PT600_2J_2022EE.sigma           = 0.1311
 ZJetsToNuNu_2jets_PT600_2J_2022EE.year            = 2022
 ZJetsToNuNu_2jets_PT600_2J_2022EE.dataset         = "/Zto2Nu-2Jets_PTNuNu-600_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v4/NANOAODSIM"
-ZJetsToNuNu_2jets_PT600_2J_2022EE.process         = 'ZJetsToNuNu_2jets_2022'
+ZJetsToNuNu_2jets_PT600_2J_2022EE.process         = 'ZJetsToNuNu_2jets_2022EE'
 ZJetsToNuNu_2jets_PT600_2J_2022EE.unix_code       = 41216
 ZJetsToNuNu_2jets_PT600_2J_2022EE.EE              = 1
 
@@ -1373,7 +1373,7 @@ WJets_2jets0J_2022EE           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJe
 WJets_2jets0J_2022EE.dataset   = "/WtoLNu-2Jets_0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM"
 WJets_2jets0J_2022EE.sigma     = 55760
 WJets_2jets0J_2022EE.year      = 2022
-WJets_2jets0J_2022EE.process   = "WJets_2jets_2022"
+WJets_2jets0J_2022EE.process   = "WJets_2jets_2022EE"
 WJets_2jets0J_2022EE.unix_code = 41308
 WJets_2jets0J_2022EE.EE        = 1
 
@@ -1381,7 +1381,7 @@ WJets_2jets1J_2022EE           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJe
 WJets_2jets1J_2022EE.dataset   = "/WtoLNu-2Jets_1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM"
 WJets_2jets1J_2022EE.sigma     = 9529
 WJets_2jets1J_2022EE.year      = 2022
-WJets_2jets1J_2022EE.process   = "WJets_2jets_2022"
+WJets_2jets1J_2022EE.process   = "WJets_2jets_2022EE"
 WJets_2jets1J_2022EE.unix_code = 41309
 WJets_2jets1J_2022EE.EE        = 1
 
@@ -1389,7 +1389,7 @@ WJets_2jets2J_2022EE           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJe
 WJets_2jets2J_2022EE.dataset   = "/WtoLNu-2Jets_2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM"
 WJets_2jets2J_2022EE.sigma     = 3532
 WJets_2jets2J_2022EE.year      = 2022
-WJets_2jets2J_2022EE.process   = "WJets_2jets_2022"
+WJets_2jets2J_2022EE.process   = "WJets_2jets_2022EE"
 WJets_2jets2J_2022EE.unix_code = 41310
 WJets_2jets2J_2022EE.EE        = 1
 
