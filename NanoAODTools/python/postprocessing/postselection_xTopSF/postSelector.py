@@ -93,7 +93,6 @@ elif where_to_write == "tier":
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
-        check=True
     )
 
     print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
@@ -103,7 +102,6 @@ elif where_to_write == "tier":
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
-        check=True
     )
 
     print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
@@ -113,7 +111,6 @@ elif where_to_write == "tier":
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
-        check=True
     )
 
 outFolder_tmp                       = "/tmp/{}/".format(username)

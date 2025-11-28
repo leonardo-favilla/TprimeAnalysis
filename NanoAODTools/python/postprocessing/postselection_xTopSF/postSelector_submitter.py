@@ -51,6 +51,8 @@ username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])
 uid             = int(os.getuid())
 workdir         = "user" if "user" in os.environ.get('PWD') else "work"
+if not os.path.exists("/tmp/x509up_u" + str(uid)):
+    os.system('voms-proxy-init --rfc --voms cms -valid 192:00')
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
 
 def sub_writer(run_folder, log_folder, component, scenario):
@@ -68,7 +70,7 @@ def sub_writer(run_folder, log_folder, component, scenario):
     f.write("+JobFlavour             = \"nextweek\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek = 1 week
     f.write('+JobTag                 = "'+component+"_"+scenario+'"\n')
     f.write("executable              = "+run_folder+"runner.sh\n")
-    f.write("arguments               = \n")
+    f.write("arguments               = $(Proxy_path)\n")
     #f.write("input                   = input.txt\n")
     f.write("output                  = "+log_folder+"output/postSelector_"+component+".out\n")
     f.write("error                   = "+log_folder+"error/postSelector_"+component+".err\n")
@@ -82,7 +84,7 @@ def runner_writer(run_folder, component, scenario, nfiles_max):
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
     f.write("source analysis_TPrime.sh\n")
     f.write("cd python/postprocessing/postselection_xTopSF/\n")
-    pycommand = "python3 postSelector.py "+f"-c {component} --scenario {scenario} --nfiles_max {nfiles_max}"
+    pycommand = "python3 postSelector.py "+f"-c {component} --scenario {scenario} --nfiles_max {nfiles_max} --certpath $1"
 
     f.write(pycommand+"\n")
     f.close()
