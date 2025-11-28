@@ -7,13 +7,13 @@ outputfolder:
     }
 
 TopSF:
-  preprocessed_files:
-    2022:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/preprocessed_ntuples/"
-    2023:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/preprocessed_ntuples/"
-  postprocessed_files:
-    2022:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
-    2023:           "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/ntuples_ready_for_TopSF_Framework/"
-
+  where_to_write: {
+    "2022":         "tier",
+    "2022EE":       "tier",
+    "2023":         "eos",
+    "2023postBPix": "eos"
+    }
+    
 dict_samples:
   2022: "../samples/dict_samples_2022.json"
   2023: "../samples/dict_samples_2023.json"

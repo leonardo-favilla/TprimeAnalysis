@@ -9,6 +9,7 @@ import math
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.variables import *
 import yaml
+import subprocess
 sys.path.append('../')
 
 
@@ -41,10 +42,11 @@ parser.add_option(      '--certpath',           dest='certpath',            type
 in_dataset              = opt.component
 year                    = int(in_dataset.split("_")[-1][:4])
 EE                      = 1 if len(in_dataset.split("_")[-1])>4 else 0
+period                  = in_dataset.split("_")[-1]
 scenario                = opt.scenario
 nfiles_max              = opt.nfiles_max
 certpath                = opt.certpath
-where_to_write          = "eos" # options are "tier" or "eos"
+where_to_write          = config["TopSF"]["where_to_write"][period] # options are "tier" or "eos"
 dict_samples_file       = config["dict_samples"][year]
 scenario_tag            = {
                             "nominal":  "nominal",
@@ -84,59 +86,46 @@ elif where_to_write == "tier":
     outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
     outSubFolder                    = outFolder+in_dataset+"/"
 
-    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
+    print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
     subprocess.run(
         ["davix-mkdir",
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
+        f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{remote_folder_name}/",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
         check=True
     )
 
-    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
+    print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFolder, certpath))
     subprocess.run(
         ["davix-mkdir",
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFolder}",
+        f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{outFolder}",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
         check=True
     )
 
-    print("davix-mkdir davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
+    print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outSubFolder, certpath))
     subprocess.run(
         ["davix-mkdir",
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outSubFolder}",
+        f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{outSubFolder}",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
         ],
         check=True
     )
 
-    outFolder_tmp                       = "/tmp/{}/".format(username)
-    if not os.path.exists(outFolder_tmp):
-        os.makedirs(outFolder_tmp)
-    outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+".root"
-    
-outFilePath                             = outSubFolder+in_dataset+"_"+scenario+".root"
+outFolder_tmp                       = "/tmp/{}/".format(username)
+if not os.path.exists(outFolder_tmp):
+    os.makedirs(outFolder_tmp)
+outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+".root"
+outFilePath                         = outSubFolder+in_dataset+"_"+scenario+".root"
 
 
-print("Output tmp (if needed) will be written to: ", outFilePath_tmp if where_to_write=="tier" else "no tmp folder needed")
-print("Output will be written to: ", outFilePath)
+print(f"Output tmp will be written to:  {outFilePath_tmp}")
+print(f"Output will be written to:      {outFilePath}")
 
-
-if where_to_write == "tier":
-    print("Copying files to tier...")
-    print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_tmp, username, outFilePath, certpath))
-    subprocess.run([
-        "davix-put",
-        outFilePath_tmp,
-        f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath}",
-        "-E", certpath,
-        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-    ])
-    print("Done!")
 
 
 
@@ -401,23 +390,30 @@ if not "Data" in in_dataset:
     branches_to_save.remove("SFbtag_nominal")
 opts                = ROOT.RDF.RSnapshotOptions()
 opts.fLazy          = True
-if where_to_write == "tier":
-    df_topselected          = df_topselected.Snapshot("Events", outFilePath_tmp, branches_to_save, opts)
-else:
-    df_topselected          = df_topselected.Snapshot("Events", outFilePath, branches_to_save, opts)
+df_topselected      = df_topselected.Snapshot("Events", outFilePath_tmp, branches_to_save, opts)
 df_topselected.GetValue()
 print("Snapshot done!")
 
-if where_to_write == "tier":
+if where_to_write == "eos":
+    print("Copying files to eos...")
+    print("cp {} {}".format(outFilePath_tmp, outFilePath))
+    subprocess.run([
+        "cp",
+        outFilePath_tmp,
+        outFilePath
+    ])
+    print("Done!")
+elif where_to_write == "tier":
     print("Copying files to tier...")
-    subprocess.run(
-        [
-            "davix-put", outFilePath_nominal_tmp, f"davs://stwebdav.pi.infn.it:8443/cms/store/user/{username}/{outFilePath_nominal}", "-E", certpath, "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
-        ],
-        check=True
-    )
-    print("davix-put {} davs://stwebdav.pi.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_nominal_tmp, username, outFilePath_nominal, certpath))
-
+    print("davix-put {} davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_tmp, username, outFilePath, certpath))
+    subprocess.run([
+        "davix-put",
+        outFilePath_tmp,
+        f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{outFilePath}",
+        "-E", certpath,
+        "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])
+    print("Done!")
 
 
 t1 = datetime.now()

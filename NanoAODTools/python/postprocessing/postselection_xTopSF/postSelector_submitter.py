@@ -23,7 +23,6 @@ else:
 usage               = "python3 postSelector_submitter.py -d dataset_name --nfiles_max <nfiles_max> --dryrun"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
-# parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--nfiles_max',             dest='nfiles_max',          type=int,               default = 1,                                            help='Max number of files to process per sample')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 
@@ -76,17 +75,6 @@ def sub_writer(run_folder, log_folder, component, scenario):
     f.write("log                     = "+log_folder+"log/postSelector_"+component+".log\n")
     f.write("queue\n")
     f.close()
-
-# def runner_writer(run_folder, component, inFilePath):
-#     f = open(run_folder+"runner.sh", "w")
-#     f.write("#!/usr/bin/bash\n")
-#     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
-#     f.write("source analysis_TPrime.sh\n")
-#     f.write("cd python/postprocessing/postselection_xTopSF/\n")
-#     pycommand = "python3 postSelector.py "+f"-c {component} --inFilePath {inFilePath}"
-
-#     f.write(pycommand+"\n")
-#     f.close()
 
 def runner_writer(run_folder, component, scenario, nfiles_max):
     f = open(run_folder+"runner.sh", "w")
