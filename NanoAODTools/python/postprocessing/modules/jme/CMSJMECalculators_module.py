@@ -14,7 +14,7 @@ from CMSJMECalculators.utils import (
 
 from CMSJMECalculators import config as calcConfigs
 
-def getJetMETArgsPostProcessor(jets , genjets, rho ,RawMET , CorrT1METJet, MET, lumiblock ,run ,_event, isMC=True, forMET=False, addHEM2018Issue=False, NanoAODv=12):
+def getJetMETArgsPostProcessor(jets , genjets, rho ,RawMET , CorrT1METJet, MET, lumiblock ,run ,_event, npv, isMC=True, forMET=False, addHEM2018Issue=False, NanoAODv=12):
     """ Get the input values for the jet/met variations calculator from a tree (PyROOT-style) 
         PuppiMET bool is not used in this function, to change between Puppi and chs it is sufficient to pass the right collection in the place of MET
     """
@@ -74,7 +74,8 @@ def getJetMETArgsPostProcessor(jets , genjets, rho ,RawMET , CorrT1METJet, MET, 
         args += [
             toRVecInt(jetgenJetIdx),
             toRVecInt(jetpartonFlavour),
-            int(_event/100000),
+            _event,
+            int(run),
             toRVecFloat(genJetpt),
             toRVecFloat(genJeteta),
             toRVecFloat(genJetphi),
@@ -82,7 +83,7 @@ def getJetMETArgsPostProcessor(jets , genjets, rho ,RawMET , CorrT1METJet, MET, 
             ]
         # print(_event)
     else:
-        args += [ toRVecInt([]), toRVecInt([]), 0, toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]) ]
+        args += [ toRVecInt([]), toRVecInt([]), 0, run, toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]) ]
     if forMET:
         args += [ RawMET.phi, RawMET.pt ]
         args += [ toRVecFloat(corrt1metjetrawPt), 
@@ -92,16 +93,19 @@ def getJetMETArgsPostProcessor(jets , genjets, rho ,RawMET , CorrT1METJet, MET, 
                   toRVecFloat(corrt1metjetmuonSubtrFactor) ]
 
         args += [ toRVecFloat([]), toRVecFloat([]) ]
-        if NanoAODv > 9:
+        
+        if hasattr(MET, "ptUnclusteredUp") and hasattr(MET, "phiUnclusteredUp"):
             MetUnclustEnUpDeltaX, MetUnclustEnUpDeltaY = getMETUnclDeltaXY(
                 MET.pt, MET.phi, MET.ptUnclusteredUp, MET.phiUnclusteredUp)
             args += [ MetUnclustEnUpDeltaX, MetUnclustEnUpDeltaY]
-        else:
-            args += [ MET.MetUnclustEnUpDeltaX, MET.MetUnclustEnUpDeltaY]
+        elif hasattr(MET, "MetUnclustEnUpDeltaX") is not None and getattr(MET, "MetUnclustEnUpDeltaY") is not None:
+                args += [ MET.MetUnclustEnUpDeltaX, MET.MetUnclustEnUpDeltaY]
+        args += [npv]
+        
     # print([a for a in args])
     return args
 
-def getFatJetArgsPostProcessor(fatjets, subjets, genjets, subgenjets, rho, run, luminosityBlock, event, isMC=True, addHEM2018Issue=False, NanoAODv=12):
+def getFatJetArgsPostProcessor(fatjets, subjets, genjets, subgenjets, rho, run, luminosityBlock, _event, isMC=True, addHEM2018Issue=False, NanoAODv=12):
     """ Get the input values for the jet variations calculator for a fat jet from a tree (PyROOT-style) """
     fatjetpt, fatjeteta, fatjetphi, fatjetmass, fatjetrawFactor, fatjetarea, fatjetmsoftdrop, fatjetsubJetIdx1, fatjetsubJetIdx2, fatjetjetId = [], [], [], [], [], [], [], [], [], []
     fatjetgenJetAK8Idx = []
@@ -161,14 +165,17 @@ def getFatJetArgsPostProcessor(fatjets, subjets, genjets, subgenjets, rho, run, 
         args += [
             toRVecInt(fatjetgenJetAK8Idx),
             # (run<<20) + (luminosityBlock<<10) + event + 1 + ( int(fatjeteta[0]/.01) if len(fatjets) != 0 else 0),
-            int(event/100000),
+            _event,
+            int(run),
             toRVecFloat(genjetpt),
             toRVecFloat(genjeteta),
             toRVecFloat(genjetphi),
             toRVecFloat(genjetmass)
             ]
     else:
-        args += [ toRVecInt([]), 0, toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([])]
+
+        args += [ toRVecInt([]), 0, int(run), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]), toRVecFloat([]) ]
+
     return args
 
 class CMSJMECalculators(Module):
@@ -219,6 +226,7 @@ class CMSJMECalculators(Module):
         run             = event.run
         luminosityBlock = event.luminosityBlock
         _event           = event.event
+        npv              = event.PV_npvsGood
         if "AK4" in self.jetType:
             jets      = Collection(event, "Jet")
             if self.isMC :genjets   = Collection(event, "GenJet")
@@ -234,11 +242,11 @@ class CMSJMECalculators(Module):
                     MET = Object(event, "MET")
             
             if self.forMET:
-                var = getJetMETArgsPostProcessor(jets, genjets, rho, RawMET, CorrT1METJet, MET, luminosityBlock, run, _event, 
+                var = getJetMETArgsPostProcessor(jets, genjets, rho, RawMET, CorrT1METJet, MET, luminosityBlock, run, _event, npv,
                             isMC=self.isMC, forMET=self.forMET, addHEM2018Issue=self.addHEM2018Issue, NanoAODv=self.NanoAODv)
                 # var = getJetMETArgs(event, isMC = self.isMC, forMET = self.forMET, PuppiMET=self.PuppiMET, addHEM2018Issue = self.addHEM2018Issue)
             else:
-                var = getJetMETArgsPostProcessor(jets, genjets, rho, None, None, None, luminosityBlock, run, _event, 
+                var = getJetMETArgsPostProcessor(jets, genjets, rho, None, None, None, luminosityBlock, run, _event, npv,
                             isMC=self.isMC, forMET=self.forMET, addHEM2018Issue=self.addHEM2018Issue, NanoAODv=self.NanoAODv)
                 # var = getFatJetArgs(event, isMC = self.isMC, addHEM2018Issue = self.addHEM2018Issue)
         elif "AK8" in self.jetType:
@@ -252,7 +260,6 @@ class CMSJMECalculators(Module):
             var = getFatJetArgsPostProcessor(fatjets, subjets, genjets, subgenjets, rho, run, luminosityBlock, _event, isMC=self.isMC, addHEM2018Issue=self.addHEM2018Issue, NanoAODv=self.NanoAODv)
         else:
             print("Jet type not recognized")
-
         res = self.config.produce(*var)
 
         # print(self.config.available())
