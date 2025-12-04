@@ -20,8 +20,6 @@ parser.add_option('--status', dest='status', action='store_true', default=False,
 parser.add_option('--delete', dest='delete_files', action='store_true', default=False, help='delete files from tier for jobs with davix errors during resubmission')
 (opt, args) = parser.parse_args()
 debug = opt.debug 
-# where_to_write = opt.write
-where_to_write = "tier"
 submit = opt.submit
 resubmit = opt.resubmit
 status = opt.status
@@ -59,16 +57,9 @@ print("\033[92m\n\n######################## POSTPROC SUBMITTER #################
 print("Launching crab script for dataset: ", opt.dat)
 
 if submit:
-    if where_to_write == 'tier':
-        print("\nRemote folder name (tier): ", remote_folder_name)
-        if not debug: os.popen("davix-mkdir {}/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, str(uid)))
-        print("          {}/store/user/{}/{} CREATED".format(redirector, username, remote_folder_name))
-
-    elif where_to_write == 'eos':
-        print("Remote folder name (eos): ", remote_folder_name)
-        if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name):
-            os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name)
-        print("root://eosuser.cern.ch//eos/user/l/lfavilla/xAnimo/{} created".format(remote_folder_name))
+    print("\nRemote folder name (tier): ", remote_folder_name)
+    if not debug: os.popen("davix-mkdir {}/store/user/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, str(uid)))
+    print("          {}/store/user/{}/{} CREATED".format(redirector, username, remote_folder_name))
 
 def write_crab_script(sample, file, modules, run_folder, calcualte_systematics, year, debug):
     f = open(run_folder+"/crab_script.py", "w")
@@ -168,10 +159,7 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     f.write("pwd\n")
     f.write("hadd -f tree_hadd_"+str(i)+".root tree.root hist.root\n")
     f.write("pwd\n")
-    if where_to_write == 'eos':
-        f.write("mv tree_hadd_{}.root /eos/home-l/lfavilla/xAnimo/{}/{}/{}/.\n".format(str(i), remote_folder_name, sample_folder, launchtime))
-    elif where_to_write == 'tier':
-        f.write("davix-put tree_hadd_{}.root {}/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), redirector, username, remote_folder_name, sample_folder, launchtime, str(i)))
+    f.write("davix-put tree_hadd_{}.root {}/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), redirector, username, remote_folder_name, sample_folder, launchtime, str(i)))
     f.close()
 
 dataset_to_run = opt.dat
@@ -211,32 +199,24 @@ if submit:
         if not os.path.exists(running_subfolder+"/condor/log"):
             os.makedirs(running_subfolder+"/condor/log")
 
-        sample_folder = sample.label    
-        if where_to_write == 'tier':
-            if not debug: 
-                command1 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, str(uid)))
-                res1 = command1.read()
-                if "Error:" in res1:
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : {}/store/user/{}/{}/{}/   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder))
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                else:
-                    print("Folder : {}/store/user/{}/{}/{}/ created".format(redirector, username, remote_folder_name, sample_folder))
-                command2 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, launchtime, str(uid)))
-                res2 = command2.read()
-                if "Error:" in res2:
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
-                    print("Folder : {}/store/user/{}/{}/{}/{}   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder, launchtime))
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                else:
-                    print("Folder : {}/store/user/{}/{}/{}/{} created".format(redirector, username, remote_folder_name, sample_folder, launchtime))
-        elif where_to_write == 'eos':
-            if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder):
-                os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder)
-            print("root://eosuser.cern.ch//eos/user/l/lfavilla/xAnimo/{}/{} created".format(remote_folder_name, sample_folder))
-            if not os.path.exists("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder+"/"+launchtime):
-                os.makedirs("/eos/home-l/lfavilla/xAnimo/"+remote_folder_name+"/"+sample_folder+"/"+launchtime)
-            print("root://eosuser.cern.ch//eos/user/l/lfavilla/xAnimo/{}/{}/{} created".format(remote_folder_name, sample_folder, launchtime))
+        sample_folder = sample.label
+        if not debug: 
+            command1 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, str(uid)))
+            res1 = command1.read()
+            if "Error:" in res1:
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+                print("Folder : {}/store/user/{}/{}/{}/   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder))
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+            else:
+                print("Folder : {}/store/user/{}/{}/{}/ created".format(redirector, username, remote_folder_name, sample_folder))
+            command2 = os.popen("davix-mkdir {}/store/user/{}/{}/{}/{}/ -E /tmp/x509up_u{} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(redirector, username, remote_folder_name, sample_folder, launchtime, str(uid)))
+            res2 = command2.read()
+            if "Error:" in res2:
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATE THIS FOLDER MANUALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!") 
+                print("Folder : {}/store/user/{}/{}/{}/{}   NOT CREATED".format(redirector, username, remote_folder_name, sample_folder, launchtime))
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            else:
+                print("Folder : {}/store/user/{}/{}/{}/{} created".format(redirector, username, remote_folder_name, sample_folder, launchtime))
 
         outfolder_tmp = "/tmp/"+username+"/"
         outfolder_crabscript = outfolder_tmp+sample.label+"/"
