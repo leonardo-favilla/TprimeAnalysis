@@ -8,6 +8,7 @@ import numpy as np
 import math
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.variables import *
+from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 import subprocess
 sys.path.append('../')
@@ -56,12 +57,7 @@ scenario_tag            = {
                             "jesDown":  "jesTotaldown"
                         }
 
-if "Data" not in in_dataset:
-    isMC                = True
-    scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
-else:
-    isMC                = False
-    scenarios           = ["nominal"]
+
 if year == 2018:
     bTagAlg = "Jet_btagDeepB"
 elif year in [2022,2023]:
@@ -141,10 +137,16 @@ my_initialization_function()
 
 
 #### Retrieve files to process for the given component and ntot ####
-if not "Data" in in_dataset:
-    ntot_events                                     = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
+if "Data" not in in_dataset:
+    isMC                = True
+    scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
+    xsecWeight          = sample_dict[in_dataset].sigma*10**3
+    ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
 else:
-    ntot_events                                     = None
+    isMC                = False
+    scenarios           = ["nominal"]
+    xsecWeight          = 1.0
+    ntot_events         = 1.0
 
 chain                                               = []
 tchain                                              = ROOT.TChain("Events")
@@ -152,14 +154,15 @@ nfiles_opened                                       = 0
 for i, string in enumerate(samples[in_dataset][in_dataset]['strings']):
     if i >= nfiles_max:
         break
-    samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
+    # samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
     f                                               = samples[in_dataset][in_dataset]['strings'][i]
     try:
         TFile                                       = ROOT.TFile.Open(f)
         tchain.Add(f)
         nfiles_opened += 1
     except:
-        ntot_events -= samples[in_dataset][in_dataset]['ntot'][i]
+        if isMC:
+            ntot_events -= samples[in_dataset][in_dataset]['ntot'][i]
         print("Could not add file: ", f)
         continue
 chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
@@ -343,10 +346,11 @@ def tag_toplep(df):
 t0 = datetime.now()
 print("Local time :", t0)
 
-# df                  = ROOT.RDataFrame("Events", inFilePath)
 df                      = ROOT.RDataFrame(tchain)
 branches                = list(map(str, df.GetColumnNames()))
 branches_dict           = {}
+
+#### Define event weights ####
 if not "Data" in in_dataset:
     df                  = df.Define("SFbtag", "SFbtag_nominal")
     branches.remove("SFbtag_nominal")
@@ -356,6 +360,8 @@ elif "WJets" in in_dataset:
     df = df.Define("nloewcorrection", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
 else:
     df = df.Define("nloewcorrection", "1")
+df     = df.Define("xsecWeight", f"{xsecWeight}")\
+           .Define("ntotEvents", f"{ntot_events}")
 
 
 for sc in scenarios:
@@ -364,8 +370,6 @@ branches_common             = [b for b in branches if not any(b in branches_dict
 
 
 
-opts            = ROOT.RDF.RSnapshotOptions()
-opts.fLazy      = True
 
 for b in branches_dict[scenario]:
     try:
@@ -378,7 +382,6 @@ df_trigger          = trigger_filter(df, None, None, year)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_toplep           = tag_toplep(df_presel)
 df_topselected      = select_top(df_toplep, isMC)
-
 
 
 
