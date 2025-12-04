@@ -10,8 +10,8 @@ TopSF:
   where_to_write: {
     "2022":         "tier",
     "2022EE":       "tier",
-    "2023":         "eos",
-    "2023postBPix": "eos"
+    "2023":         "tier",
+    "2023postBPix": "tier"
     }
     
 dict_samples:
