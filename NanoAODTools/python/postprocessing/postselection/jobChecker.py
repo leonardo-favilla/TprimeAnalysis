@@ -15,6 +15,7 @@ year                = opt.year
 samples_to_check    = [
                         "QCD",
                         "TT",
+                        "TW",
                         "ZJetsToNuNu_2jets",
                         "WJets_2jets",
                         "DataJetMET",
