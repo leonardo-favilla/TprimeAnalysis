@@ -15,11 +15,11 @@ TopSF:
     }
     
 dict_samples:
-  2022:             "../samples/dict_samples_2022.json"
-  2023:             "../samples/dict_samples_2023.json"
-  Full2022:         "."
-  Full2023:         "."
-  Full2022_Full2023: ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
+  "2022":             "../samples/dict_samples_2022.json"
+  "2023":             "../samples/dict_samples_2023.json"
+  "Full2022":         "."
+  "Full2023":         "."
+  "Full2022_Full2023": ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
 
 plotting:
   lumi_dict:

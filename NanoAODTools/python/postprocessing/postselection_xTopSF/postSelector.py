@@ -396,6 +396,13 @@ print("Snapshot done!")
 
 if where_to_write == "eos":
     print("Copying files to eos...")
+    if os.path.exists(outFilePath):
+        print("Removing existing file at destination...")
+        print("rm {}".format(outFilePath))
+        subprocess.run([
+            "rm",
+            outFilePath
+        ])
     print("cp {} {}".format(outFilePath_tmp, outFilePath))
     subprocess.run([
         "cp",
@@ -405,6 +412,17 @@ if where_to_write == "eos":
     print("Done!")
 elif where_to_write == "tier":
     print("Copying files to tier...")
+    try:
+        print("Removing existing file at destination...")
+        print("davix-rm davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, outFilePath, certpath))
+        subprocess.run([
+            "davix-rm",
+            f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{outFilePath}",
+            "-E", certpath,
+            "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+        ])
+    except:
+        print("No existing file found at destination, proceeding...")
     print("davix-put {} davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{} -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(outFilePath_tmp, username, outFilePath, certpath))
     subprocess.run([
         "davix-put",

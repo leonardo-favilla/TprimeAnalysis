@@ -93,11 +93,14 @@ for c in components_to_check:
         # print("File exists. Trying to open with ROOT...")
 
         try:
-            f = ROOT.TFile.Open(filePath)
+            f       = ROOT.TFile.Open(filePath)
             if not f or f.IsZombie():
                 print(f"ROOT error for {filePath}")
                 to_rerun.append((c, scenario))
                 continue
+            tree    = f.Get("Events")
+            nev     = tree.GetEntries()
+            print(f"File {filePath} opened successfully with {nev} entries.")
             f.Close()
             # print(f"ROOT opened file successfully: {filePath}")
         except Exception as e:
