@@ -409,6 +409,12 @@ if where_to_write == "eos":
         outFilePath_tmp,
         outFilePath
     ])
+    print("Removing temporary file...")
+    print("rm {}".format(outFilePath_tmp))
+    subprocess.run([
+        "rm",
+        outFilePath_tmp
+    ])
     print("Done!")
 elif where_to_write == "tier":
     print("Copying files to tier...")
@@ -430,6 +436,12 @@ elif where_to_write == "tier":
         f"davs://webdav.recas.ba.infn.it:8443/cms/store/user/{username}/{outFilePath}",
         "-E", certpath,
         "--capath", "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/"
+    ])
+    print("Removing temporary file...")
+    print("rm {}".format(outFilePath_tmp))
+    subprocess.run([
+        "rm",
+        outFilePath_tmp
     ])
     print("Done!")
 
