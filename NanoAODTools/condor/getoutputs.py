@@ -195,7 +195,6 @@ for sample in samples:
                 ntot.append(n)
             except:
                 print("Could not open file: ", f)
-                ntot.append(None)
                 continue
             # histo = rootfile.Get("plots/h_genweight")
             # ntot.append(histo.GetBinContent(2))
@@ -204,13 +203,11 @@ for sample in samples:
                 rootfile = ROOT.TFile.Open(f)
                 if rootfile.IsZombie():
                     print("Could not open file (zombie): ", f)
-                    ntot.append(None)
                     continue
                 out_strings.append(f)
                 ntot.append(None)
             except:
                 print("Could not open file: ", f)
-                ntot.append(None)
                 continue
     out_dict[sample.process][sample.label] = {'strings': out_strings, "ntot": ntot}
     json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
