@@ -31,11 +31,13 @@ uid      = int(os.getuid())
 WorkDir  = os.environ["PWD"]
 
 
-usage                   = 'python3 postSelector.py -c <component> --scenario <scenario> --nfiles_max <nfiles_max> [--certpath <path_to_certificate_file>]'
+usage                   = 'python3 postSelector.py -c <component> --scenario <scenario> --file0 <file0> --nfiles_max <nfiles_max> --slice <slice> [--certpath <path_to_certificate_file>]'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-c', '--component',          dest='component',           type=str,               default="QCD_HT400to600_2022",                      help='Single component to process, in the form: QCD_HT400to600_2022')
 parser.add_option(      '--scenario',           dest='scenario',            type=str,               default="nominal",                                  help='Systematic scenario to process: nominal, jerUp, jerDown, jesUp, jesDown')
+parser.add_option(      '--file0',              dest='file0',               type=int,               default=0,                                          help='Index of the first file to process')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                          help='Max number of files to process per sample')
+parser.add_option(      '--slice',              dest='slice',               type=int,               default=0,                                          help='Slice number (for parallelization)')
 parser.add_option(      '--certpath',           dest='certpath',            type=str,               default="/tmp/x509up_u{}".format(str(os.getuid())), help='Path to the certificate file')
 
 
@@ -45,7 +47,9 @@ year                    = int(in_dataset.split("_")[-1][:4])
 EE                      = 1 if len(in_dataset.split("_")[-1])>4 else 0
 period                  = in_dataset.split("_")[-1]
 scenario                = opt.scenario
+file0                   = opt.file0
 nfiles_max              = opt.nfiles_max
+slice                   = opt.slice
 certpath                = opt.certpath
 where_to_write          = config["TopSF"]["where_to_write"][period] # options are "tier" or "eos"
 dict_samples_file       = config["dict_samples"][year]
@@ -112,8 +116,8 @@ elif where_to_write == "tier":
 outFolder_tmp                       = "/tmp/{}/".format(username)
 if not os.path.exists(outFolder_tmp):
     os.makedirs(outFolder_tmp)
-outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+".root"
-outFilePath                         = outSubFolder+in_dataset+"_"+scenario+".root"
+outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+"_"+slice+".root"
+outFilePath                         = outSubFolder+in_dataset+"_"+scenario+"_"+slice+".root"
 
 
 print(f"Output tmp will be written to:  {outFilePath_tmp}")
@@ -141,7 +145,7 @@ if "Data" not in in_dataset:
     isMC                = True
     scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
     xsecWeight          = sample_dict[in_dataset].sigma*10**3
-    ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'][:nfiles_max])
+    ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'][file0:file0+nfiles_max])
 else:
     isMC                = False
     scenarios           = ["nominal"]
@@ -151,22 +155,21 @@ else:
 chain                                               = []
 tchain                                              = ROOT.TChain("Events")
 nfiles_opened                                       = 0
-for i, string in enumerate(samples[in_dataset][in_dataset]['strings']):
+for i, string in enumerate(samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max]):
     if i >= nfiles_max:
         break
-    # samples[in_dataset][in_dataset]['strings'][i]   = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
-    f                                               = samples[in_dataset][in_dataset]['strings'][i]
+    f                                               = samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max][i]
     try:
         TFile                                       = ROOT.TFile.Open(f)
         tchain.Add(f)
         nfiles_opened += 1
     except:
         if isMC:
-            ntot_events -= samples[in_dataset][in_dataset]['ntot'][i]
+            ntot_events -= samples[in_dataset][in_dataset]['ntot'][file0:file0+nfiles_max][i]
         print("Could not add file: ", f)
         continue
-chain                                               = samples[in_dataset][in_dataset]['strings'][:nfiles_max]
-print(f"Opened {nfiles_opened} files out of {nfiles_max} requested for sample {in_dataset}")
+chain                                               = samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max]
+print(f"Opened {nfiles_opened} files out of {nfiles_max} requested for sample {in_dataset} in file range [{file0}, {file0+nfiles_max})")
 
 
 

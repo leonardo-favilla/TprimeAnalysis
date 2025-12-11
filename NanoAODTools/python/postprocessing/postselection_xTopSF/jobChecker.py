@@ -98,9 +98,14 @@ for c in components_to_check:
                 print(f"ROOT error for {filePath}")
                 to_rerun.append((c, scenario))
                 continue
-            tree    = f.Get("Events")
-            nev     = tree.GetEntries()
+            tree        = f.Get("Events")
+            nev         = tree.GetEntries()
+            branches    = [b.GetName() for b in tree.GetListOfBranches()]
             print(f"File {filePath} opened successfully with {nev} entries.")
+            if ("xsecWeight" not in branches) or ("ntotEvents" not in branches):
+                print(f"xsecWeight or ntotEvents branch not found in {filePath}")
+                to_rerun.append((c, scenario))
+                continue
             f.Close()
             # print(f"ROOT opened file successfully: {filePath}")
         except Exception as e:

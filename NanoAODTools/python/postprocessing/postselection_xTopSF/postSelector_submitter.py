@@ -20,10 +20,12 @@ else:
     sys.exit(1)
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --nfiles_max <nfiles_max> --dryrun"
+# usage               = "python3 postSelector_submitter.py -d dataset_name --nfiles_max <nfiles_max> --dryrun"
+usage               = "python3 postSelector_submitter.py -d dataset_name --nSlices <nSlices> --dryrun"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
 parser.add_option(      '--nfiles_max',             dest='nfiles_max',          type=int,               default = 1,                                            help='Max number of files to process per sample')
+parser.add_option(      '--nSlices',                dest='nSlices',             type=int,               default = 1,                                            help='Number of slices to process')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 
 (opt, args)         = parser.parse_args()

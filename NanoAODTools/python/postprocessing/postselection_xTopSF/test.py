@@ -18,17 +18,17 @@ else:
 
 # in_dataset              = "QCD_HT800to1000_2022"
 in_datasets             = [
-                            "QCD_2022",
-                            "TT_2022",
-                            "TW_2022",
-                            "WJets_2jets_2022",
-                            "ZJetsToNuNu_2jets_2022",
-                            "TprimeToTZ_700_2022",
-                            "TprimeToTZ_1000_2022",
-                            "TprimeToTZ_1800_2022"
+                            "QCD_2023postBPix",
+                            "TT_2023postBPix",
+                            "TW_2023postBPix",
+                            "WJets_2jets_2023postBPix",
+                            "ZJetsToNuNu_2jets_2023postBPix",
+                            "TprimeToTZ_700_2023postBPix",
+                            "TprimeToTZ_1000_2023postBPix",
+                            "TprimeToTZ_1800_2023postBPix"
 
                         ]
-year                    = 2022
+year                    = 2023
 nfiles_max              = 100000
 dict_samples_file       = config["dict_samples"][year]
 with open(dict_samples_file, "rb") as sample_file:
