@@ -41,9 +41,9 @@ if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
     sys.exit(1)
 year                = 0
 if "2022" in period:
-    year            = 2022
+    year            = "2022"
 elif "2023" in period:
-    year            = 2023
+    year            = "2023"
 
 dict_samples_file   = config["dict_samples"][year]
 
