@@ -9,7 +9,7 @@ import math
 import shutil
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
-# from PhysicsTools.NanoAODTools.postprocessing.variables import *
+from PhysicsTools.NanoAODTools.postprocessing.variables import *
 sys.path.append('../')
 
 username = str(os.environ.get('USER'))
@@ -17,22 +17,19 @@ inituser = str(os.environ.get('USER')[0])
 uid      = int(os.getuid())
 WorkDir  = os.environ["PWD"]
 
-usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --nfiles_max <nfiles_max> --noSFbtag --syst'
+usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_file <dict_samples_file> --hist_folder <hist_folder> --nfiles_max <nfiles_max>'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-d', '--datasets',           dest='datasets',            type=str,               default="QCD_2023",                             help='Datasets to process, in the form: QCD_2023,TT_2023...')
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
 parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
-parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
-parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--tmpfold',           dest='tmpfold',            action='store_true',    default=False,                                  help='test tmp folder for out file')
 
 
 (opt, args)             = parser.parse_args()
 in_dataset              = opt.datasets.split(",")
 nfiles_max              = opt.nfiles_max
-do_variations           = opt.syst
-noSFbtag                = opt.noSFbtag
+do_variations           = False
 dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
@@ -107,13 +104,12 @@ for in_d in in_dataset:
         datasets.append(sample_dict[in_d])
 print("Datasets to process : ", [d.label for d in datasets])
 
-text_file = open(WorkDir+"../postselection/postselection.h", "r")
+text_file = open(WorkDir+"/../postselection/postselection.h", "r")
 data = text_file.read()
 def my_initialization_function():
     print(ROOT.gInterpreter.ProcessLine(".O"))
     ROOT.gInterpreter.Declare('{}'.format(data))
     print("end of initialization")
-RDataFrame = ROOT.RDataFrame
 my_initialization_function()
 
 chain                       = {}
@@ -213,7 +209,7 @@ def trigger_filter(df, data, isMC):
     df_trig = df.Filter(hlt_met+" || "+hlt_ele, "trigger")
     return df_trig
 
-def bookhisto(df, regions_def, var, s_cut):
+def bookhisto(df, regions_def, var):
     h_ = {}
     for reg in regions_def.keys():
         h_[reg] = {}
@@ -225,19 +221,19 @@ def bookhisto(df, regions_def, var, s_cut):
             else:
                 if regions_def[reg] == "":
                     if v._xarray is None:
-                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
+                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
                     else:
-                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xarray), v._name, "w_nominal")
+                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xarray), v._name, "w_nominal")
                 else:
                     if v._xarray is None:
                         # print(v._name, reg, regions_def[reg])
-                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
+                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
                     else:
-                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xarray), v._name, "w_nominal")                    
+                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xarray), v._name, "w_nominal")                    
     
     return h_
 
-def bookhisto2D(df, regions_def, var2d, s_cut):
+def bookhisto2D(df, regions_def, var2d):
     h_ = {}
     for reg in regions_def.keys():
         h_[reg] = {}
@@ -246,26 +242,26 @@ def bookhisto2D(df, regions_def, var2d, s_cut):
                 if v._xarray is None:
                     h_[reg][v._name] = df.Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
                                      .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
+                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
                 else:
                     h_[reg][v._name] = df.Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xarray[0])+","+str(v._xarray[-1])+")")\
                                      .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
+                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
             else:
                 if v._xarray is None:
                     h_[reg][v._name] = df.Filter(regions_def[reg])\
                                      .Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
                                      .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
+                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
                 else:
                     h_[reg][v._name] = df.Filter(regions_def[reg])\
                                      .Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xarray[0])+","+str(v._xarray[-1])+")")\
                                      .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._yarray[0])+","+str(v._yarray[-1])+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._yarray), v._xname, v._yname, "w_nominal")
+                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._yarray), v._xname, v._yname, "w_nominal")
     return h_
 
-def savehisto(d, h, regions_def, var, s_cut, isMC):
-    histo = {reg: {v._name: ROOT.TH1D(v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax) if v._xarray is None else ROOT.TH1D(v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xarray) for v in var} for reg in regions_def.keys()}
+def savehisto(d, h, regions_def, var, isMC):
+    histo = {reg: {v._name: ROOT.TH1D(v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax) if v._xarray is None else ROOT.TH1D(v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xarray) for v in var} for reg in regions_def.keys()}
     isMC=True
     if "Data" in d.label: isMC = False
     if hasattr(d, "components"):
@@ -289,8 +285,8 @@ def savehisto(d, h, regions_def, var, s_cut, isMC):
         outfile.Close()
 
 # i plot2d per il momento non ci servono, si deve trovare un modo più intelligente di farli
-def savehisto2d(d, h, regions_def, var2d, s_cut, isMC):
-    histo = {reg: {v._name: ROOT.TH2D(v._name+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax)  if v._xarray is None else ROOT.TH2D(v._name+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._yarray)  for v in var2d} for reg in regions_def.keys()}
+def savehisto2d(d, h, regions_def, var2d, isMC):
+    histo = {reg: {v._name: ROOT.TH2D(v._name+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax)  if v._xarray is None else ROOT.TH2D(v._name+"_"+reg," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xarray, v._nybins, v._yarray)  for v in var2d} for reg in regions_def.keys()}
         
     if hasattr(d, "components"):
         s_list = d.components
@@ -309,39 +305,12 @@ def savehisto2d(d, h, regions_def, var2d, s_cut, isMC):
         outfile.Close()
 
 
-chain = {}
-ntot_events = {}
-for d in datasets:
-    if hasattr(d, "components"):
-        samples_list = d.components
-    else:
-        samples_list = [d]
-    chain[d.label] = {}
-    ntot_events[d.label] = {}
-    for s in samples_list:
-        if distributed: 
-            nfiles = len(samples[d.label][s.label]['strings'])
-            for i, string in enumerate(samples[d.label][s.label]['strings']): 
-                samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://stormgf2.pi.infn.it/")
-            chain[d.label][s.label] = samples[d.label][s.label]['strings']
-        else: 
-            nfiles = nfiles_max
-            chain[d.label][s.label] = samples[d.label][s.label]['strings'][:nfiles]
-        if not "Data" in s.label: ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][:nfiles])
-        else: ntot_events[d.label][s.label] = None
-        print("Dataset : "+s.label)
-        print("# of files to process : ", nfiles)
-        if distributed and len(chain[d.label][s.label])>2:
-            print("files strings :\n  {}\n  {}\n  ... \n  {}\n  {}".format(chain[d.label][s.label][0], chain[d.label][s.label][1], chain[d.label][s.label][-2], chain[d.label][s.label][-1]))
-        else :
-            print("files strings :\n  {}".format(chain[d.label][s.label][0]))
-        print("# of total events in the files to process (MC only, if Data the number is None) : ", ntot_events[d.label][s.label])
-
 t0 = datetime.now()
 print("starting loop on datasets: ",[d.label for d in datasets])
 print("Local time :", t0)
 
 h = {}
+h_2D = {}
 for d in datasets:
     if hasattr(d, "components"):
         s_list = d.components
@@ -350,7 +319,6 @@ for d in datasets:
 
     if 'Data' in d.label : sampleflag = 0
     else: sampleflag = 1
-    c_ = cut
     h[d.label] = {}
     h_2D[d.label] = {}
     for s in s_list:
@@ -375,8 +343,7 @@ for d in datasets:
         print("Initializing DataFrame for "+ s.label +" chain len = ", len(chain[d.label][s.label]))
         if len(chain[d.label][s.label])==1:
             print(chain[d.label][s.label])
-        df = RDataFrame("Events", tchains[d.label][s.label])
-        
+        df = ROOT.RDataFrame(tchains[d.label][s.label])        
         
         df_ismc         = df.Define("isMC", "isMC("+str(sampleflag)+")")
         df_year         = df_ismc.Define("year", str(s.year))
@@ -410,20 +377,19 @@ for d in datasets:
             snapshot_df = df_presel.Snapshot("events_nominal", fold+"snap_"+s.label+".root", branches, opts)
             # print("./"+s.label+".root")
         if do_histos:
-            s_cut = cut_string(cut)
             if len(var) != 0 :
-                h[d.label][s.label] = bookhisto(df_presel, regions_def, var, s_cut)
+                h[d.label][s.label] = bookhisto(df_presel, regions_def, var)
             if len(var2d) != 0 :
-                h_2D[d.label][s.label] = bookhisto2D(df_presel, regions_def, var2d, s_cut)
+                h_2D[d.label][s.label] = bookhisto2D(df_presel, regions_def, var2d)
 
 
 if do_histos:
     print("All histos booked !")
     for d in datasets:
         if len(var):
-            savehisto(d, h, regions_def, var, s_cut, sampleflag)
+            savehisto(d, h, regions_def, var, sampleflag)
         if len(var2d) != 0 :
-            savehisto2d(d, h_2D, regions_def, var2d, s_cut, sampleflag)
+            savehisto2d(d, h_2D, regions_def, var2d, sampleflag)
         print(d.label + " histos saved")
 if do_snapshot:
     snapshot_df.GetValue()
