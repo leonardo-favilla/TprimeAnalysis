@@ -67,7 +67,7 @@ def sub_writer(run_folder, log_folder, dataset, syst_suffix):
     f.write("+JobFlavour             = \"nextweek\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek = 1 week
     f.write('+JobTag                 = "'+dataset+syst_suffix+'"\n')
     f.write("executable              = "+run_folder+"runner.sh\n")
-    f.write("arguments               = \n")
+    f.write("arguments               = $(Proxy_path)\n")
     #f.write("input                   = input.txt\n")
     f.write("output                  = "+log_folder+"output/postSelector_"+dataset+".out\n")
     f.write("error                   = "+log_folder+"error/postSelector_"+dataset+".err\n")

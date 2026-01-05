@@ -125,9 +125,6 @@ for d in datasets:
     tchains[d.label]        = {}
     for s in samples_list:
         nfiles              = nfiles_max
-        for i, string in enumerate(samples[d.label][s.label]['strings']):
-            # samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
-            samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://xrootd-cms.infn.it/") # root://stormgf2.pi.infn.it/
         chain[d.label][s.label] = samples[d.label][s.label]['strings'][:nfiles]
         if not "Data" in s.label:
             ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][:nfiles])
@@ -270,7 +267,16 @@ def savehisto(d, h, regions_def, var, isMC):
         s_list = [d]
     
     for s in s_list:
-        outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
+        if tmpfold:
+            repohisto_tmp = "/tmp/"+username+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            repohisto_tmp = "/tmp/"+username+"/"+s.label+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            outfile = ROOT.TFile.Open(repohisto_tmp+s.label+'.root', "RECREATE")
+        else:
+            outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
         for reg in regions_def.keys():
             for v in var:
                 if "SFbtag" in v._name: continue
