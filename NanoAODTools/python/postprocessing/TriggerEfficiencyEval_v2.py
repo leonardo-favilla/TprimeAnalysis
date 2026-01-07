@@ -7,6 +7,7 @@ import numpy as np
 import json
 import math
 import copy
+import yaml
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 
@@ -101,16 +102,30 @@ def plot2D(h1, folder, v, canv_name = "canv2d" ,extraTest="Simulation", iPos=0, 
     # CMS.SaveCanvas(canv, folder+"/C/"+canv_name+".C")
 
 cut  = requirements  ### defined in variables.py 
-lumi = 7.87#34.3 (full2022) #59.97(2018) 
+config = {}
+config_paths = os.environ.get('PWD')+'/config/config.yaml'
+if os.path.exists(config_paths):
+    with open(config_paths, "r") as _f:
+        config = yaml.safe_load(_f) or {}
+    print(f"Loaded config file from {config_paths}")
+else:
+    print(f"Config file not found in {config_paths}, exiting")
+    sys.exit(1)
+
+lumi_dict                           = config["plotting"]["lumi_dict"]
+lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]
+lumi_dict["Full2023"]               = lumi_dict["2023"] + lumi_dict["2023postBPix"]
+lumi_dict["Full2022_Full2023"]      = lumi_dict["Full2022"] + lumi_dict["Full2023"]
+lumi = lumi_dict["2023postBPix"]  # in fb
 run2 = False
 run3 = not run2
 
 datasets = [
-    "DataEGamma_2022", 
-    "TT_2022", 
-    "QCD_2022", 
-    "ZJetsToNuNu_2jets_2022",
-    "WJets_2jets_2022"
+    "DataEGamma_2023postBPix", 
+    "TT_2023postBPix", 
+    "QCD_2023postBPix", 
+    "ZJetsToNuNu_2jets_2023postBPix",
+    "WJets_2jets_2023postBPix"
     ]
 if len(datasets) > 2:
     plotname = ""
@@ -132,7 +147,7 @@ blind = False # Set to True if you want to blind the data
 
 
 # Specify the path to the JSON file
-json_file = "samples/dict_samples_2022.json"
+json_file = "samples/dict_samples_2023.json"
 
 # Load the JSON file
 with open(json_file, "r") as file:
@@ -149,7 +164,7 @@ print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 # print("Regions:           {}".format(regions.keys()))
 
 ############### out folders  
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/run2022_triggerSF/"
+folder = "/eos/home-a/acagnott/DarkMatter/nosynch/trigSF_2023postBPix/"
 
 if not os.path.exists(folder):
     os.mkdir(folder)
@@ -182,7 +197,7 @@ var.append(variable(name = "nJet", title= "# Jet", nbins = 10, xmin = -0.5, xmax
 var.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
 var.append(variable(name = "LeadingElectronPt_pt", title= "Leading Electron p_{T} [GeV]", nbins = 30, xmin = 0, xmax=300))
 var2d = [] 
-var2d.append(variable2D(name = "PuppiMET_T1_pt_nominalVsMHT", xname = "PuppiMET_T1_pt_nominal", yname = "MHT", xtitle = "p_{T}^{miss}(Puppi) [GeV]", ytitle = "MHT [GeV]", nxbins = 12, xarray = np.array([100, 125, 150, 175, 200, 225, 250, 275, 300, 350, 400, 500, 1000], dtype = 'd'),  nybins = 6, yarray = np.array([0, 100, 200, 300, 400, 500, 1000], dtype = 'd')))
+# var2d.append(variable2D(name = "PuppiMET_T1_pt_nominalVsMHT", xname = "PuppiMET_T1_pt_nominal", yname = "MHT", xtitle = "p_{T}^{miss}(Puppi) [GeV]", ytitle = "MHT [GeV]", nxbins = 12, xarray = np.array([100, 125, 150, 175, 200, 225, 250, 275, 300, 350, 400, 500, 1000], dtype = 'd'),  nybins = 6, yarray = np.array([0, 100, 200, 300, 400, 500, 1000], dtype = 'd')))
 
 hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
 hlt_ele = "(HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200)"
@@ -231,7 +246,7 @@ outfileroot = ROOT.TFile.Open(repohisto + "TriggerEfficiency.root", "RECREATE")
 for v in [var[2]]:
     r = "orthogonalPreselR_Ntot"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
-        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -245,7 +260,7 @@ for v in [var[2]]:
             h_bkg_total.Add(tmp)
         
     for f, s in zip(infile["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r+"_"+cut_tag))
+        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
         tmp.SetTitle("")
         if h_data_total==None:
             h_data_total = tmp.Clone("")
@@ -255,7 +270,7 @@ for v in [var[2]]:
 
     r = "orthogonalPreselR_Npass"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
-        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -269,7 +284,7 @@ for v in [var[2]]:
             h_bkg_pass.Add(tmp)
         
     for f, s in zip(infile["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r+"_"+cut_tag))
+        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
         tmp.SetTitle("")
         if h_data_pass==None:
             h_data_pass = tmp.Clone("")
@@ -328,7 +343,7 @@ h_data_pass    = None
 for v in var2d:
     r = "orthogonalPreselR_Ntot"
     for i, (f,s) in enumerate(zip(infile2D["bkg"], insample["bkg"])):
-        tmp = copy.deepcopy(ROOT.TH2D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+        tmp = copy.deepcopy(ROOT.TH2D(f.Get(v._name+"_"+r)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -342,7 +357,7 @@ for v in var2d:
             h_bkg_total.Add(tmp)
         
     for f, s in zip(infile2D["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r+"_"+cut_tag))
+        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
         tmp.SetTitle("")
         if h_data_total==None:
             h_data_total = tmp.Clone("")
@@ -352,8 +367,8 @@ for v in var2d:
 
     r = "orthogonalPreselR_Npass"
     for i, (f,s) in enumerate(zip(infile2D["bkg"], insample["bkg"])):
-        # print(v._name+"_"+r+"_"+cut_tag)
-        tmp = copy.deepcopy(ROOT.TH2D(f.Get(v._name+"_"+r+"_"+cut_tag)))
+        # print(v._name+"_"+r)
+        tmp = copy.deepcopy(ROOT.TH2D(f.Get(v._name+"_"+r)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -367,7 +382,7 @@ for v in var2d:
             h_bkg_pass.Add(tmp)
         
     for f, s in zip(infile2D["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r+"_"+cut_tag))
+        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
         tmp.SetTitle("")
         if h_data_pass==None:
             h_data_pass = tmp.Clone("")
