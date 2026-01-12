@@ -9,6 +9,7 @@ __pycache__/
 .vscode/
 *.cc
 __pycache__/
+NanoAODTools/condor/testcrabscript.py
 NanoAODTools/python/postprocessing/TopMassResolution.py
 NanoAODTools/python/postprocessing/TopMisId.py
 NanoAODTools/python/postprocessing/TopMixedScoreDistr.pdf
@@ -27,3 +28,4 @@ NanoAODTools/python/postprocessing/postselection/condor/
 NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/
 NanoAODTools/python/postprocessing/postselection_xTopSF/condor_preprocess/
 NanoAODTools/python/postprocessing/postselection_xTopSF/condor_postSel/
+NanoAODTools/python/postprocessing/TriggerSF/condor/
