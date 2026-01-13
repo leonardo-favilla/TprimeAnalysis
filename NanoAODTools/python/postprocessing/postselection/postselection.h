@@ -89,6 +89,88 @@ float UnOvBin(float var, int bins, float xmin, float xmax){
 }
 
 // ########################################################
+// ##############  MC weights  ##########################
+// ########################################################
+RVec<float> QCDScale_variations(rvec_f LHEScaleWeight){
+    RVec<float> result(3); 
+    float lheSF = 1.;
+    float lheUp = 1.;
+    float lheDown = 1.;
+    
+    if(LHEScaleWeight.size() > 1){
+       lheDown = Min(LHEScaleWeight);
+       lheUp = Max(LHEScaleWeight);
+    }
+    
+    result[0] = LHEScaleWeight[4];
+    result[1] = lheUp;
+    result[2] = lheDown;
+    
+    return result;
+}
+RVec<float> PSWeight_variations(rvec_f PSWeight){
+    RVec<float> result(4);
+    
+    float isrmin = 1.;
+    float isrmax = 1.;
+    float fsrmin = 1.;
+    float fsrmax = 1.;
+    if (PSWeight.size() > 1){
+        isrmin = min(PSWeight[0], PSWeight[2]);
+        isrmax = max(PSWeight[0], PSWeight[2]);
+        fsrmin = min(PSWeight[1], PSWeight[3]);
+        fsrmax = max(PSWeight[1], PSWeight[3]);
+    }
+    else{
+        isrmin = PSWeight[0];
+        isrmax = PSWeight[0];
+        fsrmin = PSWeight[0];
+        fsrmax = PSWeight[0];
+    }
+    
+    result[0] = isrmin;
+    result[1] = isrmax;
+    result[2] = fsrmin;
+    result[3] = fsrmax;
+    
+    return result;
+}
+
+RVec<float> PdfWeight_variations(rvec_f PdfWeight, int ntot){
+    
+    RVec<float> result(3);
+    
+    float pdf_totalUp = 1.;
+    float pdf_totalDown = 1.;
+    float pdf_totalSF = 1.;
+    
+    if (PdfWeight.size() > 0){
+        float pdfweight_sum = 0.;
+        float mean_pdf = 0.;
+        float rms = 0.;
+        pdf_totalSF = PdfWeight[0];
+
+        for (int j = 0; j < PdfWeight.size(); j++) pdfweight_sum += PdfWeight[j];
+        float pdf_xsweight = pdfweight_sum/ntot;
+
+        for(int j = 0; j < PdfWeight.size(); j++) mean_pdf = mean_pdf + PdfWeight[j];
+        mean_pdf = mean_pdf / PdfWeight.size();
+        
+        for (int j = 0; j < PdfWeight.size(); j++) rms = rms + pow(PdfWeight[j]-mean_pdf, 2);
+        rms = sqrt(rms / PdfWeight.size());
+
+        pdf_totalUp = (1+rms)*mean_pdf;
+        pdf_totalDown = (1-rms)*mean_pdf;
+    }
+    
+    result[0] = pdf_totalSF;
+    result[1] = pdf_totalUp;
+    result[2] = pdf_totalDown;
+
+    return result;
+}
+
+// ########################################################
 // ############## Data2018 ################################
 // ########################################################
 
