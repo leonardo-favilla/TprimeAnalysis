@@ -46,7 +46,7 @@ remote_subfolder_name   = datetime.now().strftime("%Y%m%d") #20231229
 
 
 if do_variations == True:
-    variations          = ["nominal", "pu", "jer", "jesTotal"]
+    variations          = ["nominal", "pu", "jer", "jesTotal", "pdf_total", "QCDScale", "ISR", "FSR"]
 else :
     variations          = ["nominal"]
 
@@ -293,13 +293,35 @@ def select_top(df, isMC):
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
     return df_topvariables
+def defineWeights(df, sampleflag):
+    df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
+            .Define("pdf_totalSF", "pdf_total_weights[0]")\
+            .Define("pdf_totalUp", "pdf_total_weights[1]")\
+            .Define("pdf_totalDown", "pdf_total_weights[2]")\
+            .Define("QCDScale_weights", "QCDScale_variations(LHEScaleWeight)")\
+            .Define("QCDScaleSF", "QCDScale_weights[0]")\
+            .Define("QCDScaleUp", "QCDScale_weights[1]")\
+            .Define("QCDScaleDown", "QCDScale_weights[2]")\
+            .Define("ISRSF", "1.f")\
+            .Define("FSRSF", "1.f")\
+            .Define("PSWeight_weights", "PSWeight_variations(PSWeight)")\
+            .Define("ISRUp", "PSWeight_weights[1]")\
+            .Define("ISRDown", "PSWeight_weights[0]")\
+            .Define("FSRUp", "PSWeight_weights[3]")\
+            .Define("FSRDown", "PSWeight_weights[2]")
+    return df
+
 def energetic_variations(df):
     #  Da aggiungere variazione dei fatjet
     df_sys = df.Vary(["Jet_pt_nominal", "Jet_mass_nominal", "FatJet_pt_nominal", "FatJet_mass_nominal", "PuppiMET_T1_pt_nominal_vec", "PuppiMET_T1_phi_nominal_vec", "TopMixed_pt_nominal", "TopResolved_pt_nominal", "TopMixed_mass_nominal", "TopResolved_mass_nominal",  "TopMixed_TopScore_nominal", "TopResolved_TopScore_nominal"], "RVec<RVec<RVec<float>>>{{Jet_pt_jerdown, Jet_pt_jerup}, {Jet_mass_jerdown, Jet_mass_jerup}, {FatJet_pt_jerdown, FatJet_pt_jerup}, {FatJet_mass_jerdown, FatJet_mass_jerup}, {PuppiMET_T1_pt_jerdown_vec, PuppiMET_T1_pt_jerup_vec}, {PuppiMET_T1_phi_jerdown_vec, PuppiMET_T1_phi_jerup_vec}, {TopMixed_pt_jerdown, TopMixed_pt_jerup}, {TopResolved_pt_jerdown, TopResolved_pt_jerup}, {TopMixed_mass_jerdown, TopMixed_mass_jerup}, {TopResolved_mass_jerdown, TopResolved_mass_jerup}, {TopMixed_TopScore_jerdown, TopMixed_TopScore_jerup}, {TopResolved_TopScore_jerdown, TopResolved_TopScore_jerup}}", variationTags=["down", "up"], variationName="jer")\
                .Vary(["Jet_pt_nominal", "Jet_mass_nominal", "FatJet_pt_nominal", "FatJet_mass_nominal", "PuppiMET_T1_pt_nominal_vec", "PuppiMET_T1_phi_nominal_vec", "TopMixed_pt_nominal", "TopResolved_pt_nominal", "TopMixed_mass_nominal", "TopResolved_mass_nominal",  "TopMixed_TopScore_nominal", "TopResolved_TopScore_nominal"], "RVec<RVec<RVec<float>>>{{Jet_pt_jesTotaldown, Jet_pt_jesTotalup}, {Jet_mass_jesTotaldown, Jet_mass_jesTotalup}, {FatJet_pt_jesTotaldown, FatJet_pt_jesTotalup}, {FatJet_mass_jesTotaldown, FatJet_mass_jesTotalup}, {PuppiMET_T1_pt_jesTotaldown_vec, PuppiMET_T1_pt_jesTotalup_vec}, {PuppiMET_T1_phi_jesTotaldown_vec, PuppiMET_T1_phi_jesTotalup_vec}, {TopMixed_pt_jesTotaldown, TopMixed_pt_jesTotalup}, {TopResolved_pt_jesTotaldown, TopResolved_pt_jesTotalup}, {TopMixed_mass_jesTotaldown, TopMixed_mass_jesTotalup}, {TopResolved_mass_jesTotaldown, TopResolved_mass_jesTotalup}, {TopMixed_TopScore_jesTotaldown, TopMixed_TopScore_jesTotalup}, {TopResolved_TopScore_jesTotaldown, TopResolved_TopScore_jesTotalup}}", variationTags=["down", "up"], variationName="jesTotal")
     return df_sys
 def SF_variations(df):
-    df_sys = df.Vary("puWeight", "RVec<float>{puWeightDown, puWeightUp}", variationTags=["down", "up"], variationName="pu")
+    df_sys = df.Vary("puWeight", "RVec<float>{puWeightDown, puWeightUp}", variationTags=["down", "up"], variationName="pu")\
+               .Vary("pdf_totalSF", "RVec<float>{pdf_totalDown, pdf_totalUp}", variationTags=["down", "up"], variationName="pdf_total")\
+               .Vary("QCDScaleSF", "RVec<float>{QCDScaleDown, QCDScaleUp}", variationTags=["down", "up"], variationName="QCDScale")\
+               .Vary("ISRSF", "RVec<float>{ISRDown, ISRUp}", variationTags=["down", "up"], variationName="ISR")\
+               .Vary("FSRSF", "RVec<float>{FSRDown, FSRUp}", variationTags=["down", "up"], variationName="FSR")
     return df_sys
 
 
@@ -387,6 +409,32 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
                                     if "nominal" not in histo_name : h1.SetName(histo_name+"_nominal")
                                     outfile.cd()
                                     h1.Write()
+                                elif vari=="pdf_total":
+                                    hnom = dict_h[d.label][s.label][reg][v._name]["nominal"]
+                                    hup = dict_h[d.label][s.label][reg][v._name][vari+":up"]
+                                    hdown = dict_h[d.label][s.label][reg][v._name][vari+":down"]
+                                    hup.SetName(hup.GetName())
+                                    hdown.SetName(hdown.GetName())
+                                    nbins = hup.GetNbinsX()
+                                    nbins = hdown.GetNbinsX()
+                                    if not v._noUnOvFlowbin:
+                                        hup.SetBinContent(1, hup.GetBinContent(0) + hup.GetBinContent(1))
+                                        hup.SetBinError(1, math.sqrt(pow(hup.GetBinError(0),2) + pow(hup.GetBinError(1),2)))
+                                        hup.SetBinContent(nbins, hup.GetBinContent(nbins) + hup.GetBinContent(nbins+1))
+                                        hup.SetBinError(nbins, math.sqrt(pow(hup.GetBinError(nbins),2) + pow(hup.GetBinError(nbins+1),2)))
+                                        hdown.SetBinContent(1, hdown.GetBinContent(0) + hdown.GetBinContent(1))
+                                        hdown.SetBinError(1, math.sqrt(pow(hdown.GetBinError(0),2) + pow(hdown.GetBinError(1),2)))
+                                        hdown.SetBinContent(nbins, hdown.GetBinContent(nbins) + hdown.GetBinContent(nbins+1))
+                                        hdown.SetBinError(nbins, math.sqrt(pow(hdown.GetBinError(nbins),2) + pow(hdown.GetBinError(nbins+1),2)))
+                                    if isMC:
+                                        hup.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
+                                        hdown.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
+                                        if hup.Integral()>0 and hdown.Integral()>0:
+                                            hup.Scale((hnom.Integral()+(hup.Integral()-hdown.Integral()))/hup.Integral())
+                                            hdown.Scale((hnom.Integral()-(hup.Integral()-hdown.Integral()))/hdown.Integral())
+                                    outfile.cd()
+                                    hup.Write()
+                                    hdown.Write()
                                 else:
                                     for var_type in ['up', 'down']:
                                         h1 = dict_h[d.label][s.label][reg][v._name][vari+":"+var_type]
@@ -400,12 +448,7 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
                                             h1.SetBinError(1, math.sqrt(pow(h1.GetBinError(0),2) + pow(h1.GetBinError(1),2)))
                                             h1.SetBinContent(nbins, h1.GetBinContent(nbins) + h1.GetBinContent(nbins+1))
                                             h1.SetBinError(nbins, math.sqrt(pow(h1.GetBinError(nbins),2) + pow(h1.GetBinError(nbins+1),2)))
-                                            
-                                            # Tommaso aggiunge anche questo loop, ma non so bene a cosa serve
-                                            # for i in range(0, nbins + 1):          
-                                            #     if h1.GetBinContent(i) < 0:
-                                            #         h1.SetBinContent(i, 0.)
-                                        
+
                                         if isMC:
                                             h1.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
                                         outfile.cd()
@@ -515,7 +558,7 @@ for d in datasets:
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
-
+        df                  = defineWeights(df, sampleflag)
 
         if do_variations:
             df              = df.Define("PuppiMET_T1_pt_jerdown_vec", "RVec<float>{ (float) PuppiMET_T1_pt_jerdown}").Define("PuppiMET_T1_phi_jerdown_vec", "RVec<float>{ (float) PuppiMET_T1_phi_jerdown}")\
@@ -543,9 +586,9 @@ for d in datasets:
             
         if sampleflag:
             if noSFbtag:
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')                # no SFbtag
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
             else:   
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF') # AllWeights
             # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
         else:
             df_wnom = df_hlt.Redefine('w_nominal', '1')
@@ -556,6 +599,9 @@ for d in datasets:
         df_topsel       = select_top(df_presel, sampleflag)
         df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
         
+        # command for printing the cutflow, add it in the SRs for all the bkgs 
+        df_topsel.Report().Print()
+
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()
             opts.fLazy  = True
