@@ -52,6 +52,7 @@ remote_subfolder_name   = datetime.now().strftime("%Y%m%d") #20231229
 
 if do_variations == True:
     variations          = ["nominal", "pu", "jer", "jesTotal", "pdf_total", "QCDScale", "ISR", "FSR"]
+    variations          = ["nominal", "pu", "jer", "jesTotal", "pdf_total", "QCDScale", "ISR", "FSR"]
 else :
     variations          = ["nominal"]
 
