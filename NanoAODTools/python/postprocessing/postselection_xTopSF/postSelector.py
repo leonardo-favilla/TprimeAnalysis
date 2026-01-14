@@ -1,4 +1,5 @@
 import ROOT
+ROOT.EnableImplicitMT()
 ROOT.gStyle.SetOptStat(0)
 import sys
 import os
@@ -31,13 +32,14 @@ uid      = int(os.getuid())
 WorkDir  = os.environ["PWD"]
 
 
-usage                   = 'python3 postSelector.py -c <component> --scenario <scenario> --file0 <file0> --nfiles_max <nfiles_max> --slice <slice> [--certpath <path_to_certificate_file>]'
+usage                   = 'python3 postSelector.py -c <component> --scenario <scenario> --fileStart <fileStart> --fileEnd <fileEnd> --sliceNumber <sliceNumber> [--certpath <path_to_certificate_file>]'
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-c', '--component',          dest='component',           type=str,               default="QCD_HT400to600_2022",                      help='Single component to process, in the form: QCD_HT400to600_2022')
 parser.add_option(      '--scenario',           dest='scenario',            type=str,               default="nominal",                                  help='Systematic scenario to process: nominal, jerUp, jerDown, jesUp, jesDown')
-parser.add_option(      '--file0',              dest='file0',               type=int,               default=0,                                          help='Index of the first file to process')
+parser.add_option(      '--fileStart',          dest='fileStart',           type=int,               default=0,                                          help='Index of the first file to process, default is 0')
+parser.add_option(      '--fileEnd',            dest='fileEnd',             type=int,               default=0,                                          help='Index of the last file to process, default is 0')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                          help='Max number of files to process per sample')
-parser.add_option(      '--slice',              dest='slice',               type=int,               default=0,                                          help='Slice number (for parallelization)')
+parser.add_option(      '--sliceNumber',        dest='sliceNumber',         type=int,               default=0,                                          help='Slice number (for parallelization)')
 parser.add_option(      '--certpath',           dest='certpath',            type=str,               default="/tmp/x509up_u{}".format(str(os.getuid())), help='Path to the certificate file')
 
 
@@ -47,12 +49,13 @@ year                    = int(in_dataset.split("_")[-1][:4])
 EE                      = 1 if len(in_dataset.split("_")[-1])>4 else 0
 period                  = in_dataset.split("_")[-1]
 scenario                = opt.scenario
-file0                   = opt.file0
-nfiles_max              = opt.nfiles_max
-slice                   = opt.slice
+fileStart               = opt.fileStart
+fileEnd                 = opt.fileEnd + 1
+nfiles_max              = fileEnd - fileStart
+sliceNumber             = opt.sliceNumber
 certpath                = opt.certpath
 where_to_write          = config["TopSF"]["where_to_write"][period] # options are "tier" or "eos"
-dict_samples_file       = config["dict_samples"][year]
+dict_samples_file       = config["dict_samples"][str(year)]
 scenario_tag            = {
                             "nominal":  "nominal",
                             "jerUp":    "jerup",
@@ -116,8 +119,8 @@ elif where_to_write == "tier":
 outFolder_tmp                       = "/tmp/{}/".format(username)
 if not os.path.exists(outFolder_tmp):
     os.makedirs(outFolder_tmp)
-outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+"_"+slice+".root"
-outFilePath                         = outSubFolder+in_dataset+"_"+scenario+"_"+slice+".root"
+outFilePath_tmp                     = outFolder_tmp+in_dataset+"_"+scenario+"_"+str(sliceNumber)+".root"
+outFilePath                         = outSubFolder+in_dataset+"_"+scenario+"_"+str(sliceNumber)+".root"
 
 
 print(f"Output tmp will be written to:  {outFilePath_tmp}")
@@ -126,7 +129,7 @@ print(f"Output will be written to:      {outFilePath}")
 
 
 
-#### LOAD samples.py ####
+#### LOAD dict_samples.py ####
 with open(dict_samples_file, "rb") as sample_file:
     samples = json.load(sample_file)
 
@@ -145,7 +148,7 @@ if "Data" not in in_dataset:
     isMC                = True
     scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
     xsecWeight          = sample_dict[in_dataset].sigma*10**3
-    ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'][file0:file0+nfiles_max])
+    ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'])
 else:
     isMC                = False
     scenarios           = ["nominal"]
@@ -155,21 +158,21 @@ else:
 chain                                               = []
 tchain                                              = ROOT.TChain("Events")
 nfiles_opened                                       = 0
-for i, string in enumerate(samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max]):
+for i, string in enumerate(samples[in_dataset][in_dataset]['strings'][fileStart:fileEnd]):
     if i >= nfiles_max:
         break
-    f                                               = samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max][i]
+    f                                               = samples[in_dataset][in_dataset]['strings'][fileStart:fileEnd][i]
     try:
         TFile                                       = ROOT.TFile.Open(f)
         tchain.Add(f)
         nfiles_opened += 1
     except:
-        if isMC:
-            ntot_events -= samples[in_dataset][in_dataset]['ntot'][file0:file0+nfiles_max][i]
+        # if isMC:
+        #     ntot_events -= samples[in_dataset][in_dataset]['ntot'][fileStart:fileEnd][i]
         print("Could not add file: ", f)
         continue
-chain                                               = samples[in_dataset][in_dataset]['strings'][file0:file0+nfiles_max]
-print(f"Opened {nfiles_opened} files out of {nfiles_max} requested for sample {in_dataset} in file range [{file0}, {file0+nfiles_max})")
+chain                                               = samples[in_dataset][in_dataset]['strings'][fileStart:fileEnd]
+print(f"Opened {nfiles_opened} files out of {nfiles_max} requested for sample {in_dataset} in file range [{fileStart}, {fileEnd-1}]")
 
 
 
@@ -267,7 +270,7 @@ def trigger_filter(df, data, isMC, year):
             ]
         }
     # hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
-    hlt_met = f"({' || '.join(hlt[year])})"
+    hlt_met = f"({' || '.join(hlt[int(year)])})"
     df_trig = df.Filter(hlt_met, "triggerMET")
     return df_trig
 
@@ -389,6 +392,7 @@ df_topselected      = select_top(df_toplep, isMC)
 
 
 branches_to_save    = list(map(str, df_topselected.GetColumnNames()))
+branches_to_save    = [b for b in branches_to_save if "Tau" not in b]
 if not "Data" in in_dataset:
     branches_to_save.remove("SFbtag_nominal")
 opts                = ROOT.RDF.RSnapshotOptions()
