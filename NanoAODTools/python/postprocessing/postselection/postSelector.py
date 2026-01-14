@@ -1,4 +1,5 @@
 import ROOT
+ROOT.EnableImplicitMT()
 ROOT.gStyle.SetOptStat(0)
 import sys
 import os
