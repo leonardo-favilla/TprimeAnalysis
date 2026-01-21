@@ -27,6 +27,7 @@ parser.add_option("-d", "--dat",                    dest="dat",                 
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
+parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
 
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
@@ -34,6 +35,7 @@ syst                = opt.syst
 nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
 noSFbtag            = opt.noSFbtag
+noPuWeight          = opt.noPuWeight
 
 period              = dataset_to_run.split("_")[-1]
 if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
@@ -47,14 +49,13 @@ elif "2023" in period:
 
 dict_samples_file   = config["dict_samples"][year]
 
-if not syst:
-    syst_suffix     = ""
-elif (syst and not noSFbtag):
-    syst_suffix     = "_syst"
-elif (noSFbtag and not syst):
-    syst_suffix     = "_noSFbtag"
-elif (noSFbtag and syst):
-    syst_suffix     = "_syst_noSFbtag"
+syst_suffix         = ""
+if syst:
+    syst_suffix    += "_syst"
+if noSFbtag:
+    syst_suffix    += "_noSFbtag"
+if noPuWeight:
+    syst_suffix    += "_noPuWeight"
 
 outFolder_path      = config["outputfolder"]["postselector_results"][period]
 
@@ -98,6 +99,8 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --syst"
     if noSFbtag:
         pycommand += " --noSFbtag"
+    if noPuWeight:
+        pycommand += " --noPuWeight"
 
     f.write(pycommand+"\n")
     f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/.\n")
@@ -131,10 +134,7 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    if noSFbtag:
-        condor_folder       = os.environ.get('PWD') + "/condor_noSFbtag/"
-    else:
-        condor_folder       = os.environ.get('PWD') + "/condor/"
+    condor_folder       = os.environ.get('PWD') + "/condor" + syst_suffix + "/"
     condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
