@@ -24,8 +24,7 @@ NanoAODTools/python/postprocessing/redme_trota.md
 NanoAODTools/python/postprocessing/tmp_plotJetFatJetmatched.py
 NanoAODTools/python/postprocessing/tmp_plotTesi_Scoretagger.py
 NanoAODTools/python/postprocessing/trial_canvas.png
-NanoAODTools/python/postprocessing/postselection/condor/
-NanoAODTools/python/postprocessing/postselection/condor_noSFbtag/
+NanoAODTools/python/postprocessing/postselection/condor*/
 NanoAODTools/python/postprocessing/postselection_xTopSF/condor_preprocess/
 NanoAODTools/python/postprocessing/postselection_xTopSF/condor_postSel/
 NanoAODTools/python/postprocessing/TriggerSF/condor/
