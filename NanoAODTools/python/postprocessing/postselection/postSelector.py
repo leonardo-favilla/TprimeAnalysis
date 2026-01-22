@@ -193,10 +193,10 @@ def preselection(df, btagAlg, year, EE):
     df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
     df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta)")
+    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
     df = df.Define("nTightMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")
     df = df.Define("TightMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId)")
+    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
     df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
     df = df.Define("MT", "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
     
@@ -349,18 +349,24 @@ def bookhisto(df, regions_def, var, s_cut):
 
 def bookhisto2D(df, regions_def, var2d, s_cut):
     h_ = {}
-    for reg in regions_def.keys():
-        h_[reg] = {}
-        for v in var2d:
-            if regions_def[reg]=="":
-                h_[reg][v._name] = df.Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
-                                     .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
-            else:
-                h_[reg][v._name] = df.Filter(regions_def[reg])\
-                                     .Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
-                                     .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
+    # for reg in ["SR"]:
+    #     h_[reg] = {}
+    #     for v in var2d:
+    v = var2d[0]
+    h_["incl"] = {}
+            # if regions_def[reg]=="":
+            #     h_[reg][v._name] = df.Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
+            #                          .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
+            #                          .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
+            # else:
+            #     h_[reg][v._name] = df.Filter(regions_def[reg])\
+            #                          .Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
+            #                          .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
+            #                          .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
+    h_["incl"][v._name+"_0TopMer"] = df.Filter("nTightTopMerged==0")\
+                                    .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_0TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
+    h_["incl"][v._name+"_1TopMer"] = df.Filter("nTightTopMerged>0")\
+                                    .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_1TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
     return h_
 
 def savehisto(d, dict_h, regions_def, var, s_cut):
@@ -481,7 +487,11 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
 
 # i plot2d per il momento non ci servono, si deve trovare un modo più intelligente di farli
 def savehisto2d(d, h, regions_def, var2d, s_cut):
-    histo = {reg: {v._name: ROOT.TH2D(v._name+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax,) for v in var2d} for reg in regions_def.keys()}
+    # histo = {reg: {v._name: ROOT.TH2D(v._name+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax,) for v in var2d} for reg in regions_def.keys()}
+    histo = {'incl': {
+        'nTopMixedVsnTopResolved_0TopMer': ROOT.TH2D('nTopMixedVsnTopResolved_0TopMer_SR', ' ;Number of TopResolved;Number of TopMixed', 6, -0.5, 5.5, 6, -0.5, 5.5),
+        'nTopMixedVsnTopResolved_1TopMer': ROOT.TH2D('nTopMixedVsnTopResolved_1TopMer_SR', ' ;Number of TopResolved;Number of TopMixed', 6, -0.5, 5.5, 6, -0.5, 5.5)
+    }}
         
     if hasattr(d, "components"):
         s_list = d.components
@@ -490,18 +500,25 @@ def savehisto2d(d, h, regions_def, var2d, s_cut):
     
     for s in s_list:
         outfile = ROOT.TFile.Open(repohisto+s.label+'_2D.root', "RECREATE")
-        for reg in regions_def.keys():
-            for v in histo[reg].keys():
-                histo[reg][v] = h[d.label][s.label][reg][v].GetValue()
-                if isMC:
-                    histo[reg][v._name].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                outfile.cd()
-                histo[reg][v].Write()
+        # for reg in regions_def.keys():
+        #     for v in histo[reg].keys():
+        #         histo[reg][v] = h[d.label][s.label][reg][v].GetValue()
+        #         if isMC:
+        #             histo[reg][v._name].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
+        #         outfile.cd()
+        #         histo[reg][v].Write()
+        if do_variations:
+            histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_0TopMer']["nominal"]
+            histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_1TopMer']["nominal"]
+        else:
+            histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].GetValue()
+            histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].GetValue()
+
+        # histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
+        # histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
+        histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].Write()
+        histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].Write()
         outfile.Close()
-
-
-
-    
 
 
 
@@ -612,7 +629,7 @@ for d in datasets:
             s_cut = cut_string(cut)
             if len(var) != 0 :
                 h[d.label][s.label] = bookhisto(df_topsel, regions_def, var, s_cut)
-            if len(var2d) != 0 :
+            if len(var2d) != 0:
                 h_2D[d.label][s.label] = bookhisto2D(df_topsel, regions_def, var2d, s_cut)
 
         
