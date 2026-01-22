@@ -76,7 +76,7 @@ print(f"Processing component {in_dataset}, year {year}, scenario {scenario}")
 #### Define output files and folders ####
 if where_to_write == "eos":
     remote_folder_name              = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF"
-    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
+    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal/"
     outSubFolder                    = outFolder+in_dataset+"/"
     if not os.path.exists(remote_folder_name):
         os.makedirs(remote_folder_name)
@@ -86,7 +86,7 @@ if where_to_write == "eos":
         os.makedirs(outSubFolder)
 elif where_to_write == "tier":
     remote_folder_name              = "TopSF"
-    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework/"
+    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal/"
     outSubFolder                    = outFolder+in_dataset+"/"
 
     print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
@@ -389,16 +389,59 @@ df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_toplep           = tag_toplep(df_presel)
 df_topselected      = select_top(df_toplep, isMC)
 
+#### Semi-leptonic selection ###
+df_semilep          = df_topselected.Filter("HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight || HLT_Mu50 || HLT_IsoMu24 || HLT_HighPtTkMu100", "triggerMuon")
+df_semilep          = df_semilep.Filter("nTopLep==1", "exactlyOneTightLepton")
 
 
-branches_to_save    = list(map(str, df_topselected.GetColumnNames()))
+branches_to_save    = list(map(str, df_semilep.GetColumnNames()))
 branches_to_save    = [b for b in branches_to_save if "Tau" not in b]
 if not "Data" in in_dataset:
     branches_to_save.remove("SFbtag_nominal")
+
+branches_to_save    = [
+                        "xsecWeight",
+                        "ntotEvents",
+                        "nloewcorrection",
+
+                        "BestTopResolved_pt",
+                        "BestTopResolved_eta",
+                        "BestTopResolved_phi",
+                        "BestTopResolved_mass",
+                        "BestTopResolved_score",
+                        "BestTopMixed_pt",
+                        "BestTopMixed_eta",
+                        "BestTopMixed_phi",
+                        "BestTopMixed_mass",
+                        "BestTopMixed_score",
+                        "BestTopMerged_pt",
+                        "BestTopMerged_eta",
+                        "BestTopMerged_phi",
+                        "BestTopMerged_mass",
+                        "BestTopMerged_score",
+
+                        "W_pt",
+                        "MET_pt",
+                        ]
+
+if isMC:
+    branches_to_save += [
+                            "puWeight",
+                            "puWeightUp",
+                            "puWeightDown",
+                            "SFbtag",
+                            "LHEWeight_originalXWGTUP",
+                            "TopResolvedMatched_to_GenTop_dR0p2",
+                            "TopMixedMatched_to_GenTop_dR0p2",
+                            "TopMergedMatched_to_GenTop_dR0p2",
+                        ]
+
+###### Snapshotting ######
+print("Starting snapshot...")                        
 opts                = ROOT.RDF.RSnapshotOptions()
 opts.fLazy          = True
-df_topselected      = df_topselected.Snapshot("Events", outFilePath_tmp, branches_to_save, opts)
-df_topselected.GetValue()
+df_semilep          = df_semilep.Snapshot("Events", outFilePath_tmp, branches_to_save, opts)
+df_semilep.GetValue()
 print("Snapshot done!")
 
 if where_to_write == "eos":
