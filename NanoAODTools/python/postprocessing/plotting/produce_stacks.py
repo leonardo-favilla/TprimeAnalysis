@@ -60,7 +60,7 @@ json_file_dict                      = config["dict_samples"]
 json_file_dict["2022EE"]            = json_file_dict["2022"]
 json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
-colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+colors_bkg                          = ["#e42536", "#ffcc00", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
                                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
@@ -72,6 +72,7 @@ style_signals_dict                  = {
                                     }
 labels_dict                         = {
                                         "TT":               "t#bar{t}",
+                                        "TW":               "tW",
                                         "QCD":              "QCD",
                                         "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
                                         "WJets":            "W (#it{l}#nu) + Jets",
@@ -165,6 +166,8 @@ inSample            = {"Data": [], "signal": [], "bkg": []}
 cut_tag             = cut_string(cut)
 
 for dat in datasets:
+    if "Tprime" in dat:
+        continue
     year_tag        = dat.split("_")[-1]
     folder_tmp      = folder_dict[year_tag]
     repohisto_tmp   = folder_tmp + "plots/"
@@ -195,14 +198,14 @@ MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
 PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
 
 
-for v in vars:
+# for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
-# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
+for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
 # for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
-    for r in regions.keys():
+    # for r in regions.keys():
     # for r in ["SRTop"]:
-    # for r in ["AH"]:
+    for r in ["AH"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
@@ -211,6 +214,7 @@ for v in vars:
 
         histo_bkg_dict      = {
                                 "t#bar{t}":                 None,
+                                "tW":                       None,
                                 "QCD":                      None,
                                 "Z (#nu#nu) + Jets":        None,
                                 "W (#it{l}#nu) + Jets":     None
@@ -285,8 +289,11 @@ for v in vars:
                 tmp.Scale(lumi)
             else:
                 continue
-            # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
-            leg_label                       = labels_dict[s.label.split("_")[0]]
+            print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
+            # print('s.label.split("_")[0]:', s.label.split("_")[0])
+            # print('s.process.split("_")[0]:', s.process.split("_")[0])
+            # leg_label                       = labels_dict[s.label.split("_")[0]]
+            leg_label                       = labels_dict[s.process.split("_")[0]]
             # print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
@@ -426,3 +433,6 @@ for v in vars:
                                                 colors_bkg          = colors_bkg,
                                                 style_signals_dict  = style_signals_dict,
                                                 )
+
+
+print(histo_bkg_dict.keys())
