@@ -4,7 +4,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetPalette(57)  # "DeepSea" palette
 
 
-def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals_dict=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None, colors_bkg=None, style_signals_dict=None):
+def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals_dict=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None, colors_bkg=None, style_signals_dict=None, systErr=False):
     ############ CREATE CANVAS AND PADS ############ 
     CMS.SetExtraText(extraText)
     CMS.SetLumi(lumi)
@@ -66,6 +66,10 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
     h_bkg           = stack.GetStack().Last().Clone("h_bkg")
     CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
     leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+
+    if systErr:
+        systErr_tag = "QCDScale"
+        
 
     ##### Set graphics style for Signals #####
     if histo_signals_dict is not None:

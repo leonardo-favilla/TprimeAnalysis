@@ -2,6 +2,7 @@
 *.log
 *.err
 *.out
+*.png
 tmp/
 __init__.py
 __pycache__/
