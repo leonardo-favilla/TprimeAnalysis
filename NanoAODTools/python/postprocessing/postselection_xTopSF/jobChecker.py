@@ -30,6 +30,7 @@ outputFolder        = opt.outFolder
 year                = int(opt.year[:4])
 period              = opt.year
 certpath            = "/tmp/x509up_u"+str(uid)
+rerun_script_path   = f"rerun_failed_jobs_{period}.sh"
 
 #### LOAD dict_samples.py ####
 dict_samples_file   = config["dict_samples"][str(year)]
@@ -160,3 +161,17 @@ for c in components_to_check:
 print("\n\nSummary of files to rerun:")
 for c, scenario, sliceNumber in to_rerun:
     print(f"Component: {c}, Scenario: {scenario}, Slice Number: {sliceNumber}")
+
+### Rerun commands for the failed jobs ###
+with open(rerun_script_path, "w") as f:
+    f.write("#!/bin/bash\n\n")
+    c_          = ""
+    for c, scenario, sliceNumber in to_rerun:
+        if c_!=c:
+            cmd = f"python3 postSelector_submitter.py -d {c} --dryrun\n"
+            # f.write(cmd)
+        c_      = c
+        cmd     = f"condor_submit ./condor/{c}_{scenario}_{sliceNumber}/condor.sub\n"
+        f.write(cmd)
+
+print(f"\nYou can find the commands to rerun failed jobs in {rerun_script_path}")
