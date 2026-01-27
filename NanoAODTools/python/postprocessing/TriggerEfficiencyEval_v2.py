@@ -121,11 +121,11 @@ run2 = False
 run3 = not run2
 
 datasets = [
-    "DataEGamma_2023postBPix", 
-    "TT_2023postBPix", 
-    "QCD_2023postBPix", 
-    "ZJetsToNuNu_2jets_2023postBPix",
-    "WJets_2jets_2023postBPix"
+    "DataEGamma_2023", 
+    "TT_2023", 
+    "QCD_2023", 
+    "ZJetsToNuNu_2jets_2023",
+    "WJets_2jets_2023"
     ]
 if len(datasets) > 2:
     plotname = ""
@@ -164,7 +164,7 @@ print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 # print("Regions:           {}".format(regions.keys()))
 
 ############### out folders  
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/trigSF_2023postBPix/"
+folder = "/eos/home-a/acagnott/DarkMatter/nosynch/trigSF_2023/"
 
 if not os.path.exists(folder):
     os.mkdir(folder)
