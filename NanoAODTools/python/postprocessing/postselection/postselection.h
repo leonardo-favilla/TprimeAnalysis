@@ -11,6 +11,7 @@
 #include "Math/Vector4D.h"
 #include "TStyle.h"
 #include <map>
+#include "correction.h"
 
 #include "TDavixFile.h"
 
@@ -338,6 +339,21 @@ bool MET_filter(bool flag_goodVertices, bool flag_globalSuperTightHalo2016Filter
   bool good_MET = flag_goodVertices && flag_globalSuperTightHalo2016Filter && flag_HBHENoiseFilter && flag_HBHENoiseIsoFilter && flag_EcalDeadCellTriggerPrimitiveFilter && flag_BadPFMuonFilter && flag_BadPFMuonDzFilter && flag_ecalBadCalibFilter && flag_eeBadScFilter;
   return good_MET;
 }
+
+// ########################################################
+// ############## Trigger SF     ##########################
+// ########################################################
+
+float GetTriggerSF(float PuppiMET_pt){
+  auto cset = correction::CorrectionSet::from_file("../TriggerSF/TriggerSF.json");
+  auto triggerSF_corr = cset->at("TriggerSF");
+  float weight = 1.0;
+  if (PuppiMET_pt > 100){
+    weight = triggerSF_corr->evaluate({PuppiMET_pt});
+  }
+  return weight;
+}
+
 
 // ########################################################
 // ###########Alternative Truth definition ################
