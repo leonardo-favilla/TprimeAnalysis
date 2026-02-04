@@ -27,6 +27,7 @@ plotting:
       "2023":           18.063,
       "2023postBPix":   9.693
     }
+
   folder_dict:
     {
       "2022":               "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Jan26/",
@@ -40,7 +41,7 @@ plotting:
 
   folder_www_dict:
     {
-      "2022":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_Jan26/",
+      "2022":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_Jan26_sium/",
       "2022EE":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
       "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
       "2023postBPix":       "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
@@ -99,6 +100,14 @@ plotting:
                   "TprimeToTZ_1000_2023postBPix",
                   "TprimeToTZ_1800_2023postBPix"
               ],
+    }
+
+  systematics:
+    {
+      "2022":           ["QCDScale"],
+      "2022EE":         [],
+      "2023":           [],
+      "2023postBPix":   []
     }
 
   scale_signals: 100
