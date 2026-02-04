@@ -52,24 +52,31 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
 
         # CMS.cmsHeader(leg, f"{region}", textSize=0.05)
 
-    ##### Set graphics style for Backgrounds ##### 
+    ##### Set graphics style for Backgrounds #####
     if colors_bkg is not None:
         palette     = colors_bkg
     else:
         palette     = None
     stack           = ROOT.THStack("stack", "Stack Histogram")
-    # CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=histo_data, palette=palette)
-    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=None, palette=palette)
+    # CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict["nominal"], data=histo_data, palette=palette)
+    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict["nominal"], data=None, palette=palette)
     if histo_data is not None:
         CMS.cmsDraw(histo_data, "PE", mcolor=ROOT.kBlack)
 
+    # Add statistical+systematic uncertainty band on the background stack #
     h_bkg           = stack.GetStack().Last().Clone("h_bkg")
-    CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
-    leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+    h_err_syst      = histo_bkg_dict["err_syst"].Clone("h_err_syst")
+    for i in range(1, h_bkg.GetNbinsX()+1):
+        h_err_syst.SetPoint(i-1, h_bkg.GetBinCenter(i), h_bkg.GetBinContent(i))
 
-    if systErr:
-        systErr_tag = "QCDScale"
-        
+    # if not systErr:
+    #     CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
+    #     leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+    # else:
+    #     CMS.cmsDraw(h_err_syst, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
+    #     leg.AddEntry(h_err_syst, "Stat. + Syst. Unc.", "a2")
+    
+    
 
     ##### Set graphics style for Signals #####
     if histo_signals_dict is not None:
@@ -220,12 +227,28 @@ if __name__ == "__main__":
     extraSpace      = 0.1
     iPos            = 0  # Position of the legend (0: top-right, 1: top-left, etc.)
     region          = "MixSRatleast1fjets"
-    histo_bkg_dict  = {
-                        "t#bar{t}":                 histo_tt,
-                        "QCD":                      histo_qcd,
-                        "Z (#nu#nu) + Jets":        histo_zjets,
-                        "W (#it{l}#nu) + Jets":     histo_wjets,
-                        }
+    histo_bkg_dict  = {"nominal":               None,
+                       "QCDScale_up":           None,
+                       "QCDScale_down":         None,
+                       "pu_up":                 None,
+                       "pu_down":               None,
+                       "jer_up":                None,
+                       "jer_down":              None,
+                       "jesTotal_up":           None,
+                       "jesTotal_down":         None,
+                       "pdf_total_up":          None,
+                       "pdf_total_down":        None,
+                       "ISR_up":                None,
+                       "ISR_down":              None,
+                       "FSR_up":                None,
+                       "FSR_down":              None,
+                       }
+    histo_bkg_dict["nominal"]  = {
+                                "t#bar{t}":                 histo_tt,
+                                "QCD":                      histo_qcd,
+                                "Z (#nu#nu) + Jets":        histo_zjets,
+                                "W (#it{l}#nu) + Jets":     histo_wjets,
+                                }
 
     colors_bkg      = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
 

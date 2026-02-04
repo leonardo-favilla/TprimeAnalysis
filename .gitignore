@@ -3,6 +3,8 @@
 *.err
 *.out
 *.png
+*.pdf
+*.C
 tmp/
 __init__.py
 __pycache__/
