@@ -11,6 +11,7 @@
 #include "Math/Vector4D.h"
 #include "TStyle.h"
 #include <map>
+#include "correction.h"
 
 #include "TDavixFile.h"
 
@@ -86,6 +87,88 @@ float UnOvBin(float var, int bins, float xmin, float xmax){
   else fvar = var; 
 
   return fvar;
+}
+
+// ########################################################
+// ##############  MC weights  ##########################
+// ########################################################
+RVec<float> QCDScale_variations(rvec_f LHEScaleWeight){
+    RVec<float> result(3); 
+    float lheSF = 1.;
+    float lheUp = 1.;
+    float lheDown = 1.;
+    
+    if(LHEScaleWeight.size() > 1){
+       lheDown = Min(LHEScaleWeight);
+       lheUp = Max(LHEScaleWeight);
+    }
+    
+    result[0] = LHEScaleWeight[4];
+    result[1] = lheUp;
+    result[2] = lheDown;
+    
+    return result;
+}
+RVec<float> PSWeight_variations(rvec_f PSWeight){
+    RVec<float> result(4);
+    
+    float isrmin = 1.;
+    float isrmax = 1.;
+    float fsrmin = 1.;
+    float fsrmax = 1.;
+    if (PSWeight.size() > 1){
+        isrmin = min(PSWeight[0], PSWeight[2]);
+        isrmax = max(PSWeight[0], PSWeight[2]);
+        fsrmin = min(PSWeight[1], PSWeight[3]);
+        fsrmax = max(PSWeight[1], PSWeight[3]);
+    }
+    else{
+        isrmin = PSWeight[0];
+        isrmax = PSWeight[0];
+        fsrmin = PSWeight[0];
+        fsrmax = PSWeight[0];
+    }
+    
+    result[0] = isrmin;
+    result[1] = isrmax;
+    result[2] = fsrmin;
+    result[3] = fsrmax;
+    
+    return result;
+}
+
+RVec<float> PdfWeight_variations(rvec_f PdfWeight, int ntot){
+    
+    RVec<float> result(3);
+    
+    float pdf_totalUp = 1.;
+    float pdf_totalDown = 1.;
+    float pdf_totalSF = 1.;
+    
+    if (PdfWeight.size() > 0){
+        float pdfweight_sum = 0.;
+        float mean_pdf = 0.;
+        float rms = 0.;
+        pdf_totalSF = PdfWeight[0];
+
+        for (int j = 0; j < PdfWeight.size(); j++) pdfweight_sum += PdfWeight[j];
+        float pdf_xsweight = pdfweight_sum/ntot;
+
+        for(int j = 0; j < PdfWeight.size(); j++) mean_pdf = mean_pdf + PdfWeight[j];
+        mean_pdf = mean_pdf / PdfWeight.size();
+        
+        for (int j = 0; j < PdfWeight.size(); j++) rms = rms + pow(PdfWeight[j]-mean_pdf, 2);
+        rms = sqrt(rms / PdfWeight.size());
+
+        pdf_totalUp = (1+rms)*mean_pdf;
+        pdf_totalDown = (1-rms)*mean_pdf;
+    }
+    
+    result[0] = pdf_totalSF;
+    result[1] = pdf_totalUp;
+    result[2] = pdf_totalDown;
+
+    return result;
 }
 
 // ########################################################
@@ -256,6 +339,21 @@ bool MET_filter(bool flag_goodVertices, bool flag_globalSuperTightHalo2016Filter
   bool good_MET = flag_goodVertices && flag_globalSuperTightHalo2016Filter && flag_HBHENoiseFilter && flag_HBHENoiseIsoFilter && flag_EcalDeadCellTriggerPrimitiveFilter && flag_BadPFMuonFilter && flag_BadPFMuonDzFilter && flag_ecalBadCalibFilter && flag_eeBadScFilter;
   return good_MET;
 }
+
+// ########################################################
+// ############## Trigger SF     ##########################
+// ########################################################
+
+float GetTriggerSF(float PuppiMET_pt){
+  auto cset = correction::CorrectionSet::from_file("../TriggerSF/TriggerSF.json");
+  auto triggerSF_corr = cset->at("TriggerSF");
+  float weight = 1.0;
+  if (PuppiMET_pt > 100){
+    weight = triggerSF_corr->evaluate({PuppiMET_pt});
+  }
+  return weight;
+}
+
 
 // ########################################################
 // ###########Alternative Truth definition ################
@@ -507,27 +605,27 @@ RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
   return ids;
 }
 
-int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta)
+int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta, rvec_i Electron_mvaIso_WP80)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
   }
   return n;
 }
 
-int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
+int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
 {
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4) n+=1;
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
   }
   return n;
 }
 
-bool LepVeto(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_f Muon_pt, rvec_f Muon_eta, rvec_b Muon_looseId )
+bool LepVeto(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Muon_pt, rvec_f Muon_eta, rvec_b Muon_looseId, rvec_i Muon_pfIsoId)
 {
   int EleVetoPassed = 0;
   int MuVetoPassed = 0;
@@ -535,11 +633,11 @@ bool LepVeto(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, 
   
   for (size_t i = 0; i < Electron_pt.size(); i++) 
     {
-      if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30. && abs(Electron_eta[i])<2.4) EleVetoPassed+=1;
+      if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30. && abs(Electron_eta[i])<2.4 && Electron_mvaIso_WP80[i]==1) EleVetoPassed+=1;
     }
   for (size_t i = 0; i< Muon_pt.size(); i++)
     {
-      if(Muon_looseId[i]==1 && Muon_pt[i] > 30. && abs(Muon_eta[i])<2.4) MuVetoPassed+=1;
+      if(Muon_looseId[i]==1 && Muon_pt[i] > 30. && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) MuVetoPassed+=1;
     }
   if(EleVetoPassed+MuVetoPassed >0) IsLepVetoPassed = false;
   
