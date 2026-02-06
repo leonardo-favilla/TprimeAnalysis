@@ -255,17 +255,16 @@ def trigger_filter(df, isMC, year, DataMuon=None):
                             2023: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)",
                             2024: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)"
                             }
-    hlt_met             = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
     hlt_muon            = hlt_muon_dict[year]
 
     if isMC:
-        hlt_string      = hlt_met+" || "+hlt_muon
+        hlt_string      = hlt_muon
     else:
         # Avoid double counting between DataMuon and DataJetMET datasets
         if DataMuon:
             hlt_string  = hlt_muon
         else:
-            hlt_string  = hlt_met+" && !"+hlt_muon
+            hlt_string  = "!"+hlt_muon
     print(f"Applying trigger selection: {hlt_string}")
     df_trig             = df.Filter(hlt_string, "trigger selection")
     return df_trig
