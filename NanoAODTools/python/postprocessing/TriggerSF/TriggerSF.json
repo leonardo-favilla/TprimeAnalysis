@@ -1,0 +1,378 @@
+{
+  "schema_version": 2,
+  "description": null,
+  "corrections": [
+    {
+      "name": "triggerSF",
+      "description": null,
+      "version": 1,
+      "inputs": [
+        {
+          "name": "PuppiMET_pt",
+          "type": "real",
+          "description": "Puppi MET pt"
+        },
+        {
+          "name": "era",
+          "type": "string",
+          "description": "data taking era: 2022, 2022EE, 2023, 2023BPix"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "insert: sf, stat_err"
+        }
+      ],
+      "output": {
+        "name": "triggerSF",
+        "type": "real",
+        "description": "trigger scale factor"
+      },
+      "generic_formulas": null,
+      "data": {
+        "nodetype": "category",
+        "input": "era",
+        "content": [
+          {
+            "key": "2022",
+            "value": {
+              "nodetype": "category",
+              "input": "type",
+              "content": [
+                {
+                  "key": "sf",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      1.39,
+                      0.88,
+                      0.71,
+                      0.747,
+                      0.817,
+                      0.876,
+                      0.933,
+                      0.963,
+                      0.989,
+                      0.988,
+                      0.987,
+                      1.01
+                    ],
+                    "flow": "clamp"
+                  }
+                },
+                {
+                  "key": "stat_err",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.02,
+                      0.01,
+                      0.008,
+                      0.007,
+                      0.007,
+                      0.007,
+                      0.006,
+                      0.006,
+                      0.006,
+                      0.007,
+                      0.008,
+                      0.01
+                    ],
+                    "flow": "clamp"
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "key": "2022EE",
+            "value": {
+              "nodetype": "category",
+              "input": "type",
+              "content": [
+                {
+                  "key": "sf",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      2.16,
+                      1.198,
+                      0.984,
+                      0.938,
+                      0.936,
+                      0.951,
+                      0.968,
+                      0.976,
+                      0.985,
+                      0.989,
+                      0.987,
+                      0.972
+                    ],
+                    "flow": "clamp"
+                  }
+                },
+                {
+                  "key": "stat_err",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.02,
+                      0.007,
+                      0.005,
+                      0.004,
+                      0.004,
+                      0.003,
+                      0.003,
+                      0.003,
+                      0.003,
+                      0.003,
+                      0.003,
+                      0.006
+                    ],
+                    "flow": "clamp"
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "key": "2023",
+            "value": {
+              "nodetype": "category",
+              "input": "type",
+              "content": [
+                {
+                  "key": "sf",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.97,
+                      0.961,
+                      0.896,
+                      0.893,
+                      0.92,
+                      0.941,
+                      0.975,
+                      0.985,
+                      0.992,
+                      0.996,
+                      1.002,
+                      0.998
+                    ],
+                    "flow": "clamp"
+                  }
+                },
+                {
+                  "key": "stat_err",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.01,
+                      0.008,
+                      0.006,
+                      0.006,
+                      0.005,
+                      0.004,
+                      0.004,
+                      0.004,
+                      0.002,
+                      0.002,
+                      0.002,
+                      0.003
+                    ],
+                    "flow": "clamp"
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "key": "2023BPix",
+            "value": {
+              "nodetype": "category",
+              "input": "type",
+              "content": [
+                {
+                  "key": "sf",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.85,
+                      0.8,
+                      0.793,
+                      0.827,
+                      0.876,
+                      0.918,
+                      0.959,
+                      0.975,
+                      0.993,
+                      0.995,
+                      1.003,
+                      0.999
+                    ],
+                    "flow": "clamp"
+                  }
+                },
+                {
+                  "key": "stat_err",
+                  "value": {
+                    "nodetype": "binning",
+                    "input": "PuppiMET_pt",
+                    "edges": [
+                      100.0,
+                      125.0,
+                      150.0,
+                      175.0,
+                      200.0,
+                      225.0,
+                      250.0,
+                      275.0,
+                      300.0,
+                      350.0,
+                      400.0,
+                      500.0,
+                      1000.0
+                    ],
+                    "content": [
+                      0.01,
+                      0.01,
+                      0.008,
+                      0.007,
+                      0.007,
+                      0.006,
+                      0.005,
+                      0.005,
+                      0.003,
+                      0.003,
+                      0.003,
+                      0.004
+                    ],
+                    "flow": "clamp"
+                  }
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "default": null
+      }
+    }
+  ],
+  "compound_corrections": null
+}
