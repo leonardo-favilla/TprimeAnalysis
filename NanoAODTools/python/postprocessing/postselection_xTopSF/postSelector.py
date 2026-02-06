@@ -154,6 +154,10 @@ else:
     scenarios           = ["nominal"]
     xsecWeight          = 1.0
     ntot_events         = 1.0
+    if "Muon" in in_dataset:
+        DataMuon        = True
+    elif "JetMET" in in_dataset:
+        DataMuon        = False
 
 chain                                               = []
 tchain                                              = ROOT.TChain("Events")
@@ -245,33 +249,25 @@ def preselection(df, btagAlg, year, EE):
     return df
 
 ############### trigger selection #####################
-def trigger_filter(df, data, isMC, year):
-    hlt = {
-        2022: [
-                "HLT_PFMET120_PFMHT120_IDTight",          # MET (2022-2023)
-                "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",  # MET (2022-2023)
-                "HLT_Photon200",                          # High-pT electron (2022)
-                "HLT_Ele27_WPTight_Gsf",                  # Low-pT electron (2022)
-                "HLT_Mu50",                               # Muon (2022-2023)
-                "HLT_IsoMu24",                            # Muon (2022-2023)
-                "HLT_HighPtTkMu100",                      # Muon (2022-2023)
-                ],
+def trigger_filter(df, isMC, year, DataMuon=None):
+    hlt_muon_dict       = {
+                            2022: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)", # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonHLT
+                            2023: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)",
+                            2024: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)"
+                            }
+    hlt_met             = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
+    hlt_muon            = hlt_muon_dict[year]
 
-        2023: [
-                "HLT_PFMET120_PFMHT120_IDTight",          # MET (2022-2023)
-                "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",  # MET (2022-2023)
-                "HLT_Photon175EB_TightID_TightIso",       # High-pT electron (2023)
-                "HLT_Ele30_WPTight_Gsf",                  # Low-pT electron (2023)
-                "HLT_Mu50",                               # Muon (2022-2023)
-                "HLT_IsoMu24",                            # Muon (2022-2023)
-                "HLT_HighPtTkMu100",                      # Muon (2022-2023)
-            ],
-        2024: [
-            ]
-        }
-    # hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
-    hlt_met = f"({' || '.join(hlt[int(year)])})"
-    df_trig = df.Filter(hlt_met, "triggerMET")
+    if isMC:
+        hlt_string      = hlt_met+" || "+hlt_muon
+    else:
+        # Avoid double counting between DataMuon and DataJetMET datasets
+        if DataMuon:
+            hlt_string  = hlt_muon
+        else:
+            hlt_string  = hlt_met+" && !"+hlt_muon
+    print(f"Applying trigger selection: {hlt_string}")
+    df_trig             = df.Filter(hlt_string, "trigger selection")
     return df_trig
 
 ############### top selection ########################
@@ -384,14 +380,13 @@ for b in branches_dict[scenario]:
         df          = df.Define(b.replace(f"_{scenario_tag[scenario]}", ""), b)
 df                  = df.Define("PuppiMET_T1_pt_vec", "RVec<float>{ (float) PuppiMET_T1_pt}")\
                         .Define("PuppiMET_T1_phi_vec", "RVec<float>{ (float) PuppiMET_T1_phi}")
-df_trigger          = trigger_filter(df, None, None, year)
+df_trigger          = trigger_filter(df, isMC, year, DataMuon)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_toplep           = tag_toplep(df_presel)
 df_topselected      = select_top(df_toplep, isMC)
 
 #### Semi-leptonic selection ###
-df_semilep          = df_topselected.Filter("HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight || HLT_Mu50 || HLT_IsoMu24 || HLT_HighPtTkMu100", "triggerMuon")
-df_semilep          = df_semilep.Filter("nTopLep==1", "exactlyOneTightLepton")
+df_semilep          = df_semilep.Filter("nTopLep==1", "exactly 1 TightLepton")
 
 
 branches_to_save    = list(map(str, df_semilep.GetColumnNames()))
