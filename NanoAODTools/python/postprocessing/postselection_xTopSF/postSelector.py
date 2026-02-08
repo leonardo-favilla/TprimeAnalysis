@@ -149,6 +149,7 @@ if "Data" not in in_dataset:
     scenarios           = ["nominal", "jerUp", "jerDown", "jesUp", "jesDown"]
     xsecWeight          = sample_dict[in_dataset].sigma*10**3
     ntot_events         = np.sum(samples[in_dataset][in_dataset]['ntot'])
+    DataMuon            = None
 else:
     isMC                = False
     scenarios           = ["nominal"]
@@ -209,10 +210,10 @@ def preselection(df, btagAlg, year, EE):
     df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
     df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
     df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta)")
+    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
     df = df.Define("nTightMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")
     df = df.Define("TightMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId)")
+    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
     df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)")\
             .Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)")\
             .Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
@@ -385,7 +386,7 @@ df_toplep           = tag_toplep(df_presel)
 df_topselected      = select_top(df_toplep, isMC)
 
 #### Semi-leptonic selection ###
-df_semilep          = df_semilep.Filter("nTopLep==1", "exactly 1 TightLepton")
+df_semilep          = df_topselected.Filter("nTopLep==1", "exactly 1 TightLepton")
 
 
 branches_to_save    = list(map(str, df_semilep.GetColumnNames()))
