@@ -104,7 +104,7 @@ plotting:
 
   systematics:
     {
-      "2022":           ["QCDScale"],
+      "2022":           [], # "QCDScale"
       "2022EE":         [],
       "2023":           [],
       "2023postBPix":   []
