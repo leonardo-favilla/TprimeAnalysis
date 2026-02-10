@@ -452,7 +452,7 @@ for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
         dicanv          = make_stack_with_ratio(
                                                 canv_name           = canv_name,
                                                 histo_bkg_dict      = histo_bkg_dict,
-                                                histo_data          = histo_data,
+                                                histo_data          = None,
                                                 histo_signals_dict  = histo_signals_dict,
                                                 region              = r,
                                                 xMin                = xMin,

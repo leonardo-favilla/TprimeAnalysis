@@ -1,5 +1,6 @@
 import ROOT
 import cmsstyle as CMS
+import math
 ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetPalette(57)  # "DeepSea" palette
 
@@ -68,13 +69,13 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
     h_err_syst      = histo_bkg_dict["err_syst"].Clone("h_err_syst")
     for i in range(1, h_bkg.GetNbinsX()+1):
         h_err_syst.SetPoint(i-1, h_bkg.GetBinCenter(i), h_bkg.GetBinContent(i))
-
-    # if not systErr:
-    #     CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
-    #     leg.AddEntry(h_bkg, "Stat. Unc.", "F")
-    # else:
-    #     CMS.cmsDraw(h_err_syst, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
-    #     leg.AddEntry(h_err_syst, "Stat. + Syst. Unc.", "a2")
+    
+    if not systErr:
+        CMS.cmsDraw(h_bkg, "esame20", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
+        leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+    else:
+        CMS.cmsObjectDraw(h_err_syst, "asame2", FillColor=ROOT.kRed, FillStyle=3001, MarkerSize=1)
+        leg.AddEntry(h_err_syst, "Stat. + Syst. Unc.", "a2")
     
     
 

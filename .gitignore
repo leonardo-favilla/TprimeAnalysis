@@ -29,3 +29,5 @@ NanoAODTools/python/postprocessing/tmp_plotTesi_Scoretagger.py
 NanoAODTools/python/postprocessing/trial_canvas.png
 NanoAODTools/python/postprocessing/postselection/condor*/
 NanoAODTools/python/postprocessing/TriggerSF/condor/
+NanoAODTools/python/postprocessing/plotting/condor/
+NanoAODTools/python/postprocessing/postselection_xTopSF/condor/
