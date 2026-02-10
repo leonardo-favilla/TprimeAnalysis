@@ -213,6 +213,8 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
     df = df.Define("nTightMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")
     df = df.Define("TightMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")
+    df = df.Define("nLooseMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_looseId)")
+    df = df.Define("LooseMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_looseId)")
     df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
     df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)")\
             .Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)")\
@@ -330,7 +332,8 @@ def select_top(df, isMC):
     return df_topvariables
 
 def tag_toplep(df):
-    df_toplep   = df.Define("Muon_px",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+    df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1)",          "exactly 1 tight muon and no extra loose muon")\
+                    .Define("Muon_px",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
                     .Define("Muon_py",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*cos(Muon_phi[TightMuon_idx[0]]) : -9999.")\
                     .Define("MET_px",                                   "MET_pt*sin(MET_phi)")\
                     .Define("MET_py",                                   "MET_pt*cos(MET_phi)")\
