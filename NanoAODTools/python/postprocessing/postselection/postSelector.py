@@ -589,8 +589,6 @@ for d in datasets:
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         if sampleflag:
-            print("Defining triggerSF for "+ s.label)
-            print(f"GetTriggerSF(PuppiMET_pt, \"{era}\", \"sf\")")
             df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")') 
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag)
@@ -621,11 +619,11 @@ for d in datasets:
             
         if sampleflag:
             if (noSFbtag) and (not noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
             elif (not noSFbtag) and (noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')          # no puWeight
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')          # no puWeight
             elif noSFbtag and noPuWeight:
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                         # no puWeight no SFbtag
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                         # no puWeight no SFbtag
             else:   
                 df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF') # AllWeights
             # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
