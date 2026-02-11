@@ -344,12 +344,12 @@ bool MET_filter(bool flag_goodVertices, bool flag_globalSuperTightHalo2016Filter
 // ############## Trigger SF     ##########################
 // ########################################################
 
-float GetTriggerSF(float PuppiMET_pt){
+float GetTriggerSF(float PuppiMET_pt, std::string era, std::string type){
   auto cset = correction::CorrectionSet::from_file("../TriggerSF/TriggerSF.json");
-  auto triggerSF_corr = cset->at("TriggerSF");
+  auto triggerSF_corr = cset->at("triggerSF");
   float weight = 1.0;
   if (PuppiMET_pt > 100){
-    weight = triggerSF_corr->evaluate({PuppiMET_pt});
+    weight = triggerSF_corr->evaluate({PuppiMET_pt, era, type});
   }
   return weight;
 }
