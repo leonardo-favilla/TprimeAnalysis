@@ -605,6 +605,26 @@ RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
   return ids;
 }
 
+int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
+{
+  int n=0;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) n+=1;
+  }
+  return n;
+}
+
+RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) ids.emplace_back(i);
+  }
+  return ids;
+}
+
 int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta, rvec_i Electron_mvaIso_WP80)
 {
   int n=0;
@@ -1676,7 +1696,7 @@ RVec<int> idx_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon
 }
 
 ////// Return dR(bjet,mu) of b-jets that are matched to good muons within deltaR < 2.0
-RVec<float> dR_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi,  rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+RVec<float> dR_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr, float BestTopCand_eta, float BestTopCand_phi)
 {
   RVec<float> b;
   if (JetBTag_idx.size() == 0 || GoodMu_idx.size() == 0)
@@ -1689,12 +1709,18 @@ RVec<float> dR_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muo
     
     for(int m=0; m < GoodMu_idx.size(); m++)
     {
-      if(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]) < deltaR_thr) 
+      if(deltaR(BestTopCand_eta, BestTopCand_phi, Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]]) >= 1.2) // require that the b-jet is not coming from the hadronic top candidate
       {
-        b.emplace_back(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]));
-        alreadycounted = true;
+        if(deltaR(BestTopCand_eta, BestTopCand_phi, Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]) >= 1.2) // require that the muon is not coming from the hadronic top candidate
+        {
+          if(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]) < deltaR_thr) // if the b-jet is matched to the good muon within the deltaR threshold
+          {
+            b.emplace_back(deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]));
+            alreadycounted = true;
+          }
+        }
       }
-      if(alreadycounted) 
+      if(alreadycounted)
       {
           break;
       }
@@ -1702,4 +1728,88 @@ RVec<float> dR_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muo
     
   }
   return b;
+}
+
+// Return dR(bjet,mu) of b-jets that are matched to good muons within deltaR < 2.0
+RVec<float> dR_bJets_to_GoodMuons_within_dRthr(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+{
+  RVec<float> dR_sel;
+  RVec<int> b_sel;
+  RVec<int> m_sel;
+
+  if (JetBTag_idx.size() == 0 || GoodMu_idx.size() == 0)
+  {
+    return dR_sel;
+  }
+  for(int i=0; i < JetBTag_idx.size(); i++)
+  {
+    for(int m=0; m < GoodMu_idx.size(); m++)
+    {
+      float dR = deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]);
+      if(dR < deltaR_thr)
+      {
+        dR_sel.emplace_back(dR);
+        b_sel.emplace_back(JetBTag_idx[i]);
+        m_sel.emplace_back(GoodMu_idx[m]);
+      }
+    }
+  }
+
+  return dR_sel;
+}
+
+// Return index of b-jets that are matched to good muons within deltaR < 2.0
+RVec<float> bidx_bJets_to_GoodMuons_within_dRthr(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+{
+  RVec<float> dR_sel;
+  RVec<int> b_sel;
+  RVec<int> m_sel;
+
+  if (JetBTag_idx.size() == 0 || GoodMu_idx.size() == 0)
+  {
+    return b_sel;
+  }
+  for(int i=0; i < JetBTag_idx.size(); i++)
+  {
+    for(int m=0; m < GoodMu_idx.size(); m++)
+    {
+      float dR = deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]);
+      if(dR < deltaR_thr)
+      {
+        dR_sel.emplace_back(dR);
+        b_sel.emplace_back(JetBTag_idx[i]);
+        m_sel.emplace_back(GoodMu_idx[m]);
+      }
+    }
+  }
+
+  return b_sel;
+}
+
+// Return index of muons that are matched to good muons within deltaR < 2.0
+RVec<float> midx_bJets_to_GoodMuons_within_dRthr(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
+{
+  RVec<float> dR_sel;
+  RVec<int> b_sel;
+  RVec<int> m_sel;
+
+  if (JetBTag_idx.size() == 0 || GoodMu_idx.size() == 0)
+  {
+    return m_sel;
+  }
+  for(int i=0; i < JetBTag_idx.size(); i++)
+  {
+    for(int m=0; m < GoodMu_idx.size(); m++)
+    {
+      float dR = deltaR(Jet_eta[JetBTag_idx[i]], Jet_phi[JetBTag_idx[i]], Muon_eta[GoodMu_idx[m]], Muon_phi[GoodMu_idx[m]]);
+      if(dR < deltaR_thr)
+      {
+        dR_sel.emplace_back(dR);
+        b_sel.emplace_back(JetBTag_idx[i]);
+        m_sel.emplace_back(GoodMu_idx[m]);
+      }
+    }
+  }
+
+  return m_sel;
 }
