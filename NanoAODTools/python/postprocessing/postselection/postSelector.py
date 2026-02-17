@@ -297,7 +297,8 @@ def select_top(df, isMC):
     # where 3 means true end less than 3 means false 
     return df_topvariables
 def defineWeights(df, sampleflag):
-    df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
+    if sampleflag:
+        df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
             .Define("pdf_totalSF", "pdf_total_weights[0]")\
             .Define("pdf_totalUp", "pdf_total_weights[1]")\
             .Define("pdf_totalDown", "pdf_total_weights[2]")\
@@ -312,6 +313,8 @@ def defineWeights(df, sampleflag):
             .Define("ISRDown", "PSWeight_weights[0]")\
             .Define("FSRUp", "PSWeight_weights[3]")\
             .Define("FSRDown", "PSWeight_weights[2]")
+    else: 
+        df = df
     return df
 
 def energetic_variations(df):
