@@ -5,7 +5,8 @@ import sys
 sys.path.append('../')
 from make_stack import make_stack_with_ratio
 from samples.samples import *
-from variables import *
+# from variables import *
+from PhysicsTools.NanoAODTools.postprocessing.postselection_prefitTopSF.variables import *
 import copy
 import json
 import numpy as np
@@ -60,7 +61,7 @@ json_file_dict                      = config["dict_samples"]
 json_file_dict["2022EE"]            = json_file_dict["2022"]
 json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
-colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+colors_bkg                          = ["#e42536", "#ffcc00", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
                                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
@@ -72,6 +73,7 @@ style_signals_dict                  = {
                                     }
 labels_dict                         = {
                                         "TT":               "t#bar{t}",
+                                        "TW":               "tW",
                                         "QCD":              "QCD",
                                         "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
                                         "WJets":            "W (#it{l}#nu) + Jets",
@@ -211,6 +213,7 @@ for v in vars:
 
         histo_bkg_dict      = {
                                 "t#bar{t}":                 None,
+                                "tW":                       None,
                                 "QCD":                      None,
                                 "Z (#nu#nu) + Jets":        None,
                                 "W (#it{l}#nu) + Jets":     None
