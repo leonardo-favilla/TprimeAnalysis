@@ -2,7 +2,7 @@ outputfolder:
   postselector_results: { 
     "2022":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Feb26/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
     "2022EE":       "/eos/user/a/acagnott/DarkMatter/nosynch/run2022EE_Jan26/"       , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-    "2023":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2023_Jan26/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
     "2023postBPix": "/eos/user/a/acagnott/DarkMatter/nosynch/run2023postBPix_Jan26/", #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
     }
   triggerSF_results: { 
@@ -31,7 +31,7 @@ plotting:
     {
       "2022":               "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noPuWeight_prodNov25/",
       "2022EE":             "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/",
       "2023postBPix":       "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
       "Full2022":           ".",
       "Full2023":           ".",
@@ -42,7 +42,7 @@ plotting:
     {
       "2022":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022_syst_noPuWeight_prodNov25/",
       "2022EE":             "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2022EE_syst_310725/",
-      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023_syst_310725/",
+      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/SemiLep_prefit/run2023_SemiLep/",
       "2023postBPix":       "/eos/user/l/lfavilla/www/RDF_DManalysis/results/run2023postBPix_syst_310725/",
       "Full2022":           ".",
       "Full2023":           ".",
@@ -77,15 +77,15 @@ plotting:
               ],
       "2023":
               [
-                  "DataJetMET_2023",
-                  "TT_semilep_2023",
-                  "TT_hadr_2023",
+                  "DataMuon_2023",
+                  "TT_2023",
+                  "TW_2023",
                   "QCD_2023",
                   "ZJetsToNuNu_2jets_2023",
                   "WJets_2jets_2023",
-                  "TprimeToTZ_700_2023",
-                  "TprimeToTZ_1000_2023",
-                  "TprimeToTZ_1800_2023"
+                  # "TprimeToTZ_700_2023",
+                  # "TprimeToTZ_1000_2023",
+                  # "TprimeToTZ_1800_2023"
               ],
       "2023postBPix":
               [

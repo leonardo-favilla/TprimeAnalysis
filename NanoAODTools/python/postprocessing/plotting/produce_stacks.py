@@ -228,7 +228,8 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                          = v._name+"_"+r+"_"+"nominal"
+            # histo_name                          = v._name+"_"+r+"_"+"nominal"
+            histo_name                          = v._name+"_"+r
             # print(f"histo_name:                 {histo_name}")
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
@@ -268,7 +269,8 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                      = v._name+"_"+r+"_"+"nominal"
+            # histo_name                      = v._name+"_"+r+"_"+"nominal"
+            histo_name                      = v._name+"_"+r
             # print(f"histo_name:                 {histo_name}")
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             year_tag                        = s.label.split("_")[-1]
@@ -289,7 +291,7 @@ for v in vars:
             else:
                 continue
             # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
-            leg_label                       = labels_dict[s.label.split("_")[0]]
+            leg_label                       = labels_dict[s.process.split("_")[0]]
             # print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
