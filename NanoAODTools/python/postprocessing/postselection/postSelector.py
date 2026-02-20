@@ -44,8 +44,10 @@ do_snapshot             = False
 if do_variations:
     do_snapshot         = False
 remote_subfolder_name   = datetime.now().strftime("%Y%m%d") #20231229
-
-
+muonSF_dict_file        = "muonSF_dict.json" # path to the json file containing the muon SF json path for different eras, to be used in the GetMuonSF function in postselection.h
+#### LOAD Muon SF json file path ####
+with open(muonSF_dict_file, "r") as muonSF_file:
+    muonSF_dict         = json.load(muonSF_file)
 
 
 if do_variations == True:
@@ -194,12 +196,14 @@ def preselection(df, btagAlg, year, EE):
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
     df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
-    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
+    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
+    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
     df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
-    df = df.Define("nTightMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("TightMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
+    df = df.Define("nTightMuon",        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("TightMuon_idx",     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("nLooseMuon",        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("LooseMuon_idx",     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("nVetoMuon",         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
     df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
     df = df.Define("MT", "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
     
@@ -235,9 +239,29 @@ def preselection(df, btagAlg, year, EE):
     return df
 
 ############### trigger selection #####################
-def trigger_filter(df, data, isMC):
-    hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
-    df_trig = df.Filter(hlt_met, "triggerMET")
+# def trigger_filter(df, data, isMC):
+#     hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
+#     df_trig = df.Filter(hlt_met, "triggerMET")
+#     return df_trig
+
+def trigger_filter(df, isMC, year, DataMuon=None):
+    hlt_muon_dict       = {
+                            2022: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)", # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonHLT
+                            2023: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)",
+                            2024: "(HLT_IsoMu24 || HLT_Mu50 || HLT_CascadeMu100 || HLT_HighPtTkMu100)"
+                            }
+    hlt_muon            = hlt_muon_dict[year]
+
+    if isMC:
+        hlt_string      = hlt_muon
+    else:
+        # Avoid double counting between DataMuon and DataJetMET datasets
+        if DataMuon:
+            hlt_string  = hlt_muon
+        else:
+            hlt_string  = "!"+hlt_muon
+    print(f"Applying trigger selection: {hlt_string}")
+    df_trig             = df.Filter(hlt_string, "trigger selection")
     return df_trig
 
 ############### top selection ########################
@@ -295,23 +319,79 @@ def select_top(df, isMC):
         df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
+
+    df_topselected = df_topvariables.Define("BestTopResolved_idx", "TopResolved_TopScore_nominal.size() == 0 ? -1 : (int)ArgMax(TopResolved_TopScore_nominal)")\
+                                    .Define("BestTopMixed_idx",    "TopMixed_TopScore_nominal.size() == 0 ? -1 : (int)ArgMax(TopMixed_TopScore_nominal)")\
+                                    .Define("BestTopMerged_idx",   "FatJet_particleNetWithMass_TvsQCD.size() == 0 ? -1 : (int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
+
+    df_topvariables = df_topselected.Define("BestTopResolved_pt",   "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_pt_nominal.size() ? TopResolved_pt_nominal[BestTopResolved_idx] : -9999.")\
+                                    .Define("BestTopResolved_eta",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_eta.size() ? TopResolved_eta[BestTopResolved_idx] : -9999.")\
+                                    .Define("BestTopResolved_phi",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_phi.size() ? TopResolved_phi[BestTopResolved_idx] : -9999.")\
+                                    .Define("BestTopResolved_mass", "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_mass_nominal.size() ? TopResolved_mass_nominal[BestTopResolved_idx] : -9999.")\
+                                    .Define("BestTopResolved_score","BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_TopScore_nominal.size() ? TopResolved_TopScore_nominal[BestTopResolved_idx] : -9999.")\
+                                    .Define("BestTopMixed_pt",   "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_pt_nominal.size() ? TopMixed_pt_nominal[BestTopMixed_idx] : -9999.")\
+                                    .Define("BestTopMixed_eta",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_eta.size() ? TopMixed_eta[BestTopMixed_idx] : -9999.")\
+                                    .Define("BestTopMixed_phi",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_phi.size() ? TopMixed_phi[BestTopMixed_idx] : -9999.")\
+                                    .Define("BestTopMixed_mass", "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_mass_nominal.size() ? TopMixed_mass_nominal[BestTopMixed_idx] : -9999.")\
+                                    .Define("BestTopMixed_score","BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_TopScore_nominal.size() ? TopMixed_TopScore_nominal[BestTopMixed_idx] : -9999.")\
+                                    .Define("BestTopMerged_pt",   "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_pt_nominal.size() ? FatJet_pt_nominal[BestTopMerged_idx] : -9999.")\
+                                    .Define("BestTopMerged_eta",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_eta.size() ? FatJet_eta[BestTopMerged_idx] : -9999.")\
+                                    .Define("BestTopMerged_phi",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_phi.size() ? FatJet_phi[BestTopMerged_idx] : -9999.")\
+                                    .Define("BestTopMerged_mass", "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_mass_nominal.size() ? FatJet_mass_nominal[BestTopMerged_idx] : -9999.")\
+                                    .Define("BestTopMerged_score","BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_particleNetWithMass_TvsQCD.size() ? FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx] : -9999.")
+        
+    if isMC:
+        df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2", "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2) : 0.")\
+                                         .Define("TopMixedMatched_to_GenTop_dR0p2", "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMixed_eta, BestTopMixed_phi, 0.2) : 0.")\
+                                         .Define("TopMergedMatched_to_GenTop_dR0p2", "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMerged_eta, BestTopMerged_phi, 0.2) : 0.")
+
     return df_topvariables
+
+def tag_toplep(df):
+    df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")
+    df_toplep   = df_toplep.Define("Muon_px",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*sin(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                           .Define("Muon_py",                                  "(int)nTightMuon > 0 ? Muon_pt[TightMuon_idx[0]]*cos(Muon_phi[TightMuon_idx[0]]) : -9999.")\
+                           .Define("MET_px",                                   "MET_pt*sin(MET_phi)")\
+                           .Define("MET_py",                                   "MET_pt*cos(MET_phi)")\
+                           .Define("W_pt",                                     "(int)nTightMuon > 0 ? sqrt(pow(Muon_px+MET_px, 2)+pow(Muon_py+MET_py, 2)) : -9999.")\
+                           .Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bJet_TopLep_idx",                          "dR_bJet_GoodMuon.size() ==0 ? -1 : (int)ArgMin(bidx_bJet_GoodMuon)")\
+                           .Define("mu_TopLep_idx",                            "dR_bJet_GoodMuon.size() ==0 ? -1 : (int)ArgMin(midx_bJet_GoodMuon)")\
+                           .Define("dR_bJetTopLep_BestTopResolved",            "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
+                           .Define("dR_bJetTopLep_BestTopMixed",               "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
+                           .Define("dR_bJetTopLep_BestTopMerged",              "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")\
+                           .Define("dR_muTopLep_BestTopResolved",              "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
+                           .Define("dR_muTopLep_BestTopMixed",                 "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
+                           .Define("dR_muTopLep_BestTopMerged",                "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")
+                           # .Define("bJetsMatched_to_GoodMuon_idx",             "idx_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                           # .Define("bJetsMatched_to_GoodMuon_dR",              "dR_of_bJetsMatched_to_GoodMuon_with_dR(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+                           # .Define("nearest_bJetMatched_to_GoodMuon_idx",      "bJetsMatched_to_GoodMuon_idx.size() == 0 ? -1 : (int)ArgMin(bJetsMatched_to_GoodMuon_dR)")\
+                           # .Define("nearest_bJetMatched_to_GoodMuon_dR",       "bJetsMatched_to_GoodMuon_idx.size() == 0 ? -9999 : (float)Min(bJetsMatched_to_GoodMuon_dR)")\
+                           # .Define("nTopLep",                                  "(int)nTightMuon > 0 ? (int)bJetsMatched_to_GoodMuon_idx.size() : 0.")
+    return df_toplep
+
+
 def defineWeights(df, sampleflag):
-    df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
-            .Define("pdf_totalSF", "pdf_total_weights[0]")\
-            .Define("pdf_totalUp", "pdf_total_weights[1]")\
-            .Define("pdf_totalDown", "pdf_total_weights[2]")\
-            .Define("QCDScale_weights", "QCDScale_variations(LHEScaleWeight)")\
-            .Define("QCDScaleSF", "QCDScale_weights[0]")\
-            .Define("QCDScaleUp", "QCDScale_weights[1]")\
-            .Define("QCDScaleDown", "QCDScale_weights[2]")\
-            .Define("ISRSF", "1.f")\
-            .Define("FSRSF", "1.f")\
-            .Define("PSWeight_weights", "PSWeight_variations(PSWeight)")\
-            .Define("ISRUp", "PSWeight_weights[1]")\
-            .Define("ISRDown", "PSWeight_weights[0]")\
-            .Define("FSRUp", "PSWeight_weights[3]")\
-            .Define("FSRDown", "PSWeight_weights[2]")
+    if sampleflag:
+        df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
+                .Define("pdf_totalSF", "pdf_total_weights[0]")\
+                .Define("pdf_totalUp", "pdf_total_weights[1]")\
+                .Define("pdf_totalDown", "pdf_total_weights[2]")\
+                .Define("QCDScale_weights", "QCDScale_variations(LHEScaleWeight)")\
+                .Define("QCDScaleSF", "QCDScale_weights[0]")\
+                .Define("QCDScaleUp", "QCDScale_weights[1]")\
+                .Define("QCDScaleDown", "QCDScale_weights[2]")\
+                .Define("ISRSF", "1.f")\
+                .Define("FSRSF", "1.f")\
+                .Define("PSWeight_weights", "PSWeight_variations(PSWeight)")\
+                .Define("ISRUp", "PSWeight_weights[1]")\
+                .Define("ISRDown", "PSWeight_weights[0]")\
+                .Define("FSRUp", "PSWeight_weights[3]")\
+                .Define("FSRDown", "PSWeight_weights[2]")
+    else:
+        df = df
     return df
 
 def energetic_variations(df):
@@ -545,15 +625,24 @@ for d in datasets:
     else:
         s_list              = [d]
     if 'Data' in d.label:
+        isMC                = False
         sampleflag          = 0
+        if "Muon" in s.label:
+            DataMuon        = True
+        elif "JetMET" in s.label:
+            DataMuon        = False
     else:
+        isMC                = True
         sampleflag          = 1
+        DataMuon            = None
+
     c_                      = cut
     h[d.label]              = {}
     h_2D[d.label]           = {}
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
+
         if os.path.exists(repohisto+s.label+'.root'):
             os.remove(repohisto+s.label+'.root')
         print("Processing dataset: ", s.label)
@@ -589,7 +678,7 @@ for d in datasets:
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         if sampleflag:
-            df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")') 
+            df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag)
 
@@ -606,7 +695,8 @@ for d in datasets:
         df_year             = df_ismc.Define("year", str(s.year))
         df_hemveto          = df_year.Define("HEMVeto", "hemveto(Jet_eta, Jet_phi, Electron_eta, Electron_phi)")
         df_hemveto          = df_hemveto.Filter("(isMC || (year != 2018) || (HEMVeto || run<319077.))")
-        df_hlt              = trigger_filter(df_hemveto, s.label, sampleflag)
+        # df_hlt              = trigger_filter(df_hemveto, s.label, sampleflag)
+        df_hlt              = trigger_filter(df_hemveto, isMC, s.year, DataMuon)
         
         if "ZJets" in s.label: 
             df_hlt = df_hlt.Define("w_nominal", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
@@ -635,7 +725,12 @@ for d in datasets:
         df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
         df_topsel       = select_top(df_presel, sampleflag)
         df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
-        
+        df_topsel       = tag_toplep(df_topsel)
+
+        if sampleflag:
+            df_topsel   = df_topsel.Define("muonSF", f'GetMuonSF("{muonSF_dict[era]}", Muon_eta[TightMuon_idx[0]], Muon_pt[TightMuon_idx[0]], "nominal")') # Muon_et[0], Muon_pt[0] because we only select events with only 1 TightMuon
+            df_topsel   = df_topsel.Redefine('w_nominal', 'w_nominal*muonSF')
+                                                                                           # add muon SF to the weight
         # command for printing the cutflow, add it in the SRs for all the bkgs 
         df_topsel.Report().Print()
 
@@ -674,9 +769,9 @@ if do_histos:
                 savehisto(d, h_varied, regions_def, var, s_cut)
             else:
                 savehisto(d, h, regions_def, var, s_cut)
-        if len(var2d) != 0 :
-            savehisto2d(d, h_2D, regions_def, var2d, s_cut)
-        print(d.label + " histos saved")
+        # if len(var2d) != 0 :
+        #     savehisto2d(d, h_2D, regions_def, var2d, s_cut)
+        # print(d.label + " histos saved")
 if do_snapshot:
     snapshot_df.GetValue()
     print("Snapshot done!")

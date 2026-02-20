@@ -60,7 +60,7 @@ json_file_dict                      = config["dict_samples"]
 json_file_dict["2022EE"]            = json_file_dict["2022"]
 json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
-colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+colors_bkg                          = ["#e42536", "#ffcc00", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
                                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
@@ -72,6 +72,7 @@ style_signals_dict                  = {
                                     }
 labels_dict                         = {
                                         "TT":               "t#bar{t}",
+                                        "TW":               "tW",
                                         "QCD":              "QCD",
                                         "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
                                         "WJets":            "W (#it{l}#nu) + Jets",
@@ -168,7 +169,6 @@ for dat in datasets:
     year_tag        = dat.split("_")[-1]
     folder_tmp      = folder_dict[year_tag]
     repohisto_tmp   = folder_tmp + "plots/"
-    # repohisto_tmp   = folder_tmp + "plots_rescaled_to_lumi/"
     d               = sample_dict[dat]
     if hasattr(d, "components"):
         s_list      = d.components
@@ -187,6 +187,10 @@ for dat in datasets:
             inFilePath["bkg"].append(repohisto_tmp + s.label + ".root")
             inFile["bkg"].append(ROOT.TFile.Open(repohisto_tmp + s.label + ".root"))
             inSample["bkg"].append(s)
+
+print(f'inSample["Data"]:     {[s.label for s in inSample["Data"]]}')
+print(f'inSample["signal"]:   {[s.label for s in inSample["signal"]]}')
+print(f'inSample["bkg"]:      {[s.label for s in inSample["bkg"]]}')
 
 
 ### rebinning for MT ###
@@ -211,6 +215,7 @@ for v in vars:
 
         histo_bkg_dict      = {
                                 "t#bar{t}":                 None,
+                                "tW":                       None,
                                 "QCD":                      None,
                                 "Z (#nu#nu) + Jets":        None,
                                 "W (#it{l}#nu) + Jets":     None
@@ -225,7 +230,7 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                          = v._name+"_"+r+"_"+"nominal"
+            histo_name                          = v._name+"_"+r
             # print(f"histo_name:                 {histo_name}")
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
@@ -265,7 +270,7 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                      = v._name+"_"+r+"_"+"nominal"
+            histo_name                      = v._name+"_"+r
             # print(f"histo_name:                 {histo_name}")
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             year_tag                        = s.label.split("_")[-1]
@@ -286,7 +291,7 @@ for v in vars:
             else:
                 continue
             # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
-            leg_label                       = labels_dict[s.label.split("_")[0]]
+            leg_label                       = labels_dict[s.process.split("_")[0]]
             # print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
@@ -335,13 +340,14 @@ for v in vars:
 
         ##### Drawing Options ######
         if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
-            # logy    = False
             logy    = False
+            # logy    = True
         elif "SR" in r:
-            # logy = False
-            logy    = True
+            logy = False
+            # logy    = True
         else:
-            logy    = True
+            logy = False
+            # logy    = True
 
         ##### X-axis ######
         xTitle              = v._title
@@ -396,12 +402,12 @@ for v in vars:
 
         ##### Ratio Plot ######
         rTitle          = "Data / MC"
-        rMin            = 0.0
-        rMax            = 2.0
+        rMin            = 0
+        rMax            = 2
 
 
         ##### Drawing Stacks ######
-        canv_name       = "canvas_"+v._name+"_"+r+"_"+"nominal"
+        canv_name       = "canvas_"+v._name+"_"+r
         dicanv          = make_stack_with_ratio(
                                                 canv_name           = canv_name,
                                                 histo_bkg_dict      = histo_bkg_dict,

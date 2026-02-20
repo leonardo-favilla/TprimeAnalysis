@@ -19,9 +19,10 @@ samples_to_check    = [
                         "ZJetsToNuNu_2jets",
                         "WJets_2jets",
                         "DataJetMET",
-                        "TprimeToTZ_700",
-                        "TprimeToTZ_1000",
-                        "TprimeToTZ_1800",
+                        "DataMuon",
+                        # "TprimeToTZ_700",
+                        # "TprimeToTZ_1000",
+                        # "TprimeToTZ_1800",
                         ]
 components_to_check = []
 
