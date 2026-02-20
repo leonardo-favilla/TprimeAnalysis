@@ -237,16 +237,17 @@ regions = {
     # "PreselNoTop"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==4",
     
 
-    "SemiLep_ResolvedLooseButNotTight_pt0to200_pass":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
-    "SemiLep_ResolvedLooseButNotTight_pt0to200_fail":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score<0.1422998",
-    "SemiLep_ResolvedLooseButNotTight_pt200to400_pass":     semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
-    "SemiLep_ResolvedLooseButNotTight_pt200to400_fail":     semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && BestTopResolved_score<0.1422998",
-    "SemiLep_ResolvedLooseButNotTight_pt400to600_pass":     semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
-    "SemiLep_ResolvedLooseButNotTight_pt400to600_fail":     semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && BestTopResolved_score<0.1422998",
-    "SemiLep_ResolvedLooseButNotTight_pt600to1000_pass":    semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
-    "SemiLep_ResolvedLooseButNotTight_pt600to1000_fail":    semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && BestTopResolved_score<0.1422998",
+    # "SemiLep_ResolvedLooseButNotTight_pt0to200_pass":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
+    # "SemiLep_ResolvedLooseButNotTight_pt0to200_fail":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score<0.1422998",
+    # "SemiLep_ResolvedLooseButNotTight_pt200to400_pass":     semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
+    # "SemiLep_ResolvedLooseButNotTight_pt200to400_fail":     semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && BestTopResolved_score<0.1422998",
+    # "SemiLep_ResolvedLooseButNotTight_pt400to600_pass":     semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
+    # "SemiLep_ResolvedLooseButNotTight_pt400to600_fail":     semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && BestTopResolved_score<0.1422998",
+    # "SemiLep_ResolvedLooseButNotTight_pt600to1000_pass":    semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
+    # "SemiLep_ResolvedLooseButNotTight_pt600to1000_fail":    semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && BestTopResolved_score<0.1422998",
 
 
+    "SemiLep_MixedLooseButNotTight_pt0to200_pass":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
     "SemiLep_MixedLooseButNotTight_pt0to200_pass":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
     "SemiLep_MixedLooseButNotTight_pt0to200_fail":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score<0.7214655876159668",
     "SemiLep_MixedLooseButNotTight_pt200to400_pass":        semilepPreselMixed + " && (BestTopMixed_pt>=200) && (BestTopMixed_pt<400)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
@@ -257,12 +258,12 @@ regions = {
     "SemiLep_MixedLooseButNotTight_pt600to1000_fail":       semilepPreselMixed + " && (BestTopMixed_pt>=600) && (BestTopMixed_pt<1000)" + " && BestTopMixed_score<0.7214655876159668",
 
 
-    "SemiLep_MergedLooseButNotTight_pt0to200_pass":         semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
-    "SemiLep_MergedLooseButNotTight_pt0to200_fail":         semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && BestTopMerged_score<0.8",
-    "SemiLep_MergedLooseButNotTight_pt200to400_pass":       semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
-    "SemiLep_MergedLooseButNotTight_pt200to400_fail":       semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && BestTopMerged_score<0.8",
-    "SemiLep_MergedLooseButNotTight_pt400to600_pass":       semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
-    "SemiLep_MergedLooseButNotTight_pt400to600_fail":       semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && BestTopMerged_score<0.8",
-    "SemiLep_MergedLooseButNotTight_pt600to1000_pass":      semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
-    "SemiLep_MergedLooseButNotTight_pt600to1000_fail":      semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && BestTopMerged_score<0.8",
+    # "SemiLep_MergedLooseButNotTight_pt0to200_pass":         semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
+    # "SemiLep_MergedLooseButNotTight_pt0to200_fail":         semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && BestTopMerged_score<0.8",
+    # "SemiLep_MergedLooseButNotTight_pt200to400_pass":       semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
+    # "SemiLep_MergedLooseButNotTight_pt200to400_fail":       semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && BestTopMerged_score<0.8",
+    # "SemiLep_MergedLooseButNotTight_pt400to600_pass":       semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
+    # "SemiLep_MergedLooseButNotTight_pt400to600_fail":       semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && BestTopMerged_score<0.8",
+    # "SemiLep_MergedLooseButNotTight_pt600to1000_pass":      semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",
+    # "SemiLep_MergedLooseButNotTight_pt600to1000_fail":      semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && BestTopMerged_score<0.8",
 }
