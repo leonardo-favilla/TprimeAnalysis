@@ -1096,7 +1096,7 @@ Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i 
   else if (nTightRes<=1 && nTightMix==1 && nTightMer==0){
     return 2;
   }
-  else if (nTightRes==0 && nTightMix<=1 && nTightMer==1){
+  else if ((nTightRes==0 && nTightMix<=1 && nTightMer==1) || (nTightRes==1 && nTightMix==1 && nTightMer==1)){
     return 3;
   }
 
@@ -1107,7 +1107,7 @@ Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i 
   else if (nLooseRes<=1 && nLooseMix==1 && nLooseMer==0){
     return 5;
   }
-  else if (nLooseRes==0 && nLooseMix<=1 && nLooseMer==1){
+  else if ((nLooseRes==0 && nLooseMix<=1 && nLooseMer==1) || (nLooseRes==1 && nLooseMix==1 && nLooseMer==1)){
     return 6;
   }
   else 
