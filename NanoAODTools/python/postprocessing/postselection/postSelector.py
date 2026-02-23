@@ -28,6 +28,7 @@ parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--noPuWeight',         dest='noPuWeight',          action='store_true',    default=False,                                  help='remove PU weight')
 parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
+parser.add_option(      '--printcutflow',        dest='printcutflow',        action='store_true',    default=False,                                  help='print cutflow')
 
 
 (opt, args)             = parser.parse_args()
@@ -39,6 +40,7 @@ noPuWeight              = opt.noPuWeight
 dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
+printcutflow            = opt.printcutflow
 do_histos               = True
 do_snapshot             = False
 if do_variations:
@@ -183,6 +185,42 @@ for d in datasets:
 ################### utils ###################
 def cut_string(cut):
     return cut.replace(" ", "").replace("&&","_").replace(">","_g_").replace(".","_").replace("==","_e_")
+
+def split_cuts_keeping_parentheses(cut_string):
+    """
+    Splits a cut string by '&&' while keeping parenthesized expressions together.
+    Example: "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0) && nJetBtagLoose>0"
+    Returns: ["PuppiMET_T1_pt_nominal>250", "MinDelta_phi>0.6", "(nVetoElectron==0 && nVetoMuon==0)", "nJetBtagLoose>0"]
+    """
+    cuts = []
+    current_cut = ""
+    paren_depth = 0
+    
+    i = 0
+    while i < len(cut_string):
+        char = cut_string[i]
+        
+        if char == '(':
+            paren_depth += 1
+            current_cut += char
+        elif char == ')':
+            paren_depth -= 1
+            current_cut += char
+        elif char == '&' and i + 1 < len(cut_string) and cut_string[i + 1] == '&' and paren_depth == 0:
+            # Found '&&' at depth 0, so this is a cut separator
+            cuts.append(current_cut.strip())
+            current_cut = ""
+            i += 1  # Skip the second '&'
+        else:
+            current_cut += char
+        
+        i += 1
+    
+    # Add the last cut
+    if current_cut.strip():
+        cuts.append(current_cut.strip())
+    
+    return cuts
 
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
@@ -350,7 +388,17 @@ def bookhisto(df, regions_def, var, s_cut):
                 else:
                     if "NoPu" in reg: 
                         h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name)
-                    else: h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title, v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
+                    else: 
+                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title, v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
+                        if printcutflow and 'SRTop' in reg:
+                            cuts = split_cuts_keeping_parentheses(regions_def[reg])
+                            # print("Cutflow for region {}:".format(reg))
+                            # print(cuts)
+                            print("Cutflow for region {}:".format(reg))
+                            df_cutflow = df
+                            for cut in cuts:
+                                df_cutflow = df_cutflow.Filter(cut, cut)
+                            df_cutflow.Report().Print()
     return h_
 
 def bookhisto2D(df, regions_def, var2d, s_cut):
@@ -640,7 +688,8 @@ for d in datasets:
         df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
         
         # command for printing the cutflow, add it in the SRs for all the bkgs 
-        df_topsel.Report().Print()
+        if printcutflow:
+            df_topsel.Report().Print()
 
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()

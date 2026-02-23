@@ -15,14 +15,13 @@ def createcanv(name_canv ):
     cmsstyle.SetLumi(lumi,"fb","",1)
     cmsstyle.SetExtraText("")
     # Scientific notation
-    # hdf = cmsstyle.GetcmsCanvasHist(canv)
-    # hdf.GetYaxis().SetMaxDigits(2)
     # Shift multiplier position
-    # ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
+    ROOT.TGaxis.SetExponentOffset(-0.10, 0.01, "Y")
     canv = cmsstyle.cmsCanvas(name_canv, -0.5, 5.5, -0.5, 5.5, "# Top Mixed", "# Top Resolved", square=True, with_z_axis=True, iPos=0)
+    # hdf.GetZaxis().SetMaxDigits(2)
     # canv.SetLeftMargin(0.15)
     # canv.SetBottomMargin(0.15)
-    # canv.SetRightMargin(0.15)
+    canv.SetRightMargin(0.2)
     # canv.SetTopMargin(0.15)
     return canv
 
@@ -69,8 +68,8 @@ for t in ["0TopMer", "1TopMer"]:
     cmsstyle.SetAlternative2DColor(h1)
 
     cmsstyle.cmsObjectDraw(h1,f"COLZ text")
-    cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_bkg.png",  close=False)
-    cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_bkg.pdf")
+    cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_bkg.png",  close=False)
+    cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_bkg.pdf")
 
     histogram_fin ={}
     for filepath, sample, n in zip(filelist, samples, ntot):
@@ -96,8 +95,8 @@ for t in ["0TopMer", "1TopMer"]:
         cmsstyle.SetAlternative2DColor(h1)
 
         cmsstyle.cmsObjectDraw(h1,f"COLZ text")
-        cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_{sample.label}.png",  close=False)
-        cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_{sample.label}.pdf")
+        cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_{sample.label}.png",  close=False)
+        cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_{sample.label}.pdf")
         file.Close()
 
     for i in range(1, histogram_fin_bkg.GetNbinsX() + 1):
@@ -108,9 +107,11 @@ for t in ["0TopMer", "1TopMer"]:
 
     for k in histogram_fin.keys():
         canv = createcanv(f"NtopResVsNtopMixVs{t}_{k}_significance")
+        hdf = cmsstyle.GetCmsCanvasHist(canv)
+        hdf.GetZaxis().SetTitle("Significance")
         hist_significance = histogram_fin[k].Clone()
         hist_significance.Divide(histogram_fin_bkg)
         cmsstyle.SetAlternative2DColor(hist_significance)
         cmsstyle.cmsObjectDraw(hist_significance, "COLZ text")
-        cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_{k}_significance.png", close=False)
-        cmsstyle.SaveCanvas(canv, folder+f"NtopResVsNtopMixVs{t}_{k}_significance.pdf")
+        cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_{k}_significance.png", close=False)
+        cmsstyle.SaveCanvas(canv, f"/eos/home-a/acagnott/www/2dplotsTprime/NtopResVsNtopMixVs{t}_{k}_significance.pdf")
