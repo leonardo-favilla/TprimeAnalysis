@@ -440,15 +440,15 @@ def bookhisto(df, regions_def, var, s_cut):
                         h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name)
                     else: 
                         h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title, v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
-                        if printcutflow and 'SRTop' in reg:
-                            cuts = split_cuts_keeping_parentheses(regions_def[reg])
-                            # print("Cutflow for region {}:".format(reg))
-                            # print(cuts)
-                            print("Cutflow for region {}:".format(reg))
-                            df_cutflow = df
-                            for cut in cuts:
-                                df_cutflow = df_cutflow.Filter(cut, cut)
-                            df_cutflow.Report().Print()
+        if printcutflow and 'SRTop' in reg:
+            cuts = split_cuts_keeping_parentheses(regions_def[reg])
+            # print("Cutflow for region {}:".format(reg))
+            # print(cuts)
+            print("Cutflow for region {}:".format(reg))
+            df_cutflow = df
+            for cut in cuts:
+                df_cutflow = df_cutflow.Filter(cut, cut)
+            df_cutflow.Report().Print()
     return h_
 
 def bookhisto2D(df, regions_def, var2d, s_cut):
@@ -741,8 +741,8 @@ for d in datasets:
         df_TrotaSF      = add_TrotaScaleFactors(df_topsel, sampleflag, sample_process)
 
         # command for printing the cutflow, add it in the SRs for all the bkgs 
-        if printcutflow:
-            df_TrotaSF.Report().Print()
+        # if printcutflow:
+        #     df_topsel.Report().Print()
 
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()
