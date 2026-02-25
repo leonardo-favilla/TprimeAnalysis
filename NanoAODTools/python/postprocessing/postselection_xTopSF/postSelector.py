@@ -76,7 +76,7 @@ print(f"Processing component {in_dataset}, year {year}, scenario {scenario}")
 #### Define output files and folders ####
 if where_to_write == "eos":
     remote_folder_name              = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF"
-    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal/"
+    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal_latest/"
     outSubFolder                    = outFolder+in_dataset+"/"
     if not os.path.exists(remote_folder_name):
         os.makedirs(remote_folder_name)
@@ -86,7 +86,7 @@ if where_to_write == "eos":
         os.makedirs(outSubFolder)
 elif where_to_write == "tier":
     remote_folder_name              = "TopSF"
-    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal/"
+    outFolder                       = remote_folder_name+"/ntuples_ready_for_TopSF_Framework_minimal_latest/"
     outSubFolder                    = outFolder+in_dataset+"/"
 
     print("davix-mkdir davs://webdav.recas.ba.infn.it:8443/cms/store/user/{}/{}/ -E {} --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/".format(username, remote_folder_name, certpath))
@@ -208,13 +208,13 @@ def preselection(df, btagAlg, year, EE):
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
 
     df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi, Jet_phi, GoodJet_idx)")
-    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
+    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
+    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
     df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
-    df = df.Define("nTightMuon",        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")\
-           .Define("TightMuon_idx",     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")\
-           .Define("nLooseMuon",        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId)")\
-           .Define("LooseMuon_idx",     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId)")\
+    df = df.Define("nTightMuon",        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("TightMuon_idx",     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("nLooseMuon",        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("LooseMuon_idx",     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
            .Define("nVetoMuon",         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
     df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)")\
             .Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)")\
@@ -397,12 +397,20 @@ df_trigger          = trigger_filter(df, isMC, year, DataMuon)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_tophadr          = select_top(df_presel, isMC)
 df_toplep           = tag_toplep(df_tophadr)
+n_trigger           = df_trigger.Count()
+n_presel            = df_presel.Count()
+n_tophadr           = df_tophadr.Count()
+n_toplep            = df_toplep.Count()
+print(n_trigger.GetValue())
+print(n_presel.GetValue())
+print(n_tophadr.GetValue())
+print(n_toplep.GetValue())
 
 #### Semi-leptonic selection ###
 # df_semilep          = df_topselected.Filter("nTopLep==1", "exactly 1 TightLepton")
 
 
-branches_to_save    = list(map(str, df_tophadr.GetColumnNames()))
+branches_to_save    = list(map(str, df_toplep.GetColumnNames()))
 branches_to_save    = [b for b in branches_to_save if "Tau" not in b]
 if not "Data" in in_dataset:
     branches_to_save.remove("SFbtag_nominal")

@@ -1,2 +1,7 @@
 #!/bin/bash
 
+condor_submit ./condor/ZJetsToNuNu_2jets_PT40to100_1J_2023_nominal_0/condor.sub
+condor_submit ./condor/ZJetsToNuNu_2jets_PT40to100_1J_2023_jerUp_0/condor.sub
+condor_submit ./condor/ZJetsToNuNu_2jets_PT40to100_1J_2023_jerDown_0/condor.sub
+condor_submit ./condor/ZJetsToNuNu_2jets_PT40to100_1J_2023_jesUp_0/condor.sub
+condor_submit ./condor/ZJetsToNuNu_2jets_PT40to100_1J_2023_jesDown_0/condor.sub

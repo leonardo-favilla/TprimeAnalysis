@@ -565,62 +565,62 @@ RVec<int> CalculateToptruth1(rvec_i TopMixed_idxJet0, rvec_i TopMixed_idxJet1, r
 // ########################################################
 // ########## PRESELECTION ################################
 // ########################################################
-int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased)
+int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) n+=1;
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
   }
   return n;
 }
 
-RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased)
+RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
 {
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
   }
   return ids;
 }
 
-int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
+int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
 {
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) n+=1;
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
   }
   return n;
 }
 
-RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
+RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
 {
   RVec<int> ids;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) ids.emplace_back(i);
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
   }
   return ids;
 }
 
-int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
+int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
 {
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) n+=1;
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
   }
   return n;
 }
 
-RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId)
+RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
 {
   RVec<int> ids;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) ids.emplace_back(i);
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
   }
   return ids;
 }

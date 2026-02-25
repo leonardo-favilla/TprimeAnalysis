@@ -5,7 +5,7 @@ CERT="/tmp/x509up_u159320"
 CAPATH="/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates"
 
 # Cartella principale da pulire
-BASE_URL="davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/TopSF/ntuples_ready_for_TopSF_Framework"
+BASE_URL="davs://webdav.recas.ba.infn.it:8443/cms/store/user/lfavilla/TopSF/ntuples_ready_for_TopSF_Framework_minimal_latest"
 
 # Lista delle sottocartelle
 folders=$(davix-ls --cert "$CERT" --capath "$CAPATH" "$BASE_URL")

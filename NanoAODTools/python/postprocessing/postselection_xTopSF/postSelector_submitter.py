@@ -130,7 +130,7 @@ for sample in samples_list:
 
     ### Determine number of files per each job ###
     nfiles_max              = min(nfiles_max, len(samples[sample.label][sample.label]['strings']))
-    if nfiles_max < 100:
+    if nfiles_max < 200:
         nSlices             = 1
     elif nfiles_max < 500:
         nSlices             = 2

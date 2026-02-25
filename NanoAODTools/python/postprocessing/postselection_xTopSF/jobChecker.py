@@ -43,8 +43,8 @@ samples_to_check    = [
                         "TW",
                         "ZJetsToNuNu_2jets",
                         "WJets_2jets",
-                        "DataJetMET",
-                        "DataMuon"
+                        # "DataJetMET",
+                        "DataMuon",
                         ]
 components_to_check = []
 
