@@ -344,14 +344,23 @@ for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
         print(f"errSyst_up:             {errSyst_up}")
         print(f"errSyst_down:           {errSyst_down}")
 
-        histo_bkg_dict["err_syst"] = ROOT.TGraphAsymmErrors(nbins,
-                                                            array.array("d", [tmp_nom.GetBinCenter(bin) for bin in range(1, nbins+1)]),
-                                                            array.array("d", [0.0 for bin in range(nbins)]),
-                                                            array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
-                                                            array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
-                                                            array.array("d", errSyst_up),
-                                                            array.array("d", errSyst_down)
-                                                            ) # n, x, y, exl, exh, eyl, eyh
+        
+        # histo_bkg_dict["err_syst"] = ROOT.TGraphAsymmErrors(nbins,
+        #                                                     array.array("d", [tmp_nom.GetBinCenter(bin) for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", [0.0 for bin in range(nbins)]),
+        #                                                     array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", errSyst_up),
+        #                                                     array.array("d", errSyst_down)
+        #                                                     ) # n, x, y, exl, exh, eyl, eyh
+        print(array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        histo_bkg_dict["err_syst_up"]   = ROOT.TH1D(v._name+"_"+r+"_"+"err_syst_up", "", nbins, array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        histo_bkg_dict["err_syst_down"] = ROOT.TH1D(v._name+"_"+r+"_"+"err_syst_down", "", nbins, array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        for bin in range(1, nbins+1):
+            histo_bkg_dict["err_syst_up"].SetBinContent(bin, errSyst_up[bin-1])
+            # histo_bkg_dict["err_syst_up"].SetBinError(bin, 0.0)
+            histo_bkg_dict["err_syst_down"].SetBinContent(bin, -errSyst_down[bin-1])
+            # histo_bkg_dict["err_syst_down"].SetBinError(bin, 0.0)
         # print("Finished Processing Backgrounds\n")
 
         ##### Data #####
@@ -401,7 +410,10 @@ for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
         ##### Y-axis ######
         yTitle              = "Events"
         if (not blind) and not ("SR" in r) and (not v._MConly):
-            yMax            = max(sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]]), histo_data.GetMaximum())
+            if histo_data is not None:
+                yMax            = max(sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]]), histo_data.GetMaximum())
+            else:
+                yMax            = sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]])
             if len(histo_signals_dict) != 0:
                 yMin        = min([h.GetMinimum() for label,h in histo_signals_dict.items()])
             else:
@@ -452,7 +464,7 @@ for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
         dicanv          = make_stack_with_ratio(
                                                 canv_name           = canv_name,
                                                 histo_bkg_dict      = histo_bkg_dict,
-                                                histo_data          = None,
+                                                histo_data          = histo_data,
                                                 histo_signals_dict  = histo_signals_dict,
                                                 region              = r,
                                                 xMin                = xMin,
