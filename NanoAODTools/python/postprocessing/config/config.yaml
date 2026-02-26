@@ -60,9 +60,9 @@ plotting:
                   "QCD_2022",
                   "ZJetsToNuNu_2jets_2022",
                   "WJets_2jets_2022",
-                  "TprimeToTZ_700_2022",
-                  "TprimeToTZ_1000_2022",
-                  "TprimeToTZ_1800_2022"
+                  # "TprimeToTZ_700_2022",
+                  # "TprimeToTZ_1000_2022",
+                  # "TprimeToTZ_1800_2022"
               ],
       "2022EE":
               [
@@ -104,7 +104,7 @@ plotting:
 
   systematics:
     {
-      "2022":           [], # "QCDScale"
+      "2022":           ["QCDScale"], # "QCDScale"
       "2022EE":         [],
       "2023":           [],
       "2023postBPix":   []
