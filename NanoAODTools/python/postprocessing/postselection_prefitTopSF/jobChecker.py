@@ -18,7 +18,7 @@ samples_to_check    = [
                         "TW",
                         "ZJetsToNuNu_2jets",
                         "WJets_2jets",
-                        "DataJetMET",
+                        # "DataJetMET",
                         "DataMuon",
                         # "TprimeToTZ_700",
                         # "TprimeToTZ_1000",

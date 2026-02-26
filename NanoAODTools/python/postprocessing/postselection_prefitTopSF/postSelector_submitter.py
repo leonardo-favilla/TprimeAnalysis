@@ -20,7 +20,7 @@ else:
     sys.exit(1)
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag"
+usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag --semilep_region <semilep_region>"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
 # parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
@@ -28,7 +28,7 @@ parser.add_option(      '--syst',                   dest='syst',                
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
-
+parser.add_option(      '--semilep_region',         dest='semilep_region',      type=str,               default="Semilep_MixedLooseButNotTight",                help='define the semileptonic region - options: SemiLep_MixedLooseButNotTight, etc...')
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
 syst                = opt.syst
@@ -36,6 +36,7 @@ nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
+semilep_region      = opt.semilep_region
 
 period              = dataset_to_run.split("_")[-1]
 if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
@@ -57,7 +58,7 @@ if noSFbtag:
 if noPuWeight:
     syst_suffix    += "_noPuWeight"
 
-outFolder_path      = config["outputfolder"]["postselector_results"][period]
+outFolder_path      = config["outputfolder"]["semilep_results"][semilep_region][period]
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])
@@ -65,7 +66,7 @@ uid             = int(os.getuid())
 workdir         = "user" if "user" in os.environ.get('PWD') else "work"
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
 
-def sub_writer(run_folder, log_folder, dataset, syst_suffix):
+def sub_writer(run_folder, log_folder, dataset, syst_suffix, semilep_region):
     f = open(run_folder+"condor.sub", "w")
     f.write("Proxy_filename          = x509up\n")
     f.write("Proxy_path              = /afs/cern.ch/user/" + inituser + "/" + username + "/private/$(Proxy_filename)\n")
@@ -78,7 +79,7 @@ def sub_writer(run_folder, log_folder, dataset, syst_suffix):
     # f.write("transfer_output_remaps  = \""+outname+"_Skim.root=root://eosuser.cern.ch///eos/user/"+inituser + "/" + username+"/DarkMatter/topcandidate_file/"+dat_name+"_Skim.root\"\n")
     # f.write('requirements            = (TARGET.OpSysAndVer =?= "CentOS7")\n')
     f.write("+JobFlavour             = \"nextweek\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek = 1 week
-    f.write('+JobTag                 = "'+dataset+syst_suffix+'"\n')
+    f.write('+JobTag                 = "'+dataset+syst_suffix+'_'+semilep_region+'"\n')
     f.write("executable              = "+run_folder+"runner.sh\n")
     f.write("arguments               = \n")
     #f.write("input                   = input.txt\n")
@@ -88,13 +89,13 @@ def sub_writer(run_folder, log_folder, dataset, syst_suffix):
     f.write("queue\n")
     f.close()
 
-def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_max, syst=False):
+def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_max, semilep_region, syst=False):
     f = open(run_folder+"runner.sh", "w")
     f.write("#!/usr/bin/bash\n")
     f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
     f.write("source analysis_TPrime.sh\n")
-    f.write("cd python/postprocessing/postselection/\n")
-    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --tmpfold"
+    f.write("cd python/postprocessing/postselection_prefitTopSF/\n")
+    pycommand = "python3 postSelector.py "+f"-d {dataset} --dict_samples_file {dict_samples_file} --hist_folder {hist_folder} --nfiles_max {nfiles_max} --tmpfold --semilep_region {semilep_region}"
     if syst:
         pycommand += " --syst"
     if noSFbtag:
@@ -135,7 +136,7 @@ print("Samples to run: ", [s.label for s in samples])
 
 for sample in samples:
     condor_folder       = os.environ.get('PWD') + "/condor" + syst_suffix + "/"
-    condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
+    condor_subfolder        = condor_folder + sample.label + syst_suffix + "_" + semilep_region + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
         os.makedirs(condor_folder)
@@ -164,8 +165,8 @@ for sample in samples:
 
     run_folder              = condor_subfolder
 
-    runner_writer(run_folder, sample.label, dict_samples_file, outFolder_path, nfiles_max, syst)
-    sub_writer(run_folder, log_folder, sample.label, syst_suffix)
+    runner_writer(run_folder, sample.label, dict_samples_file, outFolder_path, nfiles_max, semilep_region, syst)
+    sub_writer(run_folder, log_folder, sample.label, syst_suffix, semilep_region)
     if not dryrun:
         os.popen("condor_submit " + run_folder + "condor.sub")
     time.sleep(2)

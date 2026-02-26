@@ -123,7 +123,7 @@ vars.append(variable(name = "BestTopMerged_mass",       title= "BestTopMerged ma
 ######## 1D variables for histos
 vars2D = []
 
-vars2D.append(variable2D(name = "nTightTopMixedVsnTightTopResolved", xname = "nTightTopMixed", yname = "nTightTopResolved", xtitle = "# of Top Mixed", ytitle = "# of Top Merged", nxbins = 6, xmin = -0.5, xmax = 5.5, nybins = 6, ymin = -0.5, ymax = 5.5))
+# vars2D.append(variable2D(name = "nTightTopMixedVsnTightTopResolved", xname = "nTightTopMixed", yname = "nTightTopResolved", xtitle = "# of Top Mixed", ytitle = "# of Top Merged", nxbins = 6, xmin = -0.5, xmax = 5.5, nybins = 6, ymin = -0.5, ymax = 5.5))
 # vars2D.append(variable2D(name = "MinDelta_phiVsHT_eventHT", xname = "MinDelta_phi", yname = "HT_eventHT", xtitle = " min #Delta #phi", ytitle = "event HT", nxbins = 18, xmin = 0, xmax = math.pi,
 #                             nybins = 20, ymin = 0, ymax = 2000))
 
@@ -147,10 +147,22 @@ semilepPreselResolved   = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopResolve
 semilepPreselMixed      = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopMixed>=1.2 && dR_muTopLep_BestTopMixed>=1.2"
 semilepPreselMerged     = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopMerged>=1.2 && dR_muTopLep_BestTopMerged>=1.2"
 
+topmatchedMixed = "TopMixedMatched_to_GenTop_dR0p2"
+nonmatchedMixed = "!TopMixedMatched_to_GenTop_dR0p2"
+otherMixed      = "!TopMixedMatched_to_GenTop_dR0p2"
+tag_categories  = {
+                    "Semilep_MixedLooseButNotTight": {
+                        "topmatched": topmatchedMixed,
+                        "nonmatched": nonmatchedMixed,
+                        "other": otherMixed
+                    }
+                }
+
+
 regions = {
 
     ################### May2024
-    "btagSFcheck"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
+    # "btagSFcheck"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
 
     # "SRmhtg100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT>100",
     # "SRmhtl100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT<100",
@@ -237,6 +249,22 @@ regions = {
     # "PreselNoTop"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==4",
     
 
+    "Semilep_MixedLooseButNotTight": {
+                                        "pt0to200_pass":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
+                                        "pt0to200_fail":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score<0.7214655876159668",
+                                        "pt200to400_pass":        semilepPreselMixed + " && (BestTopMixed_pt>=200) && (BestTopMixed_pt<400)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
+                                        "pt200to400_fail":        semilepPreselMixed + " && (BestTopMixed_pt>=200) && (BestTopMixed_pt<400)" + " && BestTopMixed_score<0.7214655876159668",
+                                        "pt400to600_pass":        semilepPreselMixed + " && (BestTopMixed_pt>=400) && (BestTopMixed_pt<600)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
+                                        "pt400to600_fail":        semilepPreselMixed + " && (BestTopMixed_pt>=400) && (BestTopMixed_pt<600)" + " && BestTopMixed_score<0.7214655876159668",
+                                        "pt600to1000_pass":       semilepPreselMixed + " && (BestTopMixed_pt>=600) && (BestTopMixed_pt<1000)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
+                                        "pt600to1000_fail":       semilepPreselMixed + " && (BestTopMixed_pt>=600) && (BestTopMixed_pt<1000)" + " && BestTopMixed_score<0.7214655876159668",
+                                    },
+
+
+
+
+
+
     # "SemiLep_ResolvedLooseButNotTight_pt0to200_pass":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
     # "SemiLep_ResolvedLooseButNotTight_pt0to200_fail":       semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && BestTopResolved_score<0.1422998",
     # "SemiLep_ResolvedLooseButNotTight_pt200to400_pass":     semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && BestTopResolved_score>=0.1422998 && BestTopResolved_score<0.29475874",
@@ -247,15 +275,10 @@ regions = {
     # "SemiLep_ResolvedLooseButNotTight_pt600to1000_fail":    semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && BestTopResolved_score<0.1422998",
 
 
-    "SemiLep_MixedLooseButNotTight_pt0to200_pass":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
-    "SemiLep_MixedLooseButNotTight_pt0to200_pass":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
-    "SemiLep_MixedLooseButNotTight_pt0to200_fail":          semilepPreselMixed + " && (BestTopMixed_pt>=0) && (BestTopMixed_pt<200)" + " && BestTopMixed_score<0.7214655876159668",
-    "SemiLep_MixedLooseButNotTight_pt200to400_pass":        semilepPreselMixed + " && (BestTopMixed_pt>=200) && (BestTopMixed_pt<400)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
-    "SemiLep_MixedLooseButNotTight_pt200to400_fail":        semilepPreselMixed + " && (BestTopMixed_pt>=200) && (BestTopMixed_pt<400)" + " && BestTopMixed_score<0.7214655876159668",
-    "SemiLep_MixedLooseButNotTight_pt400to600_pass":        semilepPreselMixed + " && (BestTopMixed_pt>=400) && (BestTopMixed_pt<600)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
-    "SemiLep_MixedLooseButNotTight_pt400to600_fail":        semilepPreselMixed + " && (BestTopMixed_pt>=400) && (BestTopMixed_pt<600)" + " && BestTopMixed_score<0.7214655876159668",
-    "SemiLep_MixedLooseButNotTight_pt600to1000_pass":       semilepPreselMixed + " && (BestTopMixed_pt>=600) && (BestTopMixed_pt<1000)" + " && BestTopMixed_score>=0.7214655876159668 && BestTopMixed_score<0.8474694490432739",
-    "SemiLep_MixedLooseButNotTight_pt600to1000_fail":       semilepPreselMixed + " && (BestTopMixed_pt>=600) && (BestTopMixed_pt<1000)" + " && BestTopMixed_score<0.7214655876159668",
+
+
+
+
 
 
     # "SemiLep_MergedLooseButNotTight_pt0to200_pass":         semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && BestTopMerged_score>=0.8 && BestTopMerged_score<0.9",

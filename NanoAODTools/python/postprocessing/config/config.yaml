@@ -2,7 +2,7 @@ outputfolder:
   postselector_results: { 
     "2022":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Feb26/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_310725/",
     "2022EE":       "/eos/user/a/acagnott/DarkMatter/nosynch/run2022EE_Jan26/"       , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2022EE_syst_310725/",
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
+    "2023":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2023Jan26/"        , #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/",
     "2023postBPix": "/eos/user/a/acagnott/DarkMatter/nosynch/run2023postBPix_Jan26/", #"/eos/user/l/lfavilla/RDF_DManalysis/results/run2023postBPix_syst_310725/",
     }
   triggerSF_results: { 
@@ -11,6 +11,14 @@ outputfolder:
     "2023":         "/eos/user/a/acagnott/DarkMatter/nosynch/trigSF_2023/",
     "2023postBPix": "/eos/user/a/acagnott/DarkMatter/nosynch/trigSF_2023postBPix/",
     }
+  semilep_results: {
+    "Semilep_MixedLooseButNotTight": {
+                              "2022":         "",
+                              "2022EE":       "",
+                              "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight_step1/",
+                              "2023postBPix": "",
+                            }
+  }
 
 dict_samples:
   "2022":             "../samples/dict_samples_2022.json"
