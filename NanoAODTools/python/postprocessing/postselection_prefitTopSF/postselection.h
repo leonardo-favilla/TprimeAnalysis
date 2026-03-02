@@ -354,18 +354,6 @@ float GetTriggerSF(float PuppiMET_pt, std::string era, std::string type){
   return weight;
 }
 
-// #########################################
-// ############## Muon SF     ##############
-// #########################################
-float GetMuonSF(std::string json_file, float muon_eta, float muon_pt, std::string unc){
-  auto cset = correction::CorrectionSet::from_file(json_file);
-  auto MuonSF_corr = cset->at("NUM_HLT_DEN_TrkHighPtTightRelIsoProbes");
-  float weight = 1.0;
-  if (muon_pt >= 50){
-    weight = MuonSF_corr->evaluate({muon_eta, muon_pt, unc});
-  }
-  return weight;
-}
 
 // ########################################################
 // ###########Alternative Truth definition ################
@@ -1782,4 +1770,20 @@ RVec<float> midx_bJets_to_GoodMuons_within_dRthr(rvec_i GoodMu_idx, rvec_f Muon_
   }
 
   return m_sel;
+}
+
+// #########################################
+// ############## Muon SF     ##############
+// #########################################
+float GetMuonSF(std::string json_file, rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId, std::string unc){
+  auto cset = correction::CorrectionSet::from_file(json_file);
+  auto MuonSF_corr = cset->at("NUM_HLT_DEN_TrkHighPtTightRelIsoProbes");
+  RVec<int> ids = TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId);
+  float muon_eta = Muon_eta[ids[0]];
+  float muon_pt = Muon_pt[ids[0]];
+  float weight = 1.0;
+  if (muon_pt >= 50){
+    weight = MuonSF_corr->evaluate({muon_eta, muon_pt, unc});
+  }
+  return weight;
 }

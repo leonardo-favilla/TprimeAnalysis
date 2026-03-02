@@ -15,7 +15,7 @@ outputfolder:
     "Semilep_MixedLooseButNotTight": {
                               "2022":         "",
                               "2022EE":       "",
-                              "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight_step1/",
+                              "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight/",
                               "2023postBPix": "",
                             }
   }

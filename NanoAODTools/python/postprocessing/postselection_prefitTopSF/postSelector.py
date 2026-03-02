@@ -550,7 +550,7 @@ def savehisto(d, dict_h, regions_def, var, s_cut, tag_cats):
                                             if isMC:
                                                 h1.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
                                             outfile.cd()
-                                        h1.Write()
+                                            h1.Write()
                                 else:
                                     histo[reg][tag_cat+"_"+v._name] = dict_h[d.label][s.label][reg][tag_cat+"_"+v._name].GetValue()      
                                     if not v._noUnOvFlowbin:
@@ -687,6 +687,7 @@ for d in datasets:
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         if sampleflag:
             df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
+            df                  = df.Define("muonSF", f'GetMuonSF("{muonSF_dict[era]}", Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId, "nominal")') # we only select events with only 1 TightMuon
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag)
 
@@ -717,17 +718,17 @@ for d in datasets:
             
         if sampleflag:
             if (noSFbtag) and (not noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF*muonSF')                # no SFbtag
             elif (not noSFbtag) and (noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')          # no puWeight
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF*muonSF')          # no puWeight
             elif noSFbtag and noPuWeight:
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                         # no puWeight no SFbtag
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF*muonSF')                         # no puWeight no SFbtag
             else:   
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF') # AllWeights
+                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF*muonSF') # AllWeights
             # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
         else:
             df_wnom = df_hlt.Redefine('w_nominal', '1')
-
+        
             
         # df_wnom           = df_hlt.Define('w_nominal', '1')
         df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
@@ -735,9 +736,6 @@ for d in datasets:
         df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
         df_topsel       = tag_toplep(df_topsel)
 
-        if sampleflag:
-            df_topsel   = df_topsel.Define("muonSF", f'GetMuonSF("{muonSF_dict[era]}", Muon_eta[TightMuon_idx[0]], Muon_pt[TightMuon_idx[0]], "nominal")') # Muon_eta[0], Muon_pt[0] because we only select events with only 1 TightMuon
-            # df_topsel   = df_topsel.Redefine('w_nominal', 'w_nominal*muonSF') # add muon SF to the weight
 
         # command for printing the cutflow, add it in the SRs for all the bkgs 
         df_topsel.Report().Print()
