@@ -4,13 +4,17 @@ import sys
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 
 
-usage               = "python3 jobChecker.py -o <outFolder> --year <year> [options]"
+usage               = "python3 jobChecker.py -o <outFolder> --year <year> --semilep_region <region> [options]"
 parser              = optparse.OptionParser(usage)
-parser.add_option("-o", "--outputFolder",   dest="outFolder", type=str,             default="/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/plots/",   help="Please enter the output folder where the results of the jobs are stored.")
-parser.add_option(      "--year",           dest="year",      type=str,             default="2023",                                                                     help="Please enter the year of the samples to check, e.g. 2022, 2022EE, etc.")
+parser.add_option("-o", "--outputFolder",   dest="outFolder",               type=str,             default="/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_syst_310725/plots/",   help="Please enter the output folder where the results of the jobs are stored.")
+parser.add_option(      "--year",           dest="year",                    type=str,             default="2023",                                                                     help="Please enter the year of the samples to check, e.g. 2022, 2022EE, etc.")
+parser.add_option(      '--semilep_region', dest='semilep_region',          type=str,             default="Semilep_MixedLooseButNotTight",                                            help='define the semileptonic region - options: SemiLep_MixedLooseButNotTight, etc...')
+
 (opt, args)         = parser.parse_args()
 outputFolder        = opt.outFolder
 year                = opt.year
+semilep_region      = opt.semilep_region
+rerun_script_path   = f"rerun_failed_jobs_{year}_{semilep_region}.sh"
 
 samples_to_check    = [
                         "QCD",
@@ -37,7 +41,7 @@ print(components_to_check)
 jobs_total          = len(components_to_check)
 jobs_failed         = 0
 jobs_done           = 0
-
+components_to_rerun = []
 
 ######### HERE THERE IS THE ACTUAL JOB CHECKING ############
 if os.path.exists(outputFolder):                                # check out existence
@@ -54,21 +58,42 @@ if os.path.exists(outputFolder):                                # check out exi
                 else:
                     print(f"Job {c}: FAILED, empty root file")
                     jobs_failed    += 1
+                    components_to_rerun.append(c)
                 f.Close()
             except:
                 print(f"Job {c}: FAILED, could not open file")
                 jobs_failed        += 1
+                components_to_rerun.append(c)
         else:
             print(f"Job {c}: FAILED, file does not exist")
             jobs_failed            += 1
+            components_to_rerun.append(c)
 
 else:
     print(f"Output folder {outputFolder} does not exist.")
     print("Cannot check any job, exiting...")
     sys.exit(1)
 
+### Rerun commands for the failed jobs ###
+with open(rerun_script_path, "w") as f:
+    f.write("#!/bin/bash\n\n")
+    for c in components_to_rerun:
+        if "Data" in c:
+            cmd1 = f"python3 postSelector_submitter.py -d {c} --semilep_region {semilep_region} --dryrun\n"
+            cmd2 = f"condor_submit ./condor/{c}_{semilep_region}/condor.sub\n"
+            cmd3 = f"echo resubmitting job for {c}_{semilep_region}\n\n"
+        else:
+            cmd1 = f"python3 postSelector_submitter.py -d {c} --syst --semilep_region {semilep_region} --dryrun\n"
+            cmd2 = f"condor_submit ./condor_syst/{c}_syst_{semilep_region}/condor.sub\n"
+            cmd3 = f"echo resubmitting job for {c}_syst_{semilep_region}\n\n"
+        f.write(cmd1)
+        f.write(cmd2)
+        f.write(cmd3)
+
+
 print("--------------------------------------------------")
 print(f"Total jobs to check:    {jobs_total}")
 print(f"Jobs done:              {jobs_done}")
 print(f"Jobs failed:            {jobs_failed}")
+print(f"\nYou can find the commands to rerun failed jobs in {rerun_script_path}")
 print("--------------------------------------------------")

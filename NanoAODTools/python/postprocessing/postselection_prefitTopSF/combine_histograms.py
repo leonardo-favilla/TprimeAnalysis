@@ -21,8 +21,9 @@ else:
 
 
 
-plotsFolder     = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight_until010326/plots/"
-workspaceFolder = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight_until010326/workspace/"
+plotsFolder     = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight/plots/"
+workspaceFolder = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_Semilep_MixedLooseButNotTight/workspace/"
+mass_variable   = "BestTopMixed_mass"
 era             = "2023"
 if not os.path.exists(workspaceFolder):
     os.makedirs(workspaceFolder)
@@ -30,6 +31,12 @@ if not os.path.exists(workspaceFolder):
 
 
 event_categories    = ["pt0to200","pt200to400","pt400to600","pt600to1000"]
+uncertainties       = {
+                        "lumi":         [1.013,"lnN"],
+                        "pu":           [1,"factor"],
+                        "jesTotal":     [1,"file"],
+                        "jer":          [1,"file"]
+                        }
 uncertainties_tags  = {
                         "nominal":          "nominal",
                         "pu_up":            "puUp",
@@ -96,7 +103,7 @@ for c in components:
 
     f.Close()
 
-print(inputHistograms_dict.keys())
+# print(inputHistograms_dict.keys())
 # print(inputHistograms_dict["DataMuonC1_0_2023"].keys())
 # print(inputHistograms_dict["TT_semilep_2023"].keys())
 
@@ -119,68 +126,174 @@ for tag_cat in tag_categories:
     print(f"  Processes:    {processes_in_cat}")
     print(f"  Datasets:     {datasets_in_cat}")
     print(f"  Components:   {components_in_cat}")
-    for var in vars:
-        varname                                 = var._name
-        for ev_cat in event_categories:
-            for pass_tag in ["pass", "fail"]:
-                for unc,unc_tag in uncertainties_tags.items():
-                    histoname           = f"{tag_cat}_{varname}_{ev_cat}_{pass_tag}"
-                    histoname_out       = f"{tag_cat}_{varname}_{ev_cat}_{pass_tag}"
-                    if "data" in histoname:
-                        lumi            = 1.0
-                    else:
-                        lumi            = config["plotting"]["lumi_dict"][era]
-                        histoname       += f"_{unc}"
-                        histoname_out   += f"_{unc_tag}"
-
-                    histo               = None
-                    for component in components_in_cat:
-                        print(f"Looking for histogram: {histoname} in component: {component}")
-                        if histoname in inputHistograms_dict[component]:
-                            if histo is None:
-                                histo   = inputHistograms_dict[component][histoname].Clone(histoname)
-                            else:
-                                histo.Add(inputHistograms_dict[component][histoname])
-
-                    histo.Scale(lumi)
-                    histo.SetName(histoname_out)
-                    outputHistograms_dict[histoname_out]    = histo
-                    outputCount_dict[histoname_out]         = histo.Integral()
-
-for var in vars[0]:
-    for ev_cat in event_categories:
-        data_pass_count = 0
-        data_fail_count = 0
-        mc_pass_count   = 0
-        mc_fail_count   = 0
-        for tag_cat in tag_categories:
-            for pass_tag in ["pass", "fail"]:
-                histoname      = f"{tag_cat}_{var._name}_{ev_cat}_{pass_tag}_nominal"
-                if histoname in outputCount_dict:
-                    count = outputCount_dict[histoname]
-                    if "data" in histoname:
-                        if pass_tag == "pass":
-                            data_pass_count += count
-                        else:
-                            data_fail_count += count
-                    else:
-                        if pass_tag == "pass":
-                            mc_pass_count += count
-                        else:
-                            mc_fail_count += count
-
-for histoname_out in outputHistograms_dict:
-    outFile_dict[ev_cat].cd()
-    outputHistograms_dict[histoname_out].Write()
     
+    for ev_cat in event_categories:
+        for pass_tag in ["pass", "fail"]:
+            for unc,unc_tag in uncertainties_tags.items():
+                histoname           = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}"
+                histoname_out       = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}"
+                if "data" in histoname:
+                    lumi            = 1.0
+                else:
+                    lumi            = config["plotting"]["lumi_dict"][era]
+                    histoname       += f"_{unc}"
+                    histoname_out   += f"_{unc_tag}"
+
+                histo               = None
+                for component in components_in_cat:
+                    print(f"Looking for histogram: {histoname} in component: {component}")
+                    if histoname in inputHistograms_dict[component]:
+                        if histo is None:
+                            histo   = inputHistograms_dict[component][histoname].Clone(histoname)
+                        else:
+                            histo.Add(inputHistograms_dict[component][histoname])
+
+                histo.Scale(lumi)
+                histo.SetName(histoname_out)
+                outputHistograms_dict[histoname_out]    = histo
+                outputCount_dict[histoname_out]         = histo.Integral()
+
+summaryCount_dict = {ev_cat: None for ev_cat in event_categories}
+
+for ev_cat in event_categories:
+    data_pass_count = 0
+    data_fail_count = 0
+    mc_pass_count   = 0
+    mc_fail_count   = 0
+    summaryCount_dict[ev_cat] = {
+                                    "data_pass":                        0,
+                                    "data_fail":                        0,
+                                    "mc_pass":                          0,
+                                    "mc_fail":                          0,
+                                    "norm_match_mc_to_data":            0
+                                }
+    for tag_cat in tag_categories:
+        for pass_tag in ["pass", "fail"]:
+            histoname       = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}"
+            if not "data" in histoname:
+                histoname   += "_nominal"
+            count           = outputCount_dict[histoname]
+            
+
+            if "data" in histoname:
+                if "pass" in histoname:
+                    data_pass_count += count
+                elif "fail" in histoname:
+                    data_fail_count += count
+            else:
+                if "pass" in histoname:
+                    mc_pass_count += count
+                elif "fail" in histoname:
+                    mc_fail_count += count
+    
+    norm_match_mc_to_data = (data_pass_count + data_fail_count) / (mc_pass_count + mc_fail_count)
+    
+
+    summaryCount_dict[ev_cat] = {
+                                    "data_pass":                        data_pass_count,
+                                    "data_fail":                        data_fail_count,
+                                    "mc_pass":                          mc_pass_count,
+                                    "mc_fail":                          mc_fail_count,
+                                    "norm_match_mc_to_data":            norm_match_mc_to_data
+                                }
+
 
 
 for ev_cat, outFile in outFile_dict.items():
+    outFile.cd()
+    for histoname_out, histo in outputHistograms_dict.items():
+        if ev_cat in histoname_out:
+            histo.Write()
     outFile.Close()
     
 with open(os.path.join(workspaceFolder, "histogram_counts.txt"), "w") as count_file:
+    for ev_cat, summary in summaryCount_dict.items():
+        count_file.write(f"Event category:              {ev_cat}\n")
+        count_file.write(f"     Data pass count:        {summary['data_pass']:.1f}\n")
+        count_file.write(f"     Data fail count:        {summary['data_fail']:.1f}\n")
+        count_file.write(f"     MC pass count:          {summary['mc_pass']:.1f}\n")
+        count_file.write(f"     MC fail count:          {summary['mc_fail']:.1f}\n")
+        count_file.write(f"     Norm factor (data/mc):  {summary['norm_match_mc_to_data']:.4f}\n\n")
     for histoname, count in outputCount_dict.items():
         if ("data" in histoname) or ("nominal" in histoname):
             count_file.write(f"{histoname}: {count}\n")
 print(outFile_dict.keys())
-print(outputHistograms_dict.keys())
+# print(outputHistograms_dict.keys())
+
+categories_to_plot   = ["topmatched", "nonmatched", "other"]
+number_of_categories = len(categories_to_plot)
+print(f"Folder with datacards and workspaces: {workspaceFolder}")
+for ev_cat in event_categories:
+    print(f"Printing datacard {ev_cat}.txt")
+    with open(f"{workspaceFolder}/{ev_cat}.txt", 'w') as combine_card_file:
+        combine_lines = []
+        
+        combine_lines.append("imax 2 (two channels, pass and fail)\n")
+        combine_lines.append(f"jmax {number_of_categories-1} ({number_of_categories} categories minus 1)\n")
+        combine_lines.append("kmax * (automatic number of nuisance parameters)\n")
+        combine_lines.append("----------\n")
+
+        combine_lines.append(f"shapes data_obs pass {workspaceFolder}/{ev_cat}.root data_{mass_variable}_{ev_cat}_pass\n")
+        combine_lines.append(f"shapes * pass {workspaceFolder}/{ev_cat}.root $PROCESS_{mass_variable}_{ev_cat}_pass_nominal $PROCESS_{mass_variable}_{ev_cat}_pass_$SYSTEMATIC\n")
+        combine_lines.append(f"shapes data_obs fail {workspaceFolder}/{ev_cat}.root data_{mass_variable}_{ev_cat}_fail\n")
+        combine_lines.append(f"shapes * fail {workspaceFolder}/{ev_cat}.root $PROCESS_{mass_variable}_{ev_cat}_fail_nominal $PROCESS_{mass_variable}_{ev_cat}_fail_$SYSTEMATIC\n")
+        combine_lines.append("----------\n")
+
+        combine_lines.append("bin\tpass\tfail\n")
+        combine_lines.append(f"observation\t{summaryCount_dict[ev_cat]['data_pass']:.0f}\t{summaryCount_dict[ev_cat]['data_fail']:.0f}\n")
+        combine_lines.append("----------\n")
+        
+        combine_lines.append("# automatic counting of MC events\n")
+        combine_lines.append("bin\t" + "pass\t"*number_of_categories + "fail\t"*number_of_categories + '\n')
+        combine_lines.append("process\t"+'\t'.join(list(categories_to_plot)*2) + '\n')
+        combine_lines.append("process\t"+'\t'.join(list(map(str, range(number_of_categories)))*2) + '\n')
+        combine_lines.append("rate\t"+"-1\t"*number_of_categories*2 + '\n')
+        combine_lines.append("----------\n")
+        
+        for unc,(unc_size,unc_mode) in uncertainties.items():
+            unc_line        = unc + '\t'
+            if unc_mode in ["factor", "file"]: 
+                unc_line    += "shape\t"
+            else: 
+                unc_line    += unc_mode + '\t'
+                            
+            combine_lines.append(unc_line+'\t'.join([f"{unc_size}"]*number_of_categories*2)+'\n')
+        combine_lines.append("# normalisation factor to match MC and data\n")
+        combine_lines.append("# freezes automatically\n")
+        combine_lines.append(f"norm_match_mc_data rateParam * * {summaryCount_dict[ev_cat]['norm_match_mc_to_data']:.6f}\n")
+        combine_lines.append("nuisance edit freeze norm_match_mc_data\n")
+        combine_lines.append("\n")
+        combine_lines.append("# activating autoMCStats\n")
+        combine_lines.append("* autoMCStats 0\n")
+        
+        combine_card_file.writelines(combine_lines)
+
+print(f"Printing combine script file combine_script.sh")
+with open(f"{workspaceFolder}/combine_script.sh", 'w') as combine_script_file:
+    combine_script_file.write("#!/bin/bash\n")
+    combine_script_file.write("# Converting datacards to workspace file for portability :-)\n")
+    combine_script_file.write(f"cd {workspaceFolder}/\n")
+    for ev_cat in event_categories:
+        combine_script_file.write(f"text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe {ev_cat}.txt -o workspace_{ev_cat}.root --PO=categories={','.join(categories_to_plot)}\n")
+
+print(f"Printing fit script file fit_procedure.sh")
+with open(f"{workspaceFolder}/fit_procedure.sh", 'w') as fit_script_file:
+    fit_script_file.write("#!/bin/bash\n")
+    fit_script_file.write("# Running the fit procedure\n")
+    fit_script_file.write("echo '[1/2] Running MultiDimFit'\n")
+    fit_script_file.write(f"cd {workspaceFolder}/\n")
+    for ev_cat in event_categories:
+        fit_script_file.write(
+                                f"combine -M MultiDimFit workspace_{ev_cat}.root \\\n"
+                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
+                                f"    --name _{ev_cat}\n"
+                                )
+    fit_script_file.write("echo '[2/2] Running FitDiagnostics'\n")
+    for ev_cat in event_categories:
+        fit_script_file.write(
+                                f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
+                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
+                                f"    --saveShapes \\\n"
+                                f"    --saveWithUncertainties \\\n"
+                                f"    --name _{ev_cat}\n"
+                                )
