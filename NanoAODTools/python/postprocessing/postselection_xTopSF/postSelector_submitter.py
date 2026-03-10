@@ -129,24 +129,24 @@ for sample in samples_list:
 
 
     ### Determine number of files per each job ###
-    nfiles_max              = min(nfiles_max, len(samples[sample.label][sample.label]['strings']))
-    if nfiles_max < 200:
+    nfiles_to_run           = min(nfiles_max, len(samples[sample.label][sample.label]['strings']))
+    if nfiles_to_run < 200:
         nSlices             = 1
-    elif nfiles_max < 500:
+    elif nfiles_to_run < 500:
         nSlices             = 2
-    elif nfiles_max < 1000:
+    elif nfiles_to_run < 1000:
         nSlices             = 4
     else:
         nSlices             = 6
-    nFilesPerSlice          = nfiles_max // nSlices
-    remainder               = nfiles_max % nSlices
+    nFilesPerSlice          = nfiles_to_run // nSlices
+    remainder               = nfiles_to_run % nSlices
     slices                  = []
     start                   = 0
     for i in range(nSlices):
         end                 = start + nFilesPerSlice + (1 if i < remainder else 0)
         slices.append([start, end])
         start               = end
-    print(f"Component: {sample.label:<50} has {nfiles_max:<10} files to process in {nSlices:<5} slices")
+    print(f"Component: {sample.label:<50} has {nfiles_to_run:<10} files to process in {nSlices:<5} slices")
     print(f"Files splitting:    {[list(range(*slice)) for slice in slices]}")
 
     for scenario in scenarios:
