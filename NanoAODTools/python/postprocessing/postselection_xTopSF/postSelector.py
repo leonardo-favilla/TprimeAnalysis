@@ -63,7 +63,10 @@ scenario_tag            = {
                             "jesUp":    "jesTotalup",
                             "jesDown":  "jesTotaldown"
                         }
-
+muonSF_dict_file        = "muonSF_dict.json" # path to the json file containing the muon SF json path for different eras, to be used in the GetMuonSF function in postselection.h
+#### LOAD Muon SF json file path ####
+with open(muonSF_dict_file, "r") as muonSF_file:
+    muonSF_dict         = json.load(muonSF_file)
 
 if year == 2018:
     bTagAlg = "Jet_btagDeepB"
@@ -397,6 +400,10 @@ df_trigger          = trigger_filter(df, isMC, year, DataMuon)
 df_presel           = preselection(df_trigger, bTagAlg, year, EE)
 df_tophadr          = select_top(df_presel, isMC)
 df_toplep           = tag_toplep(df_tophadr)
+if isMC:    
+    df_toplep       = df_toplep.Define("muonSF",     f'GetMuonSF("{muonSF_dict[period]}", Muon_pt, Muon_eta, TightMuon_idx, "nominal")')
+else:
+    df_toplep       = df_toplep.Define("muonSF",     "1.0")
 n_trigger           = df_trigger.Count()
 n_presel            = df_presel.Count()
 n_tophadr           = df_tophadr.Count()
@@ -419,6 +426,7 @@ branches_to_save    = [
                         "xsecWeight",
                         "ntotEvents",
                         "nloewcorrection",
+                        "muonSF",
 
                         "BestTopResolved_pt",
                         "BestTopResolved_eta",

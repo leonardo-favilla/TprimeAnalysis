@@ -26,13 +26,12 @@ year                = opt.year
 
 
 samples_list        = [
-                        # "QCD",
+                        "DataMuon",
+                        "QCD",
                         "TT",
-                        # "TW",
-                        # "ZJetsToNuNu_2jets",
-                        # "WJets_2jets",
-                        # "DataJetMET",
-                        # "DataMuon"
+                        "TW",
+                        "WJets_2jets",
+                        "ZJetsToNuNu_2jets",
                     ]
 components          = []
 
@@ -69,5 +68,6 @@ for c in components:
         end                 = start + nFilesPerSlice + (1 if i < remainder else 0)
         slices.append([start, end])
         start               = end
-    print(f"Component: {c:<50}  Number of files: {nfiles_max:<10}   Number of slices: {nSlices:<5}")
-    print(f"Files splitting:    {slices}")
+        print(f"{c}/{c}_nominal_{i}")
+    # print(f"Component: {c:<50}  Number of files: {nfiles_max:<10}   Number of slices: {nSlices:<5}")
+    # print(f"Files splitting:    {slices}")

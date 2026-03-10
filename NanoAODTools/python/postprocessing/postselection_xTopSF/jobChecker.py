@@ -105,7 +105,7 @@ for c in components_to_check:
 
         ### Determine number of slices per each component ###
         nfiles_max              = len(samples[c][c]['strings'])
-        if nfiles_max < 100:
+        if nfiles_max < 200:
             nSlices             = 1
         elif nfiles_max < 500:
             nSlices             = 2

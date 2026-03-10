@@ -354,6 +354,20 @@ float GetTriggerSF(float PuppiMET_pt){
   return weight;
 }
 
+// #########################################
+// ############## Muon SF     ##############
+// #########################################
+float GetMuonSF(std::string json_file, rvec_f Muon_pt, rvec_f Muon_eta, rvec_i TightMuon_idx, std::string unc){
+  auto cset = correction::CorrectionSet::from_file(json_file);
+  auto MuonSF_corr = cset->at("NUM_HLT_DEN_TrkHighPtTightRelIsoProbes");
+  float muon_eta = Muon_eta[TightMuon_idx[0]];
+  float muon_pt = Muon_pt[TightMuon_idx[0]];
+  float weight = 1.0;
+  if (muon_pt >= 50){
+    weight = MuonSF_corr->evaluate({muon_eta, muon_pt, unc});
+  }
+  return weight;
+}
 
 // ########################################################
 // ###########Alternative Truth definition ################
