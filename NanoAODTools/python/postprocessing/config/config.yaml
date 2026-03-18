@@ -100,5 +100,13 @@ plotting:
                   "TprimeToTZ_1800_2023postBPix"
               ],
     }
+    
+  systematics:
+    {
+      "2022":           [], # "QCDScale"
+      "2022EE":         [],
+      "2023":           [],
+      "2023postBPix":   []
+    }
 
   scale_signals: 100
