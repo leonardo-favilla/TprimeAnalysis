@@ -205,9 +205,9 @@ def preselection(df, btagAlg, year, EE):
            .Define("nLooseMuon",        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
            .Define("LooseMuon_idx",     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
            .Define("nVetoMuon",         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
-    df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
-    df = df.Define("MT", "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
-    
+    df = df.Define("Lepton_flavour",    "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
+    df = df.Define("MT",                "TransverseMass_part1part2(Lep_pt, Lep_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
+
     df = df.Define("LeadingJetPt_idx", "GetLeadingPtJet(Jet_pt_nominal)")
     df = df.Define("LeadingJetPt_pt", "GetLeadingJetVar(LeadingJetPt_idx, Jet_pt_nominal)")
     df = df.Define("LeadingJetPt_eta", "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")
@@ -321,30 +321,30 @@ def select_top(df, isMC):
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
 
-    df_topselected = df_topvariables.Define("BestTopResolved_idx", "TopResolved_TopScore_nominal.size() == 0 ? -1 : (int)ArgMax(TopResolved_TopScore_nominal)")\
-                                    .Define("BestTopMixed_idx",    "TopMixed_TopScore_nominal.size() == 0 ? -1 : (int)ArgMax(TopMixed_TopScore_nominal)")\
-                                    .Define("BestTopMerged_idx",   "FatJet_particleNetWithMass_TvsQCD.size() == 0 ? -1 : (int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
+    df_topselected = df_topvariables.Define("BestTopResolved_idx",      "(int)ArgMax(TopResolved_TopScore_nominal)")\
+                                    .Define("BestTopMixed_idx",         "(int)ArgMax(TopMixed_TopScore_nominal)")\
+                                    .Define("BestTopMerged_idx",        "(int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
 
-    df_topvariables = df_topselected.Define("BestTopResolved_pt",   "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_pt_nominal.size() ? TopResolved_pt_nominal[BestTopResolved_idx] : -9999.")\
-                                    .Define("BestTopResolved_eta",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_eta.size() ? TopResolved_eta[BestTopResolved_idx] : -9999.")\
-                                    .Define("BestTopResolved_phi",  "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_phi.size() ? TopResolved_phi[BestTopResolved_idx] : -9999.")\
-                                    .Define("BestTopResolved_mass", "BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_mass_nominal.size() ? TopResolved_mass_nominal[BestTopResolved_idx] : -9999.")\
-                                    .Define("BestTopResolved_score","BestTopResolved_idx >= 0 && BestTopResolved_idx < (int)TopResolved_TopScore_nominal.size() ? TopResolved_TopScore_nominal[BestTopResolved_idx] : -9999.")\
-                                    .Define("BestTopMixed_pt",   "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_pt_nominal.size() ? TopMixed_pt_nominal[BestTopMixed_idx] : -9999.")\
-                                    .Define("BestTopMixed_eta",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_eta.size() ? TopMixed_eta[BestTopMixed_idx] : -9999.")\
-                                    .Define("BestTopMixed_phi",  "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_phi.size() ? TopMixed_phi[BestTopMixed_idx] : -9999.")\
-                                    .Define("BestTopMixed_mass", "BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_mass_nominal.size() ? TopMixed_mass_nominal[BestTopMixed_idx] : -9999.")\
-                                    .Define("BestTopMixed_score","BestTopMixed_idx >= 0 && BestTopMixed_idx < (int)TopMixed_TopScore_nominal.size() ? TopMixed_TopScore_nominal[BestTopMixed_idx] : -9999.")\
-                                    .Define("BestTopMerged_pt",   "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_pt_nominal.size() ? FatJet_pt_nominal[BestTopMerged_idx] : -9999.")\
-                                    .Define("BestTopMerged_eta",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_eta.size() ? FatJet_eta[BestTopMerged_idx] : -9999.")\
-                                    .Define("BestTopMerged_phi",  "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_phi.size() ? FatJet_phi[BestTopMerged_idx] : -9999.")\
-                                    .Define("BestTopMerged_mass", "BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_mass_nominal.size() ? FatJet_mass_nominal[BestTopMerged_idx] : -9999.")\
-                                    .Define("BestTopMerged_score","BestTopMerged_idx >= 0 && BestTopMerged_idx < (int)FatJet_particleNetWithMass_TvsQCD.size() ? FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx] : -9999.")
+    df_topvariables = df_topselected.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_phi",      "TopResolved_phi[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_mass",     "TopResolved_mass_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_score",    "TopResolved_TopScore_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopMixed_pt",          "TopMixed_pt_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_eta",         "TopMixed_eta[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_phi",         "TopMixed_phi[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_mass",        "TopMixed_mass_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_score",       "TopMixed_TopScore_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMerged_pt",         "FatJet_pt_nominal[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_eta",        "FatJet_eta[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_phi",        "FatJet_phi[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_mass",       "FatJet_mass_nominal[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_score",      "FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx]")
         
     if isMC:
-        df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2) : 0.")\
-                                         .Define("TopMixedMatched_to_GenTop_dR0p2",     "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMixed_eta, BestTopMixed_phi, 0.2) : 0.")\
-                                         .Define("TopMergedMatched_to_GenTop_dR0p2",    "TopGenTopPart_pt.size() > 0 ? TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMerged_eta, BestTopMerged_phi, 0.2) : 0.")
+        df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2)")\
+                                         .Define("TopMixedMatched_to_GenTop_dR0p2",     "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMixed_eta, BestTopMixed_phi, 0.2)")\
+                                         .Define("TopMergedMatched_to_GenTop_dR0p2",    "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMerged_eta, BestTopMerged_phi, 0.2)")
     else:
         df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "1.")\
                                          .Define("TopMixedMatched_to_GenTop_dR0p2",     "1.")\
@@ -353,12 +353,14 @@ def select_top(df, isMC):
     return df_topvariables
 
 def tag_toplep(df):
-    df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")
+    df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")\
+                    .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")\
+
     df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
                            .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
                            .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bJet_TopLep_idx",                          "dR_bJet_GoodMuon.size() ==0 ? -1 : (int)ArgMin(bidx_bJet_GoodMuon)")\
-                           .Define("mu_TopLep_idx",                            "dR_bJet_GoodMuon.size() ==0 ? -1 : (int)ArgMin(midx_bJet_GoodMuon)")\
+                           .Define("bJet_TopLep_idx",                          "(int)ArgMin(bidx_bJet_GoodMuon)")\
+                           .Define("mu_TopLep_idx",                            "(int)ArgMin(midx_bJet_GoodMuon)")\
                            .Define("dR_bJetTopLep_BestTopResolved",            "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
                            .Define("dR_bJetTopLep_BestTopMixed",               "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
                            .Define("dR_bJetTopLep_BestTopMerged",              "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")\
@@ -725,7 +727,7 @@ for d in datasets:
         # df_wnom           = df_hlt.Define('w_nominal', '1')
         df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
         df_topsel       = select_top(df_presel, sampleflag)
-        df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
+        df_topsel       = df_topsel.Define("MT_T", "TransverseMass_part1part2(Top_pt, Top_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
         df_topsel       = tag_toplep(df_topsel)
 
                                                                                            # add muon SF to the weight
