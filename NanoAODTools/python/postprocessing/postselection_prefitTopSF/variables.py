@@ -49,8 +49,8 @@ vars = []
 # vars.append(variable(name = "MET_phi", title= "MET #phi", nbins = 6, xmin = -math.pi, xmax=math.pi))
 # vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 20, xmin = 25, xmax=850))
 # vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
-# vars.append(variable(name = "PuppiMET_T1_pt_nominal", title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 20, xmin = 25, xmax=850))
-# vars.append(variable(name = "PuppiMET_T1_phi_nominal", title= "Puppi MET #phi nominal", nbins = 6, xmin = -math.pi, xmax=math.pi))
+vars.append(variable(name = "PuppiMET_T1_pt_nominal",   title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 20, xmin = 25,          xmax=850))
+vars.append(variable(name = "PuppiMET_T1_phi_nominal",  title= "Puppi MET #phi nominal",            nbins = 6,  xmin = -math.pi,    xmax=math.pi))
 
 # vars.append(variable(name = "LeadingJetPt_pt", title= "Leading Jet p_{T} [GeV]", nbins = 8, xmin = 50, xmax=850))
 # vars.append(variable(name = "LeadingJetPt_eta", title= "Leading Jet #eta", nbins = 8, xmin = -4, xmax=4))
@@ -80,7 +80,7 @@ vars = []
 # vars.append(variable(name = "HT_eventHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
 # vars.append(variable(name = "run", title= "Run Number", nbins = 5142, xmin = 315251.5, xmax = 320393.5))
 
-# vars.append(variable(name = "MHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
+vars.append(variable(name = "MHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
 # vars.append(variable(name = "PV_npvsGood", title= "Number of PV", nbins = 25, xmin = -0.5, xmax = 49.5))
 
 # vars.append(variable(name = "TopMixed_TopScore_nominal", title= "Top Mixed Score", nbins = 20, xmin = 0, xmax=1, noUnOvFlowbin = True))
@@ -115,9 +115,9 @@ vars.append(variable(name="BestTopResolved_mass",     title="BestTopResolved mas
 vars.append(variable(name="BestTopMixed_mass",        title="BestTopMixed mass [GeV]",           nbins=20, xmin=0,   xmax=1000, noUnOvFlowbin = True))
 vars.append(variable(name="BestTopMerged_mass",       title="BestTopMerged mass [GeV]",          nbins=20, xmin=0,   xmax=1000, noUnOvFlowbin = True))
 
-vars.append(variable(name="MT_W",                     title="M^{W}_{T} [GeV]",                   nbins=20, xmin=0,   xmax=1000, noUnOvFlowbin = True))
-vars.append(variable(name="MT_lb",                    title="M^{lb}_{T} [GeV]",                  nbins=20, xmin=0,   xmax=1000, noUnOvFlowbin = True))
-vars.append(variable(name="MT_toplep",                title="M^{TopLep}_{T} [GeV]",              nbins=20, xmin=0,   xmax=1000, noUnOvFlowbin = True))
+vars.append(variable(name="MT_W",                     title="M^{W}_{T} [GeV]",                   nbins=10, xmin=0,   xmax=250, noUnOvFlowbin = True))
+vars.append(variable(name="MT_lb",                    title="M^{lb}_{T} [GeV]",                  nbins=20, xmin=0,   xmax=500, noUnOvFlowbin = True))
+vars.append(variable(name="MT_toplep",                title="M^{TopLep}_{T} [GeV]",              nbins=20, xmin=0,   xmax=500, noUnOvFlowbin = True))
 
 
 ######## 1D variables for histos

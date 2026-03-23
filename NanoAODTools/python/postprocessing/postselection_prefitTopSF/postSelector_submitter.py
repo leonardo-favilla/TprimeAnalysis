@@ -57,7 +57,7 @@ if noSFbtag:
 if noPuWeight:
     syst_suffix    += "_noPuWeight"
 
-outFolder_path      = config["outputfolder"]["postselector_results"][period]
+outFolder_path      = config["TrotaScaleFactor"]["outputfolder"][period]
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])

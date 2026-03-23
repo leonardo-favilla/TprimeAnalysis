@@ -1791,7 +1791,7 @@ float GetMuonSF(std::string json_file, rvec_f Muon_pt, rvec_f Muon_eta, rvec_f M
 
 float TransverseMass_part1part2(float pt1, float phi1, float pt2, float phi2)
 {
-  return sqrt(2*pt1*pt2*(1-cos(phi1-phi2)));
+  return sqrt(2*pt1*pt2*(1-cos(deltaPhi(phi1,phi2))));
 }
 
 float WtoLNu_pt(float lep_pt, float lep_eta, float lep_phi, float lep_mass, float nu_pt, float nu_eta, float nu_phi, float nu_mass)
