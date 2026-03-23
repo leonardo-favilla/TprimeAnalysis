@@ -1,9 +1,9 @@
 import ROOT
 import os
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
-from PhysicsTools.NanoAODTools.postprocessing.variables import vars
 import yaml
 import sys
+import optparse
 
 config = {}
 config_paths = os.environ.get('PWD')+'/../config/config.yaml'
@@ -16,20 +16,25 @@ else:
     sys.exit(1)
 
 
+usage                   = "python3 collectHistograms.py --era <era> --region <region>"
+parser                  = optparse.OptionParser(usage)
+parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
+parser.add_option(      "--region",                 dest="region",                      type=str,     default="MixedLooseButNotTight",                  help="SemiLep region to consider among: ResolvedLooseButNotTight, ResolvedTight, MixedLooseButNotTight, MixedTight, MergedLooseButNotTight, MergedTight")
+(opt, args)             = parser.parse_args()
+era                     = opt.era
+region                  = opt.region
+outputfolder            = config["TrotaScaleFactor"]["outputfolder"][era]
+fit_variable            = config["TrotaScaleFactor"]["fit_variable"][region]
+plotsFolder             = f"{outputfolder}/plots"
+workspaceFolder         = f"{outputfolder}/workspace_{region}"
+workspaceSubFolder      = f"{workspaceFolder}/{fit_variable}/"
 
-
-
-
-
-plotsFolder     = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/plots/"
-region          = "MixedLooseButNotTight"
-workspaceFolder = f"/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/workspace_{region}/"
-mass_variable   = "BestTopMixed_mass"
-era             = "2023"
 if not os.path.exists(workspaceFolder):
     os.makedirs(workspaceFolder)
     print(f"Created workspace folder: {workspaceFolder}")
-
+if not os.path.exists(workspaceSubFolder):
+    os.makedirs(workspaceSubFolder)
+    print(f"Created workspace subfolder: {workspaceSubFolder}")
 
 event_categories    = ["pt0to200","pt200to400","pt400to600","pt600to1000"]
 uncertainties       = {
@@ -109,7 +114,7 @@ for c in components:
 # print(inputHistograms_dict["TT_semilep_2023"].keys())
 
 
-outFile_dict            = {ev_cat: ROOT.TFile.Open(os.path.join(workspaceFolder, f"{ev_cat}.root"), "RECREATE") for ev_cat in event_categories}
+outFile_dict            = {ev_cat: ROOT.TFile.Open(os.path.join(workspaceSubFolder, f"{ev_cat}.root"), "RECREATE") for ev_cat in event_categories}
 outputHistograms_dict   = {}
 outputCount_dict        = {}
 
@@ -131,12 +136,12 @@ for tag_cat in tag_categories:
         for pass_tag in ["pass", "fail"]:
             for unc,unc_tag in uncertainties_tags.items():
                 if tag_cat == "data":
-                    histoname       = f"{mass_variable}_SemiLep_{region}_{ev_cat}_{pass_tag}"
-                    histoname_out   = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}"
+                    histoname       = f"{fit_variable}_SemiLep_{region}_{ev_cat}_{pass_tag}"
+                    histoname_out   = f"{tag_cat}_{fit_variable}_{ev_cat}_{pass_tag}"
                     lumi            = 1.0
                 else:
-                    histoname       = f"{mass_variable}_SemiLep_{region}_{ev_cat}_{pass_tag}_{tag_cat}_{unc}"
-                    histoname_out   = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}_{unc_tag}"
+                    histoname       = f"{fit_variable}_SemiLep_{region}_{ev_cat}_{pass_tag}_{tag_cat}_{unc}"
+                    histoname_out   = f"{tag_cat}_{fit_variable}_{ev_cat}_{pass_tag}_{unc_tag}"
                     lumi            = config["plotting"]["lumi_dict"][era]
 
 
@@ -181,7 +186,7 @@ for ev_cat in event_categories:
                                 }
     for tag_cat in tag_categories:
         for pass_tag in ["pass", "fail"]:
-            histoname       = f"{tag_cat}_{mass_variable}_{ev_cat}_{pass_tag}"
+            histoname       = f"{tag_cat}_{fit_variable}_{ev_cat}_{pass_tag}"
             if not "data" in histoname:
                 histoname   += "_nominal"
             count           = outputCount_dict[histoname]
@@ -218,7 +223,7 @@ for ev_cat, outFile in outFile_dict.items():
             histo.Write()
     outFile.Close()
     
-with open(os.path.join(workspaceFolder, "histogram_counts.txt"), "w") as count_file:
+with open(os.path.join(workspaceSubFolder, "histogram_counts.txt"), "w") as count_file:
     for ev_cat, summary in summaryCount_dict.items():
         count_file.write(f"Event category:              {ev_cat}\n")
         count_file.write(f"     Data pass count:        {summary['data_pass']:.1f}\n")
@@ -234,10 +239,10 @@ with open(os.path.join(workspaceFolder, "histogram_counts.txt"), "w") as count_f
 
 categories_to_plot   = ["topmatched", "nonmatched", "other"]
 number_of_categories = len(categories_to_plot)
-print(f"Folder with datacards and workspaces: {workspaceFolder}")
+print(f"Folder with datacards and workspaces: {workspaceSubFolder}")
 for ev_cat in event_categories:
     print(f"Printing datacard {ev_cat}.txt")
-    with open(f"{workspaceFolder}/{ev_cat}.txt", 'w') as combine_card_file:
+    with open(f"{workspaceSubFolder}/{ev_cat}.txt", 'w') as combine_card_file:
         combine_lines = []
         
         combine_lines.append("imax 2 (two channels, pass and fail)\n")
@@ -245,10 +250,10 @@ for ev_cat in event_categories:
         combine_lines.append("kmax * (automatic number of nuisance parameters)\n")
         combine_lines.append("----------\n")
 
-        combine_lines.append(f"shapes data_obs pass {workspaceFolder}/{ev_cat}.root data_{mass_variable}_{ev_cat}_pass\n")
-        combine_lines.append(f"shapes * pass {workspaceFolder}/{ev_cat}.root $PROCESS_{mass_variable}_{ev_cat}_pass_nominal $PROCESS_{mass_variable}_{ev_cat}_pass_$SYSTEMATIC\n")
-        combine_lines.append(f"shapes data_obs fail {workspaceFolder}/{ev_cat}.root data_{mass_variable}_{ev_cat}_fail\n")
-        combine_lines.append(f"shapes * fail {workspaceFolder}/{ev_cat}.root $PROCESS_{mass_variable}_{ev_cat}_fail_nominal $PROCESS_{mass_variable}_{ev_cat}_fail_$SYSTEMATIC\n")
+        combine_lines.append(f"shapes data_obs pass {workspaceSubFolder}/{ev_cat}.root data_{fit_variable}_{ev_cat}_pass\n")
+        combine_lines.append(f"shapes * pass {workspaceSubFolder}/{ev_cat}.root $PROCESS_{fit_variable}_{ev_cat}_pass_nominal $PROCESS_{fit_variable}_{ev_cat}_pass_$SYSTEMATIC\n")
+        combine_lines.append(f"shapes data_obs fail {workspaceSubFolder}/{ev_cat}.root data_{fit_variable}_{ev_cat}_fail\n")
+        combine_lines.append(f"shapes * fail {workspaceSubFolder}/{ev_cat}.root $PROCESS_{fit_variable}_{ev_cat}_fail_nominal $PROCESS_{fit_variable}_{ev_cat}_fail_$SYSTEMATIC\n")
         combine_lines.append("----------\n")
 
         combine_lines.append("bin\tpass\tfail\n")
@@ -281,19 +286,19 @@ for ev_cat in event_categories:
         combine_card_file.writelines(combine_lines)
 
 print(f"Printing combine script file combine_script.sh")
-with open(f"{workspaceFolder}/combine_script.sh", 'w') as combine_script_file:
+with open(f"{workspaceSubFolder}/combine_script.sh", 'w') as combine_script_file:
     combine_script_file.write("#!/bin/bash\n")
     combine_script_file.write("# Converting datacards to workspace file for portability :-)\n")
-    combine_script_file.write(f"cd {workspaceFolder}/\n")
+    combine_script_file.write(f"cd {workspaceSubFolder}/\n")
     for ev_cat in event_categories:
         combine_script_file.write(f"text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe {ev_cat}.txt -o workspace_{ev_cat}.root --PO=categories={','.join(categories_to_plot)}\n")
 
 print(f"Printing fit script file fit_procedure.sh")
-with open(f"{workspaceFolder}/fit_procedure.sh", 'w') as fit_script_file:
+with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
     fit_script_file.write("#!/bin/bash\n")
     fit_script_file.write("# Running the fit procedure\n")
     fit_script_file.write("echo '[1/2] Running MultiDimFit'\n")
-    fit_script_file.write(f"cd {workspaceFolder}/\n")
+    fit_script_file.write(f"cd {workspaceSubFolder}/\n")
     for ev_cat in event_categories:
         fit_script_file.write(
                                 f"combine -M MultiDimFit workspace_{ev_cat}.root \\\n"
