@@ -2,10 +2,10 @@ import ROOT
 import os
 import json
 
-workspaceFolder     = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/workspace_MixedLooseButNotTight/"
+workspaceFolder     = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/workspace_MixedLooseButNotTight"
 era                 = "2023"
 cand                = "Mixed"
-outFolder           = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/ScaleFactors/"
+outFolder           = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep/ScaleFactors"
 outName             = "TrotaScaleFactors_LooseButNotTight"
 categories          = ["topmatched", "nonmatched", "other"]
 event_categories    = ["pt0to200", "pt200to400", "pt400to600", "pt600to1000"]
@@ -31,8 +31,9 @@ else:
     sf_dict[era][cand]  = {}
 
 
-for poi in [f"SF_{cat}" for cat in categories]:
-    sf_dict[era][cand][poi] = {
+for cat in categories:
+    poi                     = f"SF_{cat}"
+    sf_dict[era][cand][cat] = {
                                 "value": [],
                                 "error": []
                             }
@@ -44,8 +45,8 @@ for poi in [f"SF_{cat}" for cat in categories]:
         # fit.Print("v")
         sf              = fit.floatParsFinal().find(poi)
         if sf:
-            sf_dict[era][cand][poi]["value"].append(sf.getVal())
-            sf_dict[era][cand][poi]["error"].append(sf.getError())
+            sf_dict[era][cand][cat]["value"].append(sf.getVal())
+            sf_dict[era][cand][cat]["error"].append(sf.getError())
             print(f"{poi} \t\t= {sf.getVal():.4f} ± {sf.getError():.4f}")
         else:
             print(f"{poi} not found in RooFitResult")
