@@ -1582,3 +1582,41 @@ float genpartTopPt(rvec_f GenPart_pt, rvec_i GenPart_pdgId, rvec_i GenPart_genPa
 
   return top_pt;
 }
+
+
+
+################
+### Trota SF ###
+################
+
+////// Matching between Top Candidates and Gen Tops requiring their deltaR to be below a certain threshold
+RVec<int> TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPart_phi, rvec_f TopCand_eta, rvec_f TopCand_phi, float deltaR_thr)
+{
+  RVec<int> matched;
+  if(TopGenTopPart_eta.size()==0) // no gen tops in the event (QCD, etc.)
+  {
+    for(int j = 0; j < TopCand_eta.size(); j++)
+    {      
+      matched.push_back(0);
+    }
+  }
+  else
+  {
+    for(int j = 0; j < TopCand_eta.size(); j++)
+    {
+      for(int i = 0; i < TopGenTopPart_eta.size(); i++)
+      {
+        if(deltaR(TopGenTopPart_eta[i], TopGenTopPart_phi[i], TopCand_eta[j], TopCand_phi[j]) < deltaR_thr)
+        {
+          matched.push_back(1);
+          break;
+        }
+        else
+        {
+          matched.push_back(0);
+        }
+      }
+    }
+  }
+  return matched;
+}
