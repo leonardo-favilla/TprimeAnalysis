@@ -321,9 +321,11 @@ def select_top(df, isMC):
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
 
-    df_topselected = df_topvariables.Define("BestTopResolved_idx",      "(int)ArgMax(TopResolved_TopScore_nominal)")\
-                                    .Define("BestTopMixed_idx",         "(int)ArgMax(TopMixed_TopScore_nominal)")\
-                                    .Define("BestTopMerged_idx",        "(int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
+    df_topselected = df_topvariables.Define("BestTopResolved_idx",                                                          "(int)ArgMax(TopResolved_TopScore_nominal)")\
+                                    .Define("BestTopMixed_idx",                                                             "(int)ArgMax(TopMixed_TopScore_nominal)")\
+                                    .Define("BestTopMerged_idx",                                                            "(int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")\
+                                    .Define("JetBTagMedium_NotInsideBestTopMixed_idx",                                      "JetBTagMedium_NotInsideBestTopCand_idx(JetBTagMedium_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
+                                    .Define("JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",             "JetBTagMedium_NotInsideBestTopCand_idx(JetBTagMedium_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
 
     df_topvariables = df_topselected.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
                                     .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
@@ -356,9 +358,9 @@ def tag_toplep(df):
     df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")\
                     .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")\
 
-    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_idx, Jet_eta, Jet_phi, 2.0)")\
+    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
                            .Define("bJet_TopLep_idx",                          "(int)ArgMin(bidx_bJet_GoodMuon)")\
                            .Define("mu_TopLep_idx",                            "(int)ArgMin(midx_bJet_GoodMuon)")\
                            .Define("dR_bJetTopLep_BestTopResolved",            "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\

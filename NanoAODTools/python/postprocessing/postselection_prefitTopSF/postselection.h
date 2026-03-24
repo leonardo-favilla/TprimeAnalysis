@@ -1624,6 +1624,23 @@ Int_t TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPar
   return matched;
 }
 
+RVec<int> JetBTagMedium_NotInsideBestTopCand_idx(rvec_i JetBTagMedium_idx, rvec_i TopCand_idxJet0, rvec_i TopCand_idxJet1, rvec_i TopCand_idxJet2, int BestTopCand_idx)
+{
+  int jet0 = TopCand_idxJet0[BestTopCand_idx];
+  int jet1 = TopCand_idxJet1[BestTopCand_idx];
+  int jet2 = TopCand_idxJet2[BestTopCand_idx];
+
+  RVec<int> bjets_not_in_tophadr;
+  for(int i = 0; i < JetBTagMedium_idx.size(); i++)
+  {
+    if(JetBTagMedium_idx[i] != jet0 && JetBTagMedium_idx[i] != jet1 && JetBTagMedium_idx[i] != jet2)
+    {
+      bjets_not_in_tophadr.emplace_back(JetBTagMedium_idx[i]);
+    }
+  }
+  return bjets_not_in_tophadr;
+}
+
 ////// Return indexes of b-jets that are matched to good muons within deltaR < 2.0
 RVec<int> idx_of_bJetsMatched_to_GoodMuon_with_dR(rvec_i GoodMu_idx, rvec_f Muon_eta, rvec_f Muon_phi, rvec_i JetBTag_idx, rvec_f Jet_eta, rvec_f Jet_phi, float deltaR_thr)
 {
