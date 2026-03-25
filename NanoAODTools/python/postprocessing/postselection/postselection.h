@@ -1585,9 +1585,9 @@ float genpartTopPt(rvec_f GenPart_pt, rvec_i GenPart_pdgId, rvec_i GenPart_genPa
 
 
 
-################
-### Trota SF ###
-################
+////////////////
+/// Trota SF ///
+////////////////
 
 ////// Matching between Top Candidates and Gen Tops requiring their deltaR to be below a certain threshold
 RVec<int> TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPart_phi, rvec_f TopCand_eta, rvec_f TopCand_phi, float deltaR_thr)
@@ -1604,19 +1604,19 @@ RVec<int> TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTo
   {
     for(int j = 0; j < TopCand_eta.size(); j++)
     {
+      int matching_found = 0;
       for(int i = 0; i < TopGenTopPart_eta.size(); i++)
       {
         if(deltaR(TopGenTopPart_eta[i], TopGenTopPart_phi[i], TopCand_eta[j], TopCand_phi[j]) < deltaR_thr)
         {
-          matched.push_back(1);
+          matching_found = 1;
           break;
         }
-        else
-        {
-          matched.push_back(0);
-        }
       }
+      matched.push_back(matching_found);
     }
   }
   return matched;
 }
+
+// RVec<int> top_MatchCategory()
