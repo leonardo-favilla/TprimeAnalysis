@@ -83,7 +83,7 @@ branches = ["PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT",
             "GoodJet_idx", 
             "TopMixed_TopScore_nominal", "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
             "TightTopMix_idx", "LooseTopMix_idx", "LooseNOTTightTopMix_idx", "nLooseTopMixed", "nTightTopMixed",
-            "TopMixed_isMatched_to_GenTop_dR0p2"
+            "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process",
            ]
 
 #### LOAD utils/postselection.h ####
@@ -337,17 +337,22 @@ def select_top(df, isMC):
         df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
-    
-    # here we add:
-    # 1. truth:         if the candidate is matched to a GenTop with dR<0.2
-    # 2. topcategory:   topmatched, nonmatched, other
-    if isMC:
-        df_topvariables = df_topvariables.Define("TopResolved_isMatched_to_GenTop_dR0p2",   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
-                                         .Define("TopMixed_isMatched_to_GenTop_dR0p2",      "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
-                                         .Define("TopMerged_isMatched_to_GenTop_dR0p2",     "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")
-
-
     return df_topvariables
+    
+def add_TrotaScaleFactors(df, sampleflag, sample_process):
+    # 1. truth:                     if the candidate is matched to a GenTop with dR<0.2
+    # 2. top_process_category:      0: topmatched, 1: nonmatched, 2: other
+    if sampleflag:
+        df_toptruth_with_matching = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
+                                      .Define("TopMixed_isMatched_to_GenTop_dR0p2",      "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
+                                      .Define("TopMerged_isMatched_to_GenTop_dR0p2",     "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")
+
+        df_top_process_category   = df_toptruth_with_matching.Define("TopResolved_process", f'top_process_category("{sample_process}", TopResolved_isMatched_to_GenTop_dR0p2)')\
+                                                             .Define("TopMixed_process",    f'top_process_category("{sample_process}", TopMixed_isMatched_to_GenTop_dR0p2)')\
+                                                             .Define("TopMerged_process",   f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')
+
+        df_TrotaScaleFactors      = df_top_process_category
+    return df_TrotaScaleFactors
 
 def defineWeights(df, sampleflag):
     if sampleflag:
@@ -645,6 +650,8 @@ for d in datasets:
             era = "2023"
             if s.EE==1:
                 era = "2023BPix"
+
+        sample_process = s.process.split("_")[0]
         #-------------------------------------------------------------------------
         #########################  DF initialization #############################
         #-------------------------------------------------------------------------
@@ -701,23 +708,24 @@ for d in datasets:
         df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
         df_topsel       = select_top(df_presel, sampleflag)
         df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
-        
+        df_TrotaSF      = add_TrotaScaleFactors(df_topsel, sampleflag, sample_process)
+
         # command for printing the cutflow, add it in the SRs for all the bkgs 
         if printcutflow:
-            df_topsel.Report().Print()
+            df_TrotaSF.Report().Print()
 
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()
             opts.fLazy  = True
             fold        = folder
-            snapshot_df = df_topsel.Snapshot("events_nominal", fold+"snap_"+s.label+".root", branches, opts)
+            snapshot_df = df_TrotaSF.Snapshot("events_nominal", fold+"snap_"+s.label+".root", branches, opts)
             # print("./"+s.label+".root")
         if do_histos:
             s_cut = cut_string(cut)
             if len(var) != 0 :
-                h[d.label][s.label] = bookhisto(df_topsel, regions_def, var, s_cut)
+                h[d.label][s.label] = bookhisto(df_TrotaSF, regions_def, var, s_cut)
             if len(var2d) != 0:
-                h_2D[d.label][s.label] = bookhisto2D(df_topsel, regions_def, var2d, s_cut)
+                h_2D[d.label][s.label] = bookhisto2D(df_TrotaSF, regions_def, var2d, s_cut)
 
         
         if do_variations:

@@ -1619,4 +1619,31 @@ RVec<int> TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTo
   return matched;
 }
 
-// RVec<int> top_MatchCategory()
+////// Definition of the process category for each top candidate based on the matching to gen tops and on the sample process (TT, TW, QCD, etc.)
+////// 0: topmatched, 1: notmatched, 2: other
+RVec<int> top_process_category(std::string sample_process, rvec_i TopTruth_MatchedToGenTop)
+{
+  RVec<int> top_process;
+  for(int i = 0; i < TopTruth_MatchedToGenTop.size(); i++)
+  {
+    if (TopTruth_MatchedToGenTop[i] == 1)
+    {
+      if(sample_process == "TT" || sample_process == "TW")
+      {
+        top_process.push_back(0);
+      }
+    }
+    else if (TopTruth_MatchedToGenTop[i] == 0)
+    {
+      if(sample_process == "TT" || sample_process == "TW")
+      {
+        top_process.push_back(1);
+      }
+      else if(sample_process == "QCD" || sample_process == "ZJetsToNuNu" || sample_process == "WJets")
+      {
+        top_process.push_back(2);
+      }
+    }
+  }
+  return top_process;
+}
