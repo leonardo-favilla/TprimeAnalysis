@@ -27,6 +27,7 @@ plotting:
       "2023":           18.063,
       "2023postBPix":   9.693
     }
+
   folder_dict:
     {
       "2022":               "/eos/user/l/lfavilla/RDF_DManalysis/results/run2022_syst_noPuWeight_prodNov25/",
@@ -54,20 +55,20 @@ plotting:
       "2022":
               [
                   "DataJetMET_2022",
-                  "TT_semilep_2022",
-                  "TT_hadr_2022",
+                  "TT_2022",
+                  "TW_2022",
                   "QCD_2022",
                   "ZJetsToNuNu_2jets_2022",
                   "WJets_2jets_2022",
-                  "TprimeToTZ_700_2022",
-                  "TprimeToTZ_1000_2022",
-                  "TprimeToTZ_1800_2022"
+                  # "TprimeToTZ_700_2022",
+                  # "TprimeToTZ_1000_2022",
+                  # "TprimeToTZ_1800_2022"
               ],
       "2022EE":
               [
                   "DataJetMET_2022EE",
-                  "TT_semilep_2022EE",
-                  "TT_hadr_2022EE",
+                  "TT_2022EE",
+                  "TW_2022EE",
                   "QCD_2022EE",
                   "ZJetsToNuNu_2jets_2022EE",
                   "WJets_2jets_2022EE",
@@ -78,8 +79,8 @@ plotting:
       "2023":
               [
                   "DataJetMET_2023",
-                  "TT_semilep_2023",
-                  "TT_hadr_2023",
+                  "TT_2023",
+                  "TW_2023",
                   "QCD_2023",
                   "ZJetsToNuNu_2jets_2023",
                   "WJets_2jets_2023",
@@ -90,8 +91,8 @@ plotting:
       "2023postBPix":
               [
                   "DataJetMET_2023postBPix",
-                  "TT_semilep_2023postBPix",
-                  "TT_hadr_2023postBPix",
+                  "TT_2023postBPix",
+                  "TW_2023postBPix",
                   "QCD_2023postBPix",
                   "ZJetsToNuNu_2jets_2023postBPix",
                   "WJets_2jets_2023postBPix",
@@ -99,6 +100,14 @@ plotting:
                   "TprimeToTZ_1000_2023postBPix",
                   "TprimeToTZ_1800_2023postBPix"
               ],
+    }
+
+  systematics:
+    {
+      "2022":           ["QCDScale"], # "QCDScale"
+      "2022EE":         [],
+      "2023":           [],
+      "2023postBPix":   []
     }
 
   scale_signals: 100
