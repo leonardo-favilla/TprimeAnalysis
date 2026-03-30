@@ -644,13 +644,55 @@ bool LepVeto(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, 
   return IsLepVetoPassed;
 }
 
+RVec<bool> Jet_passJetIdTight(rvec_f Jet_eta, rvec_i Jet_jetId, rvec_f Jet_neHEF, rvec_f Jet_neEmEF)
+{
+  RVec<bool> passJetIdTight;
+  for(int i = 0; i<Jet_eta.size(); i++)
+  {
+    bool _passJetIdTight = false;
+    if (abs(Jet_eta[i]) <= 2.7)
+    {
+      _passJetIdTight = Jet_jetId[i] & (1 << 1);
+    }
+    else if (abs(Jet_eta[i]) > 2.7 && abs(Jet_eta[i]) <= 3.0)
+    {
+      _passJetIdTight = (Jet_jetId[i] & (1 << 1)) && (Jet_neHEF[i] < 0.99);
+    }
+    else if (abs(Jet_eta[i]) > 3.0)
+    {
+      _passJetIdTight = (Jet_jetId[i] & (1 << 1)) && (Jet_neEmEF[i] < 0.4);
+    }
+    passJetIdTight.emplace_back(_passJetIdTight);
+  }
+  return passJetIdTight;
+}
+
+RVec<bool> Jet_passJetIdTightLepVeto(rvec_f Jet_eta, rvec_b Jet_passJetIdTight, rvec_f Jet_muEF, rvec_f Jet_chEmEF)
+{
+  RVec<bool> passJetIdTightLepVeto;
+  for(int i = 0; i<Jet_eta.size(); i++)
+  {
+    bool _passJetIdTightLepVeto = false;
+    if (abs(Jet_eta[i]) <= 2.7)
+    {
+      _passJetIdTightLepVeto = Jet_passJetIdTight[i] && (Jet_muEF[i] < 0.8) && (Jet_chEmEF[i] < 0.8);
+    }
+    else
+    {
+      _passJetIdTightLepVeto = Jet_passJetIdTight[i];
+    }
+    passJetIdTightLepVeto.emplace_back(_passJetIdTightLepVeto);
+  }
+  return passJetIdTightLepVeto;
+}
+
 RVec<int> GetGoodJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
 {
   RVec<int> ids;
   for(int i = 0; i<Jet_pt.size(); i++)
   {
     // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
-      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
+      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i])
       {
         ids.emplace_back(i);
       }
