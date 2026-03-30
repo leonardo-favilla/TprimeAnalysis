@@ -208,8 +208,8 @@ for dat in datasets:
 
 ### rebinning for MT ###
 MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
-PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
-
+# PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
+PuppiMET_pt_xbins   = array.array('d', [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 850])
 
 for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:

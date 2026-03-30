@@ -49,7 +49,7 @@ vars = []
 # vars.append(variable(name = "MET_phi", title= "MET #phi", nbins = 6, xmin = -math.pi, xmax=math.pi))
 # vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 20, xmin = 25, xmax=850))
 # vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
-vars.append(variable(name = "PuppiMET_T1_pt_nominal",   title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 20, xmin = 25,          xmax=850))
+vars.append(variable(name = "PuppiMET_T1_pt_nominal",   title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 20, xmin = 50,          xmax=850))
 vars.append(variable(name = "PuppiMET_T1_phi_nominal",  title= "Puppi MET #phi nominal",            nbins = 6,  xmin = -math.pi,    xmax=math.pi))
 
 # vars.append(variable(name = "LeadingJetPt_pt", title= "Leading Jet p_{T} [GeV]", nbins = 8, xmin = 50, xmax=850))

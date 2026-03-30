@@ -1,10 +1,20 @@
 import correctionlib
 from correctionlib import _core
 
-# Path to the .json.gz file
 # filepath    = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2023_Summer23/btagging.json.gz"
-filepath    = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2023_Summer23BPix/btagging.json.gz"
+# filepath    = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2023_Summer23BPix/btagging.json.gz"
 # filepath    = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2022_Summer22/btagging.json.gz"
+
+# Path to the .json.gz file taken from https://cms-analysis-corrections.docs.cern.ch/corrections/BTV/
+era           = "2023postBPix" # options: "2022", "2022EE", "2023", "2023postBPix"
+filepath_dict = {
+                    "2022":         "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22CDSep23-Summer22-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2022EE":       "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2023":         "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
+                }
+
+filepath    = filepath_dict[era]
 
 # Load the correction set from the file
 cset        = _core.CorrectionSet.from_file(filepath)

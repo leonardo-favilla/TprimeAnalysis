@@ -190,23 +190,25 @@ def cut_string(cut):
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
     
-    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)") #richiesto jetId==6
-    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)") 
-    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") #richiesto jetId==6
-    df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
-    df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
+    df = df.Define("Jet_passJetIdTight",                "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)") # https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
+    df = df.Define("Jet_passJetIdTightLepVeto",         "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt, Jet_eta, Jet_passJetIdTightLepVeto)") # richiesto passJetIdTightLepVeto==1
+    df = df.Define("nGoodJet",                          "nGoodJet(GoodJet_idx)") 
+    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
+    df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
+    df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
 
-    df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
-    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
-    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
-    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
-    df = df.Define("nTightMuon",        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
-           .Define("TightMuon_idx",     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
-           .Define("nLooseMuon",        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
-           .Define("LooseMuon_idx",     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
-           .Define("nVetoMuon",         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
-    df = df.Define("Lepton_flavour",    "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
-    df = df.Define("MT",                "TransverseMass_part1part2(Lep_pt, Lep_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
+    df = df.Redefine("MinDelta_phi",                    "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
+    df = df.Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
+    df = df.Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
+    df = df.Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
+    df = df.Define("nTightMuon",                        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("TightMuon_idx",                     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("nLooseMuon",                        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("LooseMuon_idx",                     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("nVetoMuon",                         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
+    df = df.Define("Lepton_flavour",                    "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
+    df = df.Define("MT",                                "TransverseMass_part1part2(Lep_pt, Lep_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
 
     df = df.Define("LeadingJetPt_idx", "GetLeadingPtJet(Jet_pt_nominal)")
     df = df.Define("LeadingJetPt_pt", "GetLeadingJetVar(LeadingJetPt_idx, Jet_pt_nominal)")
@@ -230,10 +232,13 @@ def preselection(df, btagAlg, year, EE):
     
     df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)") #richiesto jetId==6
     df = df.Define("MHT","MHT(GoodJet_idx, Jet_pt_nominal, Jet_phi, Jet_eta, Jet_mass_nominal)")
-    df = df.Define("JetBTagLoose_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 0)")\
-                .Define("nJetBtagLoose", "static_cast<int>(JetBTagLoose_idx.size());")
-    df = df.Define("JetBTagMedium_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 1)")\
-                .Define("nJetBtagMedium", "static_cast<int>(JetBTagMedium_idx.size());")
+    df = df.Define("JetBTagLoose_idx",      "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 0)")\
+           .Define("nJetBtagLoose",         "static_cast<int>(JetBTagLoose_idx.size());")\
+           .Define("JetBTagMedium_idx",     "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 1)")\
+           .Define("nJetBtagMedium",        "static_cast<int>(JetBTagMedium_idx.size());")\
+           .Define("JetBTagTight_idx",      "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 2)")\
+           .Define("nJetBtagTight",         "static_cast<int>(JetBTagTight_idx.size());")
+
     df = df.Redefine("PuppiMET_T1_pt_nominal", "PuppiMET_T1_pt_nominal_vec[0]")\
                 .Redefine("PuppiMET_T1_phi_nominal", "PuppiMET_T1_phi_nominal_vec[0]")
     
@@ -324,8 +329,10 @@ def select_top(df, isMC):
     df_topselected = df_topvariables.Define("BestTopResolved_idx",                                                          "(int)ArgMax(TopResolved_TopScore_nominal)")\
                                     .Define("BestTopMixed_idx",                                                             "(int)ArgMax(TopMixed_TopScore_nominal)")\
                                     .Define("BestTopMerged_idx",                                                            "(int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")\
-                                    .Define("JetBTagMedium_NotInsideBestTopMixed_idx",                                      "JetBTagMedium_NotInsideBestTopCand_idx(JetBTagMedium_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
-                                    .Define("JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",             "JetBTagMedium_NotInsideBestTopCand_idx(JetBTagMedium_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
+                                    .Define("JetBTagMedium_NotInsideBestTopMixed_idx",                                      "JetBTag_NotInsideBestTopCand_idx(JetBTagMedium_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
+                                    .Define("JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",             "JetBTag_NotInsideBestTopCand_idx(JetBTagMedium_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
+                                    .Define("JetBTagTight_NotInsideBestTopMixed_idx",                                       "JetBTag_NotInsideBestTopCand_idx(JetBTagTight_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
+                                    .Define("JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",              "JetBTag_NotInsideBestTopCand_idx(JetBTagTight_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
 
     df_topvariables = df_topselected.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
                                     .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
@@ -356,13 +363,14 @@ def select_top(df, isMC):
 
 def tag_toplep(df):
     df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")\
-                    .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")\
+                    .Filter("nJetBtagTight>0",                                 "at least 1 tight b-tagged jet")
+                    # .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")
 
-    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bJet_TopLep_idx",                          "(int)ArgMin(bidx_bJet_GoodMuon)")\
-                           .Define("mu_TopLep_idx",                            "(int)ArgMin(midx_bJet_GoodMuon)")\
+    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bJet_TopLep_idx",                          "bidx_bJet_GoodMuon[(int)ArgMin(bidx_bJet_GoodMuon)]")\
+                           .Define("mu_TopLep_idx",                            "midx_bJet_GoodMuon[(int)ArgMin(midx_bJet_GoodMuon)]")\
                            .Define("dR_bJetTopLep_BestTopResolved",            "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
                            .Define("dR_bJetTopLep_BestTopMixed",               "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
                            .Define("dR_bJetTopLep_BestTopMerged",              "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")\
