@@ -1,10 +1,11 @@
 import ROOT
 import cmsstyle as CMS
+import math
 ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetPalette(57)  # "DeepSea" palette
 
 
-def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals_dict=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None, colors_bkg=None, style_signals_dict=None):
+def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_signals_dict=None, region=None, xMin=0, xMax=100, yMin=0, yMax=100, rMin=0, rMax=2, xTitle="xTitle", yTitle="yTitle", rTitle="rTitle", extraText="Work in Progress", lumi=1, extraSpace=0.1, iPos=0, logy=False, repo=None, colors_bkg=None, style_signals_dict=None, systErr=False):
     ############ CREATE CANVAS AND PADS ############ 
     CMS.SetExtraText(extraText)
     CMS.SetLumi(lumi)
@@ -52,20 +53,51 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
 
         # CMS.cmsHeader(leg, f"{region}", textSize=0.05)
 
-    ##### Set graphics style for Backgrounds ##### 
+    ##### Set graphics style for Backgrounds #####
     if colors_bkg is not None:
         palette     = colors_bkg
     else:
         palette     = None
     stack           = ROOT.THStack("stack", "Stack Histogram")
-    # CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=histo_data, palette=palette)
-    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict, data=None, palette=palette)
+    # CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict["nominal"], data=histo_data, palette=palette)
+    CMS.cmsDrawStack(stack=stack, legend=leg, MC=histo_bkg_dict["nominal"], data=None, palette=palette)
     if histo_data is not None:
         CMS.cmsDraw(histo_data, "PE", mcolor=ROOT.kBlack)
 
+    # Add statistical+systematic uncertainty band on the background stack #
     h_bkg           = stack.GetStack().Last().Clone("h_bkg")
-    CMS.cmsDraw(h_bkg, "e2same0", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
-    leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+    # h_err_syst      = histo_bkg_dict["err_syst"].Clone("h_err_syst")
+    h_err_syst_up   = histo_bkg_dict["err_syst_up"].Clone("h_err_syst_up")
+    h_err_syst_down = histo_bkg_dict["err_syst_down"].Clone("h_err_syst_down")
+    for bin in range(1, h_bkg.GetNbinsX()+1): # here Stat. Unc. has been added in quadrature to Syst. Unc. Up and Down
+        h_err_syst_up.SetBinContent(bin, math.hypot(h_bkg.GetBinError(bin), h_err_syst_up.GetBinContent(bin)))
+        h_err_syst_down.SetBinContent(bin, -math.hypot(h_bkg.GetBinError(bin), h_err_syst_down.GetBinContent(bin)))
+    h_err_syst_up.Add(h_bkg)
+    h_err_syst_down.Add(h_bkg)
+    # for i in range(1, h_bkg.GetNbinsX()+1):
+    #     h_err_syst.SetPoint(i-1, h_bkg.GetBinCenter(i), h_bkg.GetBinContent(i))
+    
+    if not systErr:
+        CMS.cmsDraw(h_bkg, "esame20", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
+        leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+    else:
+        # CMS.cmsObjectDraw(h_err_syst, "asame2", FillColor=ROOT.kRed, FillStyle=3001, MarkerSize=1)
+        # CMS.cmsDraw(h_err_syst, "asame2", fcolor=ROOT.kRed, fstyle=3001, msize=1)
+        # leg.AddEntry(h_err_syst, "Stat. + Syst. Unc.", "a2")
+
+        CMS.cmsDraw(h_bkg, "esame20", fcolor=ROOT.kGray+3, fstyle=3004, msize=0)
+        leg.AddEntry(h_bkg, "Stat. Unc.", "F")
+
+        CMS.cmsDraw(h_err_syst_up, "HISTSAME", lcolor=ROOT.kBlue, msize=0, fstyle=0)
+        # CMS.cmsObjectDraw(h_err_syst_up, "HIST same", LineColor=ROOT.kBlue, FillStyle=0, MarkerSize=0)
+        leg.AddEntry(h_err_syst_up, "Stat+Syst. Unc. Up", "L")
+        CMS.cmsDraw(h_err_syst_down, "HISTSAME", lcolor=ROOT.kRed, msize=0, fstyle=0)
+        # CMS.cmsObjectDraw(h_err_syst_down, "HIST same", LineColor=ROOT.kRed, FillStyle=0, MarkerSize=0)
+        leg.AddEntry(h_err_syst_down, "Stat+Syst. Unc. Down", "L")
+
+
+    
+    
 
     ##### Set graphics style for Signals #####
     if histo_signals_dict is not None:
@@ -99,17 +131,34 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
 
 
 
+    if not systErr:
+        h_bkg_err   = h_bkg.Clone("h_err")
+        h_bkg_err.Reset()
+        for i in range(1, h_bkg.GetNbinsX()+1):
+            h_bkg_err.SetBinContent(i,1)
+            if(h_bkg.GetBinContent(i)):
+                h_bkg_err.SetBinError(i, (h_bkg.GetBinError(i)/h_bkg.GetBinContent(i)))
+            else:
+                h_bkg_err.SetBinError(i, 10^(-99))
+        CMS.cmsDraw(h_bkg_err, "e2same0", fcolor=ROOT.kGray+3, fstyle=3001, msize=0)
+    else:
+        h_bkg_err   = h_bkg.Clone("h_err")
+        h_bkg_err.Reset()
+        for i in range(1, h_bkg.GetNbinsX()+1):
+            h_bkg_err.SetBinContent(i,1)
+            if(h_bkg.GetBinContent(i)):
+                h_bkg_err.SetBinError(i, (h_bkg.GetBinError(i)/h_bkg.GetBinContent(i)))
+            else:
+                h_bkg_err.SetBinError(i, 10^(-99))
+        CMS.cmsDraw(h_bkg_err, "e2same0", fcolor=ROOT.kGray+3, fstyle=3001, msize=0)
 
+        h_ratio_up   = h_err_syst_up.Clone("h_err_up")
+        h_ratio_up.Divide(h_bkg)
+        h_ratio_down = h_err_syst_down.Clone("h_err_down")
+        h_ratio_down.Divide(h_bkg)
+        CMS.cmsDraw(h_ratio_up, "HISTSAME", lcolor=ROOT.kBlue, lstyle=ROOT.kDashed, msize=0, fstyle=0)
+        CMS.cmsDraw(h_ratio_down, "HISTSAME", lcolor=ROOT.kRed, lstyle=ROOT.kDashed, msize=0, fstyle=0)
 
-    h_bkg_err   = h_bkg.Clone("h_err")
-    h_bkg_err.Reset()
-    for i in range(1, h_bkg.GetNbinsX()+1):
-        h_bkg_err.SetBinContent(i,1)
-        if(h_bkg.GetBinContent(i)):
-            h_bkg_err.SetBinError(i, (h_bkg.GetBinError(i)/h_bkg.GetBinContent(i)))
-        else:
-            h_bkg_err.SetBinError(i, 10^(-99))
-    CMS.cmsDraw(h_bkg_err, "e2same0", fcolor=ROOT.kGray+3, fstyle=3001, msize=0)
 
 
 
@@ -217,11 +266,15 @@ if __name__ == "__main__":
     iPos            = 0  # Position of the legend (0: top-right, 1: top-left, etc.)
     region          = "MixSRatleast1fjets"
     histo_bkg_dict  = {
-                        "t#bar{t}":                 histo_tt,
-                        "QCD":                      histo_qcd,
-                        "Z (#nu#nu) + Jets":        histo_zjets,
-                        "W (#it{l}#nu) + Jets":     histo_wjets,
-                        }
+                        "nominal":                  None,
+                        "err_syst":                 None,
+                       }
+    histo_bkg_dict["nominal"]  = {
+                                "t#bar{t}":                 histo_tt,
+                                "QCD":                      histo_qcd,
+                                "Z (#nu#nu) + Jets":        histo_zjets,
+                                "W (#it{l}#nu) + Jets":     histo_wjets,
+                                }
 
     colors_bkg      = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
 

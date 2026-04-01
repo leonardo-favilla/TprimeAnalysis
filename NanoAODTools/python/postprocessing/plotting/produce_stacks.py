@@ -16,6 +16,7 @@ ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 import yaml
 import optparse
+import math
 
 config = {}
 config_paths = os.environ.get('PWD')+'/../config/config.yaml'
@@ -60,7 +61,7 @@ json_file_dict                      = config["dict_samples"]
 json_file_dict["2022EE"]            = json_file_dict["2022"]
 json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
-colors_bkg                          = ["#e42536", "#bebdb8", "#86c8dd", "#caeba5"]
+colors_bkg                          = ["#e42536", "#ffcc00", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
                                         "T (0.7TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen,      "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kSolid},
                                         "T (1.0TeV) #rightarrow tZ":  {"style": "hist",   "msize": 0,    "lcolor": ROOT.kGreen+1,    "lwidth": 2, "fstyle": 0, "lstyle": ROOT.kDashed},
@@ -84,6 +85,19 @@ labels_dict                         = {
                                         "tDM_mPhi500":      "tDM (m_{#phi}=500 GeV, m_{#chi}=1 GeV)",
                                         "tDM_mPhi1000":     "tDM (m_{#phi}=1000 GeV, m_{#chi}=1 GeV)",
                                     }
+
+systematics_dict                        = config["plotting"]["systematics"]
+systematics_dict["Full2022"]            = list(set(systematics_dict["2022"]) & set(systematics_dict["2022EE"]))
+systematics_dict["Full2023"]            = list(set(systematics_dict["2023"]) & set(systematics_dict["2023postBPix"]))
+systematics_dict["Full2022_Full2023"]   = list(set(systematics_dict["Full2022"]) & set(systematics_dict["Full2023"]))
+systematics                             = [f"{syst}_{variation}" for syst in systematics_dict[year_tag] for variation in ["up", "down"]]
+if len(systematics) == 0:
+    systErr     = False
+    print(f"No systematics to be added for year {year_tag}")
+else:
+    systErr     = True
+    print(f"Systematics to be added for year {year_tag}: {systematics}")
+
 if scale_signals != 1:
     style_signals_dict = {key+f" x{scale_signals}": style_signals_dict[key] for key in style_signals_dict}
     for key in labels_dict:
@@ -158,14 +172,17 @@ print("Regions:           {}".format(regions.keys()))
 def cut_string(cut):
     return cut.replace(" ", "").replace("&&","_").replace(">","_g_").replace(".","_").replace("==","_e_").replace("<", "_l_")
 
-
+###############################################
 ################## MAIN CODE ##################
+###############################################
 inFilePath          = {"Data": [], "signal": [], "bkg": []}
 inFile              = {"Data": [], "signal": [], "bkg": []}
 inSample            = {"Data": [], "signal": [], "bkg": []}
 cut_tag             = cut_string(cut)
 
 for dat in datasets:
+    if "Tprime" in dat:
+        continue
     year_tag        = dat.split("_")[-1]
     folder_tmp      = folder_dict[year_tag]
     repohisto_tmp   = folder_tmp + "plots/"
@@ -191,51 +208,45 @@ for dat in datasets:
 
 
 ### rebinning for MT ###
-# MT_T_xbins = array.array('d', [500, 550, 600, 650, 700, 750, 800, 850, 900, 1000, 1200, 1400, 1600, 2000])
 MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
 PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
 
 
-for v in vars:
+# for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
-# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
+for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
 # for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
-    for r in regions.keys():
+    # for r in regions.keys():
     # for r in ["SRTop"]:
-    # for r in ["AH"]:
+    for r in ["AH"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
         ###############################################
         ROOT.TH1.SetDefaultSumw2()
-
-        histo_bkg_dict      = {
-                                "t#bar{t}":                 None,
-                                "QCD":                      None,
-                                "tW":                       None,
-                                "Z (#nu#nu) + Jets":        None,
-                                "W (#it{l}#nu) + Jets":     None
-                            }
-        histo_data          = None
-        histo_signals_dict  = {}
+        histo_bkg_dict                  = {}
+        histo_bkg_dict["nominal"]       = {
+                                            "t#bar{t}":                 None,
+                                            "tW":                       None,
+                                            "QCD":                      None,
+                                            "Z (#nu#nu) + Jets":        None,
+                                            "W (#it{l}#nu) + Jets":     None
+                                            }
+        histo_bkg_dict["err_syst"]      = None
+        histo_data                      = None
+        histo_signals_dict              = {}
 
         # print(f"Processing variable {v._name} in region {r}")
 
         ##### Normalize Signals (Lumi) ######
         # print("Processing Signals")
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
-            # print(f"s.label:                    {s.label}")
-            # print(f"f.GetName():                {f.GetName()}")
-            histo_name                          = v._name+"_"+r#+"_"+"nominal"
-            # print(f"histo_name:                 {histo_name}")
+            histo_name                          = v._name+"_"+r+"_"+"nominal"
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             year_tag                            = s.label.split("_")[-1]
             lumi                                = lumi_dict[year_tag]
-            # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
-            # print(f"year_tag:                   {year_tag}")
-            # print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
@@ -244,37 +255,29 @@ for v in vars:
                 tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
-            # print(f"After rebinning, signal {s.label} has {tmp.GetEntries()} entries")
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
                 tmp                             = copy.deepcopy(tmp)
             else:
                 continue
-            # print(f"Signal {s.label} has {tmp.GetEntries()} entries after scaling")
             leg_label                           = labels_dict["_".join(s.label.split("_")[:2])]
-            # print(f"leg_label:                  {leg_label}")
             if scale_signals != 1:
                 tmp.Scale(scale_signals)                                        # scale signals for better visibility in the stack plots
             if leg_label not in histo_signals_dict:
                 histo_signals_dict[leg_label]   = copy.deepcopy(tmp)
             else:
                 histo_signals_dict[leg_label].Add(copy.deepcopy(tmp))
-            # print(f"Signal {leg_label} has {histo_signals_dict[leg_label].GetEntries()} entries after scaling\n")
         # print("Finished Processing Signals\n")
 
         ##### Normalize Backgrounds (Lumi) ######
         # print("Processing Backgrounds")
+        # NOMINAL #
+        err_dict_SystSampleBin              = {syst: {} for syst in systematics}
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
-            # print(f"s.label:                    {s.label}")
-            # print(f"f.GetName():                {f.GetName()}")
-            histo_name                      = v._name+"_"+r#+"_"+"nominal"
-            # print(f"histo_name:                 {histo_name}")
+            histo_name                      = v._name+"_"+r+"_"+"nominal"
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             year_tag                        = s.label.split("_")[-1]
             lumi                            = lumi_dict[year_tag]
-            # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
-            # print(f"year_tag:                   {year_tag}")
-            # print(f"lumi:                       {lumi}")
             if v._name == "MT_T":
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
@@ -287,26 +290,86 @@ for v in vars:
                 tmp.Scale(lumi)
             else:
                 continue
-            # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
+            tmp_nom                         = copy.deepcopy(tmp)
+            nbins                           = tmp_nom.GetNbinsX()
             leg_label                       = labels_dict[s.process.split("_")[0]]
-            # print(f"leg_label:                  {leg_label}")
-            if histo_bkg_dict[leg_label] is None:
-                histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
+            if histo_bkg_dict["nominal"][leg_label] is None:
+                histo_bkg_dict["nominal"][leg_label]   = copy.deepcopy(tmp_nom)
             else:
-                histo_bkg_dict[leg_label].Add(copy.deepcopy(tmp))
-            # print(f"Background {leg_label} has {histo_bkg_dict[leg_label].GetEntries()} entries after scaling\n")
-        # print("Finished Processing Backgrounds\n")
+                histo_bkg_dict["nominal"][leg_label].Add(copy.deepcopy(tmp_nom))
+            
+            
+            
+            # SYSTEMATICS #
+            for syst in systematics:
+                err_dict_SystSampleBin[syst][s.label]     = []
+                histo_name                  = v._name+"_"+r+"_"+syst
+                tmp                         = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
+                if v._name == "MT_T":
+                    tmp_                    = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
+                    tmp                     = copy.deepcopy(tmp_)
+                    tmp.SetName(histo_name)
+                elif v._name == "PuppiMET_T1_pt_nominal":
+                    tmp_                    = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
+                    tmp                     = copy.deepcopy(tmp_)
+                    tmp.SetName(histo_name)
+                if len(samples[s.label][s.label]["ntot"]):
+                    tmp.Scale(lumi)
+                else:
+                    continue
+                tmp_syst                    = copy.deepcopy(tmp)
+
+                for bin in range(1, nbins+1):
+                    value_nom               = tmp_nom.GetBinContent(bin)
+                    value_syst              = tmp_syst.GetBinContent(bin)
+                    err_dict_SystSampleBin[syst][s.label].append(value_nom - value_syst)
         
+        # Combine systematic errors from different backgrounds in quadrature #
+        errSyst_up                      = []
+        errSyst_down                    = []
+        err_dict_SystBin                = {}
+        for syst in systematics:
+            err_dict_SystBin[syst]      = []
+            for bin in range(nbins):
+                err_dict_SystBin[syst].append(math.hypot(*[err_dict_SystSampleBin[syst][s.label][bin] for s in inSample["bkg"]]))
+        
+        for bin in range(nbins):
+            print(f"eyU in bin {bin} --> {[err_dict_SystSampleBin[syst][s.label][bin] for s in inSample['bkg'] for syst in systematics if 'up' in syst]}")
+            print(f"eyD in bin {bin} --> {[err_dict_SystSampleBin[syst][s.label][bin] for s in inSample['bkg'] for syst in systematics if 'down' in syst]}")
+            errSyst_up.append(math.hypot(*[err_dict_SystBin[syst][bin] for syst in systematics if "up" in syst]))
+            errSyst_down.append(math.hypot(*[err_dict_SystBin[syst][bin] for syst in systematics if "down" in syst]))
+
+        print(f"err_dict_SystSampleBin: {err_dict_SystSampleBin}")
+        print(f"err_dict_SystBin:       {err_dict_SystBin}")
+        print(f"errSyst_up:             {errSyst_up}")
+        print(f"errSyst_down:           {errSyst_down}")
+
+        
+        # histo_bkg_dict["err_syst"] = ROOT.TGraphAsymmErrors(nbins,
+        #                                                     array.array("d", [tmp_nom.GetBinCenter(bin) for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", [0.0 for bin in range(nbins)]),
+        #                                                     array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", [tmp_nom.GetBinWidth(bin)/2.0 for bin in range(1, nbins+1)]),
+        #                                                     array.array("d", errSyst_up),
+        #                                                     array.array("d", errSyst_down)
+        #                                                     ) # n, x, y, exl, exh, eyl, eyh
+        print(array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        histo_bkg_dict["err_syst_up"]   = ROOT.TH1D(v._name+"_"+r+"_"+"err_syst_up", "", nbins, array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        histo_bkg_dict["err_syst_down"] = ROOT.TH1D(v._name+"_"+r+"_"+"err_syst_down", "", nbins, array.array("d", [tmp_nom.GetBinLowEdge(bin) for bin in range(1, nbins+2)]))
+        for bin in range(1, nbins+1):
+            histo_bkg_dict["err_syst_up"].SetBinContent(bin, errSyst_up[bin-1])
+            # histo_bkg_dict["err_syst_up"].SetBinError(bin, 0.0)
+            histo_bkg_dict["err_syst_down"].SetBinContent(bin, -errSyst_down[bin-1])
+            # histo_bkg_dict["err_syst_down"].SetBinError(bin, 0.0)
+        # print("Finished Processing Backgrounds\n")
+
         ##### Data #####
         # print("Processing Data")
         if (not blind) and ((not ("SR" in r) or ("SRTopLoose" in r)) or (("SR" in r) and not ("SRTop" in r))):
             if not v._MConly:
                 histo_name                          = v._name+"_"+r
                 for f, s in zip(inFile["Data"], inSample["Data"]):
-                    # print(f"s.label:                    {s.label}")
-                    # print(f"f.GetName():                {f.GetName()}")
                     tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
-                    # print(f"Retrieved histogram {histo_name} from file {f.GetName()} --> entries: {tmp.GetEntries()}")
                     if v._name == "MT_T":
                         tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                         tmp                         = copy.deepcopy(tmp_)
@@ -319,17 +382,8 @@ for v in vars:
                         histo_data                  = copy.deepcopy(tmp)
                     else:
                         histo_data.Add(copy.deepcopy(tmp))
-                    # print(f"Data {s.label} has {tmp.GetEntries()} entries")
-                    # print(f"Data has {histo_data.GetEntries()} entries after summing\n")
         # print("Finished Processing Data\n")
 
-
-        # for label,h in histo_signals_dict.items():
-        #     print(f"Signal {label} has {h.GetEntries()} entries")
-        # for label,h in histo_bkg_dict.items():
-        #     print(f"Background {label} has {h.GetEntries()} entries")
-        # if histo_data is not None:
-        #     print(f"Data has {histo_data.GetEntries()} entries")
 
         ###############################
         ########## DRAW STEP ##########
@@ -357,7 +411,10 @@ for v in vars:
         ##### Y-axis ######
         yTitle              = "Events"
         if (not blind) and not ("SR" in r) and (not v._MConly):
-            yMax            = max(sum([histo_bkg_dict[process].GetMaximum() for process in histo_bkg_dict]), histo_data.GetMaximum())
+            if histo_data is not None:
+                yMax            = max(sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]]), histo_data.GetMaximum())
+            else:
+                yMax            = sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]])
             if len(histo_signals_dict) != 0:
                 yMin        = min([h.GetMinimum() for label,h in histo_signals_dict.items()])
             else:
@@ -367,7 +424,7 @@ for v in vars:
                     yMin    = 0
         
         else:
-            yMax            = sum([histo_bkg_dict[process].GetMaximum() for process in histo_bkg_dict])
+            yMax            = sum([histo_bkg_dict["nominal"][process].GetMaximum() for process in histo_bkg_dict["nominal"]])
             if len(histo_signals_dict) != 0:
                 yMin        = min([h.GetMinimum() for label,h in histo_signals_dict.items()])
             else:
@@ -429,4 +486,8 @@ for v in vars:
                                                 repo                = repostack_www,
                                                 colors_bkg          = colors_bkg,
                                                 style_signals_dict  = style_signals_dict,
+                                                systErr             = systErr
                                                 )
+
+
+print(histo_bkg_dict.keys())
