@@ -440,7 +440,7 @@ def bookhisto(df, regions_def, var, s_cut):
                         h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name)
                     else: 
                         h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title, v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
-        if printcutflow and 'SRTop' in reg:
+        if printcutflow and reg == 'SRTop':
             cuts = split_cuts_keeping_parentheses(regions_def[reg])
             # print("Cutflow for region {}:".format(reg))
             # print(cuts)

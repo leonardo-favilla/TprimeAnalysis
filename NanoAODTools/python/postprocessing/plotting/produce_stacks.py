@@ -72,6 +72,7 @@ style_signals_dict                  = {
                                     }
 labels_dict                         = {
                                         "TT":               "t#bar{t}",
+                                        "TW":               "tW",
                                         "QCD":              "QCD",
                                         "ZJetsToNuNu":      "Z (#nu#nu) + Jets",
                                         "WJets":            "W (#it{l}#nu) + Jets",
@@ -212,6 +213,7 @@ for v in vars:
         histo_bkg_dict      = {
                                 "t#bar{t}":                 None,
                                 "QCD":                      None,
+                                "tW":                       None,
                                 "Z (#nu#nu) + Jets":        None,
                                 "W (#it{l}#nu) + Jets":     None
                             }
@@ -225,7 +227,7 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["signal"], inSample["signal"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                          = v._name+"_"+r+"_"+"nominal"
+            histo_name                          = v._name+"_"+r#+"_"+"nominal"
             # print(f"histo_name:                 {histo_name}")
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
@@ -238,7 +240,7 @@ for v in vars:
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
-            elif v._name == "PuppiMET_T1_pt_nominal":
+            elif v._name == "PuppiMET_T1_pt":#_nominal":
                 tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
@@ -265,7 +267,7 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             # print(f"s.label:                    {s.label}")
             # print(f"f.GetName():                {f.GetName()}")
-            histo_name                      = v._name+"_"+r+"_"+"nominal"
+            histo_name                      = v._name+"_"+r#+"_"+"nominal"
             # print(f"histo_name:                 {histo_name}")
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
             year_tag                        = s.label.split("_")[-1]
@@ -277,7 +279,7 @@ for v in vars:
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
-            elif v._name == "PuppiMET_T1_pt_nominal":
+            elif v._name == "PuppiMET_T1_pt":#_nominal":
                 tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                 tmp                         = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
@@ -286,7 +288,7 @@ for v in vars:
             else:
                 continue
             # print(f"Background {s.label} has {tmp.GetEntries()} entries after scaling")
-            leg_label                       = labels_dict[s.label.split("_")[0]]
+            leg_label                       = labels_dict[s.process.split("_")[0]]
             # print(f"leg_label:                  {leg_label}")
             if histo_bkg_dict[leg_label] is None:
                 histo_bkg_dict[leg_label]   = copy.deepcopy(tmp)
@@ -309,7 +311,7 @@ for v in vars:
                         tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                         tmp                         = copy.deepcopy(tmp_)
                         tmp.SetName(histo_name)
-                    elif v._name == "PuppiMET_T1_pt_nominal":
+                    elif v._name == "PuppiMET_T1_pt":#_nominal":
                         tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
                         tmp                         = copy.deepcopy(tmp_)
                         tmp.SetName(histo_name)
@@ -334,7 +336,8 @@ for v in vars:
         ###############################
 
         ##### Drawing Options ######
-        if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        # if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop"]:
             # logy    = False
             logy    = False
         elif "SR" in r:
@@ -380,7 +383,8 @@ for v in vars:
             yMax            = yMax*1.6
             yMin            = yMin*0.5
         
-        if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        # if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop"]:
             if r=="AH":
                 yMax        = 1300
                 yMin        = 0
