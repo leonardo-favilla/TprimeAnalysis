@@ -116,9 +116,7 @@ vars.append(variable(name = "FatJet_msoftdrop_nominal", title= "FatJet m_{SD} [G
 ######## 1D variables for histos
 vars2D = []
 
-vars2D.append(variable2D(name = "nTightTopMixedVsnTightTopResolved", xname = "nTightTopMixed", yname = "nTightTopResolved", xtitle = "# of Top Mixed", ytitle = "# of Top Merged", nxbins = 6, xmin = -0.5, xmax = 5.5, nybins = 6, ymin = -0.5, ymax = 5.5))
-# vars2D.append(variable2D(name = "MinDelta_phiVsHT_eventHT", xname = "MinDelta_phi", yname = "HT_eventHT", xtitle = " min #Delta #phi", ytitle = "event HT", nxbins = 18, xmin = 0, xmax = math.pi,
-#                             nybins = 20, ymin = 0, ymax = 2000))
+# vars2D.append(variable2D(name = "nTightTopMixedVsnTightTopResolved", xname = "nTightTopMixed", yname = "nTightTopResolved", xtitle = "# of Top Mixed", ytitle = "# of Top Merged", nxbins = 6, xmin = -0.5, xmax = 5.5, nybins = 6, ymin = -0.5, ymax = 5.5))
 
 ################## December 2023    
 nocut = ""
@@ -178,16 +176,13 @@ regions = {
 
 
     # "Presel"               : "PuppiMET_T1_pt_nominal>250",
-    "AH"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
-    "AH_BTagLoose"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
+    "AH"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
     # "AHResLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==4",
     # "AHMixLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==5",
     # "AHMerLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==6",
     # "AHLoose"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
 
-    "SL"                   : singleLep + " && nJetBtagMedium > 0",
-    "SL_metcut"            : singleLep + " && nJetBtagMedium > 0 && PuppiMET_T1_pt_nominal>250",
-    "SL_BTagLoose"         : singleLep + " && nJetBtagLoose > 0",
+    "SL"                   : singleLep + " && nJetBtagLoose > 0 && PuppiMET_T1_pt_nominal>250",
     # "SLResLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==4",
     # "SLMixLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==5",
     # "SLMerLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==6",
@@ -196,9 +191,7 @@ regions = {
     # "SEl"                  : singleE   + " && nJetBtagMedium > 0",
     # "SMu"                  : singleMu  + " && nJetBtagMedium > 0",
 
-    "AH1lWR"               : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
-    "AH1lWR_metcut"        : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && PuppiMET_T1_pt_nominal>250",
-    "AH1lWR_BTagLoose"     : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0",
+    "AH1lWR"               : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && PuppiMET_T1_pt_nominal>250",
     # "AH1lWRResLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==4",
     # "AH1lWRMixLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==5",
     # "AH1lWRMerLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==6",

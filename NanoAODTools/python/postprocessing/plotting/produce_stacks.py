@@ -212,14 +212,14 @@ MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
 PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
 
 
-# for v in vars:
+for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
-for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
+# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
 # for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
-    # for r in regions.keys():
+    for r in regions.keys():
     # for r in ["SRTop"]:
-    for r in ["AH"]:
+    # for r in ["AH"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
@@ -391,6 +391,7 @@ for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 
         ##### Drawing Options ######
         if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        # if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop"]:
             # logy    = False
             logy    = False
         elif "SR" in r:
