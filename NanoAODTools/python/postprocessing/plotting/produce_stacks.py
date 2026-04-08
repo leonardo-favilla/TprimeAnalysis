@@ -209,16 +209,18 @@ for dat in datasets:
 ### rebinning for MT ###
 MT_T_xbins          = array.array('d', [500, 600, 700, 800, 1000, 1400, 2000])
 # PuppiMET_pt_xbins   = array.array('d', [250, 300, 350, 400, 450, 500, 600, 850])
-PuppiMET_pt_xbins   = array.array('d', [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 850])
+# PuppiMET_pt_xbins   = array.array('d', [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 850])
+# PuppiMET_pt_xbins   = array.array('d', list(range(50, 850, 50)))
 
-for v in vars:
+# for v in vars:
 # for v in [var for var in vars if var._name == "MT_T"]:
-# for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
+for v in [var for var in vars if var._name == "PuppiMET_T1_pt_nominal"]:
 # for v in [var for var in vars if var._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]]:
 # for v in [var for var in vars if var._name in ["MT_T", "PuppiMET_T1_pt_nominal"]]:
-    for r in regions.keys():
+    # for r in regions.keys():
     # for r in ["SRTop"]:
     # for r in ["AH"]:
+    for r in ["SemiLep_MixedLooseButNotTight_pt0to200_pass"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
@@ -250,10 +252,10 @@ for v in vars:
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
-            elif v._name == "PuppiMET_T1_pt_nominal":
-                tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
-                tmp                             = copy.deepcopy(tmp_)
-                tmp.SetName(histo_name)
+            # elif v._name == "PuppiMET_T1_pt_nominal":
+            #     tmp_                            = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
+            #     tmp                             = copy.deepcopy(tmp_)
+            #     tmp.SetName(histo_name)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
                 tmp                             = copy.deepcopy(tmp)
@@ -281,16 +283,17 @@ for v in vars:
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
                 tmp.SetName(histo_name)
-            elif v._name == "PuppiMET_T1_pt_nominal":
-                tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
-                tmp                         = copy.deepcopy(tmp_)
-                tmp.SetName(histo_name)
+            # elif v._name == "PuppiMET_T1_pt_nominal":
+            #     tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
+            #     tmp                         = copy.deepcopy(tmp_)
+            #     tmp.SetName(histo_name)
             if len(samples[s.label][s.label]["ntot"]):
                 tmp.Scale(lumi)
             else:
                 continue
             tmp_nom                         = copy.deepcopy(tmp)
             nbins                           = tmp_nom.GetNbinsX()
+            print(f"Processing background {s.label} with histo {histo_name} having {nbins} bins from minimum {tmp_nom.GetXaxis().GetXmin()} to maximum {tmp_nom.GetXaxis().GetXmax()}")
             leg_label                       = labels_dict[s.process.split("_")[0]]
             if histo_bkg_dict["nominal"][leg_label] is None:
                 histo_bkg_dict["nominal"][leg_label]   = copy.deepcopy(tmp_nom)
@@ -308,10 +311,10 @@ for v in vars:
                     tmp_                    = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                     tmp                     = copy.deepcopy(tmp_)
                     tmp.SetName(histo_name)
-                elif v._name == "PuppiMET_T1_pt_nominal":
-                    tmp_                    = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
-                    tmp                     = copy.deepcopy(tmp_)
-                    tmp.SetName(histo_name)
+                # elif v._name == "PuppiMET_T1_pt_nominal":
+                #     tmp_                    = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
+                #     tmp                     = copy.deepcopy(tmp_)
+                #     tmp.SetName(histo_name)
                 if len(samples[s.label][s.label]["ntot"]):
                     tmp.Scale(lumi)
                 else:
@@ -373,10 +376,12 @@ for v in vars:
                         tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                         tmp                         = copy.deepcopy(tmp_)
                         tmp.SetName(histo_name)
-                    elif v._name == "PuppiMET_T1_pt_nominal":
-                        tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
-                        tmp                         = copy.deepcopy(tmp_)
-                        tmp.SetName(histo_name)
+                    # elif v._name == "PuppiMET_T1_pt_nominal":
+                    #     tmp_                        = tmp.Rebin(len(PuppiMET_pt_xbins)-1, histo_name+"_", PuppiMET_pt_xbins)
+                    #     tmp                         = copy.deepcopy(tmp_)
+                    #     tmp.SetName(histo_name)
+                    nbins                           = tmp.GetNbinsX()
+                    print(f"Processing data {s.label} with histo {histo_name} having {nbins} bins from minimum {tmp.GetXaxis().GetXmin()} to maximum {tmp.GetXaxis().GetXmax()}")
                     if histo_data is None:
                         histo_data                  = copy.deepcopy(tmp)
                     else:
