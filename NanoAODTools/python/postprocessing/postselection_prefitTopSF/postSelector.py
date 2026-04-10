@@ -78,9 +78,12 @@ except:
 
 
 branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
-            "Top_mass", "Top_pt", "Top_score", "Top_isolationPtJetsdR04", "Top_isolationPtJetsdR06", "Top_isolationPtJetsdR08", "Top_isolationPtJetsdR12", "Top_isolationNJetsdR04", "Top_isolationNJetsdR06", "Top_isolationNJetsdR08", "Top_isolationNJetsdR12",
-            "nVetoMuon", "nVetoElectron", "nJetBtagLoose", "nJetBtagMedium", 
-            "nGoodJet", "nTightElectron", "nTightMuon", "MT", "MT_T",
+            "Top_mass", "Top_pt", "Top_score",
+            "nTightMuon", "TightMuon_idx", "nLooseMuon", "LooseMuon_idx", "Muon_pt", "Muon_eta", "Muon_phi", "Muon_tightId", "Muon_pfIsoId",
+            "nJetBtagLoose", "nJetBtagMedium", "nJetBtagTight", "JetBTagLoose_idx", "JetBTagMedium_idx", "JetBTagTight_idx",
+            "nGoodJet", "GoodJet_idx", "nGoodFatJet", "GoodFatJet_idx",
+            "MT", "MT_T",
+            "dR_bJet_GoodMuon", "bidx_bJet_GoodMuon", "midx_bJet_GoodMuon", "bJet_TopLep_idx", "mu_TopLep_idx"
            }
 
 #### LOAD utils/postselection.h ####
@@ -363,25 +366,25 @@ def select_top(df, isMC):
 
 def tag_toplep(df):
     df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")\
-                    .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")
-                    # .Filter("nJetBtagTight>0",                                 "at least 1 tight b-tagged jet")
+                    .Filter("nJetBtagTight>0",                                 "at least 1 tight b-tagged jet")
+                    # .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")
 
-    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
-                           .Define("bJet_TopLep_idx",                          "bidx_bJet_GoodMuon[(int)ArgMin(bidx_bJet_GoodMuon)]")\
-                           .Define("mu_TopLep_idx",                            "midx_bJet_GoodMuon[(int)ArgMin(midx_bJet_GoodMuon)]")\
-                           .Define("dR_bJetTopLep_BestTopResolved",            "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
-                           .Define("dR_bJetTopLep_BestTopMixed",               "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
-                           .Define("dR_bJetTopLep_BestTopMerged",              "deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")\
-                           .Define("dR_muTopLep_BestTopResolved",              "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi)")\
-                           .Define("dR_muTopLep_BestTopMixed",                 "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi)")\
-                           .Define("dR_muTopLep_BestTopMerged",                "deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi)")\
-                           .Define("W_pt",                                     "WtoLNu_pt(Muon_pt[mu_TopLep_idx], Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Muon_mass[mu_TopLep_idx], PuppiMET_T1_pt_nominal, 0, PuppiMET_T1_phi_nominal, 0)")\
-                           .Define("W_phi",                                    "WtoLNu_phi(Muon_pt[mu_TopLep_idx], Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Muon_mass[mu_TopLep_idx], PuppiMET_T1_pt_nominal, 0, PuppiMET_T1_phi_nominal, 0)")\
-                           .Define("MT_W",                                     "TransverseMass_part1part2(Muon_pt[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")\
-                           .Define("MT_lb",                                    "TransverseMass_part1part2(Muon_pt[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Jet_pt[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx])")\
-                           .Define("MT_toplep",                                "TransverseMass_part1part2(W_pt, W_phi, Jet_pt[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx])")
+    df_toplep   = df_toplep.Define("dR_bJet_GoodMuon",                         "dR_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bidx_bJet_GoodMuon",                       "bidx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("midx_bJet_GoodMuon",                       "midx_bJets_to_GoodMuons_within_dRthr(TightMuon_idx, Muon_eta, Muon_phi, JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx, Jet_eta, Jet_phi, 2.0)")\
+                           .Define("bJet_TopLep_idx",                          "dR_bJet_GoodMuon.size() > 0 ? bidx_bJet_GoodMuon[ArgMin(dR_bJet_GoodMuon)] : -1")\
+                           .Define("mu_TopLep_idx",                            "dR_bJet_GoodMuon.size() > 0 ? midx_bJet_GoodMuon[ArgMin(dR_bJet_GoodMuon)] : -1")\
+                           .Define("dR_bJetTopLep_BestTopResolved",            "dR_bJet_GoodMuon.size() > 0 ? deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi) : -1")\
+                           .Define("dR_bJetTopLep_BestTopMixed",               "dR_bJet_GoodMuon.size() > 0 ? deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi) : -1")\
+                           .Define("dR_bJetTopLep_BestTopMerged",              "dR_bJet_GoodMuon.size() > 0 ? deltaR(Jet_eta[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi) : -1")\
+                           .Define("dR_muTopLep_BestTopResolved",              "dR_bJet_GoodMuon.size() > 0 ? deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopResolved_eta, BestTopResolved_phi) : -1")\
+                           .Define("dR_muTopLep_BestTopMixed",                 "dR_bJet_GoodMuon.size() > 0 ? deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMixed_eta, BestTopMixed_phi) : -1")\
+                           .Define("dR_muTopLep_BestTopMerged",                "dR_bJet_GoodMuon.size() > 0 ? deltaR(Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], BestTopMerged_eta, BestTopMerged_phi) : -1")\
+                           .Define("W_pt",                                     "dR_bJet_GoodMuon.size() > 0 ? WtoLNu_pt(Muon_pt[mu_TopLep_idx], Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Muon_mass[mu_TopLep_idx], PuppiMET_T1_pt_nominal, 0, PuppiMET_T1_phi_nominal, 0) : -1000")\
+                           .Define("W_phi",                                    "dR_bJet_GoodMuon.size() > 0 ? WtoLNu_phi(Muon_pt[mu_TopLep_idx], Muon_eta[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Muon_mass[mu_TopLep_idx], PuppiMET_T1_pt_nominal, 0, PuppiMET_T1_phi_nominal, 0) : -1000")\
+                           .Define("MT_W",                                     "dR_bJet_GoodMuon.size() > 0 ? TransverseMass_part1part2(Muon_pt[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal) : -1000")\
+                           .Define("MT_lb",                                    "dR_bJet_GoodMuon.size() > 0 ? TransverseMass_part1part2(Muon_pt[mu_TopLep_idx], Muon_phi[mu_TopLep_idx], Jet_pt[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx]) : -1000")\
+                           .Define("MT_toplep",                                "dR_bJet_GoodMuon.size() > 0 ? TransverseMass_part1part2(W_pt, W_phi, Jet_pt[bJet_TopLep_idx], Jet_phi[bJet_TopLep_idx]) : -1000")
     return df_toplep
 
 
