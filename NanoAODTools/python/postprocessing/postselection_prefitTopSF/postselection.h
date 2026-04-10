@@ -1865,6 +1865,10 @@ float GetMuonSF(std::string json_file, rvec_f Muon_pt, rvec_f Muon_eta, rvec_f M
   return weight;
 }
 
+// #########################################
+// ############## Utilities   ##############
+// #########################################
+
 float TransverseMass_part1part2(float pt1, float phi1, float pt2, float phi2)
 {
   return sqrt(2*pt1*pt2*(1-cos(deltaPhi(phi1,phi2))));
@@ -1892,3 +1896,13 @@ float WtoLNu_phi(float lep_pt, float lep_eta, float lep_phi, float lep_mass, flo
   return W_phi;
 }
 
+// ################################################
+// ############## Top pT reweighting ##############
+// ################################################
+float topPtReweighting(float top_pt, float antitop_pt)
+{
+  float q = 0.0615;
+  float m = -0.0005;
+  float w = exp(m*top_pt + q) * exp(m*antitop_pt + q);
+  return w;
+}  
