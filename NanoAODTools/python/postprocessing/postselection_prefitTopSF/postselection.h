@@ -1668,7 +1668,7 @@ Int_t TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPar
 {
   if(TopGenTopPart_eta.size()==0) // no gen tops in the event (QCD, etc.)
   {
-    return -1;
+    return 0;
   }
   
   Int_t matched = 0;

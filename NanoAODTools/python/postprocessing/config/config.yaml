@@ -31,7 +31,7 @@ plotting:
     {
       "2022":               "",
       "2022EE":             "",
-      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/",
+      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_mediumbjet/",
       "2023postBPix":       "",
       "Full2022":           "",
       "Full2023":           "",
@@ -42,7 +42,7 @@ plotting:
     {
       "2022":               "",
       "2022EE":             "",
-      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/SemiLep_prefit/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/",
+      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/SemiLep_prefit/run2023_SemiLep_nobjetlep_inside_tophadr_using_mediumbjet/",
       "2023postBPix":       "",
       "Full2022":           "",
       "Full2023":           "",

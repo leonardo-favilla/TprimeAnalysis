@@ -25,8 +25,8 @@ era                     = opt.era
 region                  = opt.region
 outputfolder            = config["TrotaScaleFactor"]["outputfolder"][era]
 fit_variable            = config["TrotaScaleFactor"]["fit_variable"][region]
-plotsFolder             = f"{outputfolder}/plots"
-workspaceFolder         = f"{outputfolder}/workspace_{region}"
+plotsFolder             = f"{outputfolder}/plots/"
+workspaceFolder         = f"{outputfolder}/workspace_{region}/"
 workspaceSubFolder      = f"{workspaceFolder}/{fit_variable}/"
 
 if not os.path.exists(workspaceFolder):
