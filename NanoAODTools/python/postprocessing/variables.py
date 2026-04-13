@@ -112,6 +112,9 @@ vars.append(variable(name = "FatJet_msoftdrop_nominal", title= "FatJet m_{SD} [G
 #  a bassa ed alto eta
 
 
+vars.append(variable(name = "dR_bestTopMer_bestTopMix", title= "dR Best Top Mer Best Top Mix", nbins = 30, xmin = 0, xmax=3, noUnOvFlowbin = True))
+vars.append(variable(name = "dR_bestTopMer_bestTopRes", title= "dR Best Top Mer Best Top Res", nbins = 30, xmin = 0, xmax=3, noUnOvFlowbin = True))
+vars.append(variable(name = "dR_bestTopMix_bestTopRes", title= "dR Best Top Mix Best Top Res", nbins = 30, xmin = 0, xmax=3, noUnOvFlowbin = True))
 
 ######## 1D variables for histos
 vars2D = []
