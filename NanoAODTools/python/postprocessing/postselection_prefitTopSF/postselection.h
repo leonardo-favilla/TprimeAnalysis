@@ -1899,10 +1899,66 @@ float WtoLNu_phi(float lep_pt, float lep_eta, float lep_phi, float lep_mass, flo
 // ################################################
 // ############## Top pT reweighting ##############
 // ################################################
+int countTopGenLep(rvec_i pdgId, rvec_i motherIdx, rvec_i motherIdx_prompt, rvec_i statusFlags)
+{
+  int nLeptonicTops = 0;
+  for (int i = 0; i < pdgId.size(); ++i) 
+  {
+    if (abs(pdgId[i]) == 11 || abs(pdgId[i]) == 13 || abs(pdgId[i]) == 15) // ele, mu, tau
+    {
+      if ((abs(pdgId[motherIdx[i]]) == 24) && (statusFlags[motherIdx[i]] & (1 << 13))) // the mother of the lepton is a W boson
+      {
+        if ((abs(pdgId[motherIdx_prompt[motherIdx[i]]]) == 6) && (statusFlags[motherIdx_prompt[motherIdx[i]]] & (1 << 13))) // the mother of the W boson is a top quark (last copy)
+        {
+          nLeptonicTops++;
+        }
+      } 
+    }
+  }
+  return nLeptonicTops;
+}
+
+RVec<int> TopGenLep_genPartIdx(rvec_i pdgId, rvec_i motherIdx, rvec_i motherIdx_prompt, rvec_i statusFlags)
+{
+  RVec<int> idx = {};
+  for (int i = 0; i < pdgId.size(); ++i) 
+  {
+    if (abs(pdgId[i]) == 11 || abs(pdgId[i]) == 13 || abs(pdgId[i]) == 15) // ele, mu, tau
+    {
+      if ((abs(pdgId[motherIdx[i]]) == 24) && (statusFlags[motherIdx[i]] & (1 << 13))) // the mother of the lepton is a W boson
+      {
+        if ((abs(pdgId[motherIdx_prompt[motherIdx[i]]]) == 6) && (statusFlags[motherIdx_prompt[motherIdx[i]]] & (1 << 13))) // the mother of the W boson is a top quark (last copy)
+        {
+          idx.emplace_back(motherIdx_prompt[motherIdx[i]]);
+        }
+      } 
+    }
+  }
+  return idx;
+}
+
+RVec<float> TopGenLep_var(rvec_i TopGenLep_idx, rvec_f GenPart_var)
+{
+  RVec<float> var;
+  for (int i = 0; i < TopGenLep_idx.size(); ++i)
+  {
+    var.emplace_back(GenPart_var[TopGenLep_idx[i]]);
+  }
+  return var;
+}
+
 float topPtReweighting(float top_pt, float antitop_pt)
 {
+  if (top_pt > 500) // the reweighting is only defined up to 500 GeV, above that we keep the weight constant at the value it has at 500 GeV (according to the recommendation of the TOP PAG: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting)
+  {
+    top_pt = 500;
+  }
+  if (antitop_pt > 500)
+  {
+    antitop_pt = 500;
+  }
   float q = 0.0615;
   float m = -0.0005;
-  float w = exp(m*top_pt + q) * exp(m*antitop_pt + q);
+  float w = sqrt(exp(m*top_pt + q) * exp(m*antitop_pt + q));
   return w;
 }  

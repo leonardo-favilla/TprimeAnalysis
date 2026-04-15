@@ -26,6 +26,7 @@ parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type
 parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
 parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
+parser.add_option(      '--noTopPtWeight',      dest='noTopPtWeight',       action='store_true',    default=False,                                  help='remove top pt weight')
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--noPuWeight',         dest='noPuWeight',          action='store_true',    default=False,                                  help='remove PU weight')
 parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
@@ -35,6 +36,7 @@ parser.add_option(      '--tmpfold',            dest='tmpfold',             acti
 in_dataset              = opt.datasets.split(",")
 nfiles_max              = opt.nfiles_max
 do_variations           = opt.syst
+noTopPtWeight           = opt.noTopPtWeight
 noSFbtag                = opt.noSFbtag
 noPuWeight              = opt.noPuWeight
 dict_samples_file       = opt.dict_samples_file
@@ -77,13 +79,18 @@ except:
     sys.exit(1)
 
 
-branches = {"PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
-            "Top_mass", "Top_pt", "Top_score",
-            "nTightMuon", "TightMuon_idx", "nLooseMuon", "LooseMuon_idx", "Muon_pt", "Muon_eta", "Muon_phi", "Muon_tightId", "Muon_pfIsoId",
-            "nJetBtagLoose", "nJetBtagMedium", "nJetBtagTight", "JetBTagLoose_idx", "JetBTagMedium_idx", "JetBTagTight_idx",
-            "nGoodJet", "GoodJet_idx", "nGoodFatJet", "GoodFatJet_idx",
-            "MT", "MT_T",
-            "dR_bJet_GoodMuon", "bidx_bJet_GoodMuon", "midx_bJet_GoodMuon", "bJet_TopLep_idx", "mu_TopLep_idx"
+branches = {
+            # "PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
+            # "Top_mass", "Top_pt", "Top_score",
+            # "nTightMuon", "TightMuon_idx", "nLooseMuon", "LooseMuon_idx", "Muon_pt", "Muon_eta", "Muon_phi", "Muon_tightId", "Muon_pfIsoId",
+            # "nJetBtagLoose", "nJetBtagMedium", "nJetBtagTight", "JetBTagLoose_idx", "JetBTagMedium_idx", "JetBTagTight_idx",
+            # "nGoodJet", "GoodJet_idx", "nGoodFatJet", "GoodFatJet_idx",
+            # "MT", "MT_T",
+            "GenPart_pdgId", "GenPart_genPartIdxMother", "GenPart_genPartIdxMother_prompt", "GenPart_statusFlags", "GenPart_pt",
+            "nTopGenHadr", "nTopGenLep", "w_topPt",
+            "TopGenTopPart_pt", "TopGenTopPart_eta", "TopGenTopPart_phi", "TopGenTopPart_mass",
+            # "TopGenLep_idx", "TopGenLep_pt", "TopGenLep_eta", "TopGenLep_phi", "TopGenLep_mass",
+            # "dR_bJet_GoodMuon", "bidx_bJet_GoodMuon", "midx_bJet_GoodMuon", "bJet_TopLep_idx", "mu_TopLep_idx"
            }
 
 #### LOAD utils/postselection.h ####
@@ -189,6 +196,17 @@ for d in datasets:
 ################### utils ###################
 def cut_string(cut):
     return cut.replace(" ", "").replace("&&","_").replace(">","_g_").replace(".","_").replace("==","_e_")
+
+################### GenTopLep ################
+def GenTopLep(df):
+    df = df.Define("nTopGenLep",        "countTopGenLep(GenPart_pdgId, GenPart_genPartIdxMother, GenPart_genPartIdxMother_prompt, GenPart_statusFlags)")\
+           .Define("TopGenLep_idx",     "TopGenLep_genPartIdx(GenPart_pdgId, GenPart_genPartIdxMother, GenPart_genPartIdxMother_prompt, GenPart_statusFlags)")\
+           .Define("TopGenLep_pt",      "TopGenLep_var(TopGenLep_idx, GenPart_pt)")\
+           .Define("TopGenLep_eta",     "TopGenLep_var(TopGenLep_idx, GenPart_eta)")\
+           .Define("TopGenLep_phi",     "TopGenLep_var(TopGenLep_idx, GenPart_phi)")\
+           .Define("TopGenLep_mass",    "TopGenLep_var(TopGenLep_idx, GenPart_mass)")
+
+    return df
 
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
@@ -714,6 +732,11 @@ for d in datasets:
         # df_hlt              = trigger_filter(df_hemveto, s.label, sampleflag)
         df_hlt              = trigger_filter(df_hemveto, isMC, s.year, DataMuon)
         
+        if isMC:
+            df_hlt          = GenTopLep(df_hlt)
+        else:
+            df_hlt          = df_hlt
+
         if "ZJets" in s.label: 
             df_hlt = df_hlt.Define("w_nominal", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
             # df_hlt = df_hlt.Define("w_nominal", "1")                                                                                             # no nloewcorrection
@@ -724,6 +747,21 @@ for d in datasets:
             df_hlt = df_hlt.Define("w_nominal", "1")
             
         if sampleflag:
+            if "TT" in s.label:                                                                                                                     # topPt reweighting for TT only, for the other samples w_topPt is defined as 1
+                if "hadr" in s.label:
+                    df_hlt = df_hlt.Define("w_topPt", "topPtReweighting(TopGenTopPart_pt[0], TopGenTopPart_pt[1])")
+                elif "semilep" in s.label:
+                    df_hlt = df_hlt.Define("w_topPt", "topPtReweighting(TopGenTopPart_pt[0], TopGenLep_pt[0])")
+                elif "dilep" in s.label:
+                    df_hlt = df_hlt.Define("w_topPt", "topPtReweighting(TopGenLep_pt[0], TopGenLep_pt[1])")
+            else:
+                df_hlt = df_hlt.Define("w_topPt", "1.0")
+
+
+            if noTopPtWeight:
+                df_hlt = df_hlt.Redefine("w_nominal", "w_nominal")
+            else:
+                 df_hlt = df_hlt.Redefine("w_nominal", "w_nominal*w_topPt")
             if (noSFbtag) and (not noPuWeight):
                 df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*muonSF*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
             elif (not noSFbtag) and (noPuWeight):
@@ -732,20 +770,19 @@ for d in datasets:
                 df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*muonSF*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                         # no puWeight no SFbtag
             else:   
                 df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*muonSF*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF') # AllWeights
-            # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
         else:
             df_wnom = df_hlt.Redefine('w_nominal', '1')
 
             
         # df_wnom           = df_hlt.Define('w_nominal', '1')
-        df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
-        df_topsel       = select_top(df_presel, sampleflag)
-        df_topsel       = df_topsel.Define("MT_T", "TransverseMass_part1part2(Top_pt, Top_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
-        df_topsel       = tag_toplep(df_topsel)
 
-                                                                                           # add muon SF to the weight
+        df_presel           = preselection(df_wnom, bTagAlg, s.year, EE)
+        df_topsel           = select_top(df_presel, sampleflag)
+        df_topsel           = df_topsel.Define("MT_T", "TransverseMass_part1part2(Top_pt, Top_phi, PuppiMET_T1_pt_nominal, PuppiMET_T1_phi_nominal)")
+        df_topsel           = tag_toplep(df_topsel)
+
         # command for printing the cutflow, add it in the SRs for all the bkgs 
-        df_topsel.Report().Print()
+        # df_topsel.Report().Print()
 
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()
