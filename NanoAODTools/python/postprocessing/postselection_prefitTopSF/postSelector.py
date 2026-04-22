@@ -54,7 +54,7 @@ with open(muonSF_dict_file, "r") as muonSF_file:
 
 
 if do_variations == True:
-    variations          = ["nominal", "pu", "jer", "jesTotal"]
+    variations          = ["nominal", "pu", "jer", "jesTotal", "pdf_total", "QCDScale", "ISR", "FSR"]
 else :
     variations          = ["nominal"]
 
@@ -213,16 +213,18 @@ def preselection(df, btagAlg, year, EE):
     
     df = df.Define("Jet_passJetIdTight",                "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)") # https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
     df = df.Define("Jet_passJetIdTightLepVeto",         "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")
-    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt, Jet_eta, Jet_passJetIdTightLepVeto)") # richiesto passJetIdTightLepVeto==1
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_passJetIdTightLepVeto)") # richiesto passJetIdTightLepVeto==1
     df = df.Define("nGoodJet",                          "nGoodJet(GoodJet_idx)") 
-    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
+    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
-    df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
+    df = df.Filter("nGoodJet>2 || nGoodFatJet>0",       "jet presel")
 
     df = df.Redefine("MinDelta_phi",                    "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
-    df = df.Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
-    df = df.Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")
-    df = df.Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
+    df = df.Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("nLooseElectron",                    "nLooseElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("LooseElectron_idx",                 "LooseElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
     df = df.Define("nTightMuon",                        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
            .Define("TightMuon_idx",                     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
            .Define("nLooseMuon",                        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
@@ -384,6 +386,7 @@ def select_top(df, isMC):
 
 def tag_toplep(df):
     df_toplep   = df.Filter("nTightMuon==1 && nLooseMuon==1",                  "exactly 1 tight muon and no extra loose muon")\
+                    .Filter("nVetoElectron==0",                                "no veto electron")\
                     .Filter("nJetBtagTight>0",                                 "at least 1 tight b-tagged jet")
                     # .Filter("nJetBtagMedium>0",                                "at least 1 medium b-tagged jet")
 
@@ -499,8 +502,14 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
             repohisto_tmp = "/tmp/"+username+"/"
             if not os.path.exists(repohisto_tmp):
                 os.makedirs(repohisto_tmp)
+            else:
+                shutil.rmtree(repohisto_tmp)
+                os.makedirs(repohisto_tmp)
             repohisto_tmp = "/tmp/"+username+"/"+s.label+"/"
             if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            else:
+                shutil.rmtree(repohisto_tmp)
                 os.makedirs(repohisto_tmp)
             outfile = ROOT.TFile.Open(repohisto_tmp+s.label+'.root', "RECREATE")
         else:
@@ -559,6 +568,8 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
                                     hdown.Write()
                                 else:
                                     for var_type in ['up', 'down']:
+                                        if f"{vari}:{var_type}" not in dict_h[d.label][s.label][reg][v._name].GetKeys():
+                                            continue
                                         h1 = dict_h[d.label][s.label][reg][v._name][vari+":"+var_type]
                                         # h1.SetName(h1.GetName()+"_"+vari+var_type.capitalize())
                                         histo_name = h1.GetName()
@@ -710,9 +721,6 @@ for d in datasets:
             print(chain[d.label][s.label])
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
-        if sampleflag:
-            df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
-            df                  = df.Define("muonSF", f'GetMuonSF("{muonSF_dict[era]}", Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId, "nominal")') # we only select events with only 1 TightMuon
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag)
 
@@ -725,6 +733,11 @@ for d in datasets:
             df              = energetic_variations(df)
         else:
             df              = df
+
+        if sampleflag:
+            df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
+            df                  = df.Define("muonSF", f'GetMuonSF("{muonSF_dict[era]}", Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId, "nominal")') # we only select events with only 1 TightMuon
+
         df_ismc             = df.Define("isMC", "isMC("+str(sampleflag)+")")
         df_year             = df_ismc.Define("year", str(s.year))
         df_hemveto          = df_year.Define("HEMVeto", "hemveto(Jet_eta, Jet_phi, Electron_eta, Electron_phi)")
@@ -762,6 +775,7 @@ for d in datasets:
                 df_hlt = df_hlt.Redefine("w_nominal", "w_nominal")
             else:
                  df_hlt = df_hlt.Redefine("w_nominal", "w_nominal*w_topPt")
+            
             if (noSFbtag) and (not noPuWeight):
                 df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*muonSF*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
             elif (not noSFbtag) and (noPuWeight):

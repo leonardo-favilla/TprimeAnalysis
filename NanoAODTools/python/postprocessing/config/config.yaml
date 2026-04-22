@@ -31,7 +31,7 @@ plotting:
     {
       "2022":               "",
       "2022EE":             "",
-      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_mediumbjet/",
+      "2023":               "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_noJetBTagTight_inside_TopHadrCand_wTopPtWeight/",
       "2023postBPix":       "",
       "Full2022":           "",
       "Full2023":           "",
@@ -42,7 +42,7 @@ plotting:
     {
       "2022":               "",
       "2022EE":             "",
-      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/SemiLep_prefit/run2023_SemiLep_nobjetlep_inside_tophadr_using_mediumbjet/",
+      "2023":               "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/SemiLep_prefit/run2023_SemiLep_noJetBTagTight_inside_TopHadrCand_wTopPtWeight/",
       "2023postBPix":       "",
       "Full2022":           "",
       "Full2023":           "",
@@ -115,15 +115,15 @@ TrotaScaleFactor:
   outputfolder: { 
     "2022":         "",
     "2022EE":       "",
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_noJetBTagTight_inside_TopHadrCand_wTopPtWeight/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_noJetBTagTight_inside_TopHadrCand_wTopPtWeight_noVetoElectron/",
     "2023postBPix": "",
     }
     
   fit_variable: {
     "ResolvedLooseButNotTight":     "BestTopResolved_mass",
     "ResolvedTight":                "BestTopResolved_mass",
-    "MixedLooseButNotTight":        "BestTopMixed_mass",
-    "MixedTight":                   "BestTopMixed_mass",
+    "MixedLooseButNotTight":        "MT_W",
+    "MixedTight":                   "MT_W",
     "MergedLooseButNotTight":       "BestTopMerged_mass",
     "MergedTight":                  "BestTopMerged_mass",
   }

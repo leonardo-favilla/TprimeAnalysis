@@ -71,10 +71,14 @@ vars.append(variable(name = "PuppiMET_T1_phi_nominal",  title= "Puppi MET #phi n
 
 # vars.append(variable(name = "nTightTopMixed", title= "# Top Candidate Mix", nbins = 40, xmin = -0.5, xmax=80.5))
 # vars.append(variable(name = "nTightTopResolved", title= "# Top Candidate Resolved", nbins = 25, xmin = -0.5, xmax=49.5))
-# vars.append(variable(name = "nJet", title= "# Jet", nbins = 10, xmin = -0.5, xmax=9.5))
-# vars.append(variable(name = "nJetBtagMedium", title= "# b-Jet ", nbins = 5, xmin = -0.5, xmax=4.5))
-# vars.append(variable(name = "nJetBtagLoose", title= "# b-Jet ", nbins = 5, xmin = -0.5, xmax=4.5))
-# vars.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "nJet", title= "# Jet", nbins = 10, xmin = -0.5, xmax=9.5))
+vars.append(variable(name = "nGoodJet", title= "# GoodJet", nbins = 10, xmin = -0.5, xmax=9.5))
+vars.append(variable(name = "nFatJet", title= "# FatJet", nbins = 5, xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "nGoodFatJet", title= "# GoodFatJet", nbins = 5, xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "Jet_btagPNetB",    title = "jet btag score",   nbins = 20, xmin = 0,    xmax = 1,    noUnOvFlowbin = True))
+vars.append(variable(name = "nJetBtagLoose",    title = "# b-Jet (L) ",     nbins = 5,  xmin = -0.5, xmax = 4.5))
+vars.append(variable(name = "nJetBtagMedium",   title = "# b-Jet (M)",      nbins = 5,  xmin = -0.5, xmax = 4.5))
+vars.append(variable(name = "nJetBtagTight",    title = "# b-Jet (T)",      nbins = 5,  xmin = -0.5, xmax = 4.5))
 # vars.append(variable(name = "MinDelta_phi", title= "min #Delta #phi", nbins = 18, xmin = 0, xmax = math.pi))
 # vars.append(variable(name = "MaxEta_jet", title= "max #eta jet", nbins = 5, xmin = 0, xmax = 5, noUnOvFlowbin=True))
 # vars.append(variable(name = "HT_eventHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
@@ -145,8 +149,9 @@ SRPresel    = "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron=
 
 
 
-
-
+semilepPresel               = ""
+semilepPresel_MET           = "MET_pt>50"
+semilepPresel_MET_W         = "W_pt>150 && MET_pt>50"
 semilepPreselResolved       = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopResolved>=1.2 && dR_muTopLep_BestTopResolved>=1.2"
 semilepPreselMixed          = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopMixed>=1.2 && dR_muTopLep_BestTopMixed>=1.2"
 semilepPreselMerged         = "W_pt>150 && MET_pt>50 && dR_bJetTopLep_BestTopMerged>=1.2 && dR_muTopLep_BestTopMerged>=1.2"
@@ -169,6 +174,14 @@ topMixed_Loose_pass                     = "BestTopMixed_score>=0.721465587615966
 topMixed_Loose_fail                     = "BestTopMixed_score<0.7214655876159668"
 
 regions = {
+    ###### semilepPresel ######
+    "semilepPresel"                                 : semilepPresel,
+    "semilepPresel_MET"                             : semilepPresel_MET,
+    "semilepPresel_MET_W"                           : semilepPresel_MET_W,
+    "semilepPreselResolved"                         : semilepPreselResolved,
+    "semilepPreselMixed"                            : semilepPreselMixed,
+    "semilepPreselMerged"                           : semilepPreselMerged,
+
     ####################
     ###### MIXED #######
     ####################

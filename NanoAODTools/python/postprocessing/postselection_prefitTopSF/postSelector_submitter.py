@@ -6,7 +6,6 @@ import shutil
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 from pathlib import Path
-import shutil
 sys.path.append('../')
 
 config = {}
@@ -26,6 +25,7 @@ parser.add_option("-d", "--dat",                    dest="dat",                 
 # parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
+parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
 
@@ -34,6 +34,7 @@ dataset_to_run      = opt.dat
 syst                = opt.syst
 nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
+noTopPtWeight       = opt.noTopPtWeight
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
 
@@ -101,10 +102,13 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --noSFbtag"
     if noPuWeight:
         pycommand += " --noPuWeight"
+    if noTopPtWeight:
+        pycommand += " --noTopPtWeight"
 
     f.write(pycommand+"\n")
-    f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/.\n")
-    f.write("ls -lthra "+hist_folder+"plots/.\n")
+    f.write("ls -lthra /tmp/"+username+"/"+dataset+"/"+"\n")
+    f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/\n")
+    f.write("ls -lthra "+hist_folder+"plots/\n")
     f.close()
 
 
