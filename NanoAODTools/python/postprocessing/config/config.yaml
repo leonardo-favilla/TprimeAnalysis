@@ -2,7 +2,7 @@ outputfolder:
   postselector_results: { 
     "2022":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Feb26/"        ,
     "2022EE":       "/eos/user/a/acagnott/DarkMatter/nosynch/run2022EE_Jan26/"       ,
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results_wTrotaScaleFactor/run2023_syst_250326/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results_wTrotaScaleFactor/run2023_syst_220426/",
     "2023postBPix": "/eos/user/a/acagnott/DarkMatter/nosynch/run2023postBPix_Jan26/",
     }
   triggerSF_results: { 

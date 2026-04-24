@@ -28,7 +28,7 @@ parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--noPuWeight',         dest='noPuWeight',          action='store_true',    default=False,                                  help='remove PU weight')
 parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
-parser.add_option(      '--printcutflow',        dest='printcutflow',        action='store_true',    default=False,                                  help='print cutflow')
+parser.add_option(      '--printcutflow',       dest='printcutflow',        action='store_true',    default=False,                                  help='print cutflow')
 
 
 (opt, args)             = parser.parse_args()
@@ -83,7 +83,7 @@ branches = ["PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT",
             "GoodJet_idx", 
             "TopMixed_TopScore_nominal", "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
             "TightTopMix_idx", "LooseTopMix_idx", "LooseNOTTightTopMix_idx", "nLooseTopMixed", "nTightTopMixed",
-            "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process",
+            "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process", "TopMixed_TrotaSF",
            ]
 
 #### LOAD utils/postselection.h ####
@@ -126,6 +126,13 @@ cut         = requirements  # ---> see variables.py
 regions_def = regions       # ---> see variables.py
 var         = vars          # ---> variables.py
 var2d       = vars2D        # ---> variables.py
+    
+Top_Resolved_wp = {"10%": 0.1422998,           "5%": 0.29475874,           "1%": 0.59264845,           "0.1%": 0.86580896}
+Top_Mixed_wp    = {"10%": 0.7214655876159668,  "5%": 0.8474694490432739,   "1%": 0.9436638951301575,   "0.1%": 0.9789741635322571}
+Top_Merged_wp   = {"10%": 0.8,                 "5%": 0.9,                  "1%": 1.,                   "0.1%": 1.} #to double-check these wp values
+
+
+
 
 print("Regions to book: ")
 for r in regions_def.keys():
@@ -283,26 +290,19 @@ def trigger_filter(df, data, isMC):
     return df_trig
 
 ############### top selection ########################
-def select_top(df, isMC):
-    
-    Top_Resolved_wp = { "10%": 0.1422998, "5%": 0.29475874, "1%": 0.59264845, "0.1%": 0.86580896}
-    # Top_Resolved_wp = { "10%": 0.1, "5%": 0.3, "1%": 0.59264845, "0.1%": 0.86580896}
-    Top_Mixed_wp    = { "10%": 0.7214655876159668, "5%": 0.8474694490432739, "1%" : 0.9436638951301575, "0.1%": 0.9789741635322571}
-    Top_Merged_wp   = { "10%": 0.8, "5%": 0.9, "1%": 1., "0.1%": 1.} #to double-check these wp values
-    
-    # return indices of the FatJet with particleNet score over the thresholds 
-    # df_goodtopMer = df.Define("GoodTopMer_idx", f"select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, {Top_Merged_wp['10%']})")
-    df_goodtopMer = df.Define("LooseTopMer_idx", f"select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, {Top_Merged_wp['10%']})")\
-                      .Define("TightTopMer_idx", f"select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, {Top_Merged_wp['5%']})")\
-                      .Define("LooseNOTTightTopMer_idx", f"SubtractIntVectors(LooseTopMer_idx, TightTopMer_idx)")
+def select_top(df, isMC):    
+    # return indices of the FatJet with particleNet score over the thresholds
+    df_goodtopMer = df.Define("LooseTopMer_idx",                    f"select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, {Top_Merged_wp['10%']})")\
+                      .Define("TightTopMer_idx",                    f"select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, {Top_Merged_wp['5%']})")\
+                      .Define("LooseNOTTightTopMer_idx",            f"SubtractIntVectors(LooseTopMer_idx, TightTopMer_idx)")
     # return indices of the TopMixed over the threshold with any object in common
-    df_goodtopMix = df_goodtopMer.Define("LooseTopMix_idx", f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['10%']})")\
-                            .Define("TightTopMix_idx", f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['5%']})")\
-                            .Define("LooseNOTTightTopMix_idx", f"SubtractIntVectors(LooseTopMix_idx, TightTopMix_idx)")
+    df_goodtopMix = df_goodtopMer.Define("LooseTopMix_idx",         f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['10%']})")\
+                                 .Define("TightTopMix_idx",         f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['5%']})")\
+                                 .Define("LooseNOTTightTopMix_idx", f"SubtractIntVectors(LooseTopMix_idx, TightTopMix_idx)")
     # return indices of the TopResolved over the threshold with any object in common
-    df_goodtopRes = df_goodtopMix.Define("LooseTopRes_idx", f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['10%']})")\
-                            .Define("TightTopRes_idx", f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['5%']})")\
-                            .Define("LooseNOTTightTopRes_idx", f"SubtractIntVectors(LooseTopRes_idx, TightTopRes_idx)")
+    df_goodtopRes = df_goodtopMix.Define("LooseTopRes_idx",         f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['10%']})")\
+                                 .Define("TightTopRes_idx",         f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['5%']})")\
+                                 .Define("LooseNOTTightTopRes_idx", f"SubtractIntVectors(LooseTopRes_idx, TightTopRes_idx)")
     
     df_nTops = df_goodtopRes.Define("nLooseTopResolved", "nTop(LooseTopRes_idx)")\
                             .Define("nLooseTopMixed", "nTop(LooseTopMix_idx)")\
@@ -342,6 +342,9 @@ def select_top(df, isMC):
 def add_TrotaScaleFactors(df, sampleflag, sample_process):
     # 1. truth:                     if the candidate is matched to a GenTop with dR<0.2
     # 2. top_process_category:      0: topmatched, 1: nonmatched, 2: other
+
+    TopSF_Tight_CorrLibFilePath   = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/ScaleFactors_MT_W/CorrLib_TrotaScaleFactors_Tight.json"
+    
     if sampleflag:
         df_toptruth_with_matching = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
                                       .Define("TopMixed_isMatched_to_GenTop_dR0p2",      "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
@@ -351,7 +354,7 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process):
                                                              .Define("TopMixed_process",    f'top_process_category("{sample_process}", TopMixed_isMatched_to_GenTop_dR0p2)')\
                                                              .Define("TopMerged_process",   f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')
 
-        df_TrotaScaleFactors      = df_top_process_category
+        df_TrotaScaleFactors      = df_top_process_category.Define("TopMixed_TrotaSF",      f'GetTrotaSF("{TopSF_Tight_CorrLibFilePath}", "{era}", "{"Mixed"}", TopMixed_process, TopMixed_TopScore_nominal, {Top_Mixed_wp["10%"]}, {Top_Mixed_wp["5%"]}, TopMixed_pt_nominal)')
     return df_TrotaScaleFactors
 
 def defineWeights(df, sampleflag):
@@ -380,6 +383,7 @@ def energetic_variations(df):
     df_sys = df.Vary(["Jet_pt_nominal", "Jet_mass_nominal", "FatJet_pt_nominal", "FatJet_mass_nominal", "PuppiMET_T1_pt_nominal_vec", "PuppiMET_T1_phi_nominal_vec", "TopMixed_pt_nominal", "TopResolved_pt_nominal", "TopMixed_mass_nominal", "TopResolved_mass_nominal",  "TopMixed_TopScore_nominal", "TopResolved_TopScore_nominal"], "RVec<RVec<RVec<float>>>{{Jet_pt_jerdown, Jet_pt_jerup}, {Jet_mass_jerdown, Jet_mass_jerup}, {FatJet_pt_jerdown, FatJet_pt_jerup}, {FatJet_mass_jerdown, FatJet_mass_jerup}, {PuppiMET_T1_pt_jerdown_vec, PuppiMET_T1_pt_jerup_vec}, {PuppiMET_T1_phi_jerdown_vec, PuppiMET_T1_phi_jerup_vec}, {TopMixed_pt_jerdown, TopMixed_pt_jerup}, {TopResolved_pt_jerdown, TopResolved_pt_jerup}, {TopMixed_mass_jerdown, TopMixed_mass_jerup}, {TopResolved_mass_jerdown, TopResolved_mass_jerup}, {TopMixed_TopScore_jerdown, TopMixed_TopScore_jerup}, {TopResolved_TopScore_jerdown, TopResolved_TopScore_jerup}}", variationTags=["down", "up"], variationName="jer")\
                .Vary(["Jet_pt_nominal", "Jet_mass_nominal", "FatJet_pt_nominal", "FatJet_mass_nominal", "PuppiMET_T1_pt_nominal_vec", "PuppiMET_T1_phi_nominal_vec", "TopMixed_pt_nominal", "TopResolved_pt_nominal", "TopMixed_mass_nominal", "TopResolved_mass_nominal",  "TopMixed_TopScore_nominal", "TopResolved_TopScore_nominal"], "RVec<RVec<RVec<float>>>{{Jet_pt_jesTotaldown, Jet_pt_jesTotalup}, {Jet_mass_jesTotaldown, Jet_mass_jesTotalup}, {FatJet_pt_jesTotaldown, FatJet_pt_jesTotalup}, {FatJet_mass_jesTotaldown, FatJet_mass_jesTotalup}, {PuppiMET_T1_pt_jesTotaldown_vec, PuppiMET_T1_pt_jesTotalup_vec}, {PuppiMET_T1_phi_jesTotaldown_vec, PuppiMET_T1_phi_jesTotalup_vec}, {TopMixed_pt_jesTotaldown, TopMixed_pt_jesTotalup}, {TopResolved_pt_jesTotaldown, TopResolved_pt_jesTotalup}, {TopMixed_mass_jesTotaldown, TopMixed_mass_jesTotalup}, {TopResolved_mass_jesTotaldown, TopResolved_mass_jesTotalup}, {TopMixed_TopScore_jesTotaldown, TopMixed_TopScore_jesTotalup}, {TopResolved_TopScore_jesTotaldown, TopResolved_TopScore_jesTotalup}}", variationTags=["down", "up"], variationName="jesTotal")
     return df_sys
+
 def SF_variations(df):
     df_sys = df.Vary("puWeight", "RVec<float>{puWeightDown, puWeightUp}", variationTags=["down", "up"], variationName="pu")\
                .Vary("pdf_totalSF", "RVec<float>{pdf_totalDown, pdf_totalUp}", variationTags=["down", "up"], variationName="pdf_total")\

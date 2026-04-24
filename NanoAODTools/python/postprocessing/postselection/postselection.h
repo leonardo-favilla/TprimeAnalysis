@@ -1647,3 +1647,83 @@ RVec<int> top_process_category(std::string sample_process, rvec_i TopTruth_Match
   }
   return top_process;
 }
+
+////// Calculate the Trota SF for each top candidate
+RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string era, std::string TopCat, rvec_i TopCandidate_TagCat, rvec_f TopCandidate_score, float wpLoose, float wpTight, rvec_f TopCandidate_pt){
+  /**
+  * @brief Compute the Trota scale factor for each top candidate.
+  *
+  * This function loops over all top candidates and evaluates the
+  * "TrotaScaleFactors" correction from a CorrectionLib JSON file.
+  *
+  * For each candidate:
+  * - read its score, pT, and tag category
+  * - determine whether it belongs to the "pass" or "fail" region
+  *   according to the requested working point
+  * - evaluate the scale factor with CorrectionLib using:
+  *     {era, TopCat, TagCat, channel, "value", pt}
+  * - store the resulting weight in the output vector
+  *
+  * @param corrLibFilePath Path to the CorrectionLib JSON file.
+  * @param era Data-taking era string passed to the correction: 2022, 2022EE, 2023, 2023BPix.
+  * @param TopCat Top category string passed to the correction: Resolved, Mixed, Merged.
+  * @param TopCandidate_TagCat Per-candidate tag category: 0-->topmatched, 1-->nonmatched, 2-->other.
+  * @param TopCandidate_score Per-candidate Trota score.
+  * @param wpLoose Loose working-point threshold used to define pass/fail (currently unused).
+  * @param wpTight Tight working-point threshold used to define pass/fail.
+  * @param TopCandidate_pt Per-candidate transverse momentum used in the SF evaluation.
+  *
+  * @return RVec<float> weights containing one scale factor per top candidate.
+  *
+  * @note The function assumes that all input vectors have the same size.
+  * @note `wpLoose` is present in the arguments but is not used in the current implementation.
+  */
+
+  auto cset_T             = correction::CorrectionSet::from_file(corrLibFilePath);
+  auto trotaSF_corr_T     = cset_T->at("TrotaScaleFactors");
+  RVec<float> weights;
+  for (int i = 0; i < TopCandidate_pt.size(); i++)
+  {
+    float score   = TopCandidate_score[i];
+    float pt      = TopCandidate_pt[i];
+    std::string TagCat;
+    std::string channel;
+    std::string wpTag;
+    float weight  = 1.0;
+
+    if (TopCandidate_TagCat[i] == 0)
+    {
+      TagCat = "topmatched";
+    }
+    else if (TopCandidate_TagCat[i] == 1)
+    {
+      TagCat = "nonmatched";
+    }
+    else if (TopCandidate_TagCat[i] == 2)
+    {
+      TagCat = "other";
+    }
+  
+    
+    if(score >= wpTight){
+      wpTag   = "Tight";
+      channel = "pass";
+    }
+    else if(score < wpTight){
+      wpTag   = "Tight";
+      channel = "fail";
+    }
+
+
+    if (wpTag == "Tight")
+    {
+      weight  = trotaSF_corr_T->evaluate({era, TopCat, TagCat, channel, "value", pt});
+    }
+    else
+    {
+      weight = 1.0; // No SF applied for non-Tight WP in the current implementation
+    }
+    weights.push_back(weight);
+  }
+  return weights;
+}
