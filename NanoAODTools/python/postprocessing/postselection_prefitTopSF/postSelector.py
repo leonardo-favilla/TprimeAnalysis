@@ -488,7 +488,7 @@ def bookhisto2D(df, regions_def, var2d, s_cut):
                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_1TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
     return h_
 
-def savehisto(d, dict_h, regions_def, var, s_cut):
+def savehisto(d, dict_h, regions_def, var, s_cut, outfilePath_dict):
     histo = {reg: {v._name: ROOT.TH1D(v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax) for v in var} for reg in regions_def.keys()}
     isMC=True
     if "Data" in d.label: isMC = False
@@ -498,23 +498,10 @@ def savehisto(d, dict_h, regions_def, var, s_cut):
         s_list = [d]
     
     for s in s_list:
-        if tmpfold:
-            repohisto_tmp = "/tmp/"+username+"/"
-            if not os.path.exists(repohisto_tmp):
-                os.makedirs(repohisto_tmp)
-            else:
-                shutil.rmtree(repohisto_tmp)
-                os.makedirs(repohisto_tmp)
-            repohisto_tmp = "/tmp/"+username+"/"+s.label+"/"
-            if not os.path.exists(repohisto_tmp):
-                os.makedirs(repohisto_tmp)
-            else:
-                shutil.rmtree(repohisto_tmp)
-                os.makedirs(repohisto_tmp)
-            outfile = ROOT.TFile.Open(repohisto_tmp+s.label+'.root', "RECREATE")
-        else:
-            outfile = ROOT.TFile.Open(repohisto+s.label+'.root', "RECREATE")
-
+        outfilePath = outfilePath_dict[s.label]
+        if os.path.exists(outfilePath):
+            os.remove(outfilePath)
+        outfile     = ROOT.TFile.Open(outfilePath, "RECREATE")
         for n, vari in enumerate(variations):
             for reg in regions_def.keys():
                 for v in var:
@@ -656,6 +643,7 @@ print("starting loop on datasets: ", [d.label for d in datasets])
 print("Local time :", t0)
 # print("requirements: "+cut)
 
+outfilePath_dict            = {}
 h                           = {}
 h_2D                        = {}
 if do_variations:
@@ -686,9 +674,19 @@ for d in datasets:
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
+        if tmpfold:
+            repohisto_tmp   = "/tmp/"+username+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            repohisto_tmp   = "/tmp/"+username+"/"+s.label+"_TrotaSF/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            outfilePath     = repohisto_tmp+s.label+'.root'
+        else:
+            outfilePath     = repohisto_tmp+s.label+'.root'
+            
+        outfilePath_dict[s.label] = outfilePath
 
-        if os.path.exists(repohisto+s.label+'.root'):
-            os.remove(repohisto+s.label+'.root')
         print("Processing dataset: ", s.label)
         #------------------------------------------------------------------------------
         ############# Fixing variables for 2018-2022-2023 #############################
@@ -830,9 +828,9 @@ if do_histos:
             if do_variations:
                 print(h_varied.keys())
                 # print(h_varied[d.label].keys())
-                savehisto(d, h_varied, regions_def, var, s_cut)
+                savehisto(d, h_varied, regions_def, var, s_cut, outfilePath_dict)
             else:
-                savehisto(d, h, regions_def, var, s_cut)
+                savehisto(d, h, regions_def, var, s_cut, outfilePath_dict)
         # if len(var2d) != 0 :
         #     savehisto2d(d, h_2D, regions_def, var2d, s_cut)
         # print(d.label + " histos saved")

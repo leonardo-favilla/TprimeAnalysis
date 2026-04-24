@@ -79,7 +79,7 @@ def sub_writer(run_folder, log_folder, dataset, syst_suffix):
     # f.write("transfer_output_remaps  = \""+outname+"_Skim.root=root://eosuser.cern.ch///eos/user/"+inituser + "/" + username+"/DarkMatter/topcandidate_file/"+dat_name+"_Skim.root\"\n")
     # f.write('requirements            = (TARGET.OpSysAndVer =?= "CentOS7")\n')
     f.write("+JobFlavour             = \"nextweek\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek = 1 week
-    f.write('+JobTag                 = "'+dataset+syst_suffix+'"\n')
+    f.write('+JobTag                 = "'+dataset+syst_suffix+'_TrotaSF"\n')
     f.write("executable              = "+run_folder+"runner.sh\n")
     f.write("arguments               = \n")
     #f.write("input                   = input.txt\n")
@@ -106,8 +106,9 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --noTopPtWeight"
 
     f.write(pycommand+"\n")
-    f.write("ls -lthra /tmp/"+username+"/"+dataset+"/"+"\n")
-    f.write("cp /tmp/"+username+"/"+dataset+"/"+dataset+".root "+hist_folder+"plots/\n")
+    f.write("ls -lthra /tmp/"+username+"/"+"\n")
+    f.write("ls -lthra /tmp/"+username+"/"+dataset+"_TrotaSF/"+"\n")
+    f.write("cp /tmp/"+username+"/"+dataset+"_TrotaSF/"+dataset+".root "+hist_folder+"plots/\n")
     f.write("ls -lthra "+hist_folder+"plots/\n")
     f.close()
 
