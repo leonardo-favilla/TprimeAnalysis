@@ -1727,3 +1727,31 @@ RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string era, std::string
   }
   return weights;
 }
+
+
+
+
+RVec<int> TopCandidates_NonOverlapping_AcrossTopCategories_idx(rvec_i TopIndependentCandidates_TopCategoryOne_idx, rvec_f TopCandidates_TopCategoryOne_eta, rvec_f TopCandidates_TopCategoryOne_phi, rvec_i TopIndependentCandidates_TopCategoryTwo_idx, rvec_f TopCandidates_TopCategoryTwo_eta, rvec_f TopCandidates_TopCategoryTwo_phi, float deltaR_thr)
+{
+  RVec<int> non_overlapping_idx;
+  for (int j = 0; j < TopIndependentCandidates_TopCategoryTwo_idx.size(); j++) // Example: loop over TopMerged independent candidates
+  {
+    int overlap_found = 0;
+    for (int i = 0; i < TopIndependentCandidates_TopCategoryOne_idx.size(); i++) // loop over TopMixed independent candidates
+    {
+      if (deltaR(TopCandidates_TopCategoryOne_eta[TopIndependentCandidates_TopCategoryOne_idx[i]],
+                 TopCandidates_TopCategoryOne_phi[TopIndependentCandidates_TopCategoryOne_idx[i]],
+                 TopCandidates_TopCategoryTwo_eta[TopIndependentCandidates_TopCategoryTwo_idx[j]],
+                 TopCandidates_TopCategoryTwo_phi[TopIndependentCandidates_TopCategoryTwo_idx[j]]) < deltaR_thr)
+      {
+        overlap_found = 1;
+        break; // if it overlaps, we do not consider it for the list of non-overlapping candidates
+      }
+    }
+    if (overlap_found == 0) // if it does not overlap with any of the TopMixed candidates, we can consider it for the list of non-overlapping candidates
+    {
+      non_overlapping_idx.push_back(TopIndependentCandidates_TopCategoryTwo_idx[j]);
+    }
+  }
+  return non_overlapping_idx;
+}

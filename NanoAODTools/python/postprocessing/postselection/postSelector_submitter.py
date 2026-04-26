@@ -6,7 +6,6 @@ import shutil
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 from pathlib import Path
-import shutil
 sys.path.append('../')
 
 config = {}

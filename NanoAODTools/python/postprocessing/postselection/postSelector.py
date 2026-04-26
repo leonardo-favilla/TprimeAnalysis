@@ -76,14 +76,21 @@ except:
     sys.exit(1)
 
 
-branches = ["PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
+branches = [
+            # "PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
             # "Top_mass", "Top_pt", "Top_score", "Top_isolationPtJetsdR04", "Top_isolationPtJetsdR06", "Top_isolationPtJetsdR08", "Top_isolationPtJetsdR12", "Top_isolationNJetsdR04", "Top_isolationNJetsdR06", "Top_isolationNJetsdR08", "Top_isolationNJetsdR12",
-            "nVetoMuon", "nVetoElectron", "nJetBtagLoose", "JetBTagLoose_idx", "nJetBtagMedium", "JetBTagMedium_idx",
-            "nGoodJet", "nTightElectron", "nTightMuon", "MT", "MT_T",
-            "GoodJet_idx", 
-            "TopMixed_TopScore_nominal", "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
+            # "nTightElectron", "nTightMuon", "nVetoMuon", "nVetoElectron",
+            # "nJetBtagLoose", "JetBTagLoose_idx", "nJetBtagMedium", "JetBTagMedium_idx",
+            # "nGoodJet", "nGoodFatJet", "GoodJet_idx", "GoodFatJet_idx", 
+            # "MT", "MT_T",
+            "TopResolved_TopScore_nominal", "TopMixed_TopScore_nominal", "FatJet_particleNetWithMass_TvsQCD",
+            # "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
             "TightTopMix_idx", "LooseTopMix_idx", "LooseNOTTightTopMix_idx", "nLooseTopMixed", "nTightTopMixed",
-            "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process", "TopMixed_TrotaSF",
+            "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process",
+            "TopResolved_Independent_idx", "TopMixed_Independent_idx", "TopMerged_Independent_idx",
+            "nTopMerged_forEvWeight", "nTopMixed_forEvWeight", "nTopResolved_forEvWeight",
+            "TopMerged_forEvWeight_idx", "TopMixed_forEvWeight_idx", "TopResolved_forEvWeight_idx",
+            "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF"
            ]
 
 #### LOAD utils/postselection.h ####
@@ -343,18 +350,36 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process):
     # 1. truth:                     if the candidate is matched to a GenTop with dR<0.2
     # 2. top_process_category:      0: topmatched, 1: nonmatched, 2: other
 
-    TopSF_Tight_CorrLibFilePath   = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/ScaleFactors_MT_W/CorrLib_TrotaScaleFactors_Tight.json"
+    TopSF_Tight_CorrLibFilePath         = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/ScaleFactors_MT_W/CorrLib_TrotaScaleFactors_Tight.json"
     
     if sampleflag:
-        df_toptruth_with_matching = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
-                                      .Define("TopMixed_isMatched_to_GenTop_dR0p2",      "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
-                                      .Define("TopMerged_isMatched_to_GenTop_dR0p2",     "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")
+        df_toptruth_with_matching       = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",                "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
+                                            .Define("TopMixed_isMatched_to_GenTop_dR0p2",                   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
+                                            .Define("TopMerged_isMatched_to_GenTop_dR0p2",                  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")
 
-        df_top_process_category   = df_toptruth_with_matching.Define("TopResolved_process", f'top_process_category("{sample_process}", TopResolved_isMatched_to_GenTop_dR0p2)')\
-                                                             .Define("TopMixed_process",    f'top_process_category("{sample_process}", TopMixed_isMatched_to_GenTop_dR0p2)')\
-                                                             .Define("TopMerged_process",   f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')
+        df_top_process_category         = df_toptruth_with_matching.Define("TopResolved_process",           f'top_process_category("{sample_process}", TopResolved_isMatched_to_GenTop_dR0p2)')\
+                                                                   .Define("TopMixed_process",              f'top_process_category("{sample_process}", TopMixed_isMatched_to_GenTop_dR0p2)')\
+                                                                   .Define("TopMerged_process",             f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')
 
-        df_TrotaScaleFactors      = df_top_process_category.Define("TopMixed_TrotaSF",      f'GetTrotaSF("{TopSF_Tight_CorrLibFilePath}", "{era}", "{"Mixed"}", TopMixed_process, TopMixed_TopScore_nominal, {Top_Mixed_wp["10%"]}, {Top_Mixed_wp["5%"]}, TopMixed_pt_nominal)')
+        df_IndependentTopCandidates     = df_top_process_category.Define("TopResolved_Independent_idx",     "select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, -1.0)")\
+                                                                 .Define("TopMixed_Independent_idx",        "select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, -1.0)")\
+                                                                 .Define("TopMerged_Independent_idx",       "select_TopMer(FatJet_particleNetWithMass_TvsQCD, GoodFatJet_idx, -1.0)")
+        
+        df_NonOverlappingTopCandidates  = df_IndependentTopCandidates.Define("TopMixed_NonOverlappingTo_TopMerged_idx",                 "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMerged_Independent_idx, FatJet_eta, FatJet_phi, TopMixed_Independent_idx, TopMixed_eta, TopMixed_phi, 1.2)")\
+                                                                     .Define("TopResolved_NonOverlappingTo_TopMerged_idx",              "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMerged_Independent_idx, FatJet_eta, FatJet_phi, TopResolved_Independent_idx, TopResolved_eta, TopResolved_phi, 1.2)")\
+                                                                     .Define("TopResolved_NonOverlappingTo_TopMergedOrTopMixed_idx",    "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMixed_NonOverlappingTo_TopMerged_idx, TopMixed_eta, TopMixed_phi, TopResolved_NonOverlappingTo_TopMerged_idx, TopResolved_eta, TopResolved_phi, 1.2)")\
+                                                                     .Define("TopMerged_forEvWeight_idx",                               "TopMerged_Independent_idx")\
+                                                                     .Define("TopMixed_forEvWeight_idx",                                "TopMixed_NonOverlappingTo_TopMerged_idx")\
+                                                                     .Define("TopResolved_forEvWeight_idx",                             "TopResolved_NonOverlappingTo_TopMergedOrTopMixed_idx")\
+                                                                     .Define("nTopMerged_forEvWeight",                                  "static_cast<int>(TopMerged_forEvWeight_idx.size());")\
+                                                                     .Define("nTopMixed_forEvWeight",                                   "static_cast<int>(TopMixed_forEvWeight_idx.size());")\
+                                                                     .Define("nTopResolved_forEvWeight",                                "static_cast<int>(TopResolved_forEvWeight_idx.size());")
+
+        df_TrotaScaleFactors            = df_NonOverlappingTopCandidates.Define("TopMerged_TrotaSF",                                    "ROOT::VecOps::RVec<float>(FatJet_particleNetWithMass_TvsQCD.size(), 1.0f)")\
+                                                                        .Define("TopMixed_TrotaSF",                                     f'GetTrotaSF("{TopSF_Tight_CorrLibFilePath}", "{era}", "{"Mixed"}", TopMixed_process, TopMixed_TopScore_nominal, {Top_Mixed_wp["10%"]}, {Top_Mixed_wp["5%"]}, TopMixed_pt_nominal)')\
+                                                                        .Define("TopResolved_TrotaSF",                                  "ROOT::VecOps::RVec<float>(TopResolved_TopScore_nominal.size(), 1.0f)")
+    
+
     return df_TrotaScaleFactors
 
 def defineWeights(df, sampleflag):
