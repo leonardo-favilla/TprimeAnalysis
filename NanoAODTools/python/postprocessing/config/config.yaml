@@ -84,9 +84,9 @@ plotting:
                   "QCD_2023",
                   "ZJetsToNuNu_2jets_2023",
                   "WJets_2jets_2023",
-                  "TprimeToTZ_700_2023",
-                  "TprimeToTZ_1000_2023",
-                  "TprimeToTZ_1800_2023"
+                  # "TprimeToTZ_700_2023",
+                  # "TprimeToTZ_1000_2023",
+                  # "TprimeToTZ_1800_2023"
               ],
       "2023postBPix":
               [
