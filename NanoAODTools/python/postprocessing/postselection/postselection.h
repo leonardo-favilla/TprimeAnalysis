@@ -1648,7 +1648,7 @@ RVec<int> top_process_category(std::string sample_process, rvec_i TopTruth_Match
   return top_process;
 }
 
-////// Calculate the Trota SF for each top candidate
+////// Calculate the Trota SF for each top candidate of a given category
 RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string era, std::string TopCat, rvec_i TopCandidate_TagCat, rvec_f TopCandidate_score, float wpLoose, float wpTight, rvec_f TopCandidate_pt){
   /**
   * @brief Compute the Trota scale factor for each top candidate.
@@ -1754,4 +1754,26 @@ RVec<int> TopCandidates_NonOverlapping_AcrossTopCategories_idx(rvec_i TopIndepen
     }
   }
   return non_overlapping_idx;
+}
+
+
+
+////// Calculate the TrotaEventWeight for each event based on the Trota SF of the selected top candidates in the event
+float CalculateTrotaEventWeight(rvec_f TopMerged_TrotaSF, rvec_f TopMixed_TrotaSF, rvec_f TopResolved_TrotaSF, rvec_i TopMerged_forEvWeight_idx, rvec_i TopMixed_forEvWeight_idx, rvec_i TopResolved_forEvWeight_idx)
+{
+  float weight = 1.0;
+  for (int i = 0; i < TopMerged_forEvWeight_idx.size(); i++)
+  {
+    weight *= TopMerged_TrotaSF[TopMerged_forEvWeight_idx[i]];
+  }
+  for (int i = 0; i < TopMixed_forEvWeight_idx.size(); i++)
+  {
+    weight *= TopMixed_TrotaSF[TopMixed_forEvWeight_idx[i]];
+  }
+  for (int i = 0; i < TopResolved_forEvWeight_idx.size(); i++)
+  {
+    weight *= TopResolved_TrotaSF[TopResolved_forEvWeight_idx[i]];
+  }
+  
+  return weight;
 }

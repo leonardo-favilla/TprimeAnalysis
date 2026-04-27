@@ -81,7 +81,7 @@ branches = [
             # "Top_mass", "Top_pt", "Top_score", "Top_isolationPtJetsdR04", "Top_isolationPtJetsdR06", "Top_isolationPtJetsdR08", "Top_isolationPtJetsdR12", "Top_isolationNJetsdR04", "Top_isolationNJetsdR06", "Top_isolationNJetsdR08", "Top_isolationNJetsdR12",
             # "nTightElectron", "nTightMuon", "nVetoMuon", "nVetoElectron",
             # "nJetBtagLoose", "JetBTagLoose_idx", "nJetBtagMedium", "JetBTagMedium_idx",
-            # "nGoodJet", "nGoodFatJet", "GoodJet_idx", "GoodFatJet_idx", 
+            "nGoodJet", "nGoodFatJet", "GoodJet_idx", "GoodFatJet_idx", 
             # "MT", "MT_T",
             "TopResolved_TopScore_nominal", "TopMixed_TopScore_nominal", "FatJet_particleNetWithMass_TvsQCD",
             # "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
@@ -90,7 +90,7 @@ branches = [
             "TopResolved_Independent_idx", "TopMixed_Independent_idx", "TopMerged_Independent_idx",
             "nTopMerged_forEvWeight", "nTopMixed_forEvWeight", "nTopResolved_forEvWeight",
             "TopMerged_forEvWeight_idx", "TopMixed_forEvWeight_idx", "TopResolved_forEvWeight_idx",
-            "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF"
+            "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF", "TrotaEventWeight",
            ]
 
 #### LOAD utils/postselection.h ####
@@ -379,6 +379,7 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process):
                                                                         .Define("TopMixed_TrotaSF",                                     f'GetTrotaSF("{TopSF_Tight_CorrLibFilePath}", "{era}", "{"Mixed"}", TopMixed_process, TopMixed_TopScore_nominal, {Top_Mixed_wp["10%"]}, {Top_Mixed_wp["5%"]}, TopMixed_pt_nominal)')\
                                                                         .Define("TopResolved_TrotaSF",                                  "ROOT::VecOps::RVec<float>(TopResolved_TopScore_nominal.size(), 1.0f)")
     
+        df_TrotaScaleFactors            = df_TrotaScaleFactors.Define("TrotaEventWeight",                                               "CalculateTrotaEventWeight(TopMerged_TrotaSF, TopMixed_TrotaSF, TopResolved_TrotaSF, TopMerged_forEvWeight_idx, TopMixed_forEvWeight_idx, TopResolved_forEvWeight_idx)")
 
     return df_TrotaScaleFactors
 
