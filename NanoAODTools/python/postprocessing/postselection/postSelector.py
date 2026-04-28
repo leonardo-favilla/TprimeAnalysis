@@ -27,6 +27,7 @@ parser.add_option(      '--syst',               dest='syst',                acti
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--noPuWeight',         dest='noPuWeight',          action='store_true',    default=False,                                  help='remove PU weight')
+parser.add_option(      '--noTrotaSF',          dest='noTrotaSF',           action='store_true',    default=False,                                  help='remove Trota SF')
 parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
 parser.add_option(      '--printcutflow',       dest='printcutflow',        action='store_true',    default=False,                                  help='print cutflow')
 
@@ -37,6 +38,7 @@ nfiles_max              = opt.nfiles_max
 do_variations           = opt.syst
 noSFbtag                = opt.noSFbtag
 noPuWeight              = opt.noPuWeight
+noTrotaSF               = opt.noTrotaSF
 dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
@@ -85,13 +87,14 @@ branches = [
             "nGoodJet", "nGoodFatJet", "GoodJet_idx", "GoodFatJet_idx", 
             # "MT", "MT_T",
             "TopResolved_TopScore_nominal", "TopMixed_TopScore_nominal", "FatJet_particleNetWithMass_TvsQCD",
-            # "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
+            "TopMixed_pt_nominal", "TopMixed_eta", "TopMixed_phi", "TopMixed_mass_nominal", "TopMixed_idxFatJet", "TopMixed_idxJet0", "TopMixed_idxJet1", "TopMixed_idxJet2",
             "TightTopMix_idx", "LooseTopMix_idx", "LooseNOTTightTopMix_idx", "nLooseTopMixed", "nTightTopMixed",
             "TopMixed_isMatched_to_GenTop_dR0p2", "TopMixed_process",
             "TopResolved_Independent_idx", "TopMixed_Independent_idx", "TopMerged_Independent_idx",
             "nTopMerged_forEvWeight", "nTopMixed_forEvWeight", "nTopResolved_forEvWeight",
             "TopMerged_forEvWeight_idx", "TopMixed_forEvWeight_idx", "TopResolved_forEvWeight_idx",
-            "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF", "TrotaEventWeight",
+            "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF", 
+            "TrotaEventWeight", "w_nominal",
            ]
 
 #### LOAD utils/postselection.h ####
@@ -354,7 +357,7 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process):
     # 2. top_process_category:      0: topmatched, 1: nonmatched, 2: other
 
     TopSF_Tight_CorrLibFilePath         = "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/results/run2023_SemiLep_nobjetlep_inside_tophadr_using_tightbjet/ScaleFactors_MT_W/CorrLib_TrotaScaleFactors_Tight.json"
-    
+
     if sampleflag:
         df_toptruth_with_matching       = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",                "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
                                             .Define("TopMixed_isMatched_to_GenTop_dR0p2",                   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
@@ -383,10 +386,12 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process):
                                                                         .Define("TopResolved_TrotaSF",                                  "ROOT::VecOps::RVec<float>(TopResolved_TopScore_nominal.size(), 1.0f)")
     
         df_TrotaScaleFactors            = df_TrotaScaleFactors.Define("TrotaEventWeight",                                               "CalculateTrotaEventWeight(TopMerged_TrotaSF, TopMixed_TrotaSF, TopResolved_TrotaSF, TopMerged_forEvWeight_idx, TopMixed_forEvWeight_idx, TopResolved_forEvWeight_idx)")
+    else:
+        df_TrotaScaleFactors            = df
 
     return df_TrotaScaleFactors
 
-def defineWeights(df, sampleflag):
+def defineWeights(df, sampleflag, sample_process):
     if sampleflag:
         df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
             .Define("pdf_totalSF", "pdf_total_weights[0]")\
@@ -403,6 +408,14 @@ def defineWeights(df, sampleflag):
             .Define("ISRDown", "PSWeight_weights[0]")\
             .Define("FSRUp", "PSWeight_weights[3]")\
             .Define("FSRDown", "PSWeight_weights[2]")
+        
+        if "ZJets" in sample_process: 
+            df = df.Define("NLOEW", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
+        elif "WJets" in sample_process:
+            df = df.Define("NLOEW", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
+        else:
+            df = df.Define("NLOEW", "1.0f")
+
     else: 
         df = df
     return df
@@ -661,6 +674,7 @@ for d in datasets:
         if os.path.exists(repohisto+s.label+'.root'):
             os.remove(repohisto+s.label+'.root')
         print("Processing dataset: ", s.label)
+        sample_process      = s.process.split("_")[0] if hasattr(s, "process") else s.label.split("_")[0]
         #------------------------------------------------------------------------------
         ############# Fixing variables for 2018-2022-2023 #############################
         #------------------------------------------------------------------------------
@@ -695,7 +709,7 @@ for d in datasets:
         if sampleflag:
             df                  = df.Define("triggerSF", f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")') 
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
-        df                  = defineWeights(df, sampleflag)
+        df                  = defineWeights(df, sampleflag, sample_process)
 
         if do_variations:
             df              = df.Define("PuppiMET_T1_pt_jerdown_vec", "RVec<float>{ (float) PuppiMET_T1_pt_jerdown}").Define("PuppiMET_T1_phi_jerdown_vec", "RVec<float>{ (float) PuppiMET_T1_phi_jerdown}")\
@@ -711,52 +725,46 @@ for d in datasets:
         df_hemveto          = df_year.Define("HEMVeto", "hemveto(Jet_eta, Jet_phi, Electron_eta, Electron_phi)")
         df_hemveto          = df_hemveto.Filter("(isMC || (year != 2018) || (HEMVeto || run<319077.))")
         df_hlt              = trigger_filter(df_hemveto, s.label, sampleflag)
-        
-        if "ZJets" in s.label: 
-            df_hlt = df_hlt.Define("w_nominal", "nloewcorrectionZ(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
-            # df_hlt = df_hlt.Define("w_nominal", "1")                                                                                             # no nloewcorrection
-        elif "WJets" in s.label:
-            df_hlt = df_hlt.Define("w_nominal", "nloewcorrectionW(1., GenPart_pdgId, GenPart_pt, GenPart_statusFlags)")
-            # df_hlt = df_hlt.Define("w_nominal", "1")                                                                                             # no nloewcorrection
-        else:
-            df_hlt = df_hlt.Define("w_nominal", "1")
-            
-        if sampleflag:
-            if (noSFbtag) and (not noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                # no SFbtag
-            elif (not noSFbtag) and (noPuWeight):
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')          # no puWeight
-            elif noSFbtag and noPuWeight:
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF')                         # no puWeight no SFbtag
-            else:   
-                df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))*triggerSF*pdf_totalSF*QCDScaleSF*ISRSF*FSRSF') # AllWeights
-            # df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))')          # no puWeight
-        else:
-            df_wnom = df_hlt.Redefine('w_nominal', '1')
 
-            
-        # df_wnom           = df_hlt.Define('w_nominal', '1')
-        df_presel       = preselection(df_wnom, bTagAlg, s.year, EE)
-        df_topsel       = select_top(df_presel, sampleflag)
-        df_topsel       = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
-        df_TrotaSF      = add_TrotaScaleFactors(df_topsel, sampleflag, sample_process)
+        df_presel           = preselection(df_hlt, bTagAlg, s.year, EE)
+        df_topsel           = select_top(df_presel, sampleflag)
+        df_topsel           = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
+        df_TrotaSF          = add_TrotaScaleFactors(df_topsel, sampleflag, sample_process)
+
+
+        ########################## Weights application ##########################
+        if sampleflag:
+            weights_list    = ["NLOEW", "triggerSF", "(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))", "pdf_totalSF", "QCDScaleSF", "ISRSF", "FSRSF"]
+            if not noSFbtag:
+                weights_list.append("SFbtag_nominal")
+            if not noPuWeight:
+                weights_list.append("puWeight")
+            if not noTrotaSF:
+                weights_list.append("TrotaEventWeight")
+
+            weights_expr    = "*".join(weights_list)
+            print("weights expression: ", weights_expr)
+            df_wnom         = df_TrotaSF.Define("w_nominal", f"{weights_expr}")
+        else:
+            df_wnom         = df_TrotaSF.Define("w_nominal", "1.0f")
+
 
         # command for printing the cutflow, add it in the SRs for all the bkgs 
         # if printcutflow:
-        #     df_topsel.Report().Print()
+        #     df_wnom.Report().Print()
 
         if do_snapshot:
             opts        = ROOT.RDF.RSnapshotOptions()
             opts.fLazy  = True
             fold        = folder
-            snapshot_df = df_TrotaSF.Snapshot("events_nominal", fold+"snap_"+s.label+".root", branches, opts)
+            snapshot_df = df_wnom.Snapshot("events_nominal", fold+"snap_"+s.label+".root", branches, opts)
             # print("./"+s.label+".root")
         if do_histos:
             s_cut = cut_string(cut)
             if len(var) != 0 :
-                h[d.label][s.label] = bookhisto(df_TrotaSF, regions_def, var, s_cut)
+                h[d.label][s.label] = bookhisto(df_wnom, regions_def, var, s_cut)
             if len(var2d) != 0:
-                h_2D[d.label][s.label] = bookhisto2D(df_TrotaSF, regions_def, var2d, s_cut)
+                h_2D[d.label][s.label] = bookhisto2D(df_wnom, regions_def, var2d, s_cut)
 
         
         if do_variations:

@@ -27,6 +27,7 @@ parser.add_option(      '--syst',                   dest='syst',                
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
+parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default=False,                                          help='print cutflow')
 
 (opt, args)         = parser.parse_args()
@@ -36,6 +37,7 @@ nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
+noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
 
 period              = dataset_to_run.split("_")[-1]
@@ -57,6 +59,8 @@ if noSFbtag:
     syst_suffix    += "_noSFbtag"
 if noPuWeight:
     syst_suffix    += "_noPuWeight"
+if noTrotaSF:
+    syst_suffix    += "_noTrotaSF"
 
 outFolder_path      = config["outputfolder"]["postselector_results"][period]
 
@@ -102,6 +106,8 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --noSFbtag"
     if noPuWeight:
         pycommand += " --noPuWeight"
+    if noTrotaSF:
+        pycommand += " --noTrotaSF"
     if printcutflow:
         pycommand += " --printcutflow"
 
@@ -137,7 +143,7 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    condor_folder       = os.environ.get('PWD') + "/condor" + syst_suffix + "/"
+    condor_folder           = os.environ.get('PWD') + "/condor" + syst_suffix + "/"
     condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
