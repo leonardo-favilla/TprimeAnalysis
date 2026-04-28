@@ -44,7 +44,7 @@ hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
 printcutflow            = opt.printcutflow
 do_histos               = True
-do_snapshot             = True
+do_snapshot             = False
 if do_variations:
     do_snapshot         = False
 remote_subfolder_name   = datetime.now().strftime("%Y%m%d") #20231229
@@ -94,7 +94,7 @@ branches = [
             "nTopMerged_forEvWeight", "nTopMixed_forEvWeight", "nTopResolved_forEvWeight",
             "TopMerged_forEvWeight_idx", "TopMixed_forEvWeight_idx", "TopResolved_forEvWeight_idx",
             "TopMerged_TrotaSF", "TopMixed_TrotaSF", "TopResolved_TrotaSF", 
-            "TrotaEventWeight", "w_nominal",
+            "TrotaEventWeight", "w_nominal", "puWeight"
            ]
 
 #### LOAD utils/postselection.h ####

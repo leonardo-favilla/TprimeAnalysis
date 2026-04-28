@@ -1,8 +1,8 @@
 outputfolder:
   postselector_results: { 
-    "2022":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Feb26/"        ,
-    "2022EE":       "/eos/user/a/acagnott/DarkMatter/nosynch/run2022EE_Jan26/"       ,
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_wTrotaSF_TopMixedOnly/",
+    "2022":         "/eos/user/a/acagnott/DarkMatter/nosynch/run2022_Feb26/",
+    "2022EE":       "/eos/user/a/acagnott/DarkMatter/nosynch/run2022EE_Jan26/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results_wTrotaScaleFactor/run2023_wTrotaSF_TopMixedOnly/",
     "2023postBPix": "/eos/user/a/acagnott/DarkMatter/nosynch/run2023postBPix_Jan26/",
     }
   triggerSF_results: { 
@@ -60,9 +60,9 @@ plotting:
                   "QCD_2022",
                   "ZJetsToNuNu_2jets_2022",
                   "WJets_2jets_2022",
-                  # "TprimeToTZ_700_2022",
-                  # "TprimeToTZ_1000_2022",
-                  # "TprimeToTZ_1800_2022"
+                  "TprimeToTZ_700_2022",
+                  "TprimeToTZ_1000_2022",
+                  "TprimeToTZ_1800_2022"
               ],
       "2022EE":
               [
@@ -84,9 +84,9 @@ plotting:
                   "QCD_2023",
                   "ZJetsToNuNu_2jets_2023",
                   "WJets_2jets_2023",
-                  # "TprimeToTZ_700_2023",
-                  # "TprimeToTZ_1000_2023",
-                  # "TprimeToTZ_1800_2023"
+                  "TprimeToTZ_700_2023",
+                  "TprimeToTZ_1000_2023",
+                  "TprimeToTZ_1800_2023"
               ],
       "2023postBPix":
               [
@@ -104,7 +104,7 @@ plotting:
 
   systematics:
     {
-      "2022":           ["QCDScale"], # "QCDScale"
+      "2022":           [], # "QCDScale"
       "2022EE":         [],
       "2023":           [],
       "2023postBPix":   []
