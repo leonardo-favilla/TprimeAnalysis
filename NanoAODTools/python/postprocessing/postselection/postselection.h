@@ -1670,14 +1670,14 @@ RVec<int> top_process_category(std::string sample_process, rvec_i TopTruth_Match
   {
     if (TopTruth_MatchedToGenTop[i] == 1)
     {
-      if(sample_process == "TT" || sample_process == "TW")
+      if(sample_process == "TT" || sample_process == "TW" || sample_process == "TprimeToTZ")
       {
         top_process.push_back(0);
       }
     }
     else if (TopTruth_MatchedToGenTop[i] == 0)
     {
-      if(sample_process == "TT" || sample_process == "TW")
+      if(sample_process == "TT" || sample_process == "TW" || sample_process == "TprimeToTZ")
       {
         top_process.push_back(1);
       }
