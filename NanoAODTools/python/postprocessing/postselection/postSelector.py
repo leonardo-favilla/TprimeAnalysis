@@ -335,7 +335,37 @@ def select_top(df, isMC):
         df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
+
+    df_topselected = df_topvariables.Define("BestTopResolved_idx",      "(int)ArgMax(TopResolved_TopScore_nominal)")\
+                                    .Define("BestTopMixed_idx",         "(int)ArgMax(TopMixed_TopScore_nominal)")\
+                                    .Define("BestTopMerged_idx",        "(int)ArgMax(FatJet_particleNetWithMass_TvsQCD)")
+
+    df_topvariables = df_topselected.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_phi",      "TopResolved_phi[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_mass",     "TopResolved_mass_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopResolved_score",    "TopResolved_TopScore_nominal[BestTopResolved_idx]")\
+                                    .Define("BestTopMixed_pt",          "TopMixed_pt_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_eta",         "TopMixed_eta[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_phi",         "TopMixed_phi[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_mass",        "TopMixed_mass_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMixed_score",       "TopMixed_TopScore_nominal[BestTopMixed_idx]")\
+                                    .Define("BestTopMerged_pt",         "FatJet_pt_nominal[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_eta",        "FatJet_eta[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_phi",        "FatJet_phi[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_mass",       "FatJet_mass_nominal[BestTopMerged_idx]")\
+                                    .Define("BestTopMerged_score",      "FatJet_particleNetWithMass_TvsQCD[BestTopMerged_idx]")
+
+    if isMC:
+        df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2)")\
+                                         .Define("TopMixedMatched_to_GenTop_dR0p2",     "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMixed_eta, BestTopMixed_phi, 0.2)")\
+                                         .Define("TopMergedMatched_to_GenTop_dR0p2",    "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopMerged_eta, BestTopMerged_phi, 0.2)")
+    else:
+        df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "1.")\
+                                         .Define("TopMixedMatched_to_GenTop_dR0p2",     "1.")\
+                                         .Define("TopMergedMatched_to_GenTop_dR0p2",    "1.")
     return df_topvariables
+    
 def defineWeights(df, sampleflag):
     if sampleflag:
         df = df.Define("pdf_total_weights", "PdfWeight_variations(LHEPdfWeight, "+ str(ntot_events[d.label][s.label]) +")")\
