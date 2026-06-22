@@ -11,7 +11,7 @@ ROOT.gROOT.SetBatch()
 
 remoteFolderPath = "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_March26_TaggerWorkingPoints"
 year             = 2023
-TopCand          = "Resolved"
+TopCand          = "Merged"
 inFilePath       = f"{remoteFolderPath}/plotsCollected.root"
 if not os.path.exists(inFilePath):
     print(f"File {inFilePath} does not exist. Exiting...")
@@ -46,7 +46,9 @@ c                    = CMS.cmsCanvas(
                                         square=CMS.kRectangular,
                                         iPos=0
                                     )
-leg                  = CMS.cmsLeg(0.57, 0.83, 0.92, 0.67, textSize=0.025)
+leg                  = CMS.cmsLeg(0.57, 0.67, 0.87, 0.87, textSize=0.025) # Merged                                   
+# leg                  = CMS.cmsLeg(0.37, 0.47, 0.67, 0.57, textSize=0.025) # Mixed
+# leg                  = CMS.cmsLeg(0.67, 0.67, 0.87, 0.83, textSize=0.025) # Resolved                                   
 leg.AddEntry("None", "2023 Working Points", "")
 
 for i,proc in enumerate(color_map):
@@ -104,13 +106,17 @@ latex    = ROOT.TLatex()
 latex.SetTextFont(52)
 latex.SetTextSize(0.025)
 latex.SetTextColor(ROOT.kRed)
-latex.DrawLatexNDC(thr_L+0.1, 0.83, f"{thr_L:.3f}")
+latex.DrawLatexNDC(thr_L+0.1, 0.83, f"{thr_L:.3f}") # Merged
+# latex.DrawLatexNDC(thr_L-0.05, 0.83, f"{thr_L:.3f}") # Mixed
+# latex.DrawLatexNDC(thr_L-0.02, 0.83, f"{thr_L:.3f}") # Resolved
 
 latex    = ROOT.TLatex()
 latex.SetTextFont(52)
 latex.SetTextSize(0.025)
 latex.SetTextColor(ROOT.kGreen+1)
-latex.DrawLatexNDC(thr_T+0.02, 0.78, f"{thr_T:.3f}")
+latex.DrawLatexNDC(thr_T+0.02, 0.78, f"{thr_T:.3f}") # Merged
+# latex.DrawLatexNDC(thr_T-0.02, 0.78, f"{thr_T:.3f}") # Mixed
+# latex.DrawLatexNDC(thr_T-0.03, 0.78, f"{thr_T:.3f}") # Resolved
 
 
 c.SaveAs(f"{remoteFolderPath}/{var}.pdf")
