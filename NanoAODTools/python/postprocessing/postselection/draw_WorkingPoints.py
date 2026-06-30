@@ -49,7 +49,7 @@ c                    = CMS.cmsCanvas(
 if TopCand == "Merged":
     leg              = CMS.cmsLeg(0.57, 0.67, 0.87, 0.87, textSize=0.025) # Merged    
 elif TopCand == "Mixed":
-    leg              = CMS.cmsLeg(0.37, 0.47, 0.67, 0.57, textSize=0.025) # Mixed
+    leg              = CMS.cmsLeg(0.37, 0.47, 0.67, 0.67, textSize=0.025) # Mixed
 elif TopCand == "Resolved":
     leg              = CMS.cmsLeg(0.67, 0.67, 0.87, 0.83, textSize=0.025) # Resolved
 leg.AddEntry("None", "2023 Working Points", "")
