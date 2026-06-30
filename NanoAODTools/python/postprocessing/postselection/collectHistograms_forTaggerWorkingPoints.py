@@ -2,18 +2,22 @@ import os
 import ROOT
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import copy
-
+import json
 
 
 remoteFolderPath = "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_March26_TaggerWorkingPoints"
 plotsFolderPath  = f"{remoteFolderPath}/plots"
 year             = 2023
-topCand          = "Merged"
+# topCand          = "Merged"
 outFilePath      = f"{remoteFolderPath}/plotsCollected.root"
+countFilePath    = f"{remoteFolderPath}/plotsCollected_counts.json"
 
 
-
-
+TopCategories    = [
+                    "Resolved",
+                    "Mixed",
+                    "Merged"
+                    ]
 
 datasets         = [
                       f"TT_{year}",
@@ -26,7 +30,7 @@ datasets         = [
 processes_map      = {
                     "topmatched":   ["TT", "TW"],
                     "nonmatched":   ["TT", "TW"],
-                    "other":        ["QCD", "ZJetsToNuNu_2jets", "WJets_2jets"],
+                    "other":        ["QCD", "ZJetsToNuNu", "WJets"],
                     }
 
 samples_list        = []
@@ -39,8 +43,9 @@ for dat in datasets:
 
 # print(f"samples to process: {[s.label for s in samples_list]}")
 
-plotsDict                           = {topCand: {proc: None for proc in processes_map} for topCand in ["Resolved", "Mixed", "Merged"]}
-for topCand in ["Resolved", "Mixed", "Merged"]:
+plotsDict                           = {topCand: {proc: None for proc in processes_map} for topCand in TopCategories}
+countDict                           = {topCand: {proc: 0 for proc in processes_map} for topCand in TopCategories}
+for topCand in TopCategories:
     for proc in processes_map:
         variable                        = f"BestTop{topCand}_score"
         region                          = f"top{topCand}_{proc}"
@@ -60,6 +65,11 @@ for topCand in ["Resolved", "Mixed", "Merged"]:
                     plotsDict[topCand][proc]     = histo
                 else:
                     plotsDict[topCand][proc].Add(histo)
+                countDict[topCand][proc] += histo.Integral()
+
+with open(countFilePath, "w") as f:
+    json.dump(countDict, f, indent=4)
+print(f"Saved counts to {countFilePath}")
 
 
 print(f"Writing output file {outFilePath}")
