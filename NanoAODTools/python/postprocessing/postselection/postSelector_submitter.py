@@ -51,6 +51,8 @@ if "2022" in period:
     year            = "2022"
 elif "2023" in period:
     year            = "2023"
+elif "2024" in period:
+    year            = "2024"
 
 dict_samples_file   = config["dict_samples"][year]
 
