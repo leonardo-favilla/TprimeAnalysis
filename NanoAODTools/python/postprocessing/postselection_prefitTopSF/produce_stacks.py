@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import ROOT
+ROOT.TH1.AddDirectory(False)
 import os
 import sys
 sys.path.append('../')
@@ -123,22 +124,11 @@ repostack       = folder+"stacks/"
 repostack_www   = folder_www+"stacks/"
 
 if not os.path.exists(folder):
-    os.mkdir(folder)
-# if not os.path.exists(repostack):
-#     os.mkdir(repostack)
-#     print("Created folders 'stacks' at ", folder)
-# if not os.path.exists(repostack+"/png"):
-#     os.mkdir(repostack+"/png")
-# if not os.path.exists(repostack+"/pdf"):
-#     os.mkdir(repostack+"/pdf")
-# if not os.path.exists(repostack+"/C"):
-#     os.mkdir(repostack+"/C")
-
-
+    os.makedirs(folder, exist_ok=True)
 if not os.path.exists(folder_www):
-    os.mkdir(folder_www)
+    os.makedirs(folder_www, exist_ok=True)
 if not os.path.exists(repostack_www):
-    os.mkdir(repostack_www)
+    os.makedirs(repostack_www, exist_ok=True)
     print("Created folder 'stacks' at ", folder_www)
 if not os.path.exists(folder_www+"index.php"):
     shutil.copy("/eos/user/l/lfavilla/www/index.php", folder_www)

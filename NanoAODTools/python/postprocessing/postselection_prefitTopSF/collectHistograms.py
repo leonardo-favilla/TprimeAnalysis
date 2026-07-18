@@ -1,4 +1,5 @@
 import ROOT
+ROOT.TH1.AddDirectory(False)
 import os
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
@@ -173,6 +174,7 @@ for tag_cat in tag_categories:
                                 print(f"Found histogram: '{histoname}' in component: '{component}' with integral {inputHistograms_dict[component][histoname].Integral():.1f}")
                                 if histo is None:
                                     histo   = inputHistograms_dict[component][histoname].Clone(histoname)
+                                    histo.SetDirectory(0)
                                 else:
                                     histo.Add(inputHistograms_dict[component][histoname])
                                 print(f"Current integral for '{histoname_out}': {histo.Integral():.1f}")
@@ -198,6 +200,7 @@ for tag_cat in tag_categories:
                                 print(f"Found histogram: '{histoname}' in component: '{component}' with integral {inputHistograms_dict[component][histoname].Integral():.1f}")
                                 if histo is None:
                                     histo   = inputHistograms_dict[component][histoname].Clone(histoname)
+                                    histo.SetDirectory(0)
                                 else:
                                     histo.Add(inputHistograms_dict[component][histoname])
                                 print(f"Current integral for '{histoname_out}': {histo.Integral():.1f}")
@@ -219,6 +222,7 @@ for tag_cat in tag_categories:
                             print(f"Found histogram: '{histoname}' in component: '{component}' with integral {inputHistograms_dict[component][histoname].Integral():.1f}")
                             if histo is None:
                                 histo   = inputHistograms_dict[component][histoname].Clone(histoname)
+                                histo.SetDirectory(0)
                             else:
                                 histo.Add(inputHistograms_dict[component][histoname])
                             print(f"Current integral for '{histoname_out}': {histo.Integral():.1f}")
@@ -292,7 +296,7 @@ for ev_cat, outFile in outFile_dict.items():
                 outputHistograms_dict[histoname_out].Reset()
                 outputHistograms_dict[histoname_out].SetBinContent(1, 1e-10) # set a very small content to avoid issues with zero yields in datacards
                 histo = outputHistograms_dict[histoname_out].Clone(histoname_out)
-            
+                histo.SetDirectory(0)
             elif (outputCount_dict[histoname_out] <= 0) and not ("data" in histoname_out or "nominal" in histoname_out):
                 print(f"Warning: histogram '{histoname_out}' has non-positive integral {outputCount_dict[histoname_out]:.1f} --> substituting with nominal histogram")
                 for unc,unc_tag in uncertainties_tags.items():
@@ -300,8 +304,10 @@ for ev_cat, outFile in outFile_dict.items():
                         unc_tag_to_replace = unc_tag
                         break
                 histo = outputHistograms_dict[histoname_out.replace(unc_tag_to_replace, "nominal")].Clone(histoname_out)
+                histo.SetDirectory(0)
             else:
                 histo = outputHistograms_dict[histoname_out].Clone(histoname_out)
+                histo.SetDirectory(0)
             histo.Write()
     outFile.Close()
 
@@ -379,27 +385,35 @@ with open(f"{workspaceSubFolder}/combine_script.sh", 'w') as combine_script_file
         combine_script_file.write(f"text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe {ev_cat}.txt -o workspace_{ev_cat}.root --PO=categories={','.join(categories_to_plot)}\n")
 
 print(f"Printing fit script file fit_procedure.sh")
-with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
+floating_categories = [cat for cat in categories_to_plot if cat != "other"]
+floating_pois = ",".join(f"SF_{cat}" for cat in floating_categories)
+
+with open(f"{workspaceSubFolder}/fit_procedure.sh", "w") as fit_script_file:
     fit_script_file.write("#!/bin/bash\n")
     fit_script_file.write("# Running the fit procedure\n")
     fit_script_file.write("echo '[1/2] Running MultiDimFit'\n")
     fit_script_file.write(f"cd {workspaceSubFolder}/\n")
     for ev_cat in event_categories:
         fit_script_file.write(
-                                f"combine -M MultiDimFit workspace_{ev_cat}.root \\\n"
-                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
-                                f"    --cminDefaultMinimizerStrategy 2 \\\n"
-                                f"    --robustFit 1 \\\n"
-                                f"    --name _{ev_cat}\n"
-                                )
+            f"combine -M MultiDimFit workspace_{ev_cat}.root \\\n"
+            f"    --redefineSignalPOIs {floating_pois} \\\n"
+            f"    --setParameters SF_other=1.0 \\\n"
+            f"    --freezeParameters SF_other \\\n"
+            f"    --cminDefaultMinimizerStrategy 2 \\\n"
+            f"    --robustFit 1 \\\n"
+            f"    --name _{ev_cat}\n"
+        )
+
     fit_script_file.write("echo '[2/2] Running FitDiagnostics'\n")
     for ev_cat in event_categories:
         fit_script_file.write(
-                                f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
-                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
-                                f"    --saveShapes \\\n"
-                                f"    --cminDefaultMinimizerStrategy 2 \\\n"
-                                f"    --robustFit 1 \\\n"
-                                f"    --saveWithUncertainties \\\n"
-                                f"    --name _{ev_cat}\n"
-                                )
+            f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
+            f"    --redefineSignalPOIs {floating_pois} \\\n"
+            f"    --setParameters SF_other=1.0 \\\n"
+            f"    --freezeParameters SF_other \\\n"
+            f"    --saveShapes \\\n"
+            f"    --cminDefaultMinimizerStrategy 2 \\\n"
+            f"    --robustFit 1 \\\n"
+            f"    --saveWithUncertainties \\\n"
+            f"    --name _{ev_cat}\n"
+        )

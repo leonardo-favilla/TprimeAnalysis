@@ -126,7 +126,9 @@ for cat in categories:
                 sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(sf_pass_error)
                 print(f"{poi} \t\t= {sf_pass_value:.4f} ± {sf_pass_error:.4f}")
             else:
-                print(f"{poi} not found in RooFitResult")
+                print(f"{poi} not found in RooFitResult for event category {evcat}. Setting SF_pass to 1.0 with zero error.")
+                sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(1.0)
+                sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(0.0)
 
             ###############
             ### SF_fail ###
@@ -137,10 +139,19 @@ for cat in categories:
                 print(f"Calculating w_fail for {evcat} using the relation:      w_fail = SF_fail    = 1 + (1 - SF_pass) * (norm_prefit_pass / norm_prefit_fail)")
                 print(f"with error:                                             sigma_fail          = sigma_pass * (norm_prefit_pass / norm_prefit_fail)")
                 print(f"where                                                   w_pass = SF_pass    = {sf_pass_value:.4f} ± {sf_pass_error:.4f}, norm_prefit_pass = {norm_prefit_pass:.4f}, norm_prefit_fail = {norm_prefit_fail:.4f}")
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail))
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(sf_pass_error * (norm_prefit_pass / norm_prefit_fail))
+                sf_fail_value    = 1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail)
+                if sf_fail_value < 0:
+                    print(f"Warning: SF_fail value is negative ({sf_fail_value:.4f}) for {evcat}. Setting SF_fail to 1.0 with zero error.")
+                    sf_fail_value = 1.0
+                    sf_fail_error = 0.0
+                else:
+                    sf_fail_error    = sf_pass_error * (norm_prefit_pass / norm_prefit_fail)
+                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(sf_fail_value)
+                sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(sf_fail_error)
             else:
-                print(f"{poi} not found in RooFitResult")
+                print(f"{poi} not found in RooFitResult for event category {evcat}. Setting SF_fail to 1.0 with zero error.")
+                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(1.0)
+                sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(0.0)
 
     elif wp_cat in ["LooseButNotTight"]:
         inJsonName                  = f"TrotaScaleFactors_{era}"
