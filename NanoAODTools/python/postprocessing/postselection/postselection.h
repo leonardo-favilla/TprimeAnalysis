@@ -32,18 +32,25 @@ const float dR=  0.8;
 //  Top Resolved threshold 2022 training { 'fpr 10': 0.1422998, 'fpr 5': 0.29475874, 'fpr 1': 0.59264845, 'fpr 01': 0.86580896}
 //  Top Mixed threshold 2022 training {"10%": {"thr": 0.7214655876159668,},"5%": {"thr": 0.8474694490432739,},"1%": {"thr": 0.9436638951301575,},"0.1%": {"thr": 0.9789741635322571,}}
 
+const float btagPNet_tightWP_2022           = 0.6734;
+const float btagPNet_tightWP_2022EE         = 0.6915;
+const float btagPNet_tightWP_2023           = 0.6172;
+const float btagPNet_tightWP_2023postBPix   = 0.6133;
+const float btagUParTAK4B_tightWP_2024      = 0.4648;
+
 const float btagDeepB_mediumWP_2018         = 0.2783;
 const float btagPNet_mediumWP_2022          = 0.245 ;
 const float btagPNet_mediumWP_2022EE        = 0.2605;
 const float btagPNet_mediumWP_2023          = 0.1917;
 const float btagPNet_mediumWP_2023postBPix  = 0.1919;
+const float btagUParTAK4B_mediumWP_2024     = 0.1272;
 
 const float btagDeepB_looseWP_2018          = 0.0490;
 const float btagPNet_looseWP_2022           = 0.047 ;
 const float btagPNet_looseWP_2022EE         = 0.0499;
 const float btagPNet_looseWP_2023           = 0.0358;
 const float btagPNet_looseWP_2023postBPix   = 0.0359;
-
+const float btagUParTAK4B_looseWP_2024      = 0.0246;
 
 // ########################################################
 bool isMC(int SampleFlag){
@@ -565,42 +572,82 @@ RVec<int> CalculateToptruth1(rvec_i TopMixed_idxJet0, rvec_i TopMixed_idxJet1, r
 // ########################################################
 // ########## PRESELECTION ################################
 // ########################################################
-int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased)
+int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) n+=1;
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
   }
   return n;
 }
 
-RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased)
+RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
 {
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
   }
   return ids;
 }
 
-int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
+int nLooseElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
 {
   int n=0;
-  for(int i = 0; i<Muon_pt.size(); i++)
+  for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
   }
   return n;
 }
 
-RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId)
+RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Electron_pt.size(); i++)
+  {
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
+  }
+  return ids;
+}
+
+int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
+{
+  int n=0;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
+  }
+  return n;
+}
+
+RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
 {
   RVec<int> ids;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4) ids.emplace_back(i);
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
+  }
+  return ids;
+}
+
+int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
+{
+  int n=0;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
+  }
+  return n;
+}
+
+RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
   }
   return ids;
 }
@@ -692,7 +739,7 @@ RVec<int> GetGoodJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   for(int i = 0; i<Jet_pt.size(); i++)
   {
     // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
-      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i])
+      if (Jet_pt[i]>30 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
       {
         ids.emplace_back(i);
       }
@@ -706,7 +753,7 @@ RVec<int> GetGoodFatJet(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
   for(int i = 0; i<Jet_pt.size(); i++)
   {
     // taglio in eta portato da 2.7 a 2.4 -> per definizione forward jets
-      if (Jet_pt[i]>150 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
+      if (Jet_pt[i]>200 && abs(Jet_eta[i])<2.4 && Jet_jetId[i]==6)
       {
         ids.emplace_back(i);
       }
@@ -896,8 +943,8 @@ Int_t nForwardJet(rvec_f Jet_pt, rvec_f Jet_jetId, rvec_f Jet_eta)
   return nfwdjet;
 }
 
-RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, bool wp){
-  // WP legend: 0->loose, 1->medium
+RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, int wp){
+  // WP legend: 0->loose, 1->medium, 2->tight
     RVec<int> ids;
     float bthres;    
     if(year == 2018){
@@ -907,42 +954,55 @@ RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, bo
       else if(wp==0){
         bthres = btagDeepB_looseWP_2018;
       }
-    }else if(year == 2022){
-        if(EE){
-          if(wp == 1){
-            bthres = btagPNet_mediumWP_2022EE;
-          }
-          else if(wp==0){
-            bthres = btagPNet_looseWP_2022EE;
-          }
+    }
+    else if(year == 2022){
+      if(EE){
+        if(wp == 2){
+          bthres = btagPNet_tightWP_2022EE;
         }
-        else{
-          if(wp == 1){
-            bthres = btagPNet_mediumWP_2022;
-          }
-          else if(wp==0){
-            bthres = btagPNet_looseWP_2022;
-          }
-          
+        else if(wp == 1){
+          bthres = btagPNet_mediumWP_2022EE;
         }
-    }else if(year == 2023){
-        if(EE){
-          if(wp == 1){
-            bthres = btagPNet_mediumWP_2023postBPix;
-          }
-          else if(wp==0){
-            bthres = btagPNet_looseWP_2023postBPix;
-          }
+        else if(wp==0){
+          bthres = btagPNet_looseWP_2022EE;
         }
-        else{
-          if(wp == 1){
-            bthres = btagPNet_mediumWP_2023;
-          }
-          else if(wp==0){
-            bthres = btagPNet_looseWP_2023;
-          }
-          
+      }
+      else{
+        if(wp == 2){
+          bthres = btagPNet_tightWP_2022;
         }
+        else if(wp == 1){
+          bthres = btagPNet_mediumWP_2022;
+        }
+        else if(wp==0){
+          bthres = btagPNet_looseWP_2022;
+        }
+        
+      }
+    }
+    else if(year == 2023){
+      if(EE){
+        if(wp == 2){
+          bthres = btagPNet_tightWP_2023postBPix;
+        }
+        else if(wp == 1){
+          bthres = btagPNet_mediumWP_2023postBPix;
+        }
+        else if(wp==0){
+          bthres = btagPNet_looseWP_2023postBPix;
+        }
+      }
+      else{
+        if(wp == 2){
+          bthres = btagPNet_tightWP_2023;
+        }
+        else if(wp == 1){
+          bthres = btagPNet_mediumWP_2023;
+        }
+        else if(wp==0){
+          bthres = btagPNet_looseWP_2023;
+        }
+      }
     }
     // cout << "btag thr: " << bthres << endl;
     
@@ -1680,17 +1740,23 @@ RVec<float> TopGenLep_var(rvec_i TopGenLep_idx, rvec_f GenPart_var)
 
 float topPtReweighting(float top_pt, float antitop_pt)
 {
-  if (top_pt > 500) // the reweighting is only defined up to 500 GeV, above that we keep the weight constant at the value it has at 500 GeV (according to the recommendation of the TOP PAG: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting)
-  {
-    top_pt = 500;
-  }
-  if (antitop_pt > 500)
-  {
-    antitop_pt = 500;
-  }
-  float q = 0.0615;
-  float m = -0.0005;
-  float w = sqrt(exp(m*top_pt + q) * exp(m*antitop_pt + q));
+  // TOP PAG twiki for Top pT reweighting: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting
+  // if (top_pt > 500) // the reweighting is only defined up to 500 GeV, above that we keep the weight constant at the value it has at 500 GeV (according to the recommendation of the TOP PAG: https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting)
+  // {
+  //   top_pt = 500;
+  // }
+  // if (antitop_pt > 500)
+  // {
+  //   antitop_pt = 500;
+  // }
+  // float q = 0.0615;
+  // float m = -0.0005;
+  // float w = sqrt(exp(m*top_pt + q) * exp(m*antitop_pt + q));
+
+
+  float sf_top = (0.103*exp(-0.0118*top_pt)-0.000134*top_pt+0.973)*(0.991+0.000075*top_pt);
+  float sf_antitop = (0.103*exp(-0.0118*antitop_pt)-0.000134*antitop_pt+0.973)*(0.991+0.000075*antitop_pt);
+  float w = sqrt(sf_top * sf_antitop);
   return w;
 }
 
