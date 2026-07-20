@@ -45,8 +45,8 @@ dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
 printcutflow            = opt.printcutflow
-do_histos               = False
-do_snapshot             = True
+do_histos               = True
+do_snapshot             = False
 if do_variations:
     do_snapshot         = False
 remote_subfolder_name   = datetime.now().strftime("%Y%m%d") #20231229
@@ -172,7 +172,8 @@ TopSF_CorrLibFilePath_dict = {
                                 "2022":             "",
                                 "2022EE":           "",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
-                                "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs/CorrLib_TrotaScaleFactors_2023.json",
+                                # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs/CorrLib_TrotaScaleFactors_2023.json",
+                                "2023":             "./TopSF-corrections/CorrLib_TrotaScaleFactors_2023.json",
                                 "2023BPix":         "",
                                 "2024":             "",
                             }

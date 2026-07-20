@@ -1,0 +1,3255 @@
+{
+  "schema_version": 2,
+  "description": null,
+  "corrections": [
+    {
+      "name": "TrotaScaleFactors",
+      "description": null,
+      "version": 1,
+      "inputs": [
+        {
+          "name": "TopCat",
+          "type": "string",
+          "description": "Top category: Resolved, Mixed, Merged"
+        },
+        {
+          "name": "wp_cat",
+          "type": "string",
+          "description": "working point category: Loose, LooseButNotTight, Tight"
+        },
+        {
+          "name": "TagCat",
+          "type": "string",
+          "description": "Tag category: topmatched, nonmatched, other"
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "insert: pass, fail"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "insert: value, error"
+        },
+        {
+          "name": "TopCandidate_pt",
+          "type": "real",
+          "description": "Top candidate pt"
+        }
+      ],
+      "output": {
+        "name": "TrotaScaleFactor",
+        "type": "real",
+        "description": "Trota Top tagger scale factor"
+      },
+      "generic_formulas": null,
+      "data": {
+        "nodetype": "category",
+        "input": "TopCat",
+        "content": [
+          {
+            "key": "Resolved",
+            "value": {
+              "nodetype": "category",
+              "input": "wp_cat",
+              "content": [
+                {
+                  "key": "Loose",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.8541536637669714,
+                                        0.90042801042392,
+                                        0.9637329623059796,
+                                        0.9637329623059796
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.16739020947094835,
+                                        0.06490374640402274,
+                                        0.16682053523410972,
+                                        0.16682053523410972
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        2.7210263533031114,
+                                        1.4437381007776042,
+                                        1.0042281724842663,
+                                        1.0042281724842663
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.9752499049694368,
+                                        0.2892406316805277,
+                                        0.019448679620274845,
+                                        0.019448679620274845
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.9657998127952585,
+                                        0.9842552277204045,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.08550743818880391,
+                                        0.14464802113060105,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0740411914188617,
+                                        1.0273594001112925,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.1851180685290511,
+                                        0.2513521958362978,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "Tight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.8817862870790335,
+                                        0.901162763199,
+                                        0.6720390060428705,
+                                        0.6720390060428705
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.23867605405988856,
+                                        0.08211587051141855,
+                                        0.24761418687393405,
+                                        0.24761418687393405
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.3565844163947158,
+                                        1.2049366018486303,
+                                        1.0108598892163307,
+                                        1.0108598892163307
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.7199516819274536,
+                                        0.1702652563459969,
+                                        0.00819933677294024,
+                                        0.00819933677294024
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.9364977014605292,
+                                        0.929081738795082,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.1573640929994028,
+                                        0.19782984407102838,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0438310984192578,
+                                        1.067445324416662,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.10861718719719805,
+                                        0.18814192262997673,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "LooseButNotTight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.7326885161713576,
+                                        0.8969395768077136,
+                                        1.0929399800303017,
+                                        1.0929399800303017
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.3843669951317383,
+                                        0.5395957653102352,
+                                        0.2645250131102759,
+                                        0.2645250131102759
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.009205934146363,
+                                        1.1668650732961432,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.31520871428012776,
+                                        0.9040680173393283,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "key": "Mixed",
+            "value": {
+              "nodetype": "category",
+              "input": "wp_cat",
+              "content": [
+                {
+                  "key": "Loose",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.7442584758303635,
+                                        0.8882884857814901,
+                                        0.9030418501253051,
+                                        0.9030418501253051
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.27313487958155835,
+                                        0.038912165139154464,
+                                        0.06256735292137133,
+                                        0.06256735292137133
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.9602089786056092,
+                                        1.9028994765922667,
+                                        1.4342524952054791,
+                                        1.4342524952054791
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0255141967896053,
+                                        0.3145044965417984,
+                                        0.280224294292134,
+                                        0.280224294292134
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.6766008752917826,
+                                        1.074919910648766,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.1237592528378692,
+                                        0.11427327974720247,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.4606331783824915,
+                                        0.8482600135051315,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.17627635214036047,
+                                        0.23144482922378476,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "Tight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.5510618685176685,
+                                        0.8125085596414189,
+                                        0.6871842285945724,
+                                        0.6871842285945724
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.04312382815125204,
+                                        0.06942130378215172,
+                                        0.1343258510236155,
+                                        0.1343258510236155
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.3515483269717055,
+                                        1.542759819358741,
+                                        1.5531393162942098,
+                                        1.5531393162942098
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.03376881707314859,
+                                        0.20096434391024434,
+                                        0.23752290065817114,
+                                        0.23752290065817114
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.7676454622846369,
+                                        1.2146523150333703,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0179625625074048,
+                                        0.17892291710774855,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0954281479880068,
+                                        0.7982612153076171,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.007377235194348909,
+                                        0.16815887518064568,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "LooseButNotTight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.9863228994845467,
+                                        1.2723653552876217,
+                                        1.6745594656277614,
+                                        1.6745594656277614
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.617725022064129,
+                                        0.4237405083342425,
+                                        0.5589369843043361,
+                                        0.5589369843043361
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.587170037446525,
+                                        0.708912876137014,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.2459585760061006,
+                                        0.6250621565097082,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "key": "Merged",
+            "value": {
+              "nodetype": "category",
+              "input": "wp_cat",
+              "content": [
+                {
+                  "key": "Loose",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.956065129937748,
+                                        0.956065129937748,
+                                        0.5686024941360706,
+                                        0.5686024941360706
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.30809224827745124,
+                                        0.30809224827745124,
+                                        0.23790247206393214,
+                                        0.23790247206393214
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.123367356698259,
+                                        1.123367356698259,
+                                        16.760574045611804,
+                                        16.760574045611804
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.8651107021679583,
+                                        0.8651107021679583,
+                                        8.691472425388453,
+                                        8.691472425388453
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0152876732040717,
+                                        1.0152876732040717,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.2081697511388092,
+                                        0.2081697511388092,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.9908011619578012,
+                                        0.9908011619578012,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.12525907641070658,
+                                        0.12525907641070658,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "Tight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.8338106743971234,
+                                        0.8338106743971234,
+                                        0.9478665948528544,
+                                        0.9478665948528544
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.34059393064169124,
+                                        0.34059393064169124,
+                                        0.14125816877403413,
+                                        0.14125816877403413
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.2198173190804715,
+                                        1.2198173190804715,
+                                        1.8417963070267507,
+                                        1.8417963070267507
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.45050092391397695,
+                                        0.45050092391397695,
+                                        2.280890812248315,
+                                        2.280890812248315
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.1591153487811727,
+                                        1.1591153487811727,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.2853958553210647,
+                                        0.2853958553210647,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.9582278808678097,
+                                        0.9582278808678097,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.07492419656321347,
+                                        0.07492419656321347,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                },
+                {
+                  "key": "LooseButNotTight",
+                  "value": {
+                    "nodetype": "category",
+                    "input": "TagCat",
+                    "content": [
+                      {
+                        "key": "topmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.3706477477122305,
+                                        1.3706477477122305,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.7788511626232055,
+                                        1.7788511626232055,
+                                        8.430524609782625,
+                                        8.430524609782625
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "nonmatched",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.8369837231185853,
+                                        0.8369837231185853,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.5852845267543465,
+                                        0.5852845267543465,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      },
+                      {
+                        "key": "other",
+                        "value": {
+                          "nodetype": "category",
+                          "input": "channel",
+                          "content": [
+                            {
+                              "key": "pass",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            },
+                            {
+                              "key": "fail",
+                              "value": {
+                                "nodetype": "category",
+                                "input": "type",
+                                "content": [
+                                  {
+                                    "key": "value",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  },
+                                  {
+                                    "key": "error",
+                                    "value": {
+                                      "nodetype": "binning",
+                                      "input": "TopCandidate_pt",
+                                      "edges": [
+                                        0.0,
+                                        200.0,
+                                        400.0,
+                                        600.0,
+                                        1000.0
+                                      ],
+                                      "content": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                      ],
+                                      "flow": "clamp"
+                                    }
+                                  }
+                                ],
+                                "default": null
+                              }
+                            }
+                          ],
+                          "default": null
+                        }
+                      }
+                    ],
+                    "default": null
+                  }
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "default": null
+      }
+    }
+  ],
+  "compound_corrections": null
+}
