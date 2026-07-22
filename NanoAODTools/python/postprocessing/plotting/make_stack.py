@@ -45,7 +45,7 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
         # signals_factor  = 1
 
     # leg                 = CMS.cmsLeg(0.4, 0.88, 0.9, 0.67, textSize=0.025, columns=3)
-    leg                 = CMS.cmsLeg(0.4, 0.83, 0.9, 0.62, textSize=0.03, columns=3)
+    leg                 = CMS.cmsLeg(0.4, 0.83, 0.9, 0.62, textSize=0.025, columns=3)
     if region:
         latex           = ROOT.TLatex()
         latex.SetTextFont(52)
