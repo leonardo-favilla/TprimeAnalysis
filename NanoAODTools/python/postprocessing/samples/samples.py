@@ -4599,12 +4599,12 @@ sample_dict = {
 
     ########## ZJetsToNuNu
     "ZJetsToNuNu_2024":                 ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT100to200_2024":      ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT200to400_2024":      ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT400to800_2024":      ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT800to1500_2024":     ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT1500to2500_2024":    ZJetsToNuNu_2024,
-    "ZJetsToNuNu_HT2500_2024":          ZJetsToNuNu_2024,
+    "ZJetsToNuNu_HT100to200_2024":      ZJetsToNuNu_HT100to200_2024,
+    "ZJetsToNuNu_HT200to400_2024":      ZJetsToNuNu_HT200to400_2024,
+    "ZJetsToNuNu_HT400to800_2024":      ZJetsToNuNu_HT400to800_2024,
+    "ZJetsToNuNu_HT800to1500_2024":     ZJetsToNuNu_HT800to1500_2024,
+    "ZJetsToNuNu_HT1500to2500_2024":    ZJetsToNuNu_HT1500to2500_2024,
+    "ZJetsToNuNu_HT2500_2024":          ZJetsToNuNu_HT2500_2024,
 
     "ZJetsToNuNu_2jets_2024":                   ZJetsToNuNu_2jets_2024,
     "ZJetsToNuNu_2jets_PT40to100_1J_2024":      ZJetsToNuNu_2jets_PT40to100_1J_2024,
