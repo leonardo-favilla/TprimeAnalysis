@@ -13,6 +13,7 @@ __pycache__/
 *.cc
 __pycache__/
 NanoAODTools/condor/testcrabscript.py
+NanoAODTools/condor/condor*/
 NanoAODTools/python/postprocessing/TopMassResolution.py
 NanoAODTools/python/postprocessing/TopMisId.py
 NanoAODTools/python/postprocessing/TopMixedScoreDistr.pdf
