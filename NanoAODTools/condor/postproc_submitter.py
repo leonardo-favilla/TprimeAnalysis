@@ -4,7 +4,7 @@ import sys
 import time
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.get_file_fromdas import *
-from checkjobs import get_file_sizes, find_folder, check_errors_fromcondor
+from checkjobs import get_file_sizes, find_folder, check_status_submission
 from config import models # import machine learning models dictionary from config.py
 
 usage = 'python3 postproc_submitter.py -d dataset_name'
@@ -31,6 +31,8 @@ if where_to_write.lower() =='pisa':
     redirector = "davs://stwebdav.pi.infn.it:8443/cms"
 elif where_to_write.lower() =='bari':
     redirector = "davs://webdav.recas.ba.infn.it:8443/cms"
+elif where_to_write.lower() == 'legnaro':
+    redirector = "davs://t2-xrdcms.lnl.infn.it:2880/pnfs/lnl.infn.it/data/cms"
 else:
     print("Please select a valid tier (pisa or bari) OTHERWISE add the correct redirector in the code")
     exit()
@@ -139,7 +141,7 @@ def sub_writer(run_folder, log_folder, label, sample_label):
     f.write("transfer_input_files    = $(Proxy_path)\n")
     #f.write("transfer_output_remaps  = \""+outname+"_Skim.root=root://eosuser.cern.ch///eos/user/"+inituser + "/" + username+"/DarkMatter/topcandidate_file/"+dat_name+"_Skim.root\"\n")
     f.write("+JobFlavour             = \"testmatch\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek     = 1 week
-    f.write("+JobTag                 = "+sample_label+"_"+label+"\n")
+    f.write('+JobTag                 = "'+label+'"\n')
     f.write("executable              = "+run_folder+"/runner.sh\n")
     f.write("arguments               = $(Proxy_path)\n")
     #f.write("input                   = input.txt\n")
@@ -303,13 +305,13 @@ if submit:
         print("\033[92mSUBMITTED\033[0m", sample.label)
         print("##########################################################################\n")
 
-if resubmit:
-    print("\n################################################ RESUBMITTING mode")
-    for sample in samples:
-        print("Sample: ", sample.label)
-        listoffile = os.listdir(running_folder+"/"+sample.label)
 
-        # check number of total number of files that should have been created
+if status: 
+    print("\n################################################ STATUS mode")
+    
+    for sample in samples:
+        print(f"Sample: {sample.label}")
+        listoffile = os.listdir(running_folder+"/"+sample.label)
         jobs_total = 0 
         for f in listoffile: 
             if f.startswith("file"):
@@ -317,64 +319,17 @@ if resubmit:
                 if n>jobs_total: jobs_total = n
         jobs_total += 1
         print(f"Total number of jobs:               {jobs_total}")
+        check_status_submission(sample.label,username, uid, remote_folder_name, redirector,jobs_total, resubmit = False)
+        files = get_files_string(sample)
+        # print(len(files))
+        if len(files)!=jobs_total:
+            print("\n############## ATTENTION NOT ALL JOB SUBMITTED!")
 
-
-        # check number of files that have been actually created
-        davixfolder                     = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-        file_sizes                      = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-        total_files_onTier              = len(file_sizes)
-        fileNumbers_onTier              = [int(file_name.split("_")[-1].split(".")[0]) for file_name, file_size in file_sizes.items()]
-        print(f"Total files found on tier:          {total_files_onTier}")    
-        njobs_toResubmit     = 0
-        njobs_notFoundOnTier = 0
-        njobs_emptyFile      = 0
-        for jobNumber in range(jobs_total):
-            resubmit_job     = False
-            file_name        = f"tree_hadd_{jobNumber}.root"
-            if jobNumber not in fileNumbers_onTier:
-                print(f"Job {jobNumber} not found on tier")
-                njobs_notFoundOnTier            += 1
-                njobs_toResubmit                += 1
-                resubmit_job                     = True
-            else:
-                file_size = file_sizes[file_name]
-                if file_size < 1000:
-                    print(f"File: {file_name}, Size: {file_size} bytes")
-                    njobs_emptyFile             += 1
-                    njobs_toResubmit            += 1
-                    resubmit_job                 = True
-
-            if resubmit_job:
-                file_num            = str(jobNumber)
-                sample_folder       = running_folder+"/"+sample.label+"/file"+file_num+"/"
-                print("Removing empty file from tier...  "+file_name)
-                print("davix-rm "+davixfolder+"/"+file_name+" -E /tmp/x509up_u"+str(uid)+" --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-                os.popen("davix-rm "+davixfolder+"/"+file_name+" -E /tmp/x509up_u"+str(uid)+" --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-                print("Resubmitting...")
-                print("condor_submit "+sample_folder+"condor.sub")
-                os.popen("condor_submit "+sample_folder+"/condor.sub")
-                print("\n")
-
-        print(f"Number of jobs to resubmit:         {njobs_toResubmit}")
-        print(f"Number of jobs not found on tier:   {njobs_notFoundOnTier}")
-        print(f"Number of empty files:              {njobs_emptyFile}")
-        print("\n")
-        print("#######################################################################################")
-        print("Resubmitting jobs that have errors according to condor logs")
-        print("#######################################################################################\n")
-        check_errors_fromcondor(sample.label, username, uid, remote_folder_name, redirector, resubmit=True, delete_files_fromtier=False)
-
-if status:
-    print("\n################################################ STATUS mode")
-    print("Do NOT resubmit jobs before they're finished")
+if resubmit:
+    print("\n################################################ RESUBMIT mode")
+    
     for sample in samples:
-        davixfolder = find_folder(redirector, username, remote_folder_name, sample.label, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-        file_sizes = get_file_sizes(davixfolder, "/tmp/x509up_u"+str(uid), "/cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/")
-        print("Checking status for empty files in ", sample.label)
-        print("Tier folder: ", davixfolder)
-        job_failed = 0
-        job_success = 0
-        print(running_folder+"/"+sample.label)
+        print(f"Sample: {sample.label}")
         listoffile = os.listdir(running_folder+"/"+sample.label)
         jobs_total = 0 
         for f in listoffile: 
@@ -382,18 +337,5 @@ if status:
                 n = int(f.split("file")[-1])
                 if n>jobs_total: jobs_total = n
         jobs_total += 1
-        for file_name, file_size in file_sizes.items():
-            if file_size <1000:
-                print(f"File: {file_name}, Size: {file_size} bytes")
-                job_failed += 1
-            else:
-                job_success += 1
-        
-        print("--------------------------------------------------------------------------------\n")
-        print("dataset: ", sample.label)
-        print("Total jobs: ", jobs_total)
-        print("\033[91mJobs failed: {} ({:.2f}%)\033[0m".format(job_failed, (job_failed/jobs_total)*100))
-        print("\033[92mJobs succeeded: {} ({:.2f}%)\033[0m\n".format(job_success, (job_success/jobs_total)*100))
-        print("running jobs: {} ({:.2f}%)\n".format(jobs_total-(job_failed+job_success), ((jobs_total-(job_failed+job_success))/jobs_total)*100))
-        check_errors_fromcondor(sample.label, username, uid, remote_folder_name, redirector, resubmit=False, delete_files_fromtier=delete_files)
-        print("\n--------------------------------------------------------------------------------")
+        print(f"Total number of jobs:               {jobs_total}")
+        check_status_submission(sample.label,username, uid, remote_folder_name, redirector,jobs_total, resubmit = True)
