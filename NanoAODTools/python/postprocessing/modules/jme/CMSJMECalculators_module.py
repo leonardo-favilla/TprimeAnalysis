@@ -225,7 +225,7 @@ class CMSJMECalculators(Module):
         rho             = Object(event, "Rho")
         run             = event.run
         luminosityBlock = event.luminosityBlock
-        _event           = event.event
+        _event           = int(event.event & 0x7fffffff)
         npv              = event.PV_npvsGood
         if "AK4" in self.jetType:
             jets      = Collection(event, "Jet")
