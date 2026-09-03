@@ -29,18 +29,21 @@ parser.add_option(      '--noSFbtag',               dest='noSFbtag',            
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
 parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
-parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default=False,                                          help='print cutflow')
+parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
+parser.add_option(      '--suffix',                 dest='suffix',              type=str,               default = None,                                         help='suffix to add to condor folder name')
 
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
 syst                = opt.syst
-nfiles_max          = 10000#opt.nfiles_max
 dryrun              = opt.dryrun
+nfiles_max          = 10000
+# nfiles_max          = 10000 if not dryrun else 1
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
 noTopPtWeight       = opt.noTopPtWeight
 noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
+suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
 
 period              = dataset_to_run.split("_")[-1]
 if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:
@@ -56,17 +59,17 @@ elif "2024" in period:
 
 dict_samples_file   = config["dict_samples"][year]
 
-syst_suffix         = ""
-if syst:
-    syst_suffix    += "_syst"
-if noSFbtag:
-    syst_suffix    += "_noSFbtag"
-if noPuWeight:
-    syst_suffix    += "_noPuWeight"
-if noTopPtWeight:
-    syst_suffix    += "_noTopPtWeight"
-if noTrotaSF:
-    syst_suffix    += "_noTrotaSF"
+# suffix         = ""
+# if syst:
+#     suffix    += "_syst"
+# if noSFbtag:
+#     suffix    += "_noSFbtag"
+# if noPuWeight:
+#     suffix    += "_noPuWeight"
+# if noTopPtWeight:
+#     suffix    += "_noTopPtWeight"
+# if noTrotaSF:
+#     suffix    += "_noTrotaSF"
 
 outFolder_path      = config["outputfolder"]["postselector_results"][period]
 
@@ -76,7 +79,7 @@ uid             = int(os.getuid())
 workdir         = "user" if "user" in os.environ.get('PWD') else "work"
 os.popen("cp /tmp/x509up_u" + str(uid) + " /afs/cern.ch/user/" + inituser + "/" + username + "/private/x509up")
 
-def sub_writer(run_folder, log_folder, dataset, syst_suffix):
+def sub_writer(run_folder, log_folder, dataset, suffix):
     f = open(run_folder+"condor.sub", "w")
     f.write("Proxy_filename          = x509up\n")
     f.write("Proxy_path              = /afs/cern.ch/user/" + inituser + "/" + username + "/private/$(Proxy_filename)\n")
@@ -89,7 +92,7 @@ def sub_writer(run_folder, log_folder, dataset, syst_suffix):
     # f.write("transfer_output_remaps  = \""+outname+"_Skim.root=root://eosuser.cern.ch///eos/user/"+inituser + "/" + username+"/DarkMatter/topcandidate_file/"+dat_name+"_Skim.root\"\n")
     # f.write('requirements            = (TARGET.OpSysAndVer =?= "CentOS7")\n')
     f.write("+JobFlavour             = \"nextweek\"\n") # options are espresso = 20 minutes, microcentury = 1 hour, longlunch = 2 hours, workday = 8 hours, tomorrow = 1 day, testmatch = 3 days, nextweek = 1 week
-    f.write('+JobTag                 = "'+dataset+syst_suffix+'"\n')
+    f.write('+JobTag                 = "'+dataset+suffix+'"\n')
     f.write("executable              = "+run_folder+"runner.sh\n")
     f.write("arguments               = \n")
     #f.write("input                   = input.txt\n")
@@ -103,7 +106,8 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     runner_path = run_folder + "runner.sh"
     run_label   = os.path.basename(os.path.normpath(hist_folder))
     dest_dir    = hist_folder.rstrip("/") + "/plots"
-    base_tmp     = "/tmp/" + username
+    base_tmp    = "/tmp/" + username
+
     pycommand = (
         "python3 postSelector.py "
         + f"-d {dataset} "
@@ -133,7 +137,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         f.write('echo "Date: $(date)"\n')
         f.write('echo "User: ${USER:-unknown}"\n')
         f.write('echo "PWD at start: $(pwd)"\n')
-        
+
         f.write("cd /afs/cern.ch/user/" + inituser + "/" + username + "/\n")
         f.write("source analysis_TPrime.sh\n")
         f.write("cd python/postprocessing/postselection/\n\n")
@@ -154,22 +158,67 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         f.write('mkdir -p "${outdir}"\n')
         f.write('mkdir -p "${destdir}"\n\n')
 
+        # ------------------------------------------------------------
+        # Run postSelector
+        # ------------------------------------------------------------
+
         f.write('echo "Running postSelector command:"\n')
         f.write(f'echo "{pycommand}"\n\n')
+
         f.write(pycommand + "\n")
-        f.write('echo "Checking expected output file: ${outfile}"\n')
-        f.write('if [ ! -s "${outfile}" ]; then\n')
-        f.write('    echo "ERROR: expected output file does not exist or is empty: ${outfile}" >&2\n')
-        f.write('    echo "Listing base tmp area:" >&2\n')
-        f.write('    ls -lthra "${base_tmp}" || true\n')
-        f.write('    echo "Listing run label directory:" >&2\n')
-        f.write('    ls -lthra "${base_tmp}/${run_label}" || true\n')
-        f.write('    echo "Listing expected output directory:" >&2\n')
-        f.write('    ls -lthra "${outdir}" || true\n')
+        f.write("postselector_status=$?\n\n")
+
+        f.write('echo "postSelector.py exit code: ${postselector_status}"\n\n')
+
+        # ------------------------------------------------------------
+        # Check postSelector exit code
+        # ------------------------------------------------------------
+
+        f.write('if [ "${postselector_status}" -ne 0 ]; then\n')
+        f.write('    echo "ERROR: postSelector.py failed with exit code ${postselector_status}" >&2\n')
+        f.write('    exit "${postselector_status}"\n')
         f.write("fi\n\n")
 
+        # ------------------------------------------------------------
+        # Check output file
+        # ------------------------------------------------------------
+
+        f.write('echo "Checking expected output file: ${outfile}"\n')
+
+        f.write('if [ ! -s "${outfile}" ]; then\n')
+        f.write('    echo "ERROR: expected output file does not exist or is empty: ${outfile}" >&2\n')
+
+        f.write('    echo "Listing base tmp area:" >&2\n')
+        f.write('    ls -lthra "${base_tmp}" || true\n')
+
+        f.write('    echo "Listing run label directory:" >&2\n')
+        f.write('    ls -lthra "${base_tmp}/${run_label}" || true\n')
+
+        f.write('    echo "Listing expected output directory:" >&2\n')
+        f.write('    ls -lthra "${outdir}" || true\n')
+
+        f.write("    exit 1\n")
+        f.write("fi\n\n")
+
+        f.write('echo "Output file successfully produced:"\n')
+        f.write('ls -lh "${outfile}"\n\n')
+
+        # ------------------------------------------------------------
+        # Copy output
+        # ------------------------------------------------------------
+
         f.write('echo "Copying output to ${destdir}"\n')
-        f.write('cp "${outfile}" "${destdir}/"\n\n')
+        f.write('cp "${outfile}" "${destdir}/"\n')
+        f.write("cp_status=$?\n\n")
+
+        f.write('if [ "${cp_status}" -ne 0 ]; then\n')
+        f.write('    echo "ERROR: failed to copy output to ${destdir}" >&2\n')
+        f.write('    exit "${cp_status}"\n')
+        f.write("fi\n\n")
+
+        # ------------------------------------------------------------
+        # Final check
+        # ------------------------------------------------------------
 
         f.write('echo "Final destination content:"\n')
         f.write('ls -lthra "${destdir}/"\n\n')
@@ -232,8 +281,8 @@ print("Samples to run: ", [s.label for s in samples])
 
 
 for sample in samples:
-    condor_folder           = os.environ.get('PWD') + "/condor" + syst_suffix + "/"
-    condor_subfolder        = condor_folder + sample.label + syst_suffix + "/"
+    condor_folder           = os.environ.get('PWD') + "/condor" + suffix + "/"
+    condor_subfolder        = condor_folder + sample.label + suffix + "/"
     log_folder              = condor_subfolder + "condor/"
     if not os.path.exists(condor_folder):
         os.makedirs(condor_folder)
@@ -263,7 +312,7 @@ for sample in samples:
     run_folder              = condor_subfolder
 
     runner_writer(run_folder, sample.label, dict_samples_file, outFolder_path, nfiles_max, syst)
-    sub_writer(run_folder, log_folder, sample.label, syst_suffix)
+    sub_writer(run_folder, log_folder, sample.label, suffix)
     if not dryrun:
         os.popen("condor_submit " + run_folder + "condor.sub")
     time.sleep(2)

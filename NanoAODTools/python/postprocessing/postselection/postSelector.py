@@ -69,9 +69,9 @@ folder                  = hist_folder
 repohisto               = folder+"plots/"
 
 if not os.path.exists(folder):
-    os.mkdir(folder)
+    os.makedirs(folder)
 if not os.path.exists(repohisto):
-    os.mkdir(repohisto)
+    os.makedirs(repohisto)
 
 try:
     f = open(repohisto+"/test.txt", "w")
