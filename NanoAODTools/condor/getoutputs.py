@@ -141,12 +141,8 @@ for sample in samples:
     path_file = folder.replace(redirector, "root://xrootd-cms.infn.it/")
     ntot = []
     out_strings = []
-    count = 0
     for f in tqdm(files_strings): 
         f = path_file+"/"+f
-        count += 1
-        if count > 10:
-            break
         if not "Data" in sample.label:
             try:
                 rootfile = ROOT.TFile.Open(f)
