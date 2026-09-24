@@ -181,7 +181,7 @@ def check_status_submission(dataset,username, uid, remote_folder_name, redirecto
 
     for line in result.stdout.splitlines()[1:]:
         jobId, runStatus, JobTag = line.split()
-        if dataset in JobTag and JobTag not in successJobTag_list:
+        if dataset+"_" in JobTag and JobTag not in successJobTag_list:
             # if JobTag in successJobTag_list:
             #     print("ATTENTION double counting: ", JobTag)
             runningJobId_list.append(jobId)
