@@ -366,7 +366,9 @@ def preselection(df, btagAlg, year, EE):
            .Define("JetBTagMedium_idx",                 "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 1)")\
            .Define("nJetBtagMedium",                    "static_cast<int>(JetBTagMedium_idx.size());")\
            .Define("JetBTagTight_idx",                  "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+", 2)")\
-           .Define("nJetBtagTight",                     "static_cast<int>(JetBTagTight_idx.size());")
+           .Define("nJetBtagTight",                     "static_cast<int>(JetBTagTight_idx.size());")\
+           .Define("JetBTagScore",                      "GetJetBTagScore(GoodJet_idx, "+bTagAlg+")")
+
     df = df.Redefine("PuppiMET_T1_pt_nominal",          "PuppiMET_T1_pt_nominal_vec[0]")\
            .Redefine("PuppiMET_T1_phi_nominal",         "PuppiMET_T1_phi_nominal_vec[0]")
     

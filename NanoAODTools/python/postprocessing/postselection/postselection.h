@@ -1004,6 +1004,30 @@ RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, in
         }
       }
     }
+    else if(year == 2024){
+      if(EE){
+        if(wp == 2){
+          bthres = btagUParTAK4B_tightWP_2024;
+        }
+        else if(wp == 1){
+          bthres = btagUParTAK4B_mediumWP_2024;
+        }
+        else if(wp==0){
+          bthres = btagUParTAK4B_looseWP_2024;
+        }
+      }
+      else{
+        if(wp == 2){
+          bthres = btagUParTAK4B_tightWP_2024;
+        }
+        else if(wp == 1){
+          bthres = btagUParTAK4B_mediumWP_2024;
+        }
+        else if(wp==0){
+          bthres = btagUParTAK4B_looseWP_2024;
+        }
+      }
+    }
     // cout << "btag thr: " << bthres << endl;
     
     for(int i = 0; i<GoodJet.size(); i++)
@@ -1014,6 +1038,16 @@ RVec<int> GetJetBTag(rvec_i GoodJet, rvec_f Jet_btagDeepB, int year, bool EE, in
         }
     }
     return ids;
+}
+
+RVec<float> GetJetBTagScore(rvec_i GoodJet, rvec_f Jet_btagDeepB)
+{
+    RVec<float> scores;
+    for(int i = 0; i<GoodJet.size(); i++)
+    {
+        scores.emplace_back(Jet_btagDeepB[GoodJet[i]]);
+    }
+    return scores;
 }
 
 // ########################################################

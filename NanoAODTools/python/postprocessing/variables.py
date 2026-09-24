@@ -74,6 +74,7 @@ vars.append(variable(name = "LeadingFatJetPt_pt", title= "Leading FatJet p_{T} [
 # vars.append(variable(name = "nTightTopResolved",    title= "# Top Candidate Resolved",  nbins = 25, xmin = -0.5, xmax=49.5))
 vars.append(variable(name = "nJet",                 title= "# Jet",                     nbins = 10, xmin = -0.5, xmax=9.5))
 vars.append(variable(name = "nFatJet",              title= "# FatJet",                  nbins = 5,  xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "JetBTagScore",         title= "b-Jet Score",               nbins = 40, xmin = 0,    xmax=1, noUnOvFlowbin = True))
 vars.append(variable(name = "nJetBtagLoose",        title = "# b-Jet (L) ",             nbins = 5,  xmin = -0.5, xmax = 4.5))
 vars.append(variable(name = "nJetBtagMedium",       title = "# b-Jet (M)",              nbins = 5,  xmin = -0.5, xmax = 4.5))
 # vars.append(variable(name = "nJetBtagTight",        title = "# b-Jet (T)",              nbins = 5,  xmin = -0.5, xmax = 4.5))
@@ -185,22 +186,22 @@ regions = {
     "AHTight"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
     "AHLoose"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
 
-    "SL"                   : singleLep + " && nJetBtagLoose > 0 && PuppiMET_T1_pt_nominal>250",
+    "SL"                   : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0",
     # "SLResLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==4",
     # "SLMixLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==5",
     # "SLMerLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==6",
-    "SLTight"              : singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
-    "SLLoose"              : singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
+    "SLTight"              : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "SLLoose"              : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
 
     # # "SEl"                  : singleE   + " && nJetBtagMedium > 0",
     # # "SMu"                  : singleMu  + " && nJetBtagMedium > 0",
 
-    "AH1lWR"               : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && PuppiMET_T1_pt_nominal>250",
+    "AH1lWR"               : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0",
     # "AH1lWRResLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==4",
     # "AH1lWRMixLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==5",
     # "AH1lWRMerLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==6",
-    "AH1lWRTight"          : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=3",
-    "AH1lWRLoose"          : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=4 && EventTopCategory<=6",
+    "AH1lWRTight"          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH1lWRLoose"          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=4 && EventTopCategory<=6",
     # "AH1lWREl"             : singleE   + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
     # "AH1lWRMu"             : singleMu  + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
 
