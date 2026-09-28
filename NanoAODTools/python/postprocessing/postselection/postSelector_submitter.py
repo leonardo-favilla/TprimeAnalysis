@@ -44,6 +44,9 @@ noTopPtWeight       = opt.noTopPtWeight
 noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
 suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
+if "Data" in dataset_to_run:
+    syst            = False
+    suffix          = ""
 
 period              = dataset_to_run.split("_")[-1]
 if period not in ["2022", "2022EE", "2023", "2023postBPix", "2024"]:

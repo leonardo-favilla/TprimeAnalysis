@@ -22,6 +22,7 @@ samples_to_check    = [
                         "ZJetsToNuNu_2jets",
                         "WJets_2jets",
                         "DataJetMET",
+                        # "DataEGamma",
                         # "TprimeToTZ_700",
                         # "TprimeToTZ_1000",
                         # "TprimeToTZ_1800",
@@ -37,6 +38,9 @@ for s in samples_to_check:
 print(components_to_check)
 
 jobs_total          = len(components_to_check)
+jobs_data           = len([c for c in components_to_check if "Data" in c])
+jobs_bkg            = len([c for c in components_to_check if ((not "Data" in c) and (not "Tprime" in c))])
+jobs_signal         = len([c for c in components_to_check if "Tprime" in c])
 jobs_failed         = []
 jobs_done           = []
 jobs_running        = []
@@ -49,7 +53,7 @@ if os.path.exists(outputFolder):                                # check out exi
     for c in components_to_check:
         for line in result.stdout.splitlines()[1:]:
             jobId, runStatus, JobTag = line.split()
-            if f"{c}{suffix}" in JobTag:
+            if ((f"{c}{suffix}" in JobTag) and (not "Data" in c)) or ((f"{c}" in JobTag) and ("Data" in c)):
                 jobs_running.append(c)
                 break
         if c in jobs_running:
@@ -86,7 +90,7 @@ with open(rerun_script_path, "w") as f:
     for c in jobs_failed:
         if "Data" in c:
             # cmd1 = f"python3 postSelector_submitter.py -d {c} --dryrun\n"
-            cmd2 = f"condor_submit ./condor{suffix}/{c}{suffix}/condor.sub\n"
+            cmd2 = f"condor_submit ./condor/{c}/condor.sub\n"
             cmd3 = f"echo resubmitting job for {c}\n\n"
         else:
             # cmd1 = f"python3 postSelector_submitter.py -d {c} --syst --dryrun\n"
@@ -98,7 +102,7 @@ with open(rerun_script_path, "w") as f:
 
 
 print("--------------------------------------------------")
-print(f"Total jobs to check:                                {jobs_total}")
+print(f"Total jobs to check:                                {jobs_total} (bkg: {jobs_bkg} - data: {jobs_data} - signals: {jobs_signal})")
 print(f"Jobs done:                                          {len(jobs_done)}")
 print(f"Jobs running:                                       {len(jobs_running)}")
 print(f"Jobs failed:                                        {len(jobs_failed)}")
