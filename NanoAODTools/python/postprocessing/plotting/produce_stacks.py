@@ -14,6 +14,7 @@ import cmsstyle as CMS
 import array
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
+ROOT.TH1.AddDirectory(False)
 import yaml
 import optparse
 import math
@@ -211,6 +212,7 @@ for v in vars:
     # for r in ["AH"]:
     # for r in ["SL"]:
     # for r in ["SRTopLoose"]:
+    # for r in ["AH1lWR"]:
         ###############################################
         ############ PreProcess Histograms ############
         ############ normalization to Lumi ############
