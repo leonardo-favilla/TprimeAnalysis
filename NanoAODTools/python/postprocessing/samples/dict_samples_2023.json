@@ -75898,178 +75898,146 @@
   "TprimeToTZ_700_2023": {
     "TprimeToTZ_700_2023": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_18.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_16.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_14.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_15.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_17.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_19.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_13.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022/20240905_102012/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023/20260910_190300/tree_hadd_5.root"
       ],
       "ntot": [
-        731.0,
-        1462.0,
-        731.0,
-        3935.0,
-        1462.0,
-        3655.0,
-        731.0,
-        5117.0,
-        23392.0,
-        10234.0,
-        2193.0,
-        2193.0,
-        3655.0,
-        8041.0,
-        731.0,
-        8772.0,
-        5848.0,
-        2193.0,
-        1462.0,
-        731.0
+        18000,
+        3000,
+        1000,
+        12000,
+        68000,
+        2000,
+        5000,
+        7000,
+        1000,
+        7000,
+        12000,
+        119000
       ]
     }
   },
   "TprimeToTZ_1800_2023": {
     "TprimeToTZ_1800_2023": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_16.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_14.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_15.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_13.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022/20240905_102136/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023/20260910_190624/tree_hadd_5.root"
       ],
       "ntot": [
-        718,
-        7180,
-        2154,
-        4308,
-        718,
-        33028,
-        7180,
-        3994,
-        3590,
-        718,
-        1436,
-        1436,
-        3590,
-        10052,
-        5026,
-        1436,
-        718
+        37000,
+        13000,
+        2000,
+        1000,
+        28000,
+        6000,
+        157000,
+        1000,
+        1000,
+        1000,
+        4000,
+        4000
       ]
     }
   },
   "TprimeToTZ_1000_2023": {
     "TprimeToTZ_1000_2023": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1000_2022/20240905_102124/tree_hadd_0.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023/20260910_190334/tree_hadd_5.root"
       ],
       "ntot": [
-        88000
+        10000,
+        157000,
+        10000,
+        42000,
+        5000,
+        7000,
+        4000,
+        11000,
+        4000,
+        2000,
+        2000,
+        2000
       ]
     }
   },
   "TprimeToTZ_700_2023postBPix": {
     "TprimeToTZ_700_2023postBPix": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_18.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_16.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_14.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_15.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_17.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_19.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_13.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_20.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_700_2022EE/20240905_145416/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023postBPix/20260910_191428/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023postBPix/20260910_191428/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_700_2023postBPix/20260910_191428/tree_hadd_2.root"
       ],
       "ntot": [
-        1193,
-        3039,
-        611,
-        19230,
-        48874,
-        610,
-        3572,
-        9044,
-        79380,
-        12093,
-        1801,
-        10313,
-        9686,
-        4836,
-        30343,
-        5449,
-        1207,
-        3047,
-        6681,
-        3025,
-        2373
+        137000,
+        1000,
+        6000
       ]
     }
   },
   "TprimeToTZ_1000_2023postBPix": {
     "TprimeToTZ_1000_2023postBPix": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1000_2022EE/20240905_145340/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1000_2022EE/20240905_145340/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1000_2022EE/20240905_145340/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1000_2022EE/20240905_145340/tree_hadd_2.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023postBPix/20260910_191502/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023postBPix/20260910_191502/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023postBPix/20260910_191502/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023postBPix/20260910_191502/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1000_2023postBPix/20260910_191502/tree_hadd_2.root"
       ],
       "ntot": [
-        35525,
-        725,
-        725,
-        275025
+        1000,
+        1000,
+        1000,
+        9000,
+        131000
       ]
     }
   },
   "TprimeToTZ_1800_2023postBPix": {
     "TprimeToTZ_1800_2023postBPix": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022EE/20240905_145459/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1800_2022EE/20240905_145459/tree_hadd_1.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023postBPix/20260910_191856/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023postBPix/20260910_191856/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023postBPix/20260910_191856/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023postBPix/20260910_191856/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1800_2023postBPix/20260910_191856/tree_hadd_2.root"
       ],
       "ntot": [
-        233640,
-        78360
+        1000,
+        137000,
+        1000,
+        4000,
+        1000
       ]
     }
   },
@@ -76158,34 +76126,18 @@
   "TprimeToTZ_1200_2023": {
     "TprimeToTZ_1200_2023": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022/20241026_174635/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023/20260910_190424/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023/20260910_190424/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023/20260910_190424/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023/20260910_190424/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023/20260910_190424/tree_hadd_2.root"
       ],
       "ntot": [
-        4344,
-        1448,
-        724,
-        2172,
-        65884,
-        724,
-        724,
-        724,
-        3292,
-        2896,
-        3620,
-        724,
-        724
+        68000,
+        3000,
+        3000,
+        16000,
+        166000
       ]
     }
   },
@@ -76212,10 +76164,20 @@
   "TprimeToTZ_1500_2023": {
     "TprimeToTZ_1500_2023": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022/20241026_174656/tree_hadd_0.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023/20260910_190529/tree_hadd_5.root"
       ],
       "ntot": [
-        88000
+        180000,
+        1000,
+        8000,
+        64000,
+        2000,
+        1000
       ]
     }
   },
@@ -76358,54 +76320,36 @@
   "TprimeToTZ_1200_2023postBPix": {
     "TprimeToTZ_1200_2023postBPix": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_18.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_16.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_21.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_14.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_15.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_17.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_19.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_13.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_22.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_20.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1200_2022EE/20241026_174917/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_12.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_13.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1200_2023postBPix/20260910_191609/tree_hadd_5.root"
       ],
       "ntot": [
-        149208,
-        3570,
-        44268,
-        12852,
-        3570,
-        2142,
-        4998,
-        26418,
-        9282,
-        4284,
-        4284,
-        714,
-        1428,
-        2142,
-        4998,
-        11424,
-        4998,
-        7140,
-        714,
-        714,
-        2142,
-        714,
-        1428
+        19000,
+        37000,
+        1000,
+        4000,
+        9000,
+        36000,
+        9000,
+        2000,
+        1000,
+        11000,
+        1000,
+        3000,
+        8000,
+        3000
       ]
     }
   },
@@ -76480,58 +76424,34 @@
   "TprimeToTZ_1500_2023postBPix": {
     "TprimeToTZ_1500_2023postBPix": {
       "strings": [
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_23.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_7.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_3.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_6.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_11.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_18.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_8.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_16.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_9.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_0.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_1.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_21.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_14.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_4.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_15.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_2.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_10.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_12.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_24.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_17.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_19.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_13.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_22.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_20.root",
-        "root://cms-xrd-global.cern.ch//store/user/acagnott/Run3Analysis_Tprime/TprimeToTZ_1500_2022EE/20241026_174954/tree_hadd_5.root"
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_12.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_1500_2023postBPix/20260910_191656/tree_hadd_5.root"
       ],
       "ntot": [
-        2097,
-        699,
-        5592,
-        1398,
-        135606,
-        6291,
-        5592,
-        2343,
-        699,
-        15378,
-        13281,
-        3495,
-        8388,
-        11184,
-        3495,
-        32853,
-        699,
-        24465,
-        699,
-        699,
-        5592,
-        20271,
-        4893,
-        3495,
-        699
+        3000,
+        2000,
+        1000,
+        2000,
+        2000,
+        32000,
+        2000,
+        5000,
+        1000,
+        5000,
+        85000,
+        1000,
+        1000
       ]
     }
   },
@@ -79796,6 +79716,130 @@
         4000,
         20000,
         35996
+      ]
+    }
+  },
+  "TprimeToTZ_2000_2023": {
+    "TprimeToTZ_2000_2023": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023/20260910_190727/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023/20260910_190727/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023/20260910_190727/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023/20260910_190727/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023/20260910_190727/tree_hadd_2.root"
+      ],
+      "ntot": [
+        77000,
+        13000,
+        1000,
+        1000,
+        164000
+      ]
+    }
+  },
+  "TprimeToTZ_2400_2023": {
+    "TprimeToTZ_2400_2023": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023/20260910_191113/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023/20260910_191113/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023/20260910_191113/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023/20260910_191113/tree_hadd_2.root"
+      ],
+      "ntot": [
+        89000,
+        1000,
+        2000,
+        162000
+      ]
+    }
+  },
+  "TprimeToTZ_3000_2023": {
+    "TprimeToTZ_3000_2023": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023/20260910_191154/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023/20260910_191154/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023/20260910_191154/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023/20260910_191154/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023/20260910_191154/tree_hadd_2.root"
+      ],
+      "ntot": [
+        1000,
+        4000,
+        160000,
+        18000,
+        72000
+      ]
+    }
+  },
+  "TprimeToTZ_2000_2023postBPix": {
+    "TprimeToTZ_2000_2023postBPix": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023postBPix/20260910_191944/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023postBPix/20260910_191944/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023postBPix/20260910_191944/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023postBPix/20260910_191944/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2000_2023postBPix/20260910_191944/tree_hadd_2.root"
+      ],
+      "ntot": [
+        1000,
+        14000,
+        106000,
+        3000,
+        20000
+      ]
+    }
+  },
+  "TprimeToTZ_3000_2023postBPix": {
+    "TprimeToTZ_3000_2023postBPix": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023postBPix/20260910_192035/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023postBPix/20260910_192035/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_3000_2023postBPix/20260910_192035/tree_hadd_2.root"
+      ],
+      "ntot": [
+        1000,
+        11000,
+        132000
+      ]
+    }
+  },
+  "TprimeToTZ_2400_2023postBPix": {
+    "TprimeToTZ_2400_2023postBPix": {
+      "strings": [
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_7.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_3.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_6.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_11.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_8.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_9.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_0.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_1.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_14.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_4.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_15.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_2.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_10.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_12.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_13.root",
+        "root://xrootd-cms.infn.it//store/user/apuglia/Run3Analysis_Tprime/TprimeToTZ_2400_2023postBPix/20260910_192017/tree_hadd_5.root"
+      ],
+      "ntot": [
+        7000,
+        1000,
+        13000,
+        1000,
+        13000,
+        4000,
+        2000,
+        2000,
+        1000,
+        13000,
+        1000,
+        6000,
+        16000,
+        1000,
+        5000,
+        58000
       ]
     }
   }
