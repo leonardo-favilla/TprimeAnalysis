@@ -113,7 +113,10 @@ else:
 
 for sample in samples:
     print("---------- Running dataset: ", dataset)
-    out_dict[sample.process][sample.label] = {}
+    if hasattr(sample, "process"):
+        out_dict[sample.process][sample.label] = {}
+    else:
+        out_dict[sample.label][sample.label] = {}
     if dataset!=sample.label: 
         out_dict[sample.label] = {}
         out_dict[sample.label][sample.label] = {}
@@ -171,11 +174,19 @@ for sample in samples:
             except:
                 print("Could not open file: ", f)
                 continue
-    out_dict[sample.process][sample.label] = {'strings': out_strings, "ntot": ntot}
-    json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
+    if hasattr(sample, "process"):
+        out_dict[sample.process][sample.label] = {'strings': out_strings, "ntot": ntot}
+        json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
+    else:
+        out_dict[sample.label][sample.label] = {'strings': out_strings, "ntot": ntot}
+        json_out[sample.label][sample.label] = out_dict[sample.label][sample.label]
+
     if json_out.get(sample.label) is None:
         json_out[sample.label] = {}
-    json_out[sample.label][sample.label] = out_dict[sample.process][sample.label]
+    if hasattr(sample,"process"):
+        json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
+    else:
+        json_out[sample.label][sample.label] = out_dict[sample.label][sample.label]
     print(f"Sample {sample.label} done!")
     # print("-----------------------------------------------------")
     # print(out_dict[sample.process][sample.label])
