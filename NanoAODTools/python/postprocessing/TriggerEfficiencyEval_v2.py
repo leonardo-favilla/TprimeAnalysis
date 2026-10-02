@@ -155,8 +155,7 @@ for d in datasets:
         components = sample_dict[d].components
     else:
         components = [sample_dict[d]]
-if era in ["2022", "2022EE"]:
-    components = [c for c in components if "TT_dilep" not in c.label]
+
 
 blind = False # Set to True if you want to blind the data
 
@@ -236,8 +235,7 @@ for dat in datasets:
         s_list = d.components
     else:
         s_list = [d]
-    if era in ["2022", "2022EE"]:
-        s_list = [c for c in s_list if "TT_dilep" not in c.label]
+
     for s in s_list:
         if 'Data' in s.label:
             infile['Data'].append(ROOT.TFile.Open(repohisto + s.label + ".root"))
@@ -262,8 +260,6 @@ for v in [var[2]]:
     r = "orthogonalPreselR_Ntot"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
         histo_name = v._name+"_"+r
-        if era in ["2022", "2022EE"]:
-            histo_name += "_"
         tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
@@ -279,8 +275,6 @@ for v in [var[2]]:
         
     for f, s in zip(infile["Data"], insample["Data"]):
         histo_name = v._name+"_"+r
-        if era in ["2022", "2022EE"]:
-            histo_name += "_"
         tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         tmp.SetTitle("")
         if h_data_total==None:
@@ -292,8 +286,6 @@ for v in [var[2]]:
     r = "orthogonalPreselR_Npass"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
         histo_name = v._name+"_"+r
-        if era in ["2022", "2022EE"]:
-            histo_name += "_"
         tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
@@ -309,8 +301,6 @@ for v in [var[2]]:
         
     for f, s in zip(infile["Data"], insample["Data"]):
         histo_name = v._name+"_"+r
-        if era in ["2022", "2022EE"]:
-            histo_name += "_"
         tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         tmp.SetTitle("")
         if h_data_pass==None:
