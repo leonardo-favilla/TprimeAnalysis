@@ -6,12 +6,20 @@ from correctionlib import _core
 # filepath    = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2022_Summer22/btagging.json.gz"
 
 # Path to the .json.gz file taken from https://cms-analysis-corrections.docs.cern.ch/corrections/BTV/
-era           = "2023postBPix" # options: "2022", "2022EE", "2023", "2023postBPix"
+era           = "2024" # options: "2022", "2022EE", "2023", "2023postBPix"
 filepath_dict = {
                     "2022":         "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22CDSep23-Summer22-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2022EE":       "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023":         "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2024":         "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz"
+                }
+bTagAlg_dict = {
+                    "2022":         "particleNet_wp_values",
+                    "2022EE":       "particleNet_wp_values",
+                    "2023":         "particleNet_wp_values",
+                    "2023postBPix": "particleNet_wp_values",
+                    "2024":         "UParTAK4_wp_values",
                 }
 
 filepath    = filepath_dict[era]
@@ -19,7 +27,7 @@ filepath    = filepath_dict[era]
 # Load the correction set from the file
 cset        = _core.CorrectionSet.from_file(filepath)
 print([key for key in cset])
-corr        = cset["particleNet_wp_values"]
+corr        = cset[bTagAlg_dict[era]]
 print("Inputs:", corr.inputs)
 print("Description:", corr.description)
 print(corr.inputs[0].name)

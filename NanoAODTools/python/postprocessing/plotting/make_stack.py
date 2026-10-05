@@ -45,7 +45,7 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
         # signals_factor  = 1
 
     # leg                 = CMS.cmsLeg(0.4, 0.88, 0.9, 0.67, textSize=0.025, columns=3)
-    leg                 = CMS.cmsLeg(0.4, 0.83, 0.9, 0.62, textSize=0.03, columns=3)
+    leg                 = CMS.cmsLeg(0.4, 0.83, 0.9, 0.62, textSize=0.025, columns=3)
     if region:
         latex           = ROOT.TLatex()
         latex.SetTextFont(52)
@@ -144,7 +144,7 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
             if(h_bkg.GetBinContent(i)):
                 h_bkg_err.SetBinError(i, (h_bkg.GetBinError(i)/h_bkg.GetBinContent(i)))
             else:
-                h_bkg_err.SetBinError(i, 10^(-99))
+                h_bkg_err.SetBinError(i, 1e-99)
         CMS.cmsDraw(h_bkg_err, "e2same0", fcolor=ROOT.kGray+3, fstyle=3001, msize=0)
     else:
         h_bkg_err   = h_bkg.Clone("h_err")
@@ -154,7 +154,7 @@ def make_stack_with_ratio(canv_name, histo_bkg_dict, histo_data=None, histo_sign
             if(h_bkg.GetBinContent(i)):
                 h_bkg_err.SetBinError(i, (h_bkg.GetBinError(i)/h_bkg.GetBinContent(i)))
             else:
-                h_bkg_err.SetBinError(i, 10^(-99))
+                h_bkg_err.SetBinError(i, 1e-99)
         CMS.cmsDraw(h_bkg_err, "e2same0", fcolor=ROOT.kGray+3, fstyle=3001, msize=0)
 
         h_ratio_up   = h_err_syst_up.Clone("h_err_up")

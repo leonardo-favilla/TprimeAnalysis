@@ -1,6 +1,6 @@
 import ROOT 
 import cmsstyle as CMS
-import os
+import os, sys
 from variables import *
 from samples.samples import *
 import numpy as np
@@ -8,8 +8,21 @@ import json
 import math
 import copy
 import yaml
+import argparse
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
+
+parser          = argparse.ArgumentParser()
+parser.add_argument("--era", dest="era", type=str, default="2023", help="Please enter the era, e.g. 2022, 2022EE, etc.")
+args            = parser.parse_args()
+era             = args.era
+year            = 0
+if "2022" in era:
+    year        = "2022"
+elif "2023" in era:
+    year        = "2023"
+elif "2024" in era:
+    year        = "2024"
 
 def plot(h, folder, fillcolor, canv_name = "canv" ,extraTest="Preliminary", iPos=0, energy="13", lumi = "",  addInfo="", ytitle = "Efficiency"):
 
@@ -116,16 +129,16 @@ lumi_dict                           = config["plotting"]["lumi_dict"]
 lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]
 lumi_dict["Full2023"]               = lumi_dict["2023"] + lumi_dict["2023postBPix"]
 lumi_dict["Full2022_Full2023"]      = lumi_dict["Full2022"] + lumi_dict["Full2023"]
-lumi = lumi_dict["2023postBPix"]  # in fb
+lumi = lumi_dict[era]  # in fb
 run2 = False
 run3 = not run2
 
 datasets = [
-    "DataEGamma_2023", 
-    "TT_2023", 
-    "QCD_2023", 
-    "ZJetsToNuNu_2jets_2023",
-    "WJets_2jets_2023"
+    f"DataEGamma_{era}",
+    f"TT_{era}",
+    f"QCD_{era}",
+    f"ZJetsToNuNu_2jets_{era}",
+    f"WJets_2jets_{era}"
     ]
 if len(datasets) > 2:
     plotname = ""
@@ -143,14 +156,13 @@ for d in datasets:
     else:
         components = [sample_dict[d]]
 
+
 blind = False # Set to True if you want to blind the data
 
 
 # Specify the path to the JSON file
-json_file = "samples/dict_samples_2023.json"
-
-# Load the JSON file
-with open(json_file, "r") as file:
+dict_samples_file   = config["dict_samples"][year].replace("..", os.environ.get('PWD'))
+with open(dict_samples_file, "r") as file:
     samples = json.load(file)
 
 print("Paremeters setted") 
@@ -164,7 +176,7 @@ print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
 # print("Regions:           {}".format(regions.keys()))
 
 ############### out folders  
-folder = "/eos/home-a/acagnott/DarkMatter/nosynch/trigSF_2023/"
+folder      = config["outputfolder"]["triggerSF_results"][era]
 
 if not os.path.exists(folder):
     os.mkdir(folder)
@@ -223,6 +235,7 @@ for dat in datasets:
         s_list = d.components
     else:
         s_list = [d]
+
     for s in s_list:
         if 'Data' in s.label:
             infile['Data'].append(ROOT.TFile.Open(repohisto + s.label + ".root"))
@@ -246,7 +259,8 @@ outfileroot = ROOT.TFile.Open(repohisto + "TriggerEfficiency.root", "RECREATE")
 for v in [var[2]]:
     r = "orthogonalPreselR_Ntot"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
-        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
+        histo_name = v._name+"_"+r
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -260,7 +274,8 @@ for v in [var[2]]:
             h_bkg_total.Add(tmp)
         
     for f, s in zip(infile["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
+        histo_name = v._name+"_"+r
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         tmp.SetTitle("")
         if h_data_total==None:
             h_data_total = tmp.Clone("")
@@ -270,7 +285,8 @@ for v in [var[2]]:
 
     r = "orthogonalPreselR_Npass"
     for i, (f,s) in enumerate(zip(infile["bkg"], insample["bkg"])):
-        tmp = copy.deepcopy(ROOT.TH1D(f.Get(v._name+"_"+r)))
+        histo_name = v._name+"_"+r
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         if len(samples[s.label][s.label]["ntot"]):
             # tmp.Scale(s.sigma*(10**3)*lumi/np.sum(samples[s.label][s.label]["ntot"]))
             tmp.Scale(lumi)
@@ -284,7 +300,8 @@ for v in [var[2]]:
             h_bkg_pass.Add(tmp)
         
     for f, s in zip(infile["Data"], insample["Data"]):
-        tmp = copy.deepcopy(f.Get(v._name+"_"+r))
+        histo_name = v._name+"_"+r
+        tmp = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
         tmp.SetTitle("")
         if h_data_pass==None:
             h_data_pass = tmp.Clone("")
@@ -327,7 +344,7 @@ for v in [var[2]]:
         unc_bkg = h_eff_bkg.GetBinError(i)
         unc_data = h_eff_data.GetBinError(i)
         sf = eff_data / eff_bkg if eff_data > 0 else 0
-        unc_sf = math.sqrt((unc_data / eff_bkg)**2 + (unc_bkg * sf)**2) if eff_bkg > 0 and eff_data > 0 else 0
+        unc_sf = math.sqrt((unc_data / eff_bkg)**2 + (unc_bkg/eff_bkg * sf)**2) if eff_bkg > 0 and eff_data > 0 else 0
         h_ratio.SetBinContent(i, sf)
         h_ratio.SetBinError(i, unc_sf)
         print("MET bin [{}, {}]: SF = {:.5f} +/- {:.5f}".format(h_ratio.GetXaxis().GetBinLowEdge(i), h_ratio.GetXaxis().GetBinUpEdge(i), sf, unc_sf))
@@ -438,3 +455,15 @@ for v in var2d:
     outfileroot.cd()
     h_ratio.Write()
     plot2D(h_ratio, repostack,var2d[0], canv_name="TriggerEff_2Dplot_SF"+plotname, extraTest="Preliminary", iPos=0, energy="13.6", lumi=str(lumi), addInfo="", ztitle="SF")
+
+# Close ROOT files before terminating. With the LCG 107 PyROOT build,
+# leaving their destruction to Python finalization can crash in CPyCppyy.
+outfileroot.Close()
+for file_list in list(infile.values()) + list(infile2D.values()):
+    for root_file in file_list:
+        if root_file:
+            root_file.Close()
+
+sys.stdout.flush()
+sys.stderr.flush()
+ROOT.gSystem.Exit(0)

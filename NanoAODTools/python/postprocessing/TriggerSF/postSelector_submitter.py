@@ -39,12 +39,12 @@ if "2022" in period:
     year            = "2022"
 elif "2023" in period:
     year            = "2023"
+elif "2024" in period:
+    year            = "2024"
 
 dict_samples_file   = config["dict_samples"][year]
-
-syst_suffix     = ""
-
 outFolder_path      = config["outputfolder"]["triggerSF_results"][period]
+syst_suffix         = "_xTriggerSF"
 
 username        = str(os.environ.get('USER'))
 inituser        = str(os.environ.get('USER')[0])

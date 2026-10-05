@@ -23,7 +23,7 @@ parser.add_option('-d', '--datasets',           dest='datasets',            type
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
 parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
-parser.add_option(      '--tmpfold',           dest='tmpfold',            action='store_true',    default=False,                                  help='test tmp folder for out file')
+parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
 
 
 (opt, args)             = parser.parse_args()
@@ -46,10 +46,9 @@ repohisto               = folder+"plots/"
 
 
 if not os.path.exists(folder):
-    os.mkdir(folder)
-repohisto = folder+"plots/"
+    os.makedirs(folder)
 if not os.path.exists(repohisto):
-    os.mkdir(repohisto)
+    os.makedirs(repohisto)
 
 try:
     f = open(repohisto+"/test.txt", "w")
@@ -65,11 +64,11 @@ hlt_met = "(HLT_PFMET120_PFMHT120_IDTight || HLT_PFMETNoMu120_PFMHTNoMu120_IDTig
 hlt_ele = "(HLT_Ele32_WPTight_Gsf || HLT_Ele115_CaloIdVT_GsfTrkIdT || HLT_Photon200)"
 
 regions_def = {
-    "orthogonalPreselR_Ntot"     :  hlt_ele +" && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
-    "orthogonalPreselR_Npass"    :  hlt_ele+" && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
-    "orthogonalPreselR2_Ntot"     :  hlt_ele +" && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
-    "orthogonalPreselR2_Npass"    :  hlt_ele+" && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nTightElectron>0",
-    "orthogonalPreselR_CR"       :  hlt_ele+" && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nTightElectron==0",
+    "orthogonalPreselR_Ntot"     :  hlt_ele + " && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
+    "orthogonalPreselR_Npass"    :  hlt_ele + " && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
+    "orthogonalPreselR2_Ntot"    :  hlt_ele + " && PuppiMET_T1_pt_nominal>100 && nTightElectron>0",
+    "orthogonalPreselR2_Npass"   :  hlt_ele + " && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nTightElectron>0",
+    "orthogonalPreselR_CR"       :  hlt_ele + " && "+ hlt_met +" && PuppiMET_T1_pt_nominal>100 && MinDelta_phi>0.6 && nTightElectron==0",
 }
 print("Regions to book: ")
 for r in regions_def.keys():
@@ -153,44 +152,53 @@ for d in datasets:
 
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
-    
-    df = df.Define("GoodJet_idx", "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)")
-    df = df.Define("nGoodJet", "nGoodJet(GoodJet_idx)")
-    df = df.Define("GoodFatJet_idx", "GetGoodJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)")
-    df = df.Define("nGoodFatJet", "GoodFatJet_idx.size()")
-    df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ", "jet presel")
-    
-    # df = df.Redefine("MaxEta_jet", "max_etajet(Jet_eta, GoodJet_idx)")
-    df = df.Redefine("MinDelta_phi", "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
-    
-    df = df.Define("nTightElectron", "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("TightElectron_idx", "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("nVetoElectron", "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta)")
-    df = df.Define("nTightMuon", "nTightMuon(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("TightMuon_idx", "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId)")
-    df = df.Define("nVetoMuon", "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId)")
-    df = df.Define("Lepton_flavour", "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
-    df = df.Define("MT", "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
-    df = df.Define("MHT", "MHT(GoodJet_idx, Jet_pt, Jet_phi, Jet_eta, Jet_mass)")
+    if year in [2022,2023]:
+        df = df.Define("Jet_passJetIdTight",            "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)")\
+               .Define("Jet_passJetIdTightLepVeto",     "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")\
+               .Redefine("Jet_jetId",                   "ROOT::VecOps::RVec<int>(Jet_passJetIdTight) * 2 + ROOT::VecOps::RVec<int>(Jet_passJetIdTightLepVeto) * 4") # https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
+    elif year in [2024]:
+        df = df
 
-    df = df.Define("LeadingJetPt_idx", "GetLeadingPtJet(Jet_pt_nominal)")
-    df = df.Define("LeadingJetPt_pt", "GetLeadingJetVar(LeadingJetPt_idx, Jet_pt_nominal)")
-    df = df.Define("LeadingJetPt_eta", "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")
-    df = df.Define("LeadingJetPt_phi", "GetLeadingJetVar(LeadingJetPt_idx, Jet_phi)")
-    df = df.Define("LeadingJetPt_mass", "GetLeadingJetVar(LeadingJetPt_idx, Jet_mass_nominal)")
-    df = df.Define("LeadingFatJetPt_idx", "GetLeadingPtJet(FatJet_pt)")
-    df = df.Define("LeadingFatJetPt_pt", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_pt_nominal)")
-    df = df.Define("LeadingFatJetPt_eta", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")
-    df = df.Define("LeadingFatJetPt_phi", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")
-    df = df.Define("LeadingFatJetPt_mass", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_mass_nominal)")
-    df = df.Define("LeadingMuonPt_idx", "GetLeadingPtLep(Muon_pt, Muon_eta, Muon_looseId)")
-    df = df.Define("LeadingMuonPt_pt", "GetLeadingJetVar(LeadingMuonPt_idx, Muon_pt)")
-    df = df.Define("LeadingMuonPt_eta", "GetLeadingJetVar(LeadingMuonPt_idx, Muon_eta)")
-    df = df.Define("LeadingMuonPt_phi", "GetLeadingJetVar(LeadingMuonPt_idx, Muon_phi)")
-    df = df.Define("LeadingElectronPt_idx", "GetLeadingPtLep(Electron_pt, Electron_eta, Electron_cutBased)")
-    df = df.Define("LeadingElectronPt_pt", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_pt)")
-    df = df.Define("LeadingElectronPt_eta", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_eta)")
-    df = df.Define("LeadingElectronPt_phi", "GetLeadingJetVar(LeadingElectronPt_idx, Electron_phi)")
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt, Jet_eta, Jet_jetId)") # richiesto jetId==6
+    df = df.Define("nGoodJet",                          "GoodJet_idx.size()") 
+    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
+    df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
+    df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
+
+    df = df.Redefine("MinDelta_phi",                    "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
+    df = df.Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("nLooseElectron",                    "nLooseElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("LooseElectron_idx",                 "LooseElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
+           .Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
+    df = df.Define("nTightMuon",                        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("TightMuon_idx",                     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
+           .Define("nLooseMuon",                        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("LooseMuon_idx",                     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
+           .Define("nVetoMuon",                         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
+    df = df.Define("Lepton_flavour",                    "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
+    df = df.Define("MT",                                "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
+    df = df.Define("MHT", "MHT(GoodJet_idx, Jet_pt, Jet_phi, Jet_eta, Jet_mass)")
+    
+    df = df.Define("LeadingJetPt_idx",                  "GetLeadingPtJet(Jet_pt_nominal)")\
+           .Define("LeadingJetPt_pt",                   "GetLeadingJetVar(LeadingJetPt_idx, Jet_pt_nominal)")\
+           .Define("LeadingJetPt_eta",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")\
+           .Define("LeadingJetPt_phi",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_phi)")\
+           .Define("LeadingJetPt_mass",                 "GetLeadingJetVar(LeadingJetPt_idx, Jet_mass_nominal)")
+    df = df.Define("LeadingFatJetPt_idx",               "GetLeadingPtJet(FatJet_pt)")\
+           .Define("LeadingFatJetPt_pt",                "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_pt_nominal)")\
+           .Define("LeadingFatJetPt_eta",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")\
+           .Define("LeadingFatJetPt_phi",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")\
+           .Define("LeadingFatJetPt_mass",              "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_mass_nominal)")\
+           .Define("LeadingFatJetPt_msoftdrop",         "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_msoftdrop_nominal)")
+    df = df.Define("LeadingMuonPt_idx",                 "GetLeadingPtLep(Muon_pt, Muon_eta, Muon_looseId)")\
+           .Define("LeadingMuonPt_pt",                  "GetLeadingJetVar(LeadingMuonPt_idx, Muon_pt)")\
+           .Define("LeadingMuonPt_eta",                 "GetLeadingJetVar(LeadingMuonPt_idx, Muon_eta)")\
+           .Define("LeadingMuonPt_phi",                 "GetLeadingJetVar(LeadingMuonPt_idx, Muon_phi)")\
+           .Define("LeadingElectronPt_idx",             "GetLeadingPtLep(Electron_pt, Electron_eta, Electron_cutBased)")\
+           .Define("LeadingElectronPt_pt",              "GetLeadingJetVar(LeadingElectronPt_idx, Electron_pt)")\
+           .Define("LeadingElectronPt_eta",             "GetLeadingJetVar(LeadingElectronPt_idx, Electron_eta)")\
+           .Define("LeadingElectronPt_phi",             "GetLeadingJetVar(LeadingElectronPt_idx, Electron_phi)")
     
     df = df.Define("nForwardJet", "nForwardJet(Jet_pt_nominal, Jet_jetId, Jet_eta)")
     # df = df.Define("JetBTag_idx", "GetJetBTag(GoodJet_idx, "+bTagAlg+","+str(year)+","+str(EE)+")")\
@@ -338,6 +346,9 @@ for d in datasets:
             bTagAlg = "Jet_btagDeepB"
         elif s.year in [2022,2023]:
             bTagAlg = "Jet_btagPNetB"
+        elif s.year in [2024]:
+            bTagAlg = "Jet_btagUParTAK4B"
+
         if hasattr(s,"EE"):
             EE = s.EE
         else:
@@ -365,7 +376,13 @@ for d in datasets:
             # df_hlt = df_hlt.Define("w_nominal", "1")                                                                                             # no nloewcorrection
         else:
             df_hlt = df_hlt.Define("w_nominal", "1")
-            
+        
+        if sampleflag:
+            if s.year in [2022,2023]:
+                df_hlt                  = df_hlt
+            elif s.year in [2024]:
+                df_hlt                  = df_hlt.Define("SFbtag_nominal",   "1.0f")
+
         if sampleflag:
             df_wnom = df_hlt.Redefine('w_nominal', 'w_nominal*puWeight*SFbtag_nominal*(LHEWeight_originalXWGTUP/abs(LHEWeight_originalXWGTUP))') # AllWeights
         else:
