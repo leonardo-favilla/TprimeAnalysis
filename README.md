@@ -82,16 +82,21 @@ python3 postSelector_submitter.py -d *dataset_name* --syst
 
 #### config file
 The configuration file for the histogram production and plotting can be found at `TprimeAnalysis/NanoAODTools/python/postprocessing/config/config.yaml`.
-You can modify the settings in this file to customize the folder to save the plots to, as well as other parameters like which samples to use in the stacks production, the systematics to include, etc. In particular:
-- `outputfolder/postselector_results`: folder where the output histograms will be stored, per each era;
-- `dict_samples`: which dict_samples.json file to use for the histogram production, per each era (this is the json file produced at Step 1);
-- `plotting/folder_dict`: folder where the input plots for producing stacks are stored, per each era;
-- `plotting/folder_www_dict`: folder where the final plots will be saved, per each era;
-- `plotting/datasets_to_plot`: list of samples to plot, per each era;
-- `plotting/systematics`: list of systematics to include in the stacks, per each era (if no systematics are needed, just leave the list empty - by default it will only draw statistical uncertainties);
-- `plotting/scale_signals`: factor to scale the signal samples in the stacks (set to 1 for no scaling).
+You can modify this file to select the variables and samples to process, configure the output folders, and choose the plotting and systematic-uncertainty settings. In particular:
 
-Here there is a template example of config.yaml file:
+- `outputfolder/postselector_results`: folder where the output histograms will be stored for each era;
+- `outputfolder/triggerSF_results`: folder where the trigger scale-factor results will be stored for each era;
+- `variables_file`: variables definition file used by the histogram-production jobs;
+- `dict_samples`: sample dictionary produced at Step 1 and used for each era or era combination;
+- `plotting/folder_dict`: folder containing the input histograms used to produce the stacks;
+- `plotting/folder_www_dict`: folder where the final plots will be published;
+- `plotting/datasets_to_plot`: samples to include in the stacks for each era;
+- `plotting/systematics`: systematic uncertainties to include in the stacks. Leave the list empty to draw only statistical uncertainties;
+- `plotting/scale_signals`: signal scaling factor (set it to `1` for no scaling);
+- `TrotaScaleFactor`: output folders, fit variables, correction folders, and systematic settings used by the TROTA scale-factor workflow.
+
+The following template covers all supported Run 3 eras. Fill the empty strings with the appropriate local or EOS folders:
+
 ```yaml
 outputfolder:
   postselector_results: { 
@@ -99,17 +104,24 @@ outputfolder:
     "2022EE":       "",
     "2023":         "",
     "2023postBPix": "",
+    "2024":         "",
     }
   triggerSF_results: { 
     "2022":         "",
     "2022EE":       "",
     "2023":         "",
     "2023postBPix": "",
+    "2024":         "",
     }
+
+variables_file: "../variables.py"
 
 dict_samples:
   "2022":             "../samples/dict_samples_2022.json"
+  "2022EE":           "../samples/dict_samples_2022.json"
   "2023":             "../samples/dict_samples_2023.json"
+  "2023postBPix":     "../samples/dict_samples_2023.json"
+  "2024":             "../samples/dict_samples_2024.json"
   "Full2022":         "."
   "Full2023":         "."
   "Full2022_Full2023": ["../samples/dict_samples_2022.json", "../samples/dict_samples_2023.json"]
@@ -117,10 +129,18 @@ dict_samples:
 plotting:
   lumi_dict:
     {
-      "2022":           7.980,
-      "2022EE":         26.672,
-      "2023":           18.063,
-      "2023postBPix":   9.693
+      "2022":           7.99,
+      "2022EE":         26.68,
+      "2023":           17.96,
+      "2023postBPix":   9.68,
+      "2024":           109.82,
+      "2024_C":         7.26,
+      "2024_D":         7.98,
+      "2024_E":         11.42,
+      "2024_F":         28.04,
+      "2024_G":         38.07,
+      "2024_H":         5.49,
+      "2024_I":         11.56,
     }
 
   folder_dict:
@@ -129,6 +149,7 @@ plotting:
       "2022EE":             "",
       "2023":               "",
       "2023postBPix":       "",
+      "2024":               "",
       "Full2022":           "",
       "Full2023":           "",
       "Full2022_Full2023":  "",
@@ -140,6 +161,7 @@ plotting:
       "2022EE":             "",
       "2023":               "",
       "2023postBPix":       "",
+      "2024":               "",
       "Full2022":           "",
       "Full2023":           "",
       "Full2022_Full2023":  "",
@@ -195,6 +217,18 @@ plotting:
                   "TprimeToTZ_1000_2023postBPix",
                   "TprimeToTZ_1800_2023postBPix"
               ],
+      "2024":
+              [
+                  "DataJetMET_2024",
+                  "TT_2024",
+                  "TW_2024",
+                  "QCD_2024",
+                  "ZJetsToNuNu_2jets_2024",
+                  "WJets_2jets_2024",
+                  "TprimeToTZ_800_2024",
+                  "TprimeToTZ_1000_2024",
+                  "TprimeToTZ_1800_2024"
+              ],
     }
     
   systematics:
@@ -202,7 +236,8 @@ plotting:
       "2022":           [],
       "2022EE":         [],
       "2023":           [],
-      "2023postBPix":   []
+      "2023postBPix":   [],
+      "2024":           [],
     }
 
   scale_signals: 100
@@ -214,18 +249,21 @@ TrotaScaleFactor:
                   "2022EE":       "",
                   "2023":         "",
                   "2023postBPix": "",
+                  "2024":         "",
                 },
     "Mixed": {
                   "2022":         "",
                   "2022EE":       "",
                   "2023":         "",
                   "2023postBPix": "",
+                  "2024":         "",
                 },
     "Merged": {
                   "2022":         "",
                   "2022EE":       "",
                   "2023":         "",
                   "2023postBPix": "",
+                  "2024":         "",
                 },
     }
     
@@ -244,8 +282,9 @@ TrotaScaleFactor:
   corrlibfolder: {
     "2022":         "",
     "2022EE":       "",
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs_TopPtReweightingTheory/",
+    "2023":         "",
     "2023postBPix": "",
+    "2024":         "",
   }
 
   systematics:
@@ -253,7 +292,8 @@ TrotaScaleFactor:
       "2022":           [],
       "2022EE":         [],
       "2023":           ["TrotaResolved", "TrotaMixed", "TrotaMerged"],  # "QCDScale"
-      "2023postBPix":   []
+      "2023postBPix":   [],
+      "2024":           [],
     }
 
   scale_signals: 100
