@@ -1,0 +1,149 @@
+import os
+import ROOT
+import copy
+import loadHists
+import cmsstyle as CMS
+import sys
+import argparse
+sys.path.append('../')
+ROOT.gROOT.SetBatch()
+
+parser      = argparse.ArgumentParser(description='Collect histograms from different samples and save them into a single ROOT file.')
+parser.add_argument('-e',   '--era',          type=str,               default='2023',             help='Era')
+parser.add_argument(        '--TopCategory',  type=str,               default='Mixed',            help='Top Category: Resolved, Mixed, Merged')
+args        = parser.parse_args()
+TopCand     = args.TopCategory
+era         = args.era
+
+
+remoteFolderPath_dict = {
+    "2022":         "",
+    "2022EE":       "",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/run2023_March26_TaggerWorkingPoints/wp_onlyQCD/",
+    "2023postBPix": "",
+    "2024":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2024/"
+    }
+
+remoteFolderPath = remoteFolderPath_dict[era]
+inFilePath       = f"{remoteFolderPath}/plotsCollected.root"
+if not os.path.exists(inFilePath):
+    print(f"File {inFilePath} does not exist. Exiting...")
+    exit(1)
+else:
+    # inFile       = ROOT.TFile.Open(inFilePath, "READ")
+    histoDict    = loadHists.loadHists(inFilePath)
+print(histoDict.keys())
+color_map        = {
+                    "topmatched":   ROOT.TColor.GetColor("#5790fc"),
+                    "nonmatched":   ROOT.TColor.GetColor("#e42536"),
+                    "other":        ROOT.TColor.GetColor("#964a8b"),
+                    }
+
+
+var                  = f"BestTop{TopCand}_score"
+title                = f"Best Top {TopCand} score"
+
+
+####### Draw working points + cumulative distributions ####### 
+CMS.SetExtraText("Private Work" + f" | {era} Top tagging WPs")
+CMS.SetLumi("")
+CMS.SetEnergy("")
+CMS.ResetAdditionalInfo()
+c                    = CMS.cmsCanvas(
+                                        title,
+                                        0.0,
+                                        1.0,
+                                        0.0,
+                                        1.25,
+                                        title,
+                                        "1-cumulative",
+                                        square=CMS.kRectangular,
+                                        iPos=0
+                                    )
+# if TopCand == "Merged":
+#     leg              = CMS.cmsLeg(0.57, 0.67, 0.87, 0.87, textSize=0.025) # Merged    
+# elif TopCand == "Mixed":
+#     leg              = CMS.cmsLeg(0.37, 0.47, 0.67, 0.67, textSize=0.025) # Mixed
+# elif TopCand == "Resolved":
+#     leg              = CMS.cmsLeg(0.67, 0.67, 0.87, 0.83, textSize=0.025) # Resolved
+# leg              = CMS.cmsLeg(0.67, 0.72, 0.87, 0.87, textSize=0.025)
+# leg1              = CMS.cmsLeg(0.67, 0.72, 0.87, 0.87, textSize=0.025)
+leg1              = CMS.cmsLeg(0.77, 0.80, 0.92, 0.90, textSize=0.025)
+leg2              = CMS.cmsLeg(0.37, 0.82, 0.57, 0.90, textSize=0.025)
+# leg.AddEntry("None", f"{era} Top tagging WPs", "")
+
+for i,proc in enumerate(color_map):
+    histoName        = f"{var}_BestTop{TopCand}_{proc}"
+    histo            = copy.deepcopy(histoDict[histoName])
+    histo.Scale(1./histo.Integral())
+    histo = histo.GetCumulative(forward=ROOT.kFALSE)
+    CMS.cmsDraw(histo, "PE", mcolor=color_map[proc])
+    leg1.AddEntry(histo, proc, "PE")
+
+####### Find working points for topmatched and nonmatched+other ####### 
+histo            = copy.deepcopy(histoDict[f"{var}_BestTop{TopCand}_nonmatched"])
+histo.Add(copy.deepcopy(histoDict[f"{var}_BestTop{TopCand}_other"]))
+histo.Scale(1./histo.Integral())
+histo            = histo.GetCumulative(forward=ROOT.kFALSE)
+CMS.cmsDraw(histo, "PE", mcolor=ROOT.TColor.GetColor("#e76300"))
+leg1.AddEntry(histo, "nonmatched+other", "PE")
+thr_L = None
+bin_L = None
+thr_T = None
+bin_T = None
+for i in range(1, histo.GetNbinsX()+1):
+    if (histo.GetBinContent(i) < 0.1):
+        if bin_L is None:
+            bin_L       = i-1
+        elif (histo.GetBinContent(i) < 0.05) and (bin_T is None):
+            bin_T       = i-1
+
+thr_L               = histo.GetXaxis().GetBinUpEdge(bin_L)
+thr_T               = histo.GetXaxis().GetBinUpEdge(bin_T)
+fpr_L               = histo.GetBinContent(bin_L)
+fpr_T               = histo.GetBinContent(bin_T)
+
+histo               = copy.deepcopy(histoDict[f"{var}_BestTop{TopCand}_topmatched"])
+histo.Scale(1./histo.Integral())
+histo               = histo.GetCumulative(forward=ROOT.kFALSE)
+tpr_L               = histo.GetBinContent(bin_L)
+tpr_T               = histo.GetBinContent(bin_T)
+print("\n")
+print(f"Working point L for nonmatched+other:                 {thr_L:.3f} @ {100*fpr_L:.1f}%")
+print(f"Working point L for topmatched:                       {100*tpr_L:.1f}%")
+print(f"Working point T for nonmatched+other:                 {thr_T:.3f} @ {100*fpr_T:.1f}%")
+print(f"Working point T for topmatched:                       {100*tpr_T:.1f}%")
+
+
+WPL_line = ROOT.TLine(thr_L, 0.0, thr_L, 1.0)
+CMS.cmsDrawLine(WPL_line, lcolor=ROOT.kRed, lstyle=ROOT.kDashed)
+leg2.AddEntry(WPL_line, f"WP_{{L}} | thr: {thr_L:.3f} - tpr{100*tpr_L:.1f}% - fpr{100*fpr_L:.1f}%", "L")
+WPT_line = ROOT.TLine(thr_T, 0.0, thr_T, 1.0)
+CMS.cmsDrawLine(WPT_line, lcolor=ROOT.kGreen+1, lstyle=ROOT.kDashed)
+leg2.AddEntry(WPT_line, f"WP_{{T}} | thr: {thr_T:.3f} - tpr{100*tpr_T:.1f}% - fpr{100*fpr_T:.1f}%", "L")
+
+
+# latex    = ROOT.TLatex()
+# latex.SetTextFont(52)
+# latex.SetTextSize(0.025)
+# latex.SetTextColor(ROOT.kRed)
+# if TopCand == "Merged":
+#     latex.DrawLatexNDC(thr_L+0.1, 0.83, f"{thr_L:.3f}") # Merged
+# elif TopCand == "Mixed":
+#     latex.DrawLatexNDC(thr_L-0.05, 0.83, f"{thr_L:.3f}") # Mixed
+# elif TopCand == "Resolved":
+#     latex.DrawLatexNDC(thr_L-0.02, 0.83, f"{thr_L:.3f}") # Resolved
+
+# latex    = ROOT.TLatex()
+# latex.SetTextFont(52)
+# latex.SetTextSize(0.025)
+# latex.SetTextColor(ROOT.kGreen+1)
+# if TopCand == "Merged":
+#     latex.DrawLatexNDC(thr_T+0.02, 0.78, f"{thr_T:.3f}") # Merged
+# elif TopCand == "Mixed":
+#     latex.DrawLatexNDC(thr_T-0.02, 0.78, f"{thr_T:.3f}") # Mixed
+# elif TopCand == "Resolved":
+#     latex.DrawLatexNDC(thr_T-0.03, 0.78, f"{thr_T:.3f}") # Resolved
+
+
+c.SaveAs(f"{remoteFolderPath}/{var}.pdf")
