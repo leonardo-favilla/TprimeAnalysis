@@ -10,7 +10,8 @@ import math
 import shutil
 from datetime import datetime
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
-from PhysicsTools.NanoAODTools.postprocessing.variables import *
+import importlib.util
+# from PhysicsTools.NanoAODTools.postprocessing.variables import *
 sys.path.append('../')
 
 username = str(os.environ.get('USER'))
@@ -22,6 +23,7 @@ usage                   = 'python3 postSelector.py -d <datasets> --dict_samples_
 parser                  = optparse.OptionParser(usage)
 parser.add_option('-d', '--datasets',           dest='datasets',            type=str,               default="QCD_2023",                             help='Datasets to process, in the form: QCD_2023,TT_2023...')
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
+parser.add_option(      '--varfile',            dest='varfile',             type=str,               default="../variables.py",                      help='Path to the variable file')
 parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
 parser.add_option(      '--syst',               dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
@@ -45,6 +47,7 @@ dict_samples_file       = opt.dict_samples_file
 hist_folder             = opt.hist_folder
 tmpfold                 = opt.tmpfold
 printcutflow            = opt.printcutflow
+varfile                 = opt.varfile
 do_histos               = True
 do_snapshot             = False
 if do_variations:
@@ -136,7 +139,11 @@ my_initialization_function()
 with open(dict_samples_file, "rb") as sample_file:
     samples = json.load(sample_file)
 
-
+#### LOAD variables.py ####
+variables_path  = os.path.abspath(varfile)
+spec            = importlib.util.spec_from_file_location("variables", variables_path)
+variables       = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(variables)
 
 
 
@@ -159,10 +166,10 @@ elif do_snapshot:
 
 
 
-cut         = requirements  # ---> see variables.py
-regions_def = regions       # ---> see variables.py
-var         = vars          # ---> variables.py
-var2d       = vars2D        # ---> variables.py
+cut         = variables.requirements  # ---> see variables.py
+regions_def = variables.regions       # ---> see variables.py
+var         = variables.vars          # ---> variables.py
+var2d       = variables.vars2D        # ---> variables.py
     
 Top_Resolved_wp = { "10%": 0.425, "5%": 0.625,}
 Top_Mixed_wp    = { "10%": 0.900, "5%": 0.950,}
@@ -435,6 +442,26 @@ def select_top(df, isMC, year):
         df_topvariables = df_topvariables.Define("Top_truth", "select_TopVar(EventTopCategory, Top_idx, FatJet_matched, TopMixed_truth, TopResolved_truth)")
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
+
+    df_topvariables = df_topvariables.Define("BestTopResolved_idx",      "(int)ArgMax(TopResolved_TopScore_nominal)")\
+                                     .Define("BestTopMixed_idx",         "(int)ArgMax(TopMixed_TopScore_nominal)")\
+                                     .Define("BestTopMerged_idx",        "(int)ArgMax(TopMerged_TopScore_nominal)")
+
+    df_topvariables = df_topvariables.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
+                                     .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
+                                     .Define("BestTopResolved_phi",      "TopResolved_phi[BestTopResolved_idx]")\
+                                     .Define("BestTopResolved_mass",     "TopResolved_mass_nominal[BestTopResolved_idx]")\
+                                     .Define("BestTopResolved_score",    "TopResolved_TopScore_nominal[BestTopResolved_idx]")\
+                                     .Define("BestTopMixed_pt",          "TopMixed_pt_nominal[BestTopMixed_idx]")\
+                                     .Define("BestTopMixed_eta",         "TopMixed_eta[BestTopMixed_idx]")\
+                                     .Define("BestTopMixed_phi",         "TopMixed_phi[BestTopMixed_idx]")\
+                                     .Define("BestTopMixed_mass",        "TopMixed_mass_nominal[BestTopMixed_idx]")\
+                                     .Define("BestTopMixed_score",       "TopMixed_TopScore_nominal[BestTopMixed_idx]")\
+                                     .Define("BestTopMerged_pt",         "FatJet_pt_nominal[BestTopMerged_idx]")\
+                                     .Define("BestTopMerged_eta",        "FatJet_eta[BestTopMerged_idx]")\
+                                     .Define("BestTopMerged_phi",        "FatJet_phi[BestTopMerged_idx]")\
+                                     .Define("BestTopMerged_mass",       "FatJet_mass_nominal[BestTopMerged_idx]")\
+                                     .Define("BestTopMerged_score",      "TopMerged_TopScore_nominal[BestTopMerged_idx]")
     return df_topvariables
     
 def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath):
@@ -444,11 +471,17 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath)
     if sampleflag:
         df_toptruth_with_matching       = df.Define("TopResolved_isMatched_to_GenTop_dR0p2",                "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopResolved_eta, TopResolved_phi, 0.2)")\
                                             .Define("TopMixed_isMatched_to_GenTop_dR0p2",                   "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, TopMixed_eta, TopMixed_phi, 0.2)")\
-                                            .Define("TopMerged_isMatched_to_GenTop_dR0p2",                  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")
+                                            .Define("TopMerged_isMatched_to_GenTop_dR0p2",                  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, FatJet_eta, FatJet_phi, 0.2)")\
+                                            .Define("BestTopResolved_isMatched_to_GenTop_dR0p2",            "TopResolved_isMatched_to_GenTop_dR0p2[BestTopResolved_idx]")\
+                                            .Define("BestTopMixed_isMatched_to_GenTop_dR0p2",               "TopMixed_isMatched_to_GenTop_dR0p2[BestTopMixed_idx]")\
+                                            .Define("BestTopMerged_isMatched_to_GenTop_dR0p2",              "TopMerged_isMatched_to_GenTop_dR0p2[BestTopMerged_idx]")
 
         df_top_process_category         = df_toptruth_with_matching.Define("TopResolved_process",           f'top_process_category("{sample_process}", TopResolved_isMatched_to_GenTop_dR0p2)')\
                                                                    .Define("TopMixed_process",              f'top_process_category("{sample_process}", TopMixed_isMatched_to_GenTop_dR0p2)')\
-                                                                   .Define("TopMerged_process",             f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')
+                                                                   .Define("TopMerged_process",             f'top_process_category("{sample_process}", TopMerged_isMatched_to_GenTop_dR0p2)')\
+                                                                   .Define("BestTopResolved_process",       "TopResolved_process[BestTopResolved_idx]")\
+                                                                   .Define("BestTopMixed_process",          "TopMixed_process[BestTopMixed_idx]")\
+                                                                   .Define("BestTopMerged_process",         "TopMerged_process[BestTopMerged_idx]")
 
         df_IndependentTopCandidates     = df_top_process_category.Define("TopResolved_Independent_idx",     "select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, -1.0)")\
                                                                  .Define("TopMixed_Independent_idx",        "select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, -1.0)")\
@@ -489,7 +522,12 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath)
                                                               .Define("ResolvedTrotaEventWeightDown",                                   "CalculateCategoryTrotaEventWeight(TopResolved_TrotaSFDown, TopResolved_forEvWeight_idx)")
 
     else:
-        df_TrotaScaleFactors            = df
+        df_TrotaScaleFactors            = df.Define("BestTopResolved_isMatched_to_GenTop_dR0p2",            "1.")\
+                                            .Define("BestTopMixed_isMatched_to_GenTop_dR0p2",               "1.")\
+                                            .Define("BestTopMerged_isMatched_to_GenTop_dR0p2",              "1.")\
+                                            .Define("BestTopResolved_process",                              "1.")\
+                                            .Define("BestTopMixed_process",                                 "1.")\
+                                            .Define("BestTopMerged_process",                                "1.")
 
     return df_TrotaScaleFactors
 
@@ -671,6 +709,8 @@ def savehisto(d, dict_h, regions_def, var, s_cut, outfile_dict):
                                     hdown.Write()
                                 else:
                                     for var_type in ['up', 'down']:
+                                        if f"{vari}:{var_type}" not in dict_h[d.label][s.label][reg][v._name].GetKeys():
+                                            continue
                                         h1 = dict_h[d.label][s.label][reg][v._name][vari+":"+var_type]
                                         # h1.SetName(h1.GetName()+"_"+vari+var_type.capitalize())
                                         histo_name = h1.GetName()
@@ -822,11 +862,9 @@ for d in datasets:
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         if sampleflag:
-            if s.year in [2022,2023]:
-                df                  = df.Define("triggerSF",        f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
-            elif s.year in [2024]:
-                df                  = df.Define("triggerSF",        "1.0f")\
-                                        .Define("SFbtag_nominal",   "1.0f")
+            df              = df.Define("triggerSF",        f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
+            if s.year in [2024]:
+                df          = df.Define("SFbtag_nominal",   "1.0f")
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag, sample_process)
 

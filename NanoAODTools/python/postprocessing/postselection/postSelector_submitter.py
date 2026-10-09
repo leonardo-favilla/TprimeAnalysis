@@ -61,6 +61,7 @@ elif "2024" in period:
     year            = "2024"
 
 dict_samples_file   = config["dict_samples"][year]
+varfile             = config["variables_file"]
 
 # suffix         = ""
 # if syst:
@@ -115,6 +116,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         "python3 postSelector.py "
         + f"-d {dataset} "
         + f"--dict_samples_file {dict_samples_file} "
+        + f"--varfile {varfile} "
         + f"--hist_folder {hist_folder} "
         + f"--nfiles_max {nfiles_max} "
         + "--tmpfold"
