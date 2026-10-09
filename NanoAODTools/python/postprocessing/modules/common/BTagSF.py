@@ -49,12 +49,12 @@ class BTagSF(Module):
                 self.discr          = "btagPNetB"
         elif year == 2023:
             if EE:
-                eratag              = "Run3-23CSep23-Summer23-NanoAODv12"
+                eratag              = "Run3-23DSep23-Summer23BPix-NanoAODv12"
                 self.CorrVersion    = "2025-08-20"
                 self.tagger         = 'particleNet_shape'
                 self.discr          = "btagPNetB"
             else:
-                eratag              = "Run3-23DSep23-Summer23BPix-NanoAODv12"
+                eratag              = "Run3-23CSep23-Summer23-NanoAODv12"
                 self.CorrVersion    = "2025-08-20"
                 self.tagger         = 'particleNet_shape'
                 self.discr          = "btagPNetB"
