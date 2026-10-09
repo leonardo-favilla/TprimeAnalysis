@@ -5,7 +5,8 @@ import sys
 sys.path.append('../')
 from make_stack import make_stack_with_ratio
 from samples.samples import *
-from variables import *
+import importlib.util
+# from variables import *
 import copy
 import json
 import numpy as np
@@ -30,18 +31,34 @@ else:
     sys.exit(1)
 
 
-usage                   = 'python3 produce_stacks.py --year_tag <year_tag>'
+usage                   = 'python3 produce_stacks.py --era <era> --subera <subera>'
 parser                  = optparse.OptionParser(usage)
-parser.add_option("--year_tag",          dest="year_tag",         help="Year tag: 2022, 2022EE, 2023, 2023postBPix, Full2022, Full2023, Full2022_Full2023",       type="string")
+parser.add_option("--era",          dest="era",         type="string",                                                  help="era tag: 2022, 2022EE, 2023, 2023postBPix, Full2022, Full2023, Full2022_Full2023")
+parser.add_option("--subera",       dest="subera",      type="string",  default="",                                     help="Sub-era tag: C, D, E, ...")
+parser.add_option('--varfile',      dest='varfile',     type=str,       default="../variables.py",                      help='Path to the variable file')
 (opt, args)             = parser.parse_args()
 ################## input parameters
 extraText                           = "Work in Progress"
 extraSpace                          = 0.1
 iPos                                = 0                 # Position of the legend (0: top-right, 1: top-left, etc.)
-cut                                 = requirements      # defined in variables.py
 blind                               = False             # Set to True if you want to blind the data
 scale_signals                       = config["plotting"]["scale_signals"]                # Scaling factor for the signals
-year_tag                            = opt.year_tag
+era                                 = opt.era
+subera                              = opt.subera
+
+#### LOAD variables.py ####
+varfile         = opt.varfile
+variables_path  = os.path.abspath(varfile)
+spec            = importlib.util.spec_from_file_location("variables", variables_path)
+variables       = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(variables)
+cut             = variables.requirements  # ---> see variables.py
+regions         = variables.regions       # ---> see variables.py
+vars            = variables.vars          # ---> variables.py
+var2d           = variables.vars2D        # ---> variables.py
+
+
+
 
 lumi_dict                           = config["plotting"]["lumi_dict"]
 lumi_dict["Full2022"]               = lumi_dict["2022"] + lumi_dict["2022EE"]
@@ -59,8 +76,6 @@ datasets_dict["Full2023"]           = datasets_dict["2023"] + datasets_dict["202
 datasets_dict["Full2022_Full2023"]  = datasets_dict["Full2022"] + datasets_dict["Full2023"]
 
 json_file_dict                      = config["dict_samples"]
-json_file_dict["2022EE"]            = json_file_dict["2022"]
-json_file_dict["2023postBPix"]      = json_file_dict["2023"]
 
 colors_bkg                          = ["#e42536", "#ffcc00", "#bebdb8", "#86c8dd", "#caeba5"]
 style_signals_dict                  = {
@@ -91,13 +106,13 @@ systematics_dict                        = config["plotting"]["systematics"]
 systematics_dict["Full2022"]            = list(set(systematics_dict["2022"]) & set(systematics_dict["2022EE"]))
 systematics_dict["Full2023"]            = list(set(systematics_dict["2023"]) & set(systematics_dict["2023postBPix"]))
 systematics_dict["Full2022_Full2023"]   = list(set(systematics_dict["Full2022"]) & set(systematics_dict["Full2023"]))
-systematics                             = [f"{syst}_{variation}" for syst in systematics_dict[year_tag] for variation in ["up", "down"]]
+systematics                             = [f"{syst}_{variation}" for syst in systematics_dict[era] for variation in ["up", "down"]]
 if len(systematics) == 0:
     systErr     = False
-    print(f"No systematics to be added for year {year_tag}")
+    print(f"No systematics to be added for year {era}")
 else:
     systErr     = True
-    print(f"Systematics to be added for year {year_tag}: {systematics}")
+    print(f"Systematics to be added for year {era}: {systematics}")
 
 if scale_signals != 1:
     style_signals_dict = {key+f" [x{scale_signals}]": style_signals_dict[key] for key in style_signals_dict}
@@ -110,15 +125,31 @@ if scale_signals != 1:
 
 
 ############### SETTINGS ############### 
-tot_lumi        = lumi_dict[year_tag] # 9.451 (2023postBPix), 17.794 (2023), 34.3 (full2022), 7.87 (2022), 59.97 (2018)
-json_file       = json_file_dict[year_tag]
-datasets        = datasets_dict[year_tag]
+tot_lumi        = lumi_dict[era + (f"_{subera}" if subera!="" else "")]
+json_file       = json_file_dict[era]
+datasets        = datasets_dict[era]
+print("Datasets to be processed: {}".format(datasets))
+if subera != "": # if subera is specified, filter the DATA datasets to include only those corresponding to the specified sub-era, e.g.: DataJetMET_2024 -> DataJetMETC_0_2024, DataJetMETC_1_2024
+    for dataset_label in datasets:
+        if "Data" in dataset_label:
+            datasets.remove(dataset_label)
+            d                   = sample_dict[dataset_label]
+            if hasattr(d, "components"):
+                s_list      = d.components
+            else:
+                s_list      = [d]
+            for c in s_list:
+                if subera in c.runP:
+                    datasets.append(c.label)
+                else:
+                    continue
+        else:
+            continue
 run2            = False
 run3            = not run2
-folder          = folder_dict[year_tag]
-folder_www      = folder_www_dict[year_tag]
-repostack       = folder+"stacks/"
-repostack_www   = folder_www+"stacks/"
+folder          = folder_dict[era]
+folder_www      = folder_www_dict[era]
+repostack_www   = folder_www + ("stacks/" if subera=="" else f"stacks_era{subera}/") 
 
 if not os.path.exists(folder):
     os.makedirs(folder, exist_ok=True)
@@ -148,15 +179,15 @@ elif isinstance(json_file, str):                # single json file, when running
         samples = json.load(file)
 
 print("Parameters setted")
-print("year_tag         = {}".format(year_tag))
+print("era+subera       = {}".format(era + (f"_{subera}" if subera!="" else "")))
 print("cut              = {}".format(cut))
 print("lumi (fb)        = {}".format(str(tot_lumi)))
-print("input datasets   = {}".format([sample_dict[d].label for d in datasets]))
+print("input datasets   = {}".format(datasets))
 print("blind            = {}".format(blind))
 
 ################# variables & regions definition --> defined in variables.py 
-print("Producing histos:  {}".format([v._name for v in vars[1:]]))
-print("Regions:           {}".format(regions.keys()))
+# print("Producing histos:  {}".format([v._name for v in vars[1:]]))
+# print("Regions:           {}".format(regions.keys()))
 
 ################### utils ###################
 def cut_string(cut):
@@ -171,10 +202,8 @@ inSample            = {"Data": [], "signal": [], "bkg": []}
 cut_tag             = cut_string(cut)
 
 for dat in datasets:
-    # if "Tprime" in dat:
-    #     continue
-    year_tag        = dat.split("_")[-1]
-    folder_tmp      = folder_dict[year_tag]
+    era             = dat.split("_")[-1]
+    folder_tmp      = folder_dict[era]
     repohisto_tmp   = folder_tmp + "plots/"
     # repohisto_tmp   = folder_tmp + "plots_rescaled_to_lumi/"
     d               = sample_dict[dat]
@@ -238,8 +267,9 @@ for v in vars:
             histo_name                          = v._name+"_"+r+"_"+"nominal"
             tmp                                 = None
             tmp                                 = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
-            year_tag                            = s.label.split("_")[-1]
-            lumi                                = lumi_dict[year_tag]
+            era                                 = s.label.split("_")[-1]
+
+            lumi                                = tot_lumi if subera else lumi_dict[era]
             if v._name == "MT_T":
                 tmp_                            = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                             = copy.deepcopy(tmp_)
@@ -269,8 +299,8 @@ for v in vars:
         for i, (f,s) in enumerate(zip(inFile["bkg"], inSample["bkg"])):
             histo_name                      = v._name+"_"+r+"_"+"nominal"
             tmp                             = copy.deepcopy(ROOT.TH1D(f.Get(histo_name)))
-            year_tag                        = s.label.split("_")[-1]
-            lumi                            = lumi_dict[year_tag]
+            era                             = s.label.split("_")[-1]
+            lumi                            = tot_lumi if subera else lumi_dict[era]
             if v._name == "MT_T":
                 tmp_                        = tmp.Rebin(len(MT_T_xbins)-1, histo_name+"_", MT_T_xbins)
                 tmp                         = copy.deepcopy(tmp_)
@@ -481,6 +511,3 @@ for v in vars:
                                                 signals_factor      = scale_signals,
                                                 systErr             = systErr
                                                 )
-
-
-print(histo_bkg_dict.keys())
