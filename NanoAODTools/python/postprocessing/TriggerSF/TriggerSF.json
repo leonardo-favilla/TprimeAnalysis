@@ -15,7 +15,7 @@
         {
           "name": "era",
           "type": "string",
-          "description": "data taking era: 2022, 2022EE, 2023, 2023BPix, 2024"
+          "description": "data taking era: 2022, 2022EE, 2023, 2023postBPix, 2024"
         },
         {
           "name": "type",
@@ -286,7 +286,7 @@
             }
           },
           {
-            "key": "2023BPix",
+            "key": "2023postBPix",
             "value": {
               "nodetype": "category",
               "input": "type",
