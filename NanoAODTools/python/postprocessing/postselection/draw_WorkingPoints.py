@@ -5,6 +5,7 @@ import loadHists
 import cmsstyle as CMS
 import sys
 import argparse
+import json
 sys.path.append('../')
 ROOT.gROOT.SetBatch()
 
@@ -14,13 +15,33 @@ parser.add_argument(        '--TopCategory',  type=str,               default='M
 args        = parser.parse_args()
 TopCand     = args.TopCategory
 era         = args.era
+outFilePath = f"./TopTagging_WorkingPoints.json"
 
+if os.path.exists(outFilePath):
+    print(f"Output file {outFilePath} exists. Loading it...")
+    with open(outFilePath, 'r') as f:
+        outDict = json.load(f)
+    if era not in outDict:
+        outDict[era]            = {}
+    if TopCand not in outDict[era]:
+        outDict[era][TopCand]   = {
+                                    "10%": None,
+                                    "5%": None
+                                }
+else:
+    print(f"Output file {outFilePath} does not exist. Will create it...")
+    outDict                 = {}
+    outDict[era]            = {}
+    outDict[era][TopCand]   = {
+                            "10%": None,
+                            "5%": None
+                        }
 
 remoteFolderPath_dict = {
-    "2022":         "",
-    "2022EE":       "",
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/run2023_March26_TaggerWorkingPoints/wp_onlyQCD/",
-    "2023postBPix": "",
+    "2022":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2022/",
+    "2022EE":       "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2022EE/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/run2023_March26_TaggerWorkingPoints/",
+    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2023postBPix/",
     "2024":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2024/"
     }
 
@@ -113,6 +134,10 @@ print(f"Working point L for nonmatched+other:                 {thr_L:.3f} @ {100
 print(f"Working point L for topmatched:                       {100*tpr_L:.1f}%")
 print(f"Working point T for nonmatched+other:                 {thr_T:.3f} @ {100*fpr_T:.1f}%")
 print(f"Working point T for topmatched:                       {100*tpr_T:.1f}%")
+outDict[era][TopCand]["10%"]    = round(thr_L, 3)
+outDict[era][TopCand]["5%"]     = round(thr_T, 3)
+with open(outFilePath, 'w') as f:
+    json.dump(outDict, f, indent=4)
 
 
 WPL_line = ROOT.TLine(thr_L, 0.0, thr_L, 1.0)

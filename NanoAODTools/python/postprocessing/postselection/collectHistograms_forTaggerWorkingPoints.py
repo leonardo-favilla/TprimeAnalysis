@@ -12,10 +12,10 @@ era    = args.era
 
 
 remoteFolderPath_dict = {
-    "2022":         "",
-    "2022EE":       "",
-    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/results/run2023_March26_TaggerWorkingPoints/",
-    "2023postBPix": "",
+    "2022":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2022/",
+    "2022EE":       "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2022EE/",
+    "2023":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/run2023_March26_TaggerWorkingPoints/",
+    "2023postBPix": "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2023postBPix/",
     "2024":         "/eos/user/l/lfavilla/RDF_DManalysis/TopTagging_WorkingPoints/2024/"
     }
 

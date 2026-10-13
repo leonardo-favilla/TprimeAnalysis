@@ -145,7 +145,9 @@ spec            = importlib.util.spec_from_file_location("variables", variables_
 variables       = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(variables)
 
-
+#### LOAD TopTagging_WorkingPoints.json ####
+with open(WorkDir+"/TopTagging_WorkingPoints.json", "r") as json_file:
+    TopTagging_WorkingPoints = json.load(json_file)
 
 if do_histos:
     print("You are producing histograms")
@@ -170,10 +172,6 @@ cut         = variables.requirements  # ---> see variables.py
 regions_def = variables.regions       # ---> see variables.py
 var         = variables.vars          # ---> variables.py
 var2d       = variables.vars2D        # ---> variables.py
-    
-Top_Resolved_wp = { "10%": 0.425, "5%": 0.625,}
-Top_Mixed_wp    = { "10%": 0.900, "5%": 0.950,}
-Top_Merged_wp   = { "10%": 0.075, "5%": 0.250,}
 
 TopSF_CorrLibFilePath_dict = {
                                 "2022":             "",
@@ -849,9 +847,14 @@ for d in datasets:
         elif s.year == 2023:
             era     = "2023"
             if s.EE==1:
-                era = "2023BPix"
+                era = "2023postBPix"
         elif s.year == 2024:
             era     = "2024"
+
+        Top_Resolved_wp = TopTagging_WorkingPoints[era]["Resolved"]
+        Top_Mixed_wp    = TopTagging_WorkingPoints[era]["Mixed"]
+        Top_Merged_wp   = TopTagging_WorkingPoints[era]["Merged"]
+
         #-------------------------------------------------------------------------
         #########################  DF initialization #############################
         #-------------------------------------------------------------------------
