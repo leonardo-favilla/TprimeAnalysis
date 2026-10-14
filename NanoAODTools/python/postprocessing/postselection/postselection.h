@@ -572,37 +572,37 @@ RVec<int> CalculateToptruth1(rvec_i TopMixed_idxJet0, rvec_i TopMixed_idxJet1, r
 // ########################################################
 // ########## PRESELECTION ################################
 // ########################################################
-int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
+int nTightElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
   }
   return n;
 }
 
-RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
+RVec<int> TightElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
 {
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=4 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
   }
   return ids;
 }
 
-int nLooseElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
+int nLooseElectron(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
   }
   return n;
 }
 
-RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80)
+RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
 {
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
@@ -612,64 +612,84 @@ RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Elec
   return ids;
 }
 
-int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
-{
-  int n=0;
-  for(int i = 0; i<Muon_pt.size(); i++)
-  {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
-  }
-  return n;
-}
-
-RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId)
-{
-  RVec<int> ids;
-  for(int i = 0; i<Muon_pt.size(); i++)
-  {
-    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
-  }
-  return ids;
-}
-
-int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
-{
-  int n=0;
-  for(int i = 0; i<Muon_pt.size(); i++)
-  {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
-  }
-  return n;
-}
-
-RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
-{
-  RVec<int> ids;
-  for(int i = 0; i<Muon_pt.size(); i++)
-  {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) ids.emplace_back(i);
-  }
-  return ids;
-}
-
-int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta, rvec_i Electron_mvaIso_WP80)
+int nVetoElectron(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
 {
   int n=0;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) n+=1;
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
   }
   return n;
 }
 
-int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId)
+RVec<int> VetoElectron_idx(rvec_f Electron_pt, rvec_f Electron_cutBased, rvec_f Electron_eta, rvec_i Electron_mvaIso_WP80, rvec_f Electron_minDeltaR_fromGoodJets)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Electron_pt.size(); i++)
+  {
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 30 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
+  }
+  return ids;
+}
+
+int nTightMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
 {
   int n=0;
   for(int i = 0; i<Muon_pt.size(); i++)
   {
-    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3) n+=1;
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
   }
   return n;
+}
+
+RVec<int> TightMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_tightId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_tightId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
+  }
+  return ids;
+}
+
+int nLooseMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
+{
+  int n=0;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
+  }
+  return n;
+}
+
+RVec<int> LooseMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 50 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
+  }
+  return ids;
+}
+
+int nVetoMuon(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
+{
+  int n=0;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) n+=1;
+  }
+  return n;
+}
+
+RVec<int> VetoMuon_idx(rvec_f Muon_pt, rvec_f Muon_eta, rvec_f Muon_looseId, rvec_i Muon_pfIsoId, rvec_f Muon_minDeltaR_fromGoodJets)
+{
+  RVec<int> ids;
+  for(int i = 0; i<Muon_pt.size(); i++)
+  {
+    if(Muon_looseId[i]==1 && Muon_pt[i] > 30 && abs(Muon_eta[i])<2.4 && Muon_pfIsoId[i]>=3 && Muon_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
+  }
+  return ids;
 }
 
 bool LepVeto(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Electron_cutBased, rvec_i Electron_mvaIso_WP80, rvec_f Muon_pt, rvec_f Muon_eta, rvec_b Muon_looseId, rvec_i Muon_pfIsoId)
@@ -1232,7 +1252,7 @@ Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i 
   else if (nTightRes<=1 && nTightMix==1 && nTightMer==0){
     return 2;
   }
-  else if ((nTightRes==0 && nTightMix<=1 && nTightMer==1) || (nTightRes==1 && nTightMix==1 && nTightMer==1)){
+  else if ((nTightRes==0 && nTightMix==0 && nTightMer==1) || (nTightRes<=1 && nTightMix==1 && nTightMer==1)){
     return 3;
   }
 
@@ -1243,7 +1263,7 @@ Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i 
   else if (nLooseRes<=1 && nLooseMix==1 && nLooseMer==0){
     return 5;
   }
-  else if ((nLooseRes==0 && nLooseMix<=1 && nLooseMer==1) || (nLooseRes==1 && nLooseMix==1 && nLooseMer==1)){
+  else if ((nLooseRes==0 && nLooseMix==0 && nLooseMer==1) || (nLooseRes<=1 && nLooseMix==1 && nLooseMer==1)){
     return 6;
   }
   else 
@@ -1279,7 +1299,7 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
     } 
     idx = ArgMax(scores);
   }
-  else if (EventTopCategory==4){
+  else if (EventTopCategory==6){
     for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
     {
       scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
@@ -1293,7 +1313,7 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
     }
     idx = ArgMax(scores); 
   }
-  else if (EventTopCategory==6){
+  else if (EventTopCategory==4){
     for(int i = 0; i < TopResolved_TopScore.size(); i++)
     {
       scores.emplace_back(TopResolved_TopScore[i]);
@@ -1339,9 +1359,9 @@ Float_t select_TopVar(Int_t EventTopCategory, Int_t Top_idx, rvec_f FatJet_pt, r
   if (EventTopCategory==1) return TopResolved_pt[Top_idx];
   else if (EventTopCategory==2) return TopMixed_pt[Top_idx];
   else if (EventTopCategory==3) return FatJet_pt[Top_idx];
-  else if (EventTopCategory==4) return FatJet_pt[Top_idx];
+  else if (EventTopCategory==4) return TopResolved_pt[Top_idx];
   else if (EventTopCategory==5) return TopMixed_pt[Top_idx];
-  else if (EventTopCategory==6) return TopResolved_pt[Top_idx];
+  else if (EventTopCategory==6) return FatJet_pt[Top_idx];
   else if (EventTopCategory==7) 
   {
     if (TopMixed_pt.size()>0) return TopMixed_pt[Top_idx];
@@ -2047,4 +2067,24 @@ float CalculateCategoryTrotaEventWeight(rvec_f TopCand_TrotaSF, rvec_i TopCand_f
   }
   
   return weight;
+}
+
+////// Calculate dR between each lepton (can be either Muon or Electron) with all good jets in the event, and return a vector of the minimum dR for each lepton
+RVec<float> MinDeltaR_Lepton_Jets(rvec_f Lepton_eta, rvec_f Lepton_phi, rvec_f Jet_eta, rvec_f Jet_phi, rvec_i GoodJet_idx)
+{
+  RVec<float> min_dR;
+  for (int i = 0; i < Lepton_eta.size(); i++)
+  {
+    float min_dR_i = 9999.0;
+    for (int j = 0; j < GoodJet_idx.size(); j++)
+    {
+      float dR_ij = deltaR(Lepton_eta[i], Lepton_phi[i], Jet_eta[GoodJet_idx[j]], Jet_phi[GoodJet_idx[j]]);
+      if (dR_ij < min_dR_i)
+      {
+        min_dR_i = dR_ij;
+      }
+    }
+    min_dR.push_back(min_dR_i);
+  }
+  return min_dR;
 }

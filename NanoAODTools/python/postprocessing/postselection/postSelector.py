@@ -88,10 +88,14 @@ except:
 branches = [
             # "PuppiMET_T1_pt_nominal", "PuppiMET_T1_phi_nominal", "MHT", 
             # "Top_mass", "Top_pt", "Top_score", "Top_isolationPtJetsdR04", "Top_isolationPtJetsdR06", "Top_isolationPtJetsdR08", "Top_isolationPtJetsdR12", "Top_isolationNJetsdR04", "Top_isolationNJetsdR06", "Top_isolationNJetsdR08", "Top_isolationNJetsdR12",
-            # "nTightElectron", "nTightMuon", "nVetoMuon", "nVetoElectron",
+            "nMuon", "nElectron",
+            "nTightElectron", "nTightMuon", "nVetoMuon", "nVetoElectron",
+            "TightElectron_idx", "VetoElectron_idx", "TightMuon_idx", "VetoMuon_idx",
+            "Electron_minDeltaR_fromGoodJets", "Muon_minDeltaR_fromGoodJets",
             # "nJetBtagLoose", "JetBTagLoose_idx", "nJetBtagMedium", "JetBTagMedium_idx",
-            "nGoodJet", "nGoodFatJet", "GoodJet_idx", "GoodFatJet_idx",
-            "Jet_jetId", 
+            "nGoodJet", "GoodJet_idx",
+            # "nGoodFatJet", "GoodFatJet_idx",
+            # "Jet_jetId", 
             # "Jet_passJetIdTight", "Jet_passJetIdTightLepVeto", "Jet_jetId_new",
             # "MT", "MT_T",
             # "EventTopCategory", "Top_idx",
@@ -122,8 +126,8 @@ branches = [
             # "TotalTrotaEventWeight",
             # "TotalTrotaEventWeightUp",
             # "TotalTrotaEventWeightDown",
-            "w_nominal", "w_nominal_woTrota", "puWeight", "SFbtag_nominal",
-            "triggerSF", "w_topPt", "NLOEW", 
+            # "w_nominal", "w_nominal_woTrota", "puWeight", "SFbtag_nominal",
+            # "triggerSF", "w_topPt", "NLOEW", 
            ]
 
 #### LOAD utils/postselection.h ####
@@ -179,7 +183,7 @@ TopSF_CorrLibFilePath_dict = {
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs/CorrLib_TrotaScaleFactors_2023.json",
                                 "2023":             "./TopSF-corrections/CorrLib_TrotaScaleFactors_2023.json",
-                                "2023BPix":         "",
+                                "2023postBPix":     "",
                                 "2024":             "",
                             }
 
@@ -331,16 +335,22 @@ def preselection(df, btagAlg, year, EE):
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
 
     df = df.Redefine("MinDelta_phi",                    "min_DeltaPhi(PuppiMET_T1_phi_nominal, Jet_phi, GoodJet_idx)")
-    df = df.Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
-           .Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
-           .Define("nLooseElectron",                    "nLooseElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
-           .Define("LooseElectron_idx",                 "LooseElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80)")\
-           .Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80)")
-    df = df.Define("nTightMuon",                        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
-           .Define("TightMuon_idx",                     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId)")\
-           .Define("nLooseMuon",                        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
-           .Define("LooseMuon_idx",                     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")\
-           .Define("nVetoMuon",                         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId)")
+    df = df.Define("Electron_minDeltaR_fromGoodJets",   "MinDeltaR_Lepton_Jets(Electron_eta, Electron_phi, Jet_eta, Jet_phi, GoodJet_idx)")\
+           .Define("nTightElectron",                    "nTightElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")\
+           .Define("TightElectron_idx",                 "TightElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")\
+           .Define("nLooseElectron",                    "nLooseElectron(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")\
+           .Define("LooseElectron_idx",                 "LooseElectron_idx(Electron_pt, Electron_eta, Electron_cutBased, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")\
+           .Define("nVetoElectron",                     "nVetoElectron(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")\
+           .Define("VetoElectron_idx",                  "VetoElectron_idx(Electron_pt, Electron_cutBased, Electron_eta, Electron_mvaIso_WP80, Electron_minDeltaR_fromGoodJets)")
+           
+    df = df.Define("Muon_minDeltaR_fromGoodJets",       "MinDeltaR_Lepton_Jets(Muon_eta, Muon_phi, Jet_eta, Jet_phi, GoodJet_idx)")\
+           .Define("nTightMuon",                        "nTightMuon(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")\
+           .Define("TightMuon_idx",                     "TightMuon_idx(Muon_pt, Muon_eta, Muon_tightId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")\
+           .Define("nLooseMuon",                        "nLooseMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")\
+           .Define("LooseMuon_idx",                     "LooseMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")\
+           .Define("nVetoMuon",                         "nVetoMuon(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")\
+           .Define("VetoMuon_idx",                      "VetoMuon_idx(Muon_pt, Muon_eta, Muon_looseId, Muon_pfIsoId, Muon_minDeltaR_fromGoodJets)")
+           
     df = df.Define("Lepton_flavour",                    "Lepton_flavour(nTightElectron, nTightMuon)").Define("Lep_pt", "Lepton_var(Lepton_flavour, Electron_pt, TightElectron_idx, Muon_pt, TightMuon_idx)").Define("Lep_phi", "Lepton_var(Lepton_flavour, Electron_phi, TightElectron_idx, Muon_phi, TightMuon_idx)")
     df = df.Define("MT",                                "sqrt(2 * Lep_pt * PuppiMET_T1_pt_nominal * (1 - cos(Lep_phi - PuppiMET_T1_phi_nominal)))")
     
@@ -488,9 +498,9 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath)
         df_NonOverlappingTopCandidates  = df_IndependentTopCandidates.Define("TopMixed_NonOverlappingTo_TopMerged_idx",                 "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMerged_Independent_idx, FatJet_eta, FatJet_phi, TopMixed_Independent_idx, TopMixed_eta, TopMixed_phi, 1.2)")\
                                                                      .Define("TopResolved_NonOverlappingTo_TopMerged_idx",              "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMerged_Independent_idx, FatJet_eta, FatJet_phi, TopResolved_Independent_idx, TopResolved_eta, TopResolved_phi, 1.2)")\
                                                                      .Define("TopResolved_NonOverlappingTo_TopMergedOrTopMixed_idx",    "TopCandidates_NonOverlapping_AcrossTopCategories_idx(TopMixed_NonOverlappingTo_TopMerged_idx, TopMixed_eta, TopMixed_phi, TopResolved_NonOverlappingTo_TopMerged_idx, TopResolved_eta, TopResolved_phi, 1.2)")\
-                                                                     .Define("TopMerged_forEvWeight_idx",                               "(EventTopCategory == 3 || EventTopCategory == 4) ? RVec<int>{ (int) Top_idx}: ROOT::VecOps::RVec<int>()")\
+                                                                     .Define("TopMerged_forEvWeight_idx",                               "(EventTopCategory == 3 || EventTopCategory == 6) ? RVec<int>{ (int) Top_idx}: ROOT::VecOps::RVec<int>()")\
                                                                      .Define("TopMixed_forEvWeight_idx",                                "(EventTopCategory == 2 || EventTopCategory == 5) ? RVec<int>{ (int) Top_idx}: ROOT::VecOps::RVec<int>()")\
-                                                                     .Define("TopResolved_forEvWeight_idx",                             "(EventTopCategory == 1 || EventTopCategory == 6) ? RVec<int>{ (int) Top_idx}: ROOT::VecOps::RVec<int>()")\
+                                                                     .Define("TopResolved_forEvWeight_idx",                             "(EventTopCategory == 1 || EventTopCategory == 4) ? RVec<int>{ (int) Top_idx}: ROOT::VecOps::RVec<int>()")\
                                                                      .Define("nTopMerged_forEvWeight",                                  "static_cast<int>(TopMerged_forEvWeight_idx.size());")\
                                                                      .Define("nTopMixed_forEvWeight",                                   "static_cast<int>(TopMixed_forEvWeight_idx.size());")\
                                                                      .Define("nTopResolved_forEvWeight",                                "static_cast<int>(TopResolved_forEvWeight_idx.size());")
