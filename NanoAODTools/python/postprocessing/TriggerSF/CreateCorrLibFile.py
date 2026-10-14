@@ -8,7 +8,7 @@ def CreateCorrectionLibfile(triggerSF):
         version=1,
         inputs=[
             cs.Variable(name="PuppiMET_pt", type="real", description="Puppi MET pt"),
-            cs.Variable(name="era", type="string", description="data taking era: 2022, 2022EE, 2023, 2023BPix, 2024"),
+            cs.Variable(name="era", type="string", description="data taking era: 2022, 2022EE, 2023, 2023postBPix, 2024"),
             cs.Variable(name="type", type="string", description="insert: sf, stat_err")
         ],
         output=cs.Variable(
@@ -76,8 +76,8 @@ SFtrigger = {
         "SF_errors": [0.02, 0.01, 0.01, 0.008, 0.007, 0.006, 0.005, 0.005, 0.003, 0.003, 0.003, 0.004]
     },
     "2024": {
-        "SF_values": [0.68945, 0.71855, 0.77743, 0.82538, 0.89126, 0.94004, 0.97226, 0.98788, 0.99729, 0.99802, 1.00101, 0.99924],
-        "SF_errors": [0.00503, 0.00413, 0.00348, 0.00294, 0.00260, 0.00224, 0.00198, 0.00182, 0.00125, 0.00133, 0.00122, 0.00115]
+        "SF_values": [0.84636, 0.80772, 0.80726, 0.82398, 0.88424, 0.93209, 0.96520, 0.98432, 0.99502, 0.99617, 1.00006, 0.99835],
+        "SF_errors": [0.00593, 0.00434, 0.00327, 0.00261, 0.00227, 0.00194, 0.00168, 0.00154, 0.00102, 0.00107, 0.00094, 0.00085]
     }
 }
 
