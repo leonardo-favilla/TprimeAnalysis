@@ -47,8 +47,8 @@ vars = []
 
 # vars.append(variable(name = "MET_pt", title= "p_{T}^{miss} [GeV]", nbins = 6, xmin = 200, xmax=800))
 # vars.append(variable(name = "MET_phi", title= "MET #phi", nbins = 6, xmin = -math.pi, xmax=math.pi))
-vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 12, xmin = 200, xmax=800))
-vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
+# vars.append(variable(name = "PuppiMET_pt", title= "p_{T}^{miss}(Puppi) [GeV]", nbins = 12, xmin = 200, xmax=800))
+# vars.append(variable(name = "PuppiMET_phi", title= "MET #phi (Puppi) [GeV]", nbins = 6, xmin = -math.pi, xmax=math.pi))
 vars.append(variable(name = "PuppiMET_T1_pt_nominal", title= "p_{T}^{miss}(Puppi) nominal [GeV]", nbins = 12, xmin = 250, xmax=850))
 vars.append(variable(name = "PuppiMET_T1_phi_nominal", title= "Puppi MET #phi nominal", nbins = 6, xmin = -math.pi, xmax=math.pi))
 
@@ -72,12 +72,14 @@ vars.append(variable(name = "LeadingFatJetPt_pt", title= "Leading FatJet p_{T} [
 # vars.append(variable(name = "nTightTopMerged",      title= "# Top Candidate Merged",    nbins = 40, xmin = -0.5, xmax=80.5))
 # vars.append(variable(name = "nTightTopMixed",       title= "# Top Candidate Mixed",     nbins = 40, xmin = -0.5, xmax=80.5))
 # vars.append(variable(name = "nTightTopResolved",    title= "# Top Candidate Resolved",  nbins = 25, xmin = -0.5, xmax=49.5))
-vars.append(variable(name = "nJet",                 title= "# Jet",                     nbins = 10, xmin = -0.5, xmax=9.5))
-vars.append(variable(name = "nFatJet",              title= "# FatJet",                  nbins = 5,  xmin = -0.5, xmax=4.5))
-vars.append(variable(name = "JetBTagScore",         title= "b-Jet Score",               nbins = 40, xmin = 0,    xmax=1, noUnOvFlowbin = True))
+vars.append(variable(name = "nJet",                 title = "# Jet",                    nbins = 10, xmin = -0.5, xmax=9.5))
+vars.append(variable(name = "nFatJet",              title = "# FatJet",                 nbins = 5,  xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "nGoodJet",             title = "# Good Jet",               nbins = 10, xmin = -0.5, xmax=9.5))
+vars.append(variable(name = "nGoodFatJet",          title = "# Good FatJet",            nbins = 5,  xmin = -0.5, xmax=4.5))
+vars.append(variable(name = "JetBTagScore",         title = "b-Jet Score",              nbins = 40, xmin = 0,    xmax=1, noUnOvFlowbin = True))
 vars.append(variable(name = "nJetBtagLoose",        title = "# b-Jet (L) ",             nbins = 5,  xmin = -0.5, xmax = 4.5))
 vars.append(variable(name = "nJetBtagMedium",       title = "# b-Jet (M)",              nbins = 5,  xmin = -0.5, xmax = 4.5))
-# vars.append(variable(name = "nJetBtagTight",        title = "# b-Jet (T)",              nbins = 5,  xmin = -0.5, xmax = 4.5))
+vars.append(variable(name = "nJetBtagTight",        title = "# b-Jet (T)",              nbins = 5,  xmin = -0.5, xmax = 4.5))
 vars.append(variable(name = "MinDelta_phi", title= "min #Delta #phi", nbins = 18, xmin = 0, xmax = math.pi))
 # vars.append(variable(name = "MaxEta_jet", title= "max #eta jet", nbins = 5, xmin = 0, xmax = 5, noUnOvFlowbin=True))
 vars.append(variable(name = "HT_eventHT", title= "event HT", nbins = 20, xmin = 0, xmax = 2000))
@@ -88,7 +90,7 @@ vars.append(variable(name = "PV_npvsGood", title= "Number of PV", nbins = 25, xm
 
 vars.append(variable(name = "TopResolved_TopScore_nominal",     title= "Top Resolved Score",    nbins = 40, xmin = 0, xmax=1, noUnOvFlowbin = True))
 vars.append(variable(name = "TopMixed_TopScore_nominal",        title= "Top Mixed Score",       nbins = 40, xmin = 0, xmax=1, noUnOvFlowbin = True))
-# vars.append(variable(name = "TopMerged_TopScore_nominal",       title= "Top Merged Score",      nbins = 40, xmin = 0, xmax=1, noUnOvFlowbin = True))
+vars.append(variable(name = "TopMerged_TopScore_nominal",       title= "Top Merged Score",      nbins = 40, xmin = 0, xmax=1, noUnOvFlowbin = True))
 
 
 vars.append(variable(name = "EventTopCategory", title= "Top Category", nbins = 7, xmin = 0.5, xmax = 7.5))
@@ -132,6 +134,13 @@ metcut = "(MET_pt>250)"
 hltmet_filters = "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60 || HLT_PFMETNoMu120_PFMHTNoMu120_IDTight)"
 hltmu_filters = "(HLT_IsoMu24)"
 ################## January 2024
+# TightMuon_Jets_minimumDistance      = "Muon_minDeltaR_fromGoodJets[TightMuon_idx[0]] >= 0.4"
+# VetoMuon_Jets_minimumDistance       = "Muon_minDeltaR_fromGoodJets[VetoMuon_idx[0]] >= 0.4"
+# TightElectron_Jets_minimumDistance  = "Electron_minDeltaR_fromGoodJets[TightElectron_idx[0]] >= 0.4"
+# VetoElectron_Jets_minimumDistance   = "Electron_minDeltaR_fromGoodJets[VetoElectron_idx[0]] >= 0.4"
+# singleLep   = "((nTightElectron == 1 && nVetoElectron == 1 && nTightMuon == 0 && nVetoMuon == 0 && " + TightElectron_Jets_minimumDistance + " && " + VetoElectron_Jets_minimumDistance + ")||(nTightElectron == 0 && nVetoElectron == 0 && nTightMuon == 1 && nVetoMuon == 1 && " + TightMuon_Jets_minimumDistance + " && " + VetoMuon_Jets_minimumDistance + "))"
+# singleMu    = "(nTightElectron == 0 && nVetoElectron == 0 && nTightMuon == 1 && nVetoMuon == 1 && " + TightMuon_Jets_minimumDistance + " && " + VetoMuon_Jets_minimumDistance + ")"
+# singleE     = "(nTightElectron == 1 && nVetoElectron == 1 && nTightMuon == 0 && nVetoMuon == 0 && " + TightElectron_Jets_minimumDistance + " && " + VetoElectron_Jets_minimumDistance + ")"
 singleLep   = "((nTightElectron == 1 && nVetoElectron == 1 && nTightMuon == 0 && nVetoMuon == 0)||(nTightElectron == 0 && nVetoElectron == 0 && nTightMuon == 1 && nVetoMuon == 1))"
 singleMu    = "(nTightElectron == 0 && nVetoElectron == 0 && nTightMuon == 1 && nVetoMuon == 1)"
 singleE     = "(nTightElectron == 1 && nVetoElectron == 1 && nTightMuon == 0 && nVetoMuon == 0)"
@@ -139,13 +148,7 @@ SRPresel    = "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron=
 
 regions = {
 
-    ################### May2024
-    "btagSFcheck"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
-
-    # "SRmhtg100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT>100",
-    # "SRmhtl100"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && MHT<100",
-    # "SRnoPU"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
-    
+    ### Signal Regions ###
     "SR"                            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
     "SR0fjets"                      : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0",
     "SRatleast1fjets"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0",
@@ -162,6 +165,7 @@ regions = {
     "SRTop0fjets"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0 && EventTopCategory>=1 && EventTopCategory<=3",
     "SRTopatleast1fjets"            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0 && EventTopCategory>=1 && EventTopCategory<=3",
 
+    ### Associated Control Regions ###
     "SRTopLoose"                    : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTop0fjetsLoose"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTopatleast1fjetsLoose"       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0 && EventTopCategory>=4 && EventTopCategory<=6",
@@ -177,52 +181,30 @@ regions = {
     
 
 
-
-    # "Presel"               : "PuppiMET_T1_pt_nominal>250",
+    ### Control Regions ###
+    "btagSFcheck"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
     "AH"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
-    # "AHResLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==4",
-    # "AHMixLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==5",
-    # "AHMerLoose"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory==6",
+    "AHBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
+    "AHBtagTight"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagTight > 0",
     "AHTight"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
     "AHLoose"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
 
     "SL"                   : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0",
-    # "SLResLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==4",
-    # "SLMixLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==5",
-    # "SLMerLoose"           : singleLep + " && nJetBtagMedium > 0 && EventTopCategory==6",
+    "SLBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0",
+    "SLBtagTight"          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagTight > 0",
     "SLTight"              : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
     "SLLoose"              : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
 
-    # # "SEl"                  : singleE   + " && nJetBtagMedium > 0",
-    # # "SMu"                  : singleMu  + " && nJetBtagMedium > 0",
-
     "AH1lWR"               : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0",
-    # "AH1lWRResLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==4",
-    # "AH1lWRMixLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==5",
-    # "AH1lWRMerLoose"       : singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory==6",
+    "AH1lWRBtagMedium"     : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
+    "AH1lWRBtagTight"      : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagTight == 0",
     "AH1lWRTight"          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=1 && EventTopCategory<=3",
     "AH1lWRLoose"          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=4 && EventTopCategory<=6",
-    # "AH1lWREl"             : singleE   + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
-    # "AH1lWRMu"             : singleMu  + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
-
+    
     "AH0lZR"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0",
-    # "AH0lZRResLoose"       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory==4",
-    # "AH0lZRMixLoose"       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory==5",
-    # "AH0lZRMerLoose"       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory==6",
+    "AH0lZRBtagMedium"     : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0",
+    "AH0lZRBtagTight"      : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagTight==0",
     "AH0lZRTight"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=1 && EventTopCategory<=3",
     "AH0lZRLoose"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=4 && EventTopCategory<=6",
 
-
-
-    # "AH0lQCDR"             : "PuppiMET_T1_pt_nominal<250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium == 0", 
-    # "NoTop"                : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==4",
-
-
-    # "PreselNoPu"           : "PuppiMET_T1_pt_nominal>250",
-    # "AHNoPu"               : "PuppiMET_T1_pt_nominal>250 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
-    # "PreselResolved"       : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==1",
-    # "PreselMixed"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==2",
-    # "PreselMerged"         : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==3",
-    # "PreselNoTop"          : "PuppiMET_T1_pt_nominal>250 && EventTopCategory==4",
-    
 }

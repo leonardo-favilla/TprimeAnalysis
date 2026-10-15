@@ -3112,63 +3112,63 @@ WJets_4Jets_2024.components  = [WJets_4Jets_1J_2024, WJets_4Jets_2J_2024,
 
 
 WJets_2jets_ENu_0J_2024            = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_ENu_0J_2024")
-WJets_2jets_ENu_0J_2024.sigma      = 55850 * BR_W_to_ev_13p6TeV
+WJets_2jets_ENu_0J_2024.sigma      = 55850 * BR_W_to_ev_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_ENu_0J_2024.year       = 2024
 WJets_2jets_ENu_0J_2024.dataset    = "/WtoENu-2Jets_Bin-0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_ENu_0J_2024.process    = "WJets_2jets_2024"
 WJets_2jets_ENu_0J_2024.EE         = 0
 
 WJets_2jets_ENu_1J_2024            = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_ENu_1J_2024")
-WJets_2jets_ENu_1J_2024.sigma      = 9177 * BR_W_to_ev_13p6TeV
+WJets_2jets_ENu_1J_2024.sigma      = 9177 * BR_W_to_ev_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_ENu_1J_2024.year       = 2024
 WJets_2jets_ENu_1J_2024.dataset    = "/WtoENu-2Jets_Bin-1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_ENu_1J_2024.process    = "WJets_2jets_2024"
 WJets_2jets_ENu_1J_2024.EE         = 0
 
 WJets_2jets_ENu_2J_2024            = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_ENu_2J_2024")
-WJets_2jets_ENu_2J_2024.sigma      = 3474 * BR_W_to_ev_13p6TeV
+WJets_2jets_ENu_2J_2024.sigma      = 3474 * BR_W_to_ev_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_ENu_2J_2024.year       = 2024
 WJets_2jets_ENu_2J_2024.dataset    = "/WtoENu-2Jets_Bin-2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_ENu_2J_2024.process    = "WJets_2jets_2024"
 WJets_2jets_ENu_2J_2024.EE         = 0
 
 WJets_2jets_MuNu_0J_2024           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_MuNu_0J_2024")
-WJets_2jets_MuNu_0J_2024.sigma     = 55920 * BR_W_to_muv_13p6TeV
+WJets_2jets_MuNu_0J_2024.sigma     = 55920 * BR_W_to_muv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_MuNu_0J_2024.year      = 2024
 WJets_2jets_MuNu_0J_2024.dataset   = "/WtoMuNu-2Jets_Bin-0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_MuNu_0J_2024.process   = "WJets_2jets_2024"
 WJets_2jets_MuNu_0J_2024.EE        = 0
 
 WJets_2jets_MuNu_1J_2024           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_MuNu_1J_2024")
-WJets_2jets_MuNu_1J_2024.sigma     = 9202 * BR_W_to_muv_13p6TeV
+WJets_2jets_MuNu_1J_2024.sigma     = 9202 * BR_W_to_muv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_MuNu_1J_2024.year      = 2024
 WJets_2jets_MuNu_1J_2024.dataset   = "/WtoMuNu-2Jets_Bin-1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_MuNu_1J_2024.process   = "WJets_2jets_2024"
 WJets_2jets_MuNu_1J_2024.EE        = 0
 
 WJets_2jets_MuNu_2J_2024           = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_MuNu_2J_2024")
-WJets_2jets_MuNu_2J_2024.sigma     = 3490 * BR_W_to_muv_13p6TeV
+WJets_2jets_MuNu_2J_2024.sigma     = 3490 * BR_W_to_muv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_MuNu_2J_2024.year      = 2024
 WJets_2jets_MuNu_2J_2024.dataset   = "/WtoMuNu-2Jets_Bin-2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_MuNu_2J_2024.process   = "WJets_2jets_2024"
 WJets_2jets_MuNu_2J_2024.EE        = 0
 
 WJets_2jets_TauNu_0J_2024          = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_TauNu_0J_2024")
-WJets_2jets_TauNu_0J_2024.sigma    = 55890 * BR_W_to_tauv_13p6TeV
+WJets_2jets_TauNu_0J_2024.sigma    = 55890 * BR_W_to_tauv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_TauNu_0J_2024.year     = 2024
 WJets_2jets_TauNu_0J_2024.dataset  = "/WtoTauNu-2Jets_Bin-0J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_TauNu_0J_2024.process  = "WJets_2jets_2024"
 WJets_2jets_TauNu_0J_2024.EE       = 0
 
 WJets_2jets_TauNu_1J_2024          = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_TauNu_1J_2024")
-WJets_2jets_TauNu_1J_2024.sigma    = 9280 * BR_W_to_tauv_13p6TeV
+WJets_2jets_TauNu_1J_2024.sigma    = 9280 * BR_W_to_tauv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_TauNu_1J_2024.year     = 2024
 WJets_2jets_TauNu_1J_2024.dataset  = "/WtoTauNu-2Jets_Bin-1J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_TauNu_1J_2024.process  = "WJets_2jets_2024"
 WJets_2jets_TauNu_1J_2024.EE       = 0
 
 WJets_2jets_TauNu_2J_2024          = sample(ROOT.kGreen-3, 1, 1001, "W + Jets", "WJets_2jets_TauNu_2J_2024")
-WJets_2jets_TauNu_2J_2024.sigma    = 3470 * BR_W_to_tauv_13p6TeV
+WJets_2jets_TauNu_2J_2024.sigma    = 3470 * BR_W_to_tauv_13p6TeV / BR_W_to_lv_13p6TeV
 WJets_2jets_TauNu_2J_2024.year     = 2024
 WJets_2jets_TauNu_2J_2024.dataset  = "/WtoTauNu-2Jets_Bin-2J_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
 WJets_2jets_TauNu_2J_2024.process  = "WJets_2jets_2024"
