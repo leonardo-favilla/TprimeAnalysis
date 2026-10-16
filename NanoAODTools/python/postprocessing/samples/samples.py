@@ -4741,3 +4741,5 @@ sample_dict = {
     "DataEGammaI_2_2024":   DataEGammaI_2_2024,
     "DataEGammaI_3_2024":   DataEGammaI_3_2024,
     }
+from PhysicsTools.NanoAODTools.postprocessing.samples.samples_TDM_signal import samples_dict_tdm_signals
+sample_dict.update(samples_dict_tdm_signals)
