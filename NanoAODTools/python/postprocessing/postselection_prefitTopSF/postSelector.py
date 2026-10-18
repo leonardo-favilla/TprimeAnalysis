@@ -31,6 +31,9 @@ parser.add_option(      '--noTopPtWeight',      dest='noTopPtWeight',       acti
 parser.add_option(      '--noSFbtag',           dest='noSFbtag',            action='store_true',    default=False,                                  help='remove b tag SF')
 parser.add_option(      '--noPuWeight',         dest='noPuWeight',          action='store_true',    default=False,                                  help='remove PU weight')
 parser.add_option(      '--tmpfold',            dest='tmpfold',             action='store_true',    default=False,                                  help='test tmp folder for out file')
+parser.add_option(      '--partsize',       dest='partsize',        type=int,    default=-1,                                  help='number of files to run for a given portion To use if you are doing the a-priori splitting option, together with firstfile  ')
+parser.add_option(      '--firstfile',       dest='firstfile',        type=int,    default=0,                                  help='fist file to run in the dataset, to use together with partsize')
+parser.add_option(      '--npart',       dest='npart',        type=int,    default=1,                                  help='part number of the dataset for the outfile, to use together with partsize')
 
 
 (opt, args)             = parser.parse_args()
@@ -54,6 +57,11 @@ muonSF_dict_file        = "muonSF_dict.json" # path to the json file containing 
 with open(muonSF_dict_file, "r") as muonSF_file:
     muonSF_dict         = json.load(muonSF_file)
 
+partsize=opt.partsize
+firstfile=opt.firstfile
+npart=opt.npart
+
+partname="" if partsize==-1 else "_part"+str(npart)
 
 if do_variations == True:
     variations          = ["nominal", "pu", "jer", "jesTotal", "pdf_total", "QCDScale", "ISR", "FSR"]
@@ -72,13 +80,14 @@ if not os.path.exists(folder):
 if not os.path.exists(repohisto):
     os.mkdir(repohisto)
 
-try:
-    f = open(repohisto+"/test.txt", "w")
-    f.write("This folder contains the output histograms from the postSelector step.\n")
-    f.close()
-    os.remove(repohisto+"/test.txt")
-except:
-    sys.exit(1)
+#This does occasionally create problems, removed it
+#try:
+#    f = open(repohisto+"/test.txt", "w")
+#    f.write("This folder contains the output histograms from the postSelector step.\n")
+#    f.close()
+#    os.remove(repohisto+"/test.txt")
+#except:
+#    sys.exit(1)
 
 
 branches = {
@@ -155,6 +164,7 @@ for in_d in in_dataset:
     if not in_d in sample_dict.keys():
         print("Check the in_dataset string... ", sample_dict.keys())
     else: 
+        print("Dataset is ", in_d, "sample is ", sample_dict[in_d])
         datasets.append(sample_dict[in_d])
 print("Datasets to process: ", [d.label for d in datasets])
 
@@ -172,17 +182,27 @@ for d in datasets:
     ntot_events[d.label]    = {}
     tchains[d.label]        = {}
     for s in samples_list:
-        nfiles              = nfiles_max
+        totfiles = (len(samples[d.label][s.label]['strings']))
+        nfiles = min(nfiles_max,totfiles)
+        nstart=0
+        nend= nfiles_max
+        if(partsize>-1):
+            nstart=firstfile 
+            nend=firstfile+partsize
+            print(" firstfile n ",nstart," lastfile n ",nend)
         for i, string in enumerate(samples[d.label][s.label]['strings']):
             # samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
             samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://xrootd-cms.infn.it/") # root://stormgf2.pi.infn.it/
-        chain[d.label][s.label] = samples[d.label][s.label]['strings'][:nfiles]
-        if not "Data" in s.label:
-            ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][:nfiles])
+        chain[d.label][s.label] = samples[d.label][s.label]['strings'][nstart:nend]
+        if not "Data" in s.label:            
+            ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][0:totfiles])#the total weight is the one of the sum of all
+            #weights, assuming all histograms will be summed together. A better solution would be to book histograms for the weights
+            #and fix it in post, when summing histos together
+            #ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][nstart:nend])
         else:
             ntot_events[d.label][s.label] = None
         print("Dataset : "+s.label)
-        print("# of files to process : ", nfiles)
+        print("# of files to process : ", nstart-nend)
         if len(chain[d.label][s.label])>1:
             print("files strings :\n  {}\n  {}\n  ... \n  {}\n  {}".format(chain[d.label][s.label][0], chain[d.label][s.label][1], chain[d.label][s.label][-2], chain[d.label][s.label][-1]))
         else:
@@ -198,6 +218,9 @@ for d in datasets:
             except:
                 ntot_events[d.label][s.label] -= samples[d.label][s.label]['ntot'][i]
                 print("Could not add file: ", f)
+                if (partsize>=-1):
+                    print("Since using the part method we are interrupting the job with an ERROR")
+                    sys.exit(1)
                 continue
         print("Number of events in the TChain: ", tchains[d.label][s.label].GetEntries())
         print("Number of total events in the TChain (MC only, if Data the number is None): ", ntot_events[d.label][s.label])
@@ -220,10 +243,14 @@ def GenTopLep(df):
 
 ################### preselection ###############
 def preselection(df, btagAlg, year, EE):
-    
-    df = df.Define("Jet_passJetIdTight",                "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)") # https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
-    df = df.Define("Jet_passJetIdTightLepVeto",         "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")
-    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_passJetIdTightLepVeto)") # richiesto passJetIdTightLepVeto==1
+    if year in [2022,2023]:
+        df = df.Define("Jet_passJetIdTight",            "Jet_passJetIdTight(Jet_eta, Jet_jetId, Jet_neHEF, Jet_neEmEF)")\
+               .Define("Jet_passJetIdTightLepVeto",     "Jet_passJetIdTightLepVeto(Jet_eta, Jet_passJetIdTight, Jet_muEF, Jet_chEmEF)")\
+               .Redefine("Jet_jetId",                   "ROOT::VecOps::RVec<int>(Jet_passJetIdTight) * 2 + ROOT::VecOps::RVec<int>(Jet_passJetIdTightLepVeto) * 4") # https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
+    elif year in [2024]:
+        df = df
+   
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_passJetIdTightLepVeto)")# richiesto passJetIdTightLepVeto==1
     df = df.Define("nGoodJet",                          "nGoodJet(GoodJet_idx)") 
     df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
@@ -517,7 +544,7 @@ def bookhisto2D(df, regions_def, var2d, s_cut):
                                     .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_1TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
     return h_
 
-def savehisto(d, dict_h, regions_def, var, s_cut, outfilePath_dict):
+def savehisto(d, dict_h, regions_def, var, s_cut, outfile_dict):
     histo = {reg: {v._name: ROOT.TH1D(v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax) for v in var} for reg in regions_def.keys()}
     isMC=True
     if "Data" in d.label: isMC = False
@@ -527,10 +554,10 @@ def savehisto(d, dict_h, regions_def, var, s_cut, outfilePath_dict):
         s_list = [d]
     
     for s in s_list:
-        outfilePath = outfilePath_dict[s.label]
-        if os.path.exists(outfilePath):
-            os.remove(outfilePath)
-        outfile     = ROOT.TFile.Open(outfilePath, "RECREATE")
+        outfile_path = outfile_dict[s.label]
+        if os.path.exists(outfile_path):
+            os.remove(outfile_path)
+        outfile     = ROOT.TFile.Open(outfile_path, "RECREATE")
         for n, vari in enumerate(variations):
             for reg in regions_def.keys():
                 for v in var:
@@ -672,7 +699,7 @@ print("starting loop on datasets: ", [d.label for d in datasets])
 print("Local time :", t0)
 # print("requirements: "+cut)
 
-outfilePath_dict            = {}
+outfile_dict            = {}
 h                           = {}
 h_2D                        = {}
 if do_variations:
@@ -704,18 +731,32 @@ for d in datasets:
         h_varied[d.label]   = {}
     for s in s_list:
         if tmpfold:
-            repohisto_tmp   = "/tmp/"+username+"/"
+            repohisto_tmp = "/tmp/"+username+"/"
             if not os.path.exists(repohisto_tmp):
                 os.makedirs(repohisto_tmp)
-            repohisto_tmp   = "/tmp/"+username+"/"+s.label+"_TrotaSF/"
+            repohisto_tmp = "/tmp/"+username+"/"+os.path.basename(os.path.normpath(hist_folder))+"_TrotaSF/"
             if not os.path.exists(repohisto_tmp):
                 os.makedirs(repohisto_tmp)
-            outfilePath     = repohisto_tmp+s.label+'.root'
+            repohisto_tmp = "/tmp/"+username+"/"+os.path.basename(os.path.normpath(hist_folder))+"_TrotaSF/"+s.label+"/"
+            if not os.path.exists(repohisto_tmp):
+                os.makedirs(repohisto_tmp)
+            outfile_path = repohisto_tmp+s.label+partname+'.root'
+            print("outfile path is: ",outfile_path)
         else:
-            outfilePath     = repohisto+s.label+'.root'
+            outfile_path = repohisto+s.label+partname+'.root'
             
-        outfilePath_dict[s.label] = outfilePath
+        outfile_dict[s.label] = outfile_path
 
+        #repohisto_tmp   = "/tmp/"+username+"/"
+        #   if not os.path.exists(repohisto_tmp):
+        #        os.makedirs(repohisto_tmp)
+        #    repohisto_tmp   = "/tmp/"+username+"/"+s.label+"_TrotaSF/"
+        #    if not os.path.exists(repohisto_tmp):
+        #        os.makedirs(repohisto_tmp)
+        #    outfile_path = repohisto_tmp+s.label+partname+'.root'
+        #    print("outfile path is: ",outfile_path)
+
+        
         print("Processing dataset: ", s.label)
         #------------------------------------------------------------------------------
         ############# Fixing variables for 2018-2022-2023 #############################
@@ -724,6 +765,9 @@ for d in datasets:
             bTagAlg = "Jet_btagDeepB"
         elif s.year in [2022,2023]:
             bTagAlg = "Jet_btagPNetB"
+        elif s.year in [2024]:
+            bTagAlg = "Jet_btagUParTAK4B"
+
         if hasattr(s,"EE"):
             EE = s.EE
         else:
@@ -739,6 +783,8 @@ for d in datasets:
             era = "2023"
             if s.EE==1:
                 era = "2023BPix"
+        elif s.year == 2024:
+            era = "2024"
         #-------------------------------------------------------------------------
         #########################  DF initialization #############################
         #-------------------------------------------------------------------------
@@ -857,9 +903,9 @@ if do_histos:
             if do_variations:
                 print(h_varied.keys())
                 # print(h_varied[d.label].keys())
-                savehisto(d, h_varied, regions_def, var, s_cut, outfilePath_dict)
+                savehisto(d, h_varied, regions_def, var, s_cut, outfile_dict)
             else:
-                savehisto(d, h, regions_def, var, s_cut, outfilePath_dict)
+                savehisto(d, h, regions_def, var, s_cut, outfile_dict)
         # if len(var2d) != 0 :
         #     savehisto2d(d, h_2D, regions_def, var2d, s_cut)
         # print(d.label + " histos saved")

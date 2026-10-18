@@ -83,7 +83,7 @@ if not os.path.exists(folder):
 if not os.path.exists(repohisto):
     os.makedirs(repohisto)
 
-#Questo crea problemi, l'ho tolto 
+#This does occasionally create problems, removed it
 #    with tempfile.NamedTemporaryFile( mode="w", prefix=f"test_{opt.datasets}", suffix=".txt", dir=repohisto) as f:
 #    f.write("This folder contains the output histograms from the postSelector step.\n")
 #except Exception as exc:
@@ -279,7 +279,7 @@ for d in datasets:
                 print("Could not add file: ", f)
                 if (partsize>=-1):
                     print("Since using the part method we are interrupting the job with an ERROR")
-                    exit 1
+                    sys.exit(1)
                 continue
         print("Number of events in the TChain: ", tchains[d.label][s.label].GetEntries())
         print("Number of total events in the TChain (MC only, if Data the number is None): ", ntot_events[d.label][s.label])
@@ -334,8 +334,7 @@ def GenTopLep(df):
            .Define("TopGenLep_idx",     "TopGenLep_genPartIdx(GenPart_pdgId, GenPart_genPartIdxMother, GenPart_genPartIdxMother_prompt, GenPart_statusFlags)")\
            .Define("TopGenLep_pt",      "TopGenLep_var(TopGenLep_idx, GenPart_pt)")\
            .Define("TopGenLep_eta",     "TopGenLep_var(TopGenLep_idx, GenPart_eta)")\
-
-    .Define("TopGenLep_phi",     "TopGenLep_var(TopGenLep_idx, GenPart_phi)")\
+           .Define("TopGenLep_phi",     "TopGenLep_var(TopGenLep_idx, GenPart_phi)")\
            .Define("TopGenLep_mass",    "TopGenLep_var(TopGenLep_idx, GenPart_mass)")
 
     return df

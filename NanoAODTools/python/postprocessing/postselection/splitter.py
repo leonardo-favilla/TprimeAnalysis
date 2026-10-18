@@ -35,7 +35,7 @@ def sampleSplitter(samplesfile, sample,dataset,njobs_per_part ):
 
     #nparts = int(totfiles/njobs_per_part)+1
     nparts = (totfiles + njobs_per_part - 1) // njobs_per_part
-    print("njobs_per_part is ",njobs_per_part," totfiles is ", totfiles," --> nparts is " , nparts)
+    print("sample is: ",sample," njobs_per_part is ",njobs_per_part," totfiles is ", totfiles," --> nparts is " , nparts)
     lenlastpart=totfiles-njobs_per_part*(nparts-1)
     print("len last part is: ", lenlastpart )
     return nparts, lenlastpart 

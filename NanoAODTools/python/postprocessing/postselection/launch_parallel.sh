@@ -24,37 +24,37 @@
 # For simplicity, it's done with bash variables here - make your scripting however you want! 
 ####################################################################################################
 
-export OPT=r
+export OPT=s
 export OUTPATH="/eos/user/o/oiorio/tDM/FrameworkTestV5/"
 export MERGEPATH="/eos/user/o/oiorio/tDM/MergedV5/"
 export CONFIGPATH="../config/config.yaml" 
 
 ### TTBar
-python3 postSelector_submitter_large.py -d TT_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 10 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --verbose 1
+python3 postSelector_submitter_large.py -d TT_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 10 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --verbose 1
 
 
 ### ZJets
-python3 postSelector_submitter_large.py -d ZJetsToNuNu_2jets_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+python3 postSelector_submitter_large.py -d ZJetsToNuNu_2jets_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
 #HT binned - careful incomplete samples at the moment
-#3 postSelector_submitter_large.py -d ZJetsToNuNu_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths "../config/config_zj.yaml" --partsize 50 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+#3 postSelector_submitter_large.py -d ZJetsToNuNu_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths "../config/config_zj.yaml" --partsize 50 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
 #WJets
-python3 postSelector_submitter_large.py -d WJets_2jets_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --verbose 1
+python3 postSelector_submitter_large.py -d WJets_2jets_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --verbose 1
 #
 #Single top TW
-python3 postSelector_submitter_large.py -d TW_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 25 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+python3 postSelector_submitter_large.py -d TW_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 25 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
 #QCD
-python3 postSelector_submitter_large.py -d QCD_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+python3 postSelector_submitter_large.py -d QCD_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
+#Data
+python3 postSelector_submitter_large.py -d DataJetMET_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
-python3 postSelector_submitter_large.py -d DataJetMET_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+python3 postSelector_submitter_large.py -d DataEGamma_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
 #
-python3 postSelector_submitter_large.py -d DataEGamma_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH 
+python3 postSelector_submitter_large.py -d DataMuon_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH
 #
-python3 postSelector_submitter_large.py -d DataMuon_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_paths $CONFIGPATH --partsize 20 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH
-#
-#
-python3 postSelector_submitter_large.py -d TBDM_s_2024,TBDM_ps_2024,TTDM_s_2024,TTDM_ps_2024,TWDM_s_2024,TWDM_ps_2024 --suffix TestParallelV3 --noSFbtag --noPuWeight --noTrotaSF --noTopPtWeight --config_path $CONFIGPATH --partsize 25 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --dict_samples_file "../samples/dict_samples_2024_tdm.json"
+#t/ttDM
+python3 postSelector_submitter_large.py -d TBDM_s_2024,TBDM_ps_2024,TTDM_s_2024,TTDM_ps_2024,TWDM_s_2024,TWDM_ps_2024 --suffix TestParallelV3 --noSFbtag --noTrotaSF --config_path $CONFIGPATH --partsize 25 -m $OPT --mergepath $MERGEPATH --outpath $OUTPATH --dict_samples_file "../samples/dict_samples_2024_tdm.json"
 #
