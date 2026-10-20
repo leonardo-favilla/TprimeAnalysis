@@ -16,15 +16,21 @@ else:
     sys.exit(1)
 
 
-usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat>"
+usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --categories_to_fit <cat1,cat2>"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
 parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, LooseButNotTight, Tight")
+parser.add_option(      "--categories_to_fit",      dest="categories_to_fit",           type=str,     default="topmatched,nonmatched",                  help="Comma separated categories whose SF is fitted, among: topmatched, nonmatched, other. The others are fixed to 1")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 TopCategory             = opt.TopCategory
 wp_cat                  = opt.wp_cat
+categories_to_plot      = ["topmatched", "nonmatched", "other"]                     # all the categories in the datacard
+categories_to_fit       = opt.categories_to_fit.split(",")                          # SFs fitted in the fit, the others are fixed to 1
+if not set(categories_to_fit) <= set(categories_to_plot):
+    print(f"Unknown categories to fit: {sorted(set(categories_to_fit) - set(categories_to_plot))}, choose among {categories_to_plot}, exiting")
+    sys.exit(1)
 region                  = f"{TopCategory}{wp_cat}"
 outputfolder            = config["TrotaScaleFactor"]["outputfolder"][TopCategory][era]
 fit_variable            = config["TrotaScaleFactor"]["fit_variable"][region]
@@ -319,7 +325,6 @@ with open(os.path.join(workspaceSubFolder, "histogram_counts.txt"), "w") as coun
 # print(outFile_dict.keys())
 # print(outputHistograms_dict.keys())
 
-categories_to_plot   = ["topmatched", "nonmatched", "other"]
 number_of_categories = len(categories_to_plot)
 print(f"Folder with datacards and workspaces: {workspaceSubFolder}")
 for ev_cat in event_categories:
@@ -378,28 +383,53 @@ with open(f"{workspaceSubFolder}/combine_script.sh", 'w') as combine_script_file
     for ev_cat in event_categories:
         combine_script_file.write(f"text2workspace.py -m 125 -P HiggsAnalysis.CombinedLimit.TagAndProbeExtended:tagAndProbe {ev_cat}.txt -o workspace_{ev_cat}.root --PO=categories={','.join(categories_to_plot)}\n")
 
+categories_frozen    = [cat for cat in categories_to_plot if cat not in categories_to_fit]
+pois_str             = ','.join(['SF_' + cat for cat in categories_to_fit])
+frozen_opts          = (
+                        f"    --setParameters {','.join(['SF_' + cat + '=1.0' for cat in categories_frozen])} \\\n"
+                        f"    --freezeParameters {','.join(['SF_' + cat for cat in categories_frozen])} \\\n"
+                        ) if categories_frozen else ""
 print(f"Printing fit script file fit_procedure.sh")
 with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
     fit_script_file.write("#!/bin/bash\n")
     fit_script_file.write("# Running the fit procedure\n")
-    fit_script_file.write("echo '[1/2] Running MultiDimFit'\n")
+    fit_script_file.write("echo '[1/3] Running MultiDimFit'\n")
     fit_script_file.write(f"cd {workspaceSubFolder}/\n")
     for ev_cat in event_categories:
         fit_script_file.write(
                                 f"combine -M MultiDimFit workspace_{ev_cat}.root \\\n"
-                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
+                                f"    --redefineSignalPOIs {pois_str} \\\n"
+                                f"{frozen_opts}"
                                 f"    --cminDefaultMinimizerStrategy 2 \\\n"
                                 f"    --robustFit 1 \\\n"
                                 f"    --name _{ev_cat}\n"
                                 )
-    fit_script_file.write("echo '[2/2] Running FitDiagnostics'\n")
+    fit_script_file.write("echo '[2/3] Running FitDiagnostics'\n")
     for ev_cat in event_categories:
         fit_script_file.write(
                                 f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
-                                f"    --redefineSignalPOIs {','.join(['SF_' + cat for cat in categories_to_plot])} \\\n"
+                                f"    --redefineSignalPOIs {pois_str} \\\n"
+                                f"{frozen_opts}"
                                 f"    --saveShapes \\\n"
                                 f"    --cminDefaultMinimizerStrategy 2 \\\n"
                                 f"    --robustFit 1 \\\n"
                                 f"    --saveWithUncertainties \\\n"
                                 f"    --name _{ev_cat}\n"
                                 )
+    fit_script_file.write("echo '[3/3] Running Impacts'\n")
+    fit_script_file.write("mkdir -p impacts\n")
+    fit_script_file.write("cd impacts/\n")
+    for ev_cat in event_categories:
+        impacts_opts = (
+                        f"-d ../workspace_{ev_cat}.root -m 125 -n _{ev_cat} \\\n"
+                        f"    --redefineSignalPOIs {pois_str} \\\n"
+                        f"{frozen_opts}"
+                        f"    --cminDefaultMinimizerStrategy 2 \\\n"
+                        f"    --robustFit 1"
+                        )
+        exclude_opts = f" \\\n    --exclude {','.join(['SF_' + cat for cat in categories_frozen])}" if categories_frozen else ""   # frozen SFs are not nuisances
+        fit_script_file.write(f"combineTool.py -M Impacts {impacts_opts} \\\n    --doInitialFit\n")
+        fit_script_file.write(f"combineTool.py -M Impacts {impacts_opts}{exclude_opts} \\\n    --doFits --parallel 50\n")
+        fit_script_file.write(f"combineTool.py -M Impacts {impacts_opts}{exclude_opts} \\\n    -o impacts_{ev_cat}.json\n")
+        for cat in categories_to_fit:
+            fit_script_file.write(f"plotImpacts.py -i impacts_{ev_cat}.json -o impacts_{ev_cat}_SF_{cat} --POI SF_{cat} --summary\n")
