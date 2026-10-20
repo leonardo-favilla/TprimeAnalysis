@@ -11,24 +11,24 @@ class JetVetoMaps_run3(Module):
         if year == 2022:
             if EE:
                 eratag          = "Run3-22EFGSep23-Summer22EE-NanoAODv12"
-                self.CorrVersion= "2025-10-07"
+                self.CorrVersion= "2026-06-05"
                 self.map_name   = "Summer22EE_23Sep2023_RunEFG_V1"
             else:
                 eratag          = "Run3-22CDSep23-Summer22-NanoAODv12"
-                self.CorrVersion = "2025-09-23"
+                self.CorrVersion = "2026-06-05"
                 self.map_name   = "Summer22_23Sep2023_RunCD_V1"
         elif year == 2023:
             if EE:
                 eratag          = "Run3-23DSep23-Summer23BPix-NanoAODv12"
-                self.CorrVersion= "2025-10-07"
+                self.CorrVersion= "2026-07-15"
                 self.map_name   = "Summer23BPixPrompt23_RunD_V1"
             else:
                 eratag          = "Run3-23CSep23-Summer23-NanoAODv12"
-                self.CorrVersion= "2025-10-07"
+                self.CorrVersion= "2026-07-15"
                 self.map_name   = "Summer23Prompt23_RunC_V1"
         elif year == 2024:
             eratag              = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15"
-            self.CorrVersion    = "2026-06-05"
+            self.CorrVersion    = "2026-06-05" # 2026-07-16
             self.map_name       = "Summer24Prompt24_RunBCDEFGHI_V1"
         else:
             print("Please specify the correct era tag for the JetVetoMaps. Possible choices are 2022_Summer22 - 2022_Summer22EE - 2023_Summer23 - 2023_Summer23BPix.")

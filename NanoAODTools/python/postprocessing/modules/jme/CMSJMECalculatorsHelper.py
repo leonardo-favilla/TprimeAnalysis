@@ -15,69 +15,69 @@ cvmfsPOGpath = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/"
 
 versiontag = {
     "2018"      :   "2018_UL",
-    "2022"      :   "Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23",
-    "2022EE"    :   "Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07",
-    "2023"      :   "Run3-23CSep23-Summer23-NanoAODv12/2025-10-07",
-    "2023BPix"  :   "Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07",
-    "2024"      :   "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-06-05",
+    "2022"      :   "Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05",
+    "2022EE"    :   "Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05",
+    "2023"      :   "Run3-23CSep23-Summer23-NanoAODv12/2026-07-15",
+    "2023BPix"  :   "Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15",
+    "2024"      :   "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-06-05", # 2026-07-16
 }
 jestag = {
     "MC":{
         'AK8PFPuppi':{
             '2018'      : 'Summer19UL18_V5_MC',
-            '2022'      : 'Summer22_22Sep2023_V3_MC',
-            '2022EE'    : 'Summer22EE_22Sep2023_V3_MC',
-            '2023'      : 'Summer23Prompt23_V2_MC', 
-            '2023BPix'  : 'Summer23BPixPrompt23_V3_MC',
-            '2024'      : 'Summer24Prompt24_V3_MC',
+            '2022'      : 'Summer22_22Sep2023_V4_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_V4_MC',
+            '2023'      : 'Summer23Prompt23_V4_MC',
+            '2023BPix'  : 'Summer23BPixPrompt23_V4_MC',
+            '2024'      : 'Summer24Prompt24_V3_MC', # Summer24Prompt24_V5_MC
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_V5_MC',
-            '2022'      : 'Summer22_22Sep2023_V3_MC',
-            '2022EE'    : 'Summer22EE_22Sep2023_V3_MC',
-            '2023'      : 'Summer23Prompt23_V2_MC',
-            '2023BPix'  : 'Summer23BPixPrompt23_V3_MC',
-            '2024'      : 'Summer24Prompt24_V3_MC',
+            '2022'      : 'Summer22_22Sep2023_V4_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_V4_MC',
+            '2023'      : 'Summer23Prompt23_V4_MC',
+            '2023BPix'  : 'Summer23BPixPrompt23_V4_MC',
+            '2024'      : 'Summer24Prompt24_V3_MC', # Summer24Prompt24_V5_MC
         }
     },
     "DATA":{
         'AK8PFPuppi':{
             '2018'          : 'Summer19UL18_V5_DATA',
-            '2022'          : 'Summer22_22Sep2023_RunCD_V3_DATA',
-            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V3_DATA',
-            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V3_DATA',
-            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V3_DATA',
-            '2023_C1'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C2'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C3'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C4'       : 'Summer23Prompt23_V2_DATA',
-            '2023BPix_D'    : 'Summer23BPixPrompt23_V3_DATA',
-            '2024_C'          : 'Summer24Prompt24_V3_DATA',
-            '2024_D'          : 'Summer24Prompt24_V3_DATA',
-            '2024_E'          : 'Summer24Prompt24_V3_DATA',
-            '2024_F'          : 'Summer24Prompt24_V3_DATA',
-            '2024_G'          : 'Summer24Prompt24_V3_DATA',
-            '2024_H'          : 'Summer24Prompt24_V3_DATA',
-            '2024_I'          : 'Summer24Prompt24_V3_DATA',
+            '2022'          : 'Summer22_22Sep2023_V4_DATA',
+            '2022EE_E'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2022EE_F'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2022EE_G'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2023_C1'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C2'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C3'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C4'       : 'Summer23Prompt23_V4_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_V4_DATA',
+            '2024_C'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_D'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_E'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_F'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_G'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_H'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_I'          : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
         },
         'AK4PFPuppi':{
             '2018'          : 'Summer19UL18_V5_DATA',
-            '2022'          : 'Summer22_22Sep2023_RunCD_V3_DATA',
-            '2022EE_E'      : 'Summer22EE_22Sep2023_RunE_V3_DATA',
-            '2022EE_F'      : 'Summer22EE_22Sep2023_RunF_V3_DATA',
-            '2022EE_G'      : 'Summer22EE_22Sep2023_RunG_V3_DATA',
-            '2023_C1'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C2'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C3'       : 'Summer23Prompt23_V2_DATA',
-            '2023_C4'       : 'Summer23Prompt23_V2_DATA',
-            '2023BPix_D'    : 'Summer23BPixPrompt23_V3_DATA',
-            '2024_C'        : 'Summer24Prompt24_V3_DATA',
-            '2024_D'        : 'Summer24Prompt24_V3_DATA',
-            '2024_E'        : 'Summer24Prompt24_V3_DATA',
-            '2024_F'        : 'Summer24Prompt24_V3_DATA',
-            '2024_G'        : 'Summer24Prompt24_V3_DATA',
-            '2024_H'        : 'Summer24Prompt24_V3_DATA',
-            '2024_I'        : 'Summer24Prompt24_V3_DATA',
+            '2022'          : 'Summer22_22Sep2023_V4_DATA',
+            '2022EE_E'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2022EE_F'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2022EE_G'      : 'Summer22EE_22Sep2023_V4_DATA',
+            '2023_C1'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C2'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C3'       : 'Summer23Prompt23_V4_DATA',
+            '2023_C4'       : 'Summer23Prompt23_V4_DATA',
+            '2023BPix_D'    : 'Summer23BPixPrompt23_V4_DATA',
+            '2024_C'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_D'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_E'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_F'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_G'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_H'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
+            '2024_I'        : 'Summer24Prompt24_V3_DATA', # Summer24Prompt24_V5_DATA
         }
     }
 }
@@ -85,19 +85,19 @@ jertag = {
     "MC":{
         'AK8PFPuppi':{
             '2018'      : 'Summer19UL18_JRV2_MC',
-            '2022'      : 'Summer22_22Sep2023_JRV1_MC', 
-            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC',
-            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', 
-            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC',
-            '2024'      : 'Summer24Prompt24_JRV1_MC',
+            '2022'      : 'Summer22_22Sep2023_JRV2_MC', 
+            '2022EE'    : 'Summer22EE_22Sep2023_JRV2_MC',
+            '2023'      : 'Summer23Prompt23_RunCv1234_JRV3_MC', 
+            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV3_MC',
+            '2024'      : 'Summer24Prompt24_JRV1_MC', # Summer24Prompt24_JRV2_MC
         },
         'AK4PFPuppi':{
             '2018'      : 'Summer19UL18_JRV2_MC',
-            '2022'      : 'Summer22_22Sep2023_JRV1_MC',
-            '2022EE'    : 'Summer22EE_22Sep2023_JRV1_MC',
-            '2023'      : 'Summer23Prompt23_RunCv1234_JRV1_MC', 
-            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV1_MC',
-            '2024'      : 'Summer24Prompt24_JRV1_MC',
+            '2022'      : 'Summer22_22Sep2023_JRV2_MC',
+            '2022EE'    : 'Summer22EE_22Sep2023_JRV2_MC',
+            '2023'      : 'Summer23Prompt23_RunCv1234_JRV3_MC', 
+            '2023BPix'  : 'Summer23BPixPrompt23_RunD_JRV3_MC',
+            '2024'      : 'Summer24Prompt24_JRV1_MC', # Summer24Prompt24_JRV2_MC
         }
     }
 }
