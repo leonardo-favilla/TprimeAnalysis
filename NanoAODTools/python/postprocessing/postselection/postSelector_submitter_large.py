@@ -58,7 +58,7 @@ if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h")):
 
 config = {}
 config_p = os.environ.get('PWD')+'/../config/config.yaml'
-config_p = os.environ.get('PWD')+'/../config/config_tdm.yaml'
+# config_p = os.environ.get('PWD')+'/../config/config_tdm.yaml'
 
 config_paths = os.environ.get('PWD')+f"/{opt.config_paths}" if opt.config_paths is not None else config_p 
 
