@@ -9,9 +9,9 @@ import numpy as np
 import math
 import shutil
 from datetime import datetime
+import importlib.util
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 # from PhysicsTools.NanoAODTools.postprocessing.variables import *
-from PhysicsTools.NanoAODTools.postprocessing.postselection_prefitTopSF.variables import *
 sys.path.append('../')
 
 username = str(os.environ.get('USER'))
@@ -24,7 +24,7 @@ parser                  = optparse.OptionParser(usage)
 parser.add_option('-d', '--datasets',           dest='datasets',            type=str,               default="QCD_2023",                             help='Datasets to process, in the form: QCD_2023,TT_2023...')
 parser.add_option(      '--dict_samples_file',  dest='dict_samples_file',   type=str,               default="../samples/dict_samples_2023.json",    help='Path to the JSON file containing the sample definitions')
 parser.add_option(      '--hist_folder',        dest='hist_folder',         type=str,               default="",                                     help='Folder where to save the histograms')
-parser.add_option(      '--TopCategory',        dest='TopCategory',         type=str,               default="Mixed",                                help='Top category for the histograms: Resolved, Mixed or Merged')
+parser.add_option(      '--varfile',            dest='varfile',             type=str,               default="../variables_TopSF_Mixed.py",          help='Path to the variable file, e.g. ../variables_TopSF_Resolved.py, ../variables_TopSF_Mixed.py, ../variables_TopSF_Merged.py')
 parser.add_option(      '--syst',              dest='syst',                action='store_true',    default=False,                                  help='calculate jerc')
 parser.add_option(      '--nfiles_max',         dest='nfiles_max',          type=int,               default=1,                                      help='Max number of files to process per sample')
 parser.add_option(      '--noTopPtWeight',      dest='noTopPtWeight',       action='store_true',    default=False,                                  help='remove top pt weight')
@@ -38,7 +38,7 @@ parser.add_option(      '--npart',       dest='npart',        type=int,    defau
 
 (opt, args)             = parser.parse_args()
 in_dataset              = opt.datasets.split(",")
-TopCategory             = opt.TopCategory
+varfile                 = opt.varfile
 nfiles_max              = opt.nfiles_max
 do_variations           = opt.syst
 noTopPtWeight           = opt.noTopPtWeight
@@ -125,6 +125,13 @@ my_initialization_function()
 with open(dict_samples_file, "rb") as sample_file:
     samples = json.load(sample_file)
 
+#### LOAD variables.py ####
+variables_path  = os.path.abspath(varfile)
+print(f"Loading variables and regions from {variables_path}")
+spec            = importlib.util.spec_from_file_location("variables", variables_path)
+variables       = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(variables)
+
 
 
 
@@ -148,10 +155,10 @@ elif do_snapshot:
 
 
 
-cut         = requirements  # ---> see variables.py
-regions_def = regions[TopCategory]       # ---> see variables.py
-var         = vars          # ---> variables.py
-var2d       = vars2D        # ---> variables.py
+cut         = variables.requirements  # ---> see varfile
+regions_def = variables.regions       # ---> see varfile
+var         = variables.vars          # ---> see varfile
+var2d       = variables.vars2D        # ---> see varfile
 
 print("Regions to book: ")
 for r in regions_def.keys():
@@ -409,7 +416,13 @@ def select_top(df, isMC, year):
                                     .Define("BestTopMerged_eta",        "FatJet_eta[BestTopMerged_idx]")\
                                     .Define("BestTopMerged_phi",        "FatJet_phi[BestTopMerged_idx]")\
                                     .Define("BestTopMerged_mass",       "FatJet_mass_nominal[BestTopMerged_idx]")\
-                                    .Define("BestTopMerged_score",      "TopMerged_TopScore_nominal[BestTopMerged_idx]")
+                                    .Define("BestTopMerged_score",      "TopMerged_TopScore_nominal[BestTopMerged_idx]")\
+                                    .Define("BestTopResolved_passLoose",    f"BestTopResolved_score>={Top_Resolved_wp['10%']}")\
+                                    .Define("BestTopResolved_passTight",    f"BestTopResolved_score>={Top_Resolved_wp['5%']}")\
+                                    .Define("BestTopMixed_passLoose",       f"BestTopMixed_score>={Top_Mixed_wp['10%']}")\
+                                    .Define("BestTopMixed_passTight",       f"BestTopMixed_score>={Top_Mixed_wp['5%']}")\
+                                    .Define("BestTopMerged_passLoose",      f"BestTopMerged_score>={Top_Merged_wp['10%']}")\
+                                    .Define("BestTopMerged_passTight",      f"BestTopMerged_score>={Top_Merged_wp['5%']}")
 
     if isMC:
         df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2)")\

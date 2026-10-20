@@ -56,6 +56,7 @@ cut             = variables.requirements  # ---> see variables.py
 regions         = variables.regions       # ---> see variables.py
 vars            = variables.vars          # ---> variables.py
 var2d           = variables.vars2D        # ---> variables.py
+plot_logy       = getattr(variables, "plot_logy", True)  # optional in variables.py, False for linear y-axis
 
 
 
@@ -413,7 +414,9 @@ for v in vars:
         ###############################
 
         ##### Drawing Options ######
-        if v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
+        if not plot_logy:
+            logy    = False
+        elif v._name in ["LeadingFatJetPt_msoftdrop", "FatJet_msoftdrop_nominal"]:
             # logy    = False
             logy    = False
         elif "SR" in r:

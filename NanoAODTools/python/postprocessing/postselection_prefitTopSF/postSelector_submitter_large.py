@@ -12,9 +12,10 @@ from pathlib import Path
 sys.path.append('../')
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag"
+usage               = "python3 postSelector_submitter_large.py -d dataset_name --TopCategory Mixed --syst --dryrun --noSFbtag"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
+parser.add_option(      '--TopCategory',            dest='TopCategory',         type=str,               default = "Mixed",                                      help='Top category for the histograms: Resolved, Mixed or Merged')
 # parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
@@ -38,6 +39,7 @@ parser.add_option(      '--setupFile',           dest='setupFile',        type=s
 
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
+TopCategory         = opt.TopCategory
 syst                = opt.syst
 dryrun              = opt.dryrun
 nfiles_max          = 10000
@@ -48,7 +50,7 @@ noTopPtWeight       = opt.noTopPtWeight
 noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
 njobs_per_part      = opt.partsize
-suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
+suffix              = f"_{TopCategory}" + (f"_{opt.suffix}" if opt.suffix is not None else "")
 mode = opt.mode
 verb = opt.verbose
 
@@ -58,7 +60,6 @@ if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h")):
 
 config = {}
 config_p = os.environ.get('PWD')+'/../config/config.yaml'
-config_p = os.environ.get('PWD')+'/../config/config_tdm.yaml'
 
 config_paths = os.environ.get('PWD')+f"/{opt.config_paths}" if opt.config_paths is not None else config_p 
 
@@ -102,7 +103,7 @@ with open(dict_samples_file, "rb") as sample_file:
 # if noTrotaSF:
 #     suffix    += "_noTrotaSF"
 
-outFolder_path      = config["outputfolder"]["postselector_results"][period] if opt.outpath=="" else opt.outpath
+outFolder_path      = config["TrotaScaleFactor"]["outputfolder"][TopCategory][period] if opt.outpath=="" else opt.outpath
 mergeFolder_path = outFolder_path if opt.mergepath=="" else opt.mergepath
 print("outfolder path: ",outFolder_path)
 username        = str(os.environ.get('USER'))
@@ -143,6 +144,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     pycommand = (
         "python3 postSelector.py "
         + f"-d {dataset} "
+        + f"--varfile ../variables_TopSF_{TopCategory}.py "
         + f"--dict_samples_file {dict_samples_file} "
         + f"--hist_folder {hist_folder} "
         + f"--nfiles_max {nfiles_max} "
