@@ -22,7 +22,6 @@ parser.add_option(      '--dryrun',                 dest='dryrun',              
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
-parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
 
 parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root)  ')
@@ -47,7 +46,6 @@ nfiles_max          = 10000
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
 noTopPtWeight       = opt.noTopPtWeight
-noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
 njobs_per_part      = opt.partsize
 suffix              = f"_{TopCategory}" + (f"_{opt.suffix}" if opt.suffix is not None else "")
@@ -100,8 +98,6 @@ with open(dict_samples_file, "rb") as sample_file:
 #     suffix    += "_noPuWeight"
 # if noTopPtWeight:
 #     suffix    += "_noTopPtWeight"
-# if noTrotaSF:
-#     suffix    += "_noTrotaSF"
 
 outFolder_path      = config["TrotaScaleFactor"]["outputfolder"][TopCategory][period] if opt.outpath=="" else opt.outpath
 mergeFolder_path = outFolder_path if opt.mergepath=="" else opt.mergepath
@@ -162,8 +158,6 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --noPuWeight"
     if noTopPtWeight:
         pycommand += " --noTopPtWeight"
-    if noTrotaSF:
-        pycommand += " --noTrotaSF"
     if printcutflow:
         pycommand += " --printcutflow"
 
@@ -282,8 +276,6 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     #     pycommand += " --noPuWeight"
     # if noTopPtWeight:
     #     pycommand += " --noTopPtWeight"
-    # if noTrotaSF:
-    #     pycommand += " --noTrotaSF"
     # if printcutflow:
     #     pycommand += " --printcutflow"
 
