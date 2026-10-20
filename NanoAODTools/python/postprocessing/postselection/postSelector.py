@@ -849,8 +849,9 @@ for d in datasets:
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
-        if os.path.exists(repohisto+s.label+'.root'):
-            os.remove(repohisto+s.label+'.root')
+        # remove only this job's own output (not the merged plots/<label>.root when running a part)
+        if os.path.exists(outfile_dict[s.label]):
+            os.remove(outfile_dict[s.label])
         print("Processing dataset: ", s.label)
         sample_process      = s.process.split("_")[0] if hasattr(s, "process") else s.label.split("_")[0]
         #------------------------------------------------------------------------------

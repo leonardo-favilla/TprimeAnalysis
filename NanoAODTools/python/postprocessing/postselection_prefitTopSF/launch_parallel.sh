@@ -10,6 +10,8 @@
 # NOTA BENE: there are two paths :
 # --mergepath is for MERGED files, i.e. the TRUE FOLDER you will use for plots 
 # --outpath is the path for SPLIT files, i.e. you DO NOT have to use it for plots
+# Split outputs (<sample>_partN.root) are saved in $OUTPATH/parts/, while -m h writes the merged
+# files in $MERGEPATH/plots/ (samples with a single part are written directly in $OUTPATH/plots/)
 #
 ### ==> Sequence of operations:
 # first run it with -s, then with -r to resubmit failed jobs (usually after a few minutes the jobs that had to fail will fail

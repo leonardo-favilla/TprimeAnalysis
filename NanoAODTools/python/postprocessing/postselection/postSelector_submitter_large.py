@@ -24,12 +24,12 @@ parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       
 parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
 
-parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms  ')
+parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root)  ')
 
 parser.add_option('--config_paths', dest='config_paths', type=str, default = None, help='config file path ')
 parser.add_option('--dict_samples_file', dest='dict_samples_file', type=str, default = None, help='samples file path - will override the one in the config ')
 parser.add_option('--suffix', dest='suffix', type=str,               default = None, help='suffix to add to condor folder name')
-parser.add_option('--partsize', dest='partsize',type=int,    default=-1, help='size of the dataset portion to get. To use if you are doing the a-priori splitting option, together with npart ')
+parser.add_option('--partsize', dest='partsize',type=int,    default=-1, help='size of the dataset portion to get. To use if you are doing the a-priori splitting option, together with npart. Split outputs are saved in <outpath>/parts/ ')
 parser.add_option(      '--mergepath',           dest='mergepath',        type=str,    default = "",       help='path where you want to merge histograms, if different from output folder  ')
 
 parser.add_option(      '--outpath',           dest='outpath',        type=str,    default = "",       help='path where you want to output histograms, if different from  path of the config file  ')
@@ -137,7 +137,9 @@ def sub_writer(run_folder, log_folder, dataset, suffix):
 def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_max, syst=False, parts="",filesuffix=""):
     runner_path = run_folder + "runner.sh"
     run_label   = os.path.basename(os.path.normpath(hist_folder))
-    dest_dir    = hist_folder.rstrip("/") + "/plots"
+    # split jobs (filesuffix="_partN") go to parts/, merged into plots/ with -m h
+    dest_subdir = "parts" if filesuffix else "plots"
+    dest_dir    = hist_folder.rstrip("/") + "/" + dest_subdir
     base_tmp    = "/tmp/" + username
 
     pycommand = (
@@ -373,13 +375,19 @@ for d in dss:
         nsplit,lastpartsize = sampleSplitter(samplesfile,sample.label,dat,njobs_per_part) 
         if mode == "h":
             if nsplit>1:
-                hcommand = histoMergeWriter(outFolder_path+"/plots", mergeFolder_path+"/plots", sample.label)
+                hcommand = histoMergeWriter(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label)
                 print (" histomerge command is \n", hcommand)
                 if not dryrun:
                     os.system(hcommand)
                     time.sleep(3)
                     continue
             if nsplit==1:
+                if os.path.normpath(outFolder_path) == os.path.normpath(mergeFolder_path):
+                    print (" "+sample.label+" was not split, output already in "+outFolder_path+"/plots/ - nothing to do")
+                    continue
+                if not dryrun and not os.path.exists(mergeFolder_path+"/plots"):
+                    print (" warning, merge path: "+mergeFolder_path+"/plots did not exist at time of copying histos, creating it on the fly.")
+                    os.makedirs(mergeFolder_path+"/plots")
                 cpcommand= "cp "+outFolder_path+"/plots/"+sample.label+".root " + mergeFolder_path+"/plots/"+sample.label+".root"
                 print (" histomerge copy command is \n", cpcommand)
                 if not dryrun:
