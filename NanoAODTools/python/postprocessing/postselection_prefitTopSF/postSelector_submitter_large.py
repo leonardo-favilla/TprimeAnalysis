@@ -12,24 +12,24 @@ from pathlib import Path
 sys.path.append('../')
 
 
-usage               = "python3 postSelector_submitter.py -d dataset_name --syst --dryrun --noSFbtag"
+usage               = "python3 postSelector_submitter_large.py -d dataset_name --TopCategory Mixed --syst --dryrun --noSFbtag"
 parser              = optparse.OptionParser(usage)
 parser.add_option("-d", "--dat",                    dest="dat",                 type=str,                                                                       help="Please enter a dataset name")
+parser.add_option(      '--TopCategory',            dest='TopCategory',         type=str,               default = "Mixed",                                      help='Top category for the histograms: Resolved, Mixed or Merged')
 # parser.add_option(      '--period',                 dest='period',              type=str,               default = "2023",                                       help='era you are running: 2022, 2022EE, 2023 or 2023postBPix')
 parser.add_option(      '--syst',                   dest='syst',                action='store_true',    default = False,                                        help='calculate jerc')
 parser.add_option(      '--dryrun',                 dest='dryrun',              action='store_true',    default = False,                                        help='dryrun')
 parser.add_option(      '--noSFbtag',               dest='noSFbtag',            action='store_true',    default = False,                                        help='remove b tag SF')
 parser.add_option(      '--noPuWeight',             dest='noPuWeight',          action='store_true',    default = False,                                        help='remove PU weight')
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
-parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
 
-parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms  ')
+parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root)  ')
 
 parser.add_option('--config_paths', dest='config_paths', type=str, default = None, help='config file path ')
 parser.add_option('--dict_samples_file', dest='dict_samples_file', type=str, default = None, help='samples file path - will override the one in the config ')
 parser.add_option('--suffix', dest='suffix', type=str,               default = None, help='suffix to add to condor folder name')
-parser.add_option('--partsize', dest='partsize',type=int,    default=-1, help='size of the dataset portion to get. To use if you are doing the a-priori splitting option, together with npart ')
+parser.add_option('--partsize', dest='partsize',type=int,    default=-1, help='size of the dataset portion to get. To use if you are doing the a-priori splitting option, together with npart. Split outputs are saved in <outpath>/parts/ ')
 parser.add_option(      '--mergepath',           dest='mergepath',        type=str,    default = "",       help='path where you want to merge histograms, if different from output folder  ')
 
 parser.add_option(      '--outpath',           dest='outpath',        type=str,    default = "",       help='path where you want to output histograms, if different from  path of the config file  ')
@@ -38,6 +38,7 @@ parser.add_option(      '--setupFile',           dest='setupFile',        type=s
 
 (opt, args)         = parser.parse_args()
 dataset_to_run      = opt.dat
+TopCategory         = opt.TopCategory
 syst                = opt.syst
 dryrun              = opt.dryrun
 nfiles_max          = 10000
@@ -45,10 +46,9 @@ nfiles_max          = 10000
 noSFbtag            = opt.noSFbtag
 noPuWeight          = opt.noPuWeight
 noTopPtWeight       = opt.noTopPtWeight
-noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
 njobs_per_part      = opt.partsize
-suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
+suffix              = f"_{TopCategory}" + (f"_{opt.suffix}" if opt.suffix is not None else "")
 mode = opt.mode
 verb = opt.verbose
 
@@ -58,7 +58,6 @@ if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h")):
 
 config = {}
 config_p = os.environ.get('PWD')+'/../config/config.yaml'
-config_p = os.environ.get('PWD')+'/../config/config_tdm.yaml'
 
 config_paths = os.environ.get('PWD')+f"/{opt.config_paths}" if opt.config_paths is not None else config_p 
 
@@ -99,10 +98,8 @@ with open(dict_samples_file, "rb") as sample_file:
 #     suffix    += "_noPuWeight"
 # if noTopPtWeight:
 #     suffix    += "_noTopPtWeight"
-# if noTrotaSF:
-#     suffix    += "_noTrotaSF"
 
-outFolder_path      = config["outputfolder"]["postselector_results"][period] if opt.outpath=="" else opt.outpath
+outFolder_path      = config["TrotaScaleFactor"]["outputfolder"][TopCategory][period] if opt.outpath=="" else opt.outpath
 mergeFolder_path = outFolder_path if opt.mergepath=="" else opt.mergepath
 print("outfolder path: ",outFolder_path)
 username        = str(os.environ.get('USER'))
@@ -137,12 +134,15 @@ def sub_writer(run_folder, log_folder, dataset, suffix):
 def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_max, syst=False, parts="",filesuffix=""):
     runner_path = run_folder + "runner.sh"
     run_label   = os.path.basename(os.path.normpath(hist_folder))
-    dest_dir    = hist_folder.rstrip("/") + "/plots"
+    # split jobs (filesuffix="_partN") go to parts/, merged into plots/ with -m h
+    dest_subdir = "parts" if filesuffix else "plots"
+    dest_dir    = hist_folder.rstrip("/") + "/" + dest_subdir
     base_tmp    = "/tmp/" + username
 
     pycommand = (
         "python3 postSelector.py "
         + f"-d {dataset} "
+        + f"--varfile ../variables_TopSF_{TopCategory}.py "
         + f"--dict_samples_file {dict_samples_file} "
         + f"--hist_folder {hist_folder} "
         + f"--nfiles_max {nfiles_max} "
@@ -158,8 +158,6 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         pycommand += " --noPuWeight"
     if noTopPtWeight:
         pycommand += " --noTopPtWeight"
-    if noTrotaSF:
-        pycommand += " --noTrotaSF"
     if printcutflow:
         pycommand += " --printcutflow"
 
@@ -244,13 +242,35 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         # Copy output
         # ------------------------------------------------------------
 
+        # cp on the EOS fuse mount can return 0 (and ls show the full size from the local cache)
+        # while the file on the server is truncated: check the size seen by the server with xrdfs.
+        # A previous truncated copy can be left with incomplete replicas, which EOS refuses to extend
+        # ("Read-only file system"): remove it before copying, so that a new file is created
         f.write('echo "Copying output to ${destdir}"\n')
-        f.write('cp "${outfile}" "${destdir}/"\n')
-        f.write("cp_status=$?\n\n")
+        f.write('local_size=$(stat -c %s "${outfile}")\n')
+        f.write('remote_file="${destdir}/$(basename "${outfile}")"\n')
+        f.write("copy_ok=0\n")
+        f.write("for attempt in 1 2 3; do\n")
+        f.write('    rm -f "${remote_file}"\n')
+        f.write('    if ! cp "${outfile}" "${destdir}/"; then\n')
+        f.write('        echo "cp failed (attempt ${attempt})" >&2\n')
+        f.write("        sleep 30\n")
+        f.write("        continue\n")
+        f.write("    fi\n")
+        f.write("    for check in 1 2 3 4 5 6; do\n")
+        f.write('        remote_size=$(xrdfs eosuser.cern.ch stat "${remote_file}" 2>/dev/null | awk \'/^Size:/{print $2}\')\n')
+        f.write('        echo "attempt ${attempt}, check ${check}: local size ${local_size}, EOS size ${remote_size}"\n')
+        f.write('        if [ "${remote_size}" = "${local_size}" ]; then\n')
+        f.write("            copy_ok=1\n")
+        f.write("            break 2\n")
+        f.write("        fi\n")
+        f.write("        sleep 10\n")
+        f.write("    done\n")
+        f.write("done\n\n")
 
-        f.write('if [ "${cp_status}" -ne 0 ]; then\n')
-        f.write('    echo "ERROR: failed to copy output to ${destdir}" >&2\n')
-        f.write('    exit "${cp_status}"\n')
+        f.write('if [ "${copy_ok}" -ne 1 ]; then\n')
+        f.write('    echo "ERROR: failed to copy output to ${destdir} (size on EOS does not match the local file)" >&2\n')
+        f.write("    exit 1\n")
         f.write("fi\n\n")
 
         # ------------------------------------------------------------
@@ -278,8 +298,6 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     #     pycommand += " --noPuWeight"
     # if noTopPtWeight:
     #     pycommand += " --noTopPtWeight"
-    # if noTrotaSF:
-    #     pycommand += " --noTrotaSF"
     # if printcutflow:
     #     pycommand += " --printcutflow"
 
@@ -292,7 +310,22 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     # f.close()
 
 
-def checkJobHasFailed(condorFolder, sampleLabel, dataset, verbose=0): #returns true if the job has to be rerun
+def checkOutputFileIsBad(path): #returns true if the root file is missing, empty, truncated or without keys
+    import ROOT
+    ROOT.gErrorIgnoreLevel = ROOT.kFatal
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
+        return True
+    try:
+        tf = ROOT.TFile.Open(path)
+    except OSError:
+        return True
+    if not tf or tf.IsZombie():
+        return True
+    bad = tf.TestBit(ROOT.TFile.kRecovered) or tf.GetListOfKeys().GetEntries() == 0
+    tf.Close()
+    return bad
+
+def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0): #returns true if the job has to be rerun
     if not os.path.exists(condorFolder):
         if(verbose==1): print ("job does not have condor folder - has to be rerun" )
         return True
@@ -316,14 +349,19 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, verbose=0): #returns t
         if(verbose==1): print ("only error exists, this should not happen - job has to be rerun ") 
         return True
 
+    # the runner prints this only after postSelector, the output check and the copy to EOS all succeeded
+    # (ERROR messages go to stderr, i.e. to the .err file)
     with open (outputfileName,"r" ) as fo:
-        if not ( ("postSelector.py exit code: 0" in fo.read() ) or ("failed to copy output" in fo.read() ) ): 
-            if(verbose==1): print ("postselector did end with an error or not at all - job has to be rerun") 
+        if "===== Job finished successfully =====" not in fo.read():
+            if(verbose==1): print ("postselector did end with an error or not at all - job has to be rerun")
             return True
         else:
             if(verbose==1): print ("postselector did end successfully")
-    #alternative: put a check on the output root file whether it exists
-        
+
+    if checkOutputFileIsBad(outfilePath):
+        if(verbose==1): print ("output file "+outfilePath+" is missing, truncated or empty - job has to be rerun")
+        return True
+
     return False
 
 #outFolder_path      = config["outputfolder"]["postselector_results"][period]
@@ -331,8 +369,28 @@ def histoMergeWriter(outpath, mergepath, sampleLabel):
     if not os.path.exists(mergepath):
         print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
         os.makedirs(mergepath)
-    commandHadd = "hadd -f "+mergepath+"/"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root" 
+    # hadd into a temporary file, renamed to <sampleLabel>.root only if the merge succeeded
+    commandHadd = "hadd -f "+mergepath+"/tmp_"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root"
     return commandHadd
+
+def histoMerge(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the merge succeeded
+    badParts = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit) if checkOutputFileIsBad(outpath+"/"+sampleLabel+"_part"+str(ns)+".root")]
+    if badParts:
+        print (" ERROR: "+sampleLabel+" not merged, missing or broken parts (rerun them with -m r):")
+        for p in badParts: print ("   "+p)
+        return False
+    hcommand = histoMergeWriter(outpath, mergepath, sampleLabel)
+    print (" histomerge command is \n", hcommand)
+    if dryrun:
+        return True
+    tmpMerged = mergepath+"/tmp_"+sampleLabel+".root"
+    haddStatus = os.system(hcommand)
+    if haddStatus != 0 or checkOutputFileIsBad(tmpMerged):
+        print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+        if os.path.exists(tmpMerged): os.remove(tmpMerged)
+        return False
+    os.replace(tmpMerged, mergepath+"/"+sampleLabel+".root")
+    return True
     
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
     print("Please run voms command")
@@ -374,13 +432,17 @@ for d in dss:
         nsplit,lastpartsize = sampleSplitter(samplesfile,sample.label,dat,njobs_per_part) 
         if mode == "h":
             if nsplit>1:
-                hcommand = histoMergeWriter(outFolder_path+"/plots", mergeFolder_path+"/plots", sample.label)
-                print (" histomerge command is \n", hcommand)
+                histoMerge(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)
                 if not dryrun:
-                    os.system(hcommand)
                     time.sleep(3)
                     continue
             if nsplit==1:
+                if os.path.normpath(outFolder_path) == os.path.normpath(mergeFolder_path):
+                    print (" "+sample.label+" was not split, output already in "+outFolder_path+"/plots/ - nothing to do")
+                    continue
+                if not dryrun and not os.path.exists(mergeFolder_path+"/plots"):
+                    print (" warning, merge path: "+mergeFolder_path+"/plots did not exist at time of copying histos, creating it on the fly.")
+                    os.makedirs(mergeFolder_path+"/plots")
                 cpcommand= "cp "+outFolder_path+"/plots/"+sample.label+".root " + mergeFolder_path+"/plots/"+sample.label+".root"
                 print (" histomerge copy command is \n", cpcommand)
                 if not dryrun:
@@ -407,7 +469,9 @@ for d in dss:
             log_folder              = condor_subfolder + "condor/"
 
             hasFailed=False
-            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,0)
+            # same destination as in runner_writer: split jobs in parts/, unsplit ones in plots/
+            outfile_path = outFolder_path.rstrip("/") + "/" + ("parts" if postsuffix else "plots") + "/" + sample.label + postsuffix + ".root"
+            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0)
 
             pass_fail_jobs[sample.label + locsuffix] = 1*(not hasFailed)
             if mode=="c":

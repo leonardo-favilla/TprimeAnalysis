@@ -183,6 +183,8 @@ regions = {
 
     ### Control Regions ###
     "btagSFcheck"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
+    "STnonTTbar"           : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=1 && EventTopCategory<=3",
+    
     "AH"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
     "AHBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
     "AHBtagTight"          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagTight > 0",
