@@ -1144,7 +1144,7 @@ RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rve
 {
   RVec<int> ids;
   RVec<float> scores;
-  RVec<float> ids_selected;
+  RVec<int> ids_selected;
 
   for (int i = 0; i < TopMixed_TopScore.size(); i++)
   {
@@ -1175,7 +1175,7 @@ RVec<int> select_TopMix(rvec_f TopMixed_TopScore, rvec_f TopMixed_idxFatJet, rve
       int bestTop_idx = 0;
       while(!same_top and bestTop_idx < ids_selected.size())
       {
-        same_top = check_same_top(TopMixed_idxFatJet[ids_sorted[i]], TopMixed_idxJet0[ids_sorted[i]], TopMixed_idxJet1[ids_sorted[i]], TopMixed_idxJet2[ids_sorted[i]], TopMixed_idxFatJet[ids_sorted[bestTop_idx]], TopMixed_idxJet0[ids_sorted[bestTop_idx]], TopMixed_idxJet1[ids_sorted[bestTop_idx]], TopMixed_idxJet2[ids_sorted[bestTop_idx]]);
+        same_top = check_same_top(TopMixed_idxFatJet[ids_sorted[i]], TopMixed_idxJet0[ids_sorted[i]], TopMixed_idxJet1[ids_sorted[i]], TopMixed_idxJet2[ids_sorted[i]], TopMixed_idxFatJet[ids_selected[bestTop_idx]], TopMixed_idxJet0[ids_selected[bestTop_idx]], TopMixed_idxJet1[ids_selected[bestTop_idx]], TopMixed_idxJet2[ids_selected[bestTop_idx]]);
         bestTop_idx += 1;
       }
       if(!same_top)
@@ -1221,7 +1221,7 @@ RVec<int> select_TopRes(rvec_f TopResolved_TopScore, rvec_f TopResolved_idxJet0,
       int bestTop_idx = 0;
       while(!same_top and bestTop_idx < ids_selected.size())
       {
-        same_top = check_same_top(-1, TopResolved_idxJet0[ids_sorted[i]], TopResolved_idxJet1[ids_sorted[i]], TopResolved_idxJet2[ids_sorted[i]], -1, TopResolved_idxJet0[ids_sorted[bestTop_idx]], TopResolved_idxJet1[ids_sorted[bestTop_idx]], TopResolved_idxJet2[ids_sorted[bestTop_idx]]);
+        same_top = check_same_top(-1, TopResolved_idxJet0[ids_sorted[i]], TopResolved_idxJet1[ids_sorted[i]], TopResolved_idxJet2[ids_sorted[i]], -1, TopResolved_idxJet0[ids_selected[bestTop_idx]], TopResolved_idxJet1[ids_selected[bestTop_idx]], TopResolved_idxJet2[ids_selected[bestTop_idx]]);
         bestTop_idx += 1;
       }
       if(!same_top)
@@ -1355,6 +1355,40 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
     {
       idx = -1;
     }
+  }
+  return idx;
+}
+
+// Best top restricted to the candidates that define the EventTopCategory (score above WP and good jets):
+// Tight*_idx for categories 1-3, LooseNOTTight*_idx for categories 4-6. Category 7 falls back to select_bestTop.
+Int_t select_bestTopInCategory(int EventTopCategory, rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i TightTopRes_idx, rvec_i LooseNOTTightTopMer_idx, rvec_i LooseNOTTightTopMix_idx, rvec_i LooseNOTTightTopRes_idx, rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore)
+{
+  RVec<int> candidates;
+  RVec<float> scores;
+  if (EventTopCategory==1 || EventTopCategory==4)
+  {
+    candidates = (EventTopCategory==1) ? TightTopRes_idx : LooseNOTTightTopRes_idx;
+    scores     = TopResolved_TopScore;
+  }
+  else if (EventTopCategory==2 || EventTopCategory==5)
+  {
+    candidates = (EventTopCategory==2) ? TightTopMix_idx : LooseNOTTightTopMix_idx;
+    scores     = TopMixed_TopScore;
+  }
+  else if (EventTopCategory==3 || EventTopCategory==6)
+  {
+    candidates = (EventTopCategory==3) ? TightTopMer_idx : LooseNOTTightTopMer_idx;
+    scores     = FatJet_particleNet_TvsQCD;
+  }
+  else
+  {
+    return select_bestTop(EventTopCategory, FatJet_particleNet_TvsQCD, TopMixed_TopScore, TopResolved_TopScore);
+  }
+
+  int idx = -1;
+  for (int i = 0; i < candidates.size(); i++)
+  {
+    if (idx == -1 || scores[candidates[i]] > scores[idx]) idx = candidates[i];
   }
   return idx;
 }

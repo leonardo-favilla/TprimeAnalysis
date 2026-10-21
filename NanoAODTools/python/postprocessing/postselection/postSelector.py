@@ -450,7 +450,7 @@ def select_top(df, isMC, year):
         df_topcategory = df_topcategory.Define("EventTopCategoryWithTruth", "select_TopCategoryWithTruth(EventTopCategory, FatJet_matched, LooseTopMer_idx, TopMixed_truth, LooseTopMix_idx, TopResolved_truth, LooseTopRes_idx)")
     
     df_topselected = df_topcategory.Define("Top_idx",
-                                           "select_bestTop(EventTopCategory, TopMerged_TopScore_nominal, TopMixed_TopScore_nominal, TopResolved_TopScore_nominal)")
+                                           "select_bestTopInCategory(EventTopCategory, TightTopMer_idx, TightTopMix_idx, TightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx, TopMerged_TopScore_nominal, TopMixed_TopScore_nominal, TopResolved_TopScore_nominal)")
     # return best top idx wrt category --> the idx is referred to the list of candidates fixed by the EventTopCategory
     df_topvariables = df_topselected.Define("Top_pt", "select_TopVar(EventTopCategory, Top_idx, FatJet_pt_nominal, TopMixed_pt_nominal, TopResolved_pt_nominal)")\
                         .Define("Top_eta", "select_TopVar(EventTopCategory, Top_idx, FatJet_eta, TopMixed_eta, TopResolved_eta)")\
