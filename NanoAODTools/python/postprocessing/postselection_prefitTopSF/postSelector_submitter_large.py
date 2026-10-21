@@ -242,13 +242,35 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         # Copy output
         # ------------------------------------------------------------
 
+        # cp on the EOS fuse mount can return 0 (and ls show the full size from the local cache)
+        # while the file on the server is truncated: check the size seen by the server with xrdfs.
+        # A previous truncated copy can be left with incomplete replicas, which EOS refuses to extend
+        # ("Read-only file system"): remove it before copying, so that a new file is created
         f.write('echo "Copying output to ${destdir}"\n')
-        f.write('cp "${outfile}" "${destdir}/"\n')
-        f.write("cp_status=$?\n\n")
+        f.write('local_size=$(stat -c %s "${outfile}")\n')
+        f.write('remote_file="${destdir}/$(basename "${outfile}")"\n')
+        f.write("copy_ok=0\n")
+        f.write("for attempt in 1 2 3; do\n")
+        f.write('    rm -f "${remote_file}"\n')
+        f.write('    if ! cp "${outfile}" "${destdir}/"; then\n')
+        f.write('        echo "cp failed (attempt ${attempt})" >&2\n')
+        f.write("        sleep 30\n")
+        f.write("        continue\n")
+        f.write("    fi\n")
+        f.write("    for check in 1 2 3 4 5 6; do\n")
+        f.write('        remote_size=$(xrdfs eosuser.cern.ch stat "${remote_file}" 2>/dev/null | awk \'/^Size:/{print $2}\')\n')
+        f.write('        echo "attempt ${attempt}, check ${check}: local size ${local_size}, EOS size ${remote_size}"\n')
+        f.write('        if [ "${remote_size}" = "${local_size}" ]; then\n')
+        f.write("            copy_ok=1\n")
+        f.write("            break 2\n")
+        f.write("        fi\n")
+        f.write("        sleep 10\n")
+        f.write("    done\n")
+        f.write("done\n\n")
 
-        f.write('if [ "${cp_status}" -ne 0 ]; then\n')
-        f.write('    echo "ERROR: failed to copy output to ${destdir}" >&2\n')
-        f.write('    exit "${cp_status}"\n')
+        f.write('if [ "${copy_ok}" -ne 1 ]; then\n')
+        f.write('    echo "ERROR: failed to copy output to ${destdir} (size on EOS does not match the local file)" >&2\n')
+        f.write("    exit 1\n")
         f.write("fi\n\n")
 
         # ------------------------------------------------------------
@@ -288,7 +310,22 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
     # f.close()
 
 
-def checkJobHasFailed(condorFolder, sampleLabel, dataset, verbose=0): #returns true if the job has to be rerun
+def checkOutputFileIsBad(path): #returns true if the root file is missing, empty, truncated or without keys
+    import ROOT
+    ROOT.gErrorIgnoreLevel = ROOT.kFatal
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
+        return True
+    try:
+        tf = ROOT.TFile.Open(path)
+    except OSError:
+        return True
+    if not tf or tf.IsZombie():
+        return True
+    bad = tf.TestBit(ROOT.TFile.kRecovered) or tf.GetListOfKeys().GetEntries() == 0
+    tf.Close()
+    return bad
+
+def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0): #returns true if the job has to be rerun
     if not os.path.exists(condorFolder):
         if(verbose==1): print ("job does not have condor folder - has to be rerun" )
         return True
@@ -312,14 +349,19 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, verbose=0): #returns t
         if(verbose==1): print ("only error exists, this should not happen - job has to be rerun ") 
         return True
 
+    # the runner prints this only after postSelector, the output check and the copy to EOS all succeeded
+    # (ERROR messages go to stderr, i.e. to the .err file)
     with open (outputfileName,"r" ) as fo:
-        if not ( ("postSelector.py exit code: 0" in fo.read() ) or ("failed to copy output" in fo.read() ) ): 
-            if(verbose==1): print ("postselector did end with an error or not at all - job has to be rerun") 
+        if "===== Job finished successfully =====" not in fo.read():
+            if(verbose==1): print ("postselector did end with an error or not at all - job has to be rerun")
             return True
         else:
             if(verbose==1): print ("postselector did end successfully")
-    #alternative: put a check on the output root file whether it exists
-        
+
+    if checkOutputFileIsBad(outfilePath):
+        if(verbose==1): print ("output file "+outfilePath+" is missing, truncated or empty - job has to be rerun")
+        return True
+
     return False
 
 #outFolder_path      = config["outputfolder"]["postselector_results"][period]
@@ -327,8 +369,28 @@ def histoMergeWriter(outpath, mergepath, sampleLabel):
     if not os.path.exists(mergepath):
         print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
         os.makedirs(mergepath)
-    commandHadd = "hadd -f "+mergepath+"/"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root" 
+    # hadd into a temporary file, renamed to <sampleLabel>.root only if the merge succeeded
+    commandHadd = "hadd -f "+mergepath+"/tmp_"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root"
     return commandHadd
+
+def histoMerge(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the merge succeeded
+    badParts = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit) if checkOutputFileIsBad(outpath+"/"+sampleLabel+"_part"+str(ns)+".root")]
+    if badParts:
+        print (" ERROR: "+sampleLabel+" not merged, missing or broken parts (rerun them with -m r):")
+        for p in badParts: print ("   "+p)
+        return False
+    hcommand = histoMergeWriter(outpath, mergepath, sampleLabel)
+    print (" histomerge command is \n", hcommand)
+    if dryrun:
+        return True
+    tmpMerged = mergepath+"/tmp_"+sampleLabel+".root"
+    haddStatus = os.system(hcommand)
+    if haddStatus != 0 or checkOutputFileIsBad(tmpMerged):
+        print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+        if os.path.exists(tmpMerged): os.remove(tmpMerged)
+        return False
+    os.replace(tmpMerged, mergepath+"/"+sampleLabel+".root")
+    return True
     
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
     print("Please run voms command")
@@ -370,10 +432,8 @@ for d in dss:
         nsplit,lastpartsize = sampleSplitter(samplesfile,sample.label,dat,njobs_per_part) 
         if mode == "h":
             if nsplit>1:
-                hcommand = histoMergeWriter(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label)
-                print (" histomerge command is \n", hcommand)
+                histoMerge(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)
                 if not dryrun:
-                    os.system(hcommand)
                     time.sleep(3)
                     continue
             if nsplit==1:
@@ -409,7 +469,9 @@ for d in dss:
             log_folder              = condor_subfolder + "condor/"
 
             hasFailed=False
-            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,0)
+            # same destination as in runner_writer: split jobs in parts/, unsplit ones in plots/
+            outfile_path = outFolder_path.rstrip("/") + "/" + ("parts" if postsuffix else "plots") + "/" + sample.label + postsuffix + ".root"
+            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0)
 
             pass_fail_jobs[sample.label + locsuffix] = 1*(not hasFailed)
             if mode=="c":
