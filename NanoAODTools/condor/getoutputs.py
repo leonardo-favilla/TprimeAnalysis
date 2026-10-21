@@ -184,7 +184,7 @@ for sample in samples:
     if json_out.get(sample.label) is None:
         json_out[sample.label] = {}
     if hasattr(sample,"process"):
-        json_out[sample.process][sample.label] = out_dict[sample.process][sample.label]
+        json_out[sample.label][sample.label] = out_dict[sample.process][sample.label]
     else:
         json_out[sample.label][sample.label] = out_dict[sample.label][sample.label]
     print(f"Sample {sample.label} done!")
