@@ -612,7 +612,7 @@ RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Elec
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
   }
   return ids;
 }
