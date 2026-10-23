@@ -4,6 +4,7 @@ import sys
 import time
 import json
 import shutil
+import subprocess
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.postselection.splitter import sampleSplitter
 
@@ -330,7 +331,29 @@ def checkOutputFileIsBad(path): #returns true if the root file is missing, empty
     tf.Close()
     return bad
 
-def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0): #returns true if the job has to be rerun
+def getQueuedJobs(): #returns {JobTag: (state, "cluster.proc", holdReason)} for the jobs of the user still in the condor queue
+    states = {"1": "idle", "2": "running", "5": "held", "6": "running", "7": "suspended"} # 3 = removed, 4 = completed: not in the queue anymore
+    cmd = ["condor_q", "-af:t", "JobTag", "JobStatus", "ClusterId", "ProcId", "HoldReason"]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True)
+    except OSError as e:
+        res = None
+        err = str(e)
+    if res is None or res.returncode != 0:
+        # never assume an empty queue: jobs still running would be resubmitted
+        print("ERROR: condor_q failed, cannot tell which jobs are still in the queue - exiting")
+        print(err if res is None else res.stderr)
+        sys.exit(1)
+    queued = {}
+    for line in res.stdout.splitlines():
+        fields = line.split("\t")
+        if len(fields) < 5 or fields[1] not in states:
+            continue
+        queued[fields[0]] = (states[fields[1]], fields[2]+"."+fields[3], fields[4] if fields[4] != "undefined" else "")
+    return queued
+
+def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0, queueKnown=False): #returns true if the job has to be rerun
+    # queueKnown: the job is known not to be in the condor queue (checked with condor_q)
     if not os.path.exists(condorFolder):
         if(verbose==1): print ("job does not have condor folder - has to be rerun" )
         return True
@@ -345,9 +368,12 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0
         print("outfile ",outputfileName," exists? ", outputfileExists)
         print("errorfile ",errorfileName," exists? ", errorfileExists)
     
-    jobHasEnded = (outputfileExists and errorfileExists)#check here job is not running - still to implement better 
+    jobHasEnded = (outputfileExists and errorfileExists)
     if jobHasEnded==False:
-        if(verbose==1): print ("job had not ended - does not have to be rerun yet") 
+        if queueKnown:
+            if(verbose==1): print ("job not in queue and without logs - lost, has to be rerun")
+            return True
+        if(verbose==1): print ("job had not ended - does not have to be rerun yet")
         return False
 
     if (errorfileExists and not outputfileExists):
@@ -401,7 +427,9 @@ if not os.path.exists("/tmp/x509up_u" + str(uid)):
     print("Please run voms command")
     exit()
 
-pass_fail_jobs={}
+pass_fail_jobs={} # job -> "ok", "failed", "idle", "running", "held" or "suspended"
+# jobs still in the condor queue are never checked nor (re)submitted
+queued = getQueuedJobs() if (mode in ("s", "c", "r") and not dryrun) else None
 #maxlaunch = 10
 
 #njobs_per_part=100
@@ -474,14 +502,23 @@ for d in dss:
             log_folder              = condor_subfolder + "condor/"
 
             hasFailed=False
+            jobkey = sample.label + locsuffix # = JobTag in condor.sub
             # same destination as in runner_writer: split jobs in parts/, unsplit ones in plots/
             outfile_path = outFolder_path.rstrip("/") + "/" + ("parts" if postsuffix else "plots") + "/" + sample.label + postsuffix + ".root"
-            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0)
+            if queued is not None and jobkey in queued:
+                state, clusterid, holdreason = queued[jobkey]
+                pass_fail_jobs[jobkey] = state
+                if state == "held":
+                    print(f" job {jobkey} is held (cluster {clusterid}): {holdreason}")
+                elif (mode == "s" or mode == "r" or verb>0):
+                    print(f" job {jobkey} already in queue ({state}, cluster {clusterid}): skipped")
+                continue
+            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0,queued is not None)
 
-            pass_fail_jobs[sample.label + locsuffix] = 1*(not hasFailed)
+            pass_fail_jobs[jobkey] = "failed" if hasFailed else "ok"
             if mode=="c":
                 if (verb>0): print(" job in ", condor_subfolder, " has failed? ",hasFailed)
-                
+
             if ( mode =="s" or (mode == "r" and hasFailed)):
                 if not os.path.exists(condor_folder):
                     os.makedirs(condor_folder)
@@ -517,14 +554,23 @@ for d in dss:
 
             
             
-if mode == "c" or mode == "r": 
+if mode == "c" or mode == "r":
     for ss in pass_fail_jobs:
         if(verb>1): print (f"{ss} {pass_fail_jobs[ss]}")
     if(verb>0): print ("files to rerun: ")
     ntorerun=0
     for ss in pass_fail_jobs:
-        if(pass_fail_jobs[ss]==0):
+        if(pass_fail_jobs[ss]=="failed"):
             ntorerun+=1
             if(verb>0):print(ss)
+    if(verb>0 and "held" in pass_fail_jobs.values()):
+        print ("held jobs (not resubmitted): ")
+        for ss in pass_fail_jobs:
+            if(pass_fail_jobs[ss]=="held"): print(f"{ss} (cluster {queued[ss][1]}): {queued[ss][2]}")
+    counts = {st: list(pass_fail_jobs.values()).count(st) for st in ["ok", "failed", "idle", "running", "held", "suspended"]}
+    print("  ".join(f"{st}: {n}" for st, n in counts.items()))
+    nqueued = counts["idle"] + counts["running"] + counts["held"] + counts["suspended"]
+    if nqueued > 0:
+        print(f"WARNING: {nqueued} jobs still in queue: run -m c again when the queue is empty")
     if(mode=="c"): print("total to rerun: "+str(ntorerun))
     if(mode=="r"): print("total being rerun: "+str(ntorerun))
