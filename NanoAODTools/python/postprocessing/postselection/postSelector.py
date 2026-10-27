@@ -354,9 +354,9 @@ def preselection(df, btagAlg, year, EE):
     elif year in [2024]:
         df = df
 
-    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt, Jet_eta, Jet_jetId)") # richiesto jetId==6
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodJet",                          "GoodJet_idx.size()") 
-    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
+    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
 
@@ -385,7 +385,7 @@ def preselection(df, btagAlg, year, EE):
            .Define("LeadingJetPt_eta",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")\
            .Define("LeadingJetPt_phi",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_phi)")\
            .Define("LeadingJetPt_mass",                 "GetLeadingJetVar(LeadingJetPt_idx, Jet_mass_nominal)")
-    df = df.Define("LeadingFatJetPt_idx",               "GetLeadingPtJet(FatJet_pt)")\
+    df = df.Define("LeadingFatJetPt_idx",               "GetLeadingPtJet(FatJet_pt_nominal)")\
            .Define("LeadingFatJetPt_pt",                "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_pt_nominal)")\
            .Define("LeadingFatJetPt_eta",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")\
            .Define("LeadingFatJetPt_phi",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")\

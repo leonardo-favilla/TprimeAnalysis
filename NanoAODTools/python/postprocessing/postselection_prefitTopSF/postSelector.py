@@ -287,7 +287,7 @@ def preselection(df, btagAlg, year, EE):
     df = df.Define("LeadingJetPt_eta", "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")
     df = df.Define("LeadingJetPt_phi", "GetLeadingJetVar(LeadingJetPt_idx, Jet_phi)")
     df = df.Define("LeadingJetPt_mass", "GetLeadingJetVar(LeadingJetPt_idx, Jet_mass_nominal)")
-    df = df.Define("LeadingFatJetPt_idx", "GetLeadingPtJet(FatJet_pt)")
+    df = df.Define("LeadingFatJetPt_idx", "GetLeadingPtJet(FatJet_pt_nominal)")
     df = df.Define("LeadingFatJetPt_pt", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_pt_nominal)")
     df = df.Define("LeadingFatJetPt_eta", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")
     df = df.Define("LeadingFatJetPt_phi", "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")
