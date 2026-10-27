@@ -12,7 +12,7 @@ outfilename     = infilename.replace(".root","_symmetrized.root")
 systs           = args.systs.split(",")
 histo_dict      = loadHists(infilename)
 outfile         = ROOT.TFile.Open(outfilename, "RECREATE")
-thrOutput       = 0.001 # negative symmetrized contents are set to this
+thrOutput       = 0.000001 # negative symmetrized contents are set to this, same value as in makePositiveHistos.py
 
 # up/down variations to symmetrize, taken from the nominal histograms: <base>_nominal, <base>_<syst>Up, <base>_<syst>Down
 symmetrized_dict = {}
