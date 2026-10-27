@@ -15,6 +15,8 @@ sys.path.append('../')
 # Output corrections, with the BTV signature evaluate(wp, flav, abseta, pt) (https://gitlab.cern.ch/cms-analysis-corrections/BTV/examples):
 #   <tagger>_efficiency_<process>   one per process group
 #   <tagger>_efficiency             inclusive
+#   <tagger>_efficiency_TT_TW_ZJetsToNuNu   inclusive of the processes with large statistics only (reference_processes):
+#                                   the inclusive map is dominated by the large weights of the low-HT QCD samples
 # Bins with no jets in a process take the inclusive efficiency.
 
 config = {}
@@ -43,6 +45,10 @@ wps                     = ["L", "M", "T"]
 tagger_dict             = {"2022": "particleNet", "2022EE": "particleNet", "2023": "particleNet", "2023postBPix": "particleNet", "2024": "UParTAK4"}
 tagger                  = tagger_dict[era]
 
+# Processes summed in the second inclusive map: large statistics and homogeneous weights
+reference_processes     = ["TT", "TW", "ZJetsToNuNu"]
+reference_group         = "_".join(reference_processes)
+
 def get_era(s):
     # as in postSelector.py
     if s.year == 2022:
@@ -62,8 +68,11 @@ for file_name in sorted(os.listdir(plots_folder)):
     s           = sample_dict[label]
     process     = s.process.split("_")[0] if hasattr(s, "process") else s.label.split("_")[0]
     in_file     = ROOT.TFile.Open(plots_folder + file_name)
-    print(f"Adding {label} to {process}")
-    for group in [process, "inclusive"]:
+    groups      = [process, "inclusive"]
+    if process in reference_processes:
+        groups.append(reference_group)
+    print(f"Adding {label} to {groups}")
+    for group in groups:
         histos.setdefault(group, {})
         for flavour in flavours:
             for wp in ["all"] + wps:
