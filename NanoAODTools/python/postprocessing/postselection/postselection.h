@@ -1099,23 +1099,23 @@ RVec<float> GetJetBTagScore(rvec_i GoodJet, rvec_f Jet_btagDeepB)
 //////   L < score <= M  ->  (SF_L*eff_L - SF_M*eff_M) / (eff_L - eff_M)
 //////   score <= L      ->  (1 - SF_L*eff_L) / (1 - eff_L)
 ////// eff = MC b-tag efficiency of the WP (our maps), SF = BTV scale factor of the WP
+////// only b jets (hadronFlavour 5) are reweighted, c and light jets keep factor 1
 float GetBTagEventWeight_FixedWP(std::string btvFilePath, std::string effFilePath, std::string effCorrectionName,
                                  rvec_i GoodJet_idx, rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_hadronFlavour, rvec_f Jet_btagScore,
                                  float wpLoose, float wpMedium, float wpTight)
 {
   const auto& btv_cset = GetCachedCorrectionSet(btvFilePath);
   const auto& eff_cset = GetCachedCorrectionSet(effFilePath);
-  auto sf_heavy = btv_cset.at("UParTAK4_comb");                               // b, c jets
-  auto sf_light = btv_cset.at("UParTAK4_light");                              // udsg jets
-  auto eff      = eff_cset.at(effCorrectionName);                             // process map or inclusive map, chosen in postSelector.py
+  auto sf       = btv_cset.at("UParTAK4_comb");                               // b jets
+  auto eff      = eff_cset.at(effCorrectionName);                             // process map, chosen in postSelector.py
 
   float weight = 1.;
   for (int j : GoodJet_idx)
   {
     int   flavour = Jet_hadronFlavour[j];    // 5 = b, 4 = c, 0 = udsg, same convention as the BTV json
+    if (flavour != 5) continue;              // c and light jets not reweighted
     float abseta  = std::abs(Jet_eta[j]);
     float pt      = Jet_pt[j];
-    auto  sf      = (flavour > 3) ? sf_heavy : sf_light;
 
     float eff_L = eff->evaluate({"L", flavour, abseta, pt});
     float eff_M = eff->evaluate({"M", flavour, abseta, pt});

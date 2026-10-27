@@ -567,6 +567,7 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath)
 
 def add_BTagFixedWPScaleFactor(df, era, sample_process):
     # b-tag event weight with fixed WPs L/M/T (BTV multi-WP method), MC efficiency maps from BTagEfficiency/
+    # only b jets are reweighted (c and light jets keep factor 1, see GetBTagEventWeight_FixedWP)
     # each background uses its own map; the inclusive maps in the json are not used
     eff_names           = [c["name"] for c in json.load(open(BTagEff_CorrLibFilePath_dict[era]))["corrections"]]
     if f"UParTAK4_efficiency_{sample_process}" in eff_names:
