@@ -94,18 +94,21 @@ for file_path in input_files:
 
 ############# Efficiency maps, same definition as in CreateCorrLibFile.py #############
 def efficiency_map(flavour, wp):
-    # pass/all in each bin, limited to [0, 1]; empty bins are left at 0
+    # pass/all in each bin, limited to [0, 1]; empty bins (e.g. pt 20-30 GeV, good jets have pt > 30 GeV) are set to -1:
+    # below the minimum of the 2D plots, so they are drawn blank, and skipped in the 1D plots
     h_all, h_pass   = histos[f"BTagEff_{flavour}_all"], histos[f"BTagEff_{flavour}_{wp}"]
     h_eff           = h_all.Clone(f"eff_{flavour}_{wp}")
     h_eff.Reset()
     for ix in range(1, h_all.GetNbinsX()+1):
         for iy in range(1, h_all.GetNbinsY()+1):
-            if h_all.GetBinContent(ix, iy) > 0:
-                n_pass  = h_pass.GetBinContent(ix, iy)                                  # number of jets passing the WP in the bin
-                n_all   = h_all.GetBinContent(ix, iy)                                   # number of all jets in the bin
-                print(f"Bin ({ix}, {iy}): n_all = {n_all}, h_pass = {n_pass}")
-                eff     = min(max(n_pass / n_all, 0.), 1.)
-                h_eff.SetBinContent(ix, iy, eff)
+            if h_all.GetBinContent(ix, iy) <= 0:
+                h_eff.SetBinContent(ix, iy, -1.)
+                continue
+            n_pass  = h_pass.GetBinContent(ix, iy)                                      # number of jets passing the WP in the bin
+            n_all   = h_all.GetBinContent(ix, iy)                                       # number of all jets in the bin
+            print(f"Bin ({ix}, {iy}): n_all = {n_all}, h_pass = {n_pass}")
+            eff     = min(max(n_pass / n_all, 0.), 1.)
+            h_eff.SetBinContent(ix, iy, eff)
     return h_eff
 
 def equal_size_bins(h):
@@ -151,13 +154,15 @@ tagger      = "btagUParTAK4B" if era == "2024" else "btagPNetB"
 for flavour, flavour_title in flavours.items():
     h_effs  = {wp: efficiency_map(flavour, wp) for wp in wps}
     h_ref   = h_effs["L"]
+    h_all   = histos[f"BTagEff_{flavour}_all"]
     for ix in range(1, h_ref.GetNbinsX()+1):
         eta_lo, eta_hi  = h_ref.GetXaxis().GetBinLowEdge(ix), h_ref.GetXaxis().GetBinUpEdge(ix)
-        pt_lo,  pt_hi   = h_ref.GetYaxis().GetXmin(), h_ref.GetYaxis().GetXmax()
+        pt_hi           = h_ref.GetYaxis().GetXmax()
 
         canvas  = ROOT.TCanvas(f"c1D_{flavour}_{ix}", "", 800, 700)
         canvas.SetLeftMargin(0.13)
-        frame   = canvas.DrawFrame(pt_lo, 0., pt_hi, 1.05, f"|#eta^{{jet}}| #in [{eta_lo:.3f}, {eta_hi:.3f}];p_{{T}}^{{jet}} [GeV];Efficiency")
+        # pt axis from 0; only the bins with jets are drawn, so with good jets at pt > 30 GeV the first point is the 30-50 GeV bin
+        frame   = canvas.DrawFrame(0., 0., pt_hi, 1.05, f"|#eta^{{jet}}| #in [{eta_lo:.3f}, {eta_hi:.3f}];p_{{T}}^{{jet}} [GeV];Efficiency")
         frame.GetYaxis().SetTitleOffset(1.3)
 
         legend  = ROOT.TLegend(0.15, 0.15, 0.32, 0.32) if flavour == "b" else ROOT.TLegend(0.15, 0.72, 0.32, 0.89)
@@ -166,10 +171,13 @@ for flavour, flavour_title in flavours.items():
         for wp in wps:
             graph = ROOT.TGraphErrors()
             for iy in range(1, h_ref.GetNbinsY()+1):
+                if h_all.GetBinContent(ix, iy) <= 0:                                    # empty bin (e.g. 20-30 GeV), not drawn
+                    continue
                 pt_center   = h_ref.GetYaxis().GetBinCenter(iy)
                 pt_halfwidth= h_ref.GetYaxis().GetBinWidth(iy) / 2
-                graph.SetPoint(iy-1, pt_center, h_effs[wp].GetBinContent(ix, iy))
-                graph.SetPointError(iy-1, pt_halfwidth, 0.)                             # horizontal bar = pt bin, no vertical error
+                n_points    = graph.GetN()
+                graph.SetPoint(n_points, pt_center, h_effs[wp].GetBinContent(ix, iy))
+                graph.SetPointError(n_points, pt_halfwidth, 0.)                         # horizontal bar = pt bin, no vertical error
             graph.SetMarkerStyle(20)
             graph.SetMarkerColor(wp_colors[wp])
             graph.SetLineColor(wp_colors[wp])
