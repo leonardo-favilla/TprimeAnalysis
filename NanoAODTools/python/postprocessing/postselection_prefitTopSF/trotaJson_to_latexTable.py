@@ -19,7 +19,7 @@ Supported JSON structures
 }
 
 For the new structure, the era is inferred from the filename (for example
-TrotaScaleFactors_2023.json -> 2023) unless --era is provided.
+TrotaScaleFactors_2023_Mixed.json -> 2023) unless --era is provided.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ from typing import Iterable
 DEFAULT_CATEGORIES      = ["Resolved", "Mixed", "Merged"]
 DEFAULT_MATCHING_ORDER  = ["topmatched", "nonmatched", "other"]
 DEFAULT_CHANNELS        = ["pass", "fail"]
-DEFAULT_BIN_LABELS      = ["[0,200[", "[200,400[", "[400,600[", "[600,1000)"]
+DEFAULT_BIN_LABELS      = ["[0,200[", "[200,400[", "[400,600[", "[600,1000)", "[0,400[", "[400,1000)"]   # event categories of extract_ScaleFactors.py
 LATEX_NL                = r"\\"
 FILENAME_PREFIX         = "TrotaScaleFactors_"
 
@@ -134,7 +134,7 @@ def sanitize_label_component(text: str) -> str:
 def infer_era_from_filename(input_path: Path) -> str:
     stem = input_path.stem
     if stem.startswith(FILENAME_PREFIX) and len(stem) > len(FILENAME_PREFIX):
-        return stem[len(FILENAME_PREFIX) :]
+        return stem[len(FILENAME_PREFIX) :].split("_")[0]   # TrotaScaleFactors_<era>_<TopCategory>.json -> <era>
     return stem
 
 
