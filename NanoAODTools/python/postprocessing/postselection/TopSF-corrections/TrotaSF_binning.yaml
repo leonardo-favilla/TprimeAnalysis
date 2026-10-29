@@ -1,0 +1,84 @@
+####################################################################################################
+# Trota top tagging SFs: event categories (pT ranges) used in the analysis, per era and top category
+#
+# Each list has one entry per bin of TopCandidate_pt in the correctionlib file: [0,200], [200,400], [400,600], [600,1000]
+#   - event category of extract_ScaleFactors.py: pt0to200, pt200to400, pt400to600, pt600to1000, pt0to400, pt400to1000
+#       Loose and Tight: SFs (pass and fail) fitted in that event category
+#       LooseButNotTight: pass SF computed from the Loose and Tight SFs and n_pass of that same event category, fail SF = 1
+#   - null: SF = 1.0 +- 0.0 for Loose, LooseButNotTight and Tight
+# A top category with all bins null needs no input json (placeholders of the eras without SFs yet)
+#
+# Inputs: TrotaScaleFactors_<era>_<TopCategory>.json and TrotaEfficiencies_<era>_<TopCategory>.json
+#         in config.yaml TrotaScaleFactor:outputfolder:<TopCategory>:<era>/ScaleFactors/
+# Usage:  python3 produceTrotaCorrLib.py --era <era>
+####################################################################################################
+
+"2022":
+  Resolved:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Mixed:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Merged:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+
+"2022EE":
+  Resolved:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Mixed:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Merged:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+
+"2023":
+  Resolved:
+    topmatched: [pt0to200, pt200to400, pt400to1000, pt400to1000]
+    nonmatched: [pt0to200, pt200to400, null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Mixed:
+    topmatched: [pt0to400, pt0to400,   pt400to1000, pt400to1000]
+    nonmatched: [pt0to400, pt0to400,   null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Merged:
+    topmatched: [pt0to400, pt0to400,   pt400to1000, pt400to1000]
+    nonmatched: [pt0to400, pt0to400,   null,        null       ]
+    other:      [null,     null,       null,        null       ]
+
+"2023postBPix":
+  Resolved:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Mixed:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Merged:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+
+"2024":
+  Resolved:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Mixed:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
+  Merged:
+    topmatched: [null,     null,       null,        null       ]
+    nonmatched: [null,     null,       null,        null       ]
+    other:      [null,     null,       null,        null       ]
