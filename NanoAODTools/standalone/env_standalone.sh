@@ -23,7 +23,7 @@ if [ -f standalone/env_standalone.sh ]; then
 	if [ x${1} = 'xbuild' ]; then
 	    echo "Build directory is already present, please source again standalone/env_standalone.sh without the build argument."
 	else
-	    find build/lib/python python -type d -execdir touch '{}/__init__.py' \;
+	    find build/lib/python python -type d \( -name 'condor*' -o -name '__pycache__' \) -prune -o -type d -execdir touch '{}/__init__.py' \;
 	    export NANOAODTOOLS_BASE=${PWD}
 	    export PYTHONPATH=${NANOAODTOOLS_BASE}/build/lib/python:${PYTHONPATH}
 	    echo "Standalone environment set."
