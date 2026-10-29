@@ -3,7 +3,6 @@ import argparse
 import ROOT
 import cmsstyle as CMS
 import os
-import shutil
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 
@@ -59,8 +58,6 @@ else:
 
 if not os.path.exists(os.path.dirname(args.output)):
     os.makedirs(os.path.dirname(args.output))
-if "www" in args.output:
-    shutil.copy("/eos/user/l/lfavilla/www/index.php", os.path.dirname(args.output))
 
 
 CMS.SetExtraText("Work in Progress")
