@@ -8,8 +8,9 @@
 #   - null: SF = 1.0 +- 0.0 for Loose, LooseButNotTight and Tight
 # A top category with all bins null needs no input json (placeholders of the eras without SFs yet)
 #
-# Inputs: TrotaScaleFactors_<era>_<TopCategory>.json and TrotaEfficiencies_<era>_<TopCategory>.json
-#         in config.yaml TrotaScaleFactor:outputfolder:<TopCategory>:<era>/ScaleFactors/
+# Inputs: <era>/TrotaScaleFactors_<era>_<TopCategory>.json and <era>/TrotaEfficiencies_<era>_<TopCategory>.json in this folder,
+#         raw Loose and Tight SFs and efficiencies written by postselection_prefitTopSF/extract_ScaleFactors.py
+# Output: <era>/CorrLib_TrotaScaleFactors_<era>.json in this folder, read by postselection/postSelector.py
 # Usage:  python3 produceTrotaCorrLib.py --era <era>
 ####################################################################################################
 

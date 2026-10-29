@@ -8,25 +8,16 @@ import optparse
 
 script_folder           = os.path.dirname(os.path.abspath(__file__))
 
-config = {}
-config_paths = script_folder+'/../../config/config.yaml'
-if os.path.exists(config_paths):
-    with open(config_paths, "r") as _f:
-        config = yaml.safe_load(_f) or {}
-    print(f"Loaded config file from {config_paths}")
-else:
-    print(f"Config file not found in {config_paths}, exiting")
-    sys.exit(1)
-
 usage                   = "python3 produceTrotaCorrLib.py --era <era>"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                                       help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      "--binning",                dest="binning",                     type=str,     default=f"{script_folder}/TrotaSF_binning.yaml",                      help="yaml file with the event categories used in each pT bin, per era and top category")
-parser.add_option(      "--output",                 dest="output",                      type=str,     default="",                                                           help="Output correctionlib file, default: CorrLib_TrotaScaleFactors_<era>.json in this folder")
+parser.add_option(      "--output",                 dest="output",                      type=str,     default="",                                                           help="Output correctionlib file, default: <era>/CorrLib_TrotaScaleFactors_<era>.json in this folder")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 binningFilePath         = opt.binning
-outFilePath             = opt.output if opt.output else f"{script_folder}/CorrLib_TrotaScaleFactors_{era}.json"
+eraFolder               = f"{script_folder}/{era}"     # input json from postselection_prefitTopSF/extract_ScaleFactors.py and output correctionlib file
+outFilePath             = opt.output if opt.output else f"{eraFolder}/CorrLib_TrotaScaleFactors_{era}.json"
 
 pt_edges                = [0, 200, 400, 600, 1000]
 event_categories        = ["pt0to200", "pt200to400", "pt400to600", "pt600to1000", "pt0to400", "pt400to1000"]   # same order as in extract_ScaleFactors.py
@@ -39,8 +30,7 @@ print(f"Loaded binning for era {era} from {binningFilePath}")
 
 
 def load_input_json(TopCat, inJsonName):
-    outputfolder        = config["TrotaScaleFactor"]["outputfolder"][TopCat][era]
-    inFilePath          = f"{outputfolder}/ScaleFactors/{inJsonName}_{era}_{TopCat}.json"
+    inFilePath          = f"{eraFolder}/{inJsonName}_{era}_{TopCat}.json"
     print(f"Loading {inFilePath}")
     with open(inFilePath, "r") as json_file:
         return json.load(json_file)[TopCat]

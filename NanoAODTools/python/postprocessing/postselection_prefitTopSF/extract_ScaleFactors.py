@@ -30,7 +30,7 @@ if wp_cat not in ["Loose", "Tight"]:
 region                  = f"{TopCategory}{wp_cat}"
 outputfolder            = config["TrotaScaleFactor"]["outputfolder"][TopCategory][era]
 fit_variable            = config["TrotaScaleFactor"]["fit_variable"][region]
-outFolder               = f"{outputfolder}/ScaleFactors/"
+outFolder               = os.path.normpath(f"{os.path.dirname(os.path.abspath(__file__))}/../postselection/TopSF-corrections/{era}")   # versioned with the analysis, read by postselection/TopSF-corrections/produceTrotaCorrLib.py
 outName                 = f"TrotaScaleFactors_{era}_{TopCategory}"
 outJsonPath             = f"{outFolder}/{outName}.json"
 outEffName              = f"TrotaEfficiencies_{era}_{TopCategory}"
@@ -49,6 +49,9 @@ if os.path.exists(outJsonPath):
 else:
     print(f"Output file {outJsonPath} does not exist. Extracting scale factors from fit results.")
     sf_dict         = {}
+if (TopCategory in sf_dict) and ("LooseButNotTight" in sf_dict[TopCategory]):
+    print(f"Removing old LooseButNotTight scale factors of {TopCategory} from {outJsonPath}: they are computed in the analysis by produceTrotaCorrLib.py")
+    del sf_dict[TopCategory]["LooseButNotTight"]
 if TopCategory in sf_dict:
     print(f"Candidate {TopCategory} already exists in the results for era {era}. Overwriting existing scale factors for this candidate.")
 else:    

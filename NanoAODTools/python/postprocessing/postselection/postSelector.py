@@ -188,7 +188,7 @@ TopSF_CorrLibFilePath_dict = {
                                 "2022EE":           "",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs/CorrLib_TrotaScaleFactors_2023.json",
-                                "2023":             "./TopSF-corrections/CorrLib_TrotaScaleFactors_2023.json",
+                                "2023":             "./TopSF-corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
                                 "2023postBPix":     "",
                                 "2024":             "",
                             }
