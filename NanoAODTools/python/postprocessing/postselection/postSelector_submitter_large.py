@@ -25,6 +25,7 @@ parser.add_option(      '--noPuWeight',             dest='noPuWeight',          
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
 parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
+parser.add_option(      '--varfile',                dest='varfile',             type=str,               default = "../variables.py",                            help='variables file passed to postSelector.py (cuts and regions), resolved from the submission folder')
 
 parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root, merged in a local copy in /tmp/<user>/)  ')
 
@@ -50,6 +51,11 @@ noPuWeight          = opt.noPuWeight
 noTopPtWeight       = opt.noTopPtWeight
 noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
+# absolute path: the jobs run from another folder
+varfile             = os.path.abspath(opt.varfile)
+if not os.path.exists(varfile):
+    print(f"variables file {varfile} not found - please check the option --varfile")
+    exit()
 njobs_per_part      = opt.partsize
 suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
 mode = opt.mode
@@ -153,6 +159,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         + f"--hist_folder {hist_folder} "
         + f"--nfiles_max {nfiles_max} "
         + f"{parts} "
+        + f"--varfile {varfile} "
         + "--tmpfold"
     )
 
