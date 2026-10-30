@@ -477,9 +477,13 @@ def histoMerge(outpath, mergepath, sampleLabel, nsplit, dryrun=False, rmparts=Fa
         if rmparts and not mergeChecked:
             print (" ERROR: check of the merged file failed for "+sampleLabel+", parts NOT removed")
         shutil.copy(localMerged, tmpMerged)
-        copyChecked = mergeChecked and filecmp.cmp(localMerged, tmpMerged, shallow=False)  # byte by byte
-        if mergeChecked and not copyChecked:
-            print (" ERROR: copy of the merged file on EOS differs from the local one for "+sampleLabel+", parts NOT removed")
+        # the copy is always read back byte by byte: opened by ROOT right after the copy, the file on EOS (fuse)
+        # can still have a stale tail and is seen as truncated (kRecovered) even if it is fine
+        if not filecmp.cmp(localMerged, tmpMerged, shallow=False):
+            print (" ERROR: copy of the merged file on EOS differs from the local one for "+sampleLabel+", "+mergepath+"/"+sampleLabel+".root left untouched")
+            os.remove(tmpMerged)
+            return False
+        copyChecked = mergeChecked
     except OSError as e:
         print (" ERROR: merge of "+sampleLabel+" failed ("+str(e)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
         if os.path.exists(tmpMerged): os.remove(tmpMerged)
