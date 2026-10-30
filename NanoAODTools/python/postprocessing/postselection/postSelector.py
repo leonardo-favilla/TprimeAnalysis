@@ -188,9 +188,15 @@ TopSF_CorrLibFilePath_dict = {
                                 "2022EE":           "",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
                                 # "2023":             "/eos/user/l/lfavilla/RDF_DManalysis/TopSF/corrections/2023_NewWPs/CorrLib_TrotaScaleFactors_2023.json",
-                                "2023":             "./TopSF-corrections/CorrLib_TrotaScaleFactors_2023.json",
+                                "2023":             "./TopSF-corrections/2023/CorrLib_TrotaScaleFactors_2023.json",
                                 "2023postBPix":     "",
                                 "2024":             "",
+                            }
+BTV_CorrLibFilePath_dict        = {
+                                "2024":             "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-10-20/btagging.json.gz",
+                            }
+BTagEff_CorrLibFilePath_dict    = {
+                                "2024":             "../BTagEfficiency/BTagEfficiency_2024.json",
                             }
 
 
@@ -348,9 +354,9 @@ def preselection(df, btagAlg, year, EE):
     elif year in [2024]:
         df = df
 
-    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt, Jet_eta, Jet_jetId)") # richiesto jetId==6
+    df = df.Define("GoodJet_idx",                       "GetGoodJet(Jet_pt_nominal, Jet_eta, Jet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodJet",                          "GoodJet_idx.size()") 
-    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
+    df = df.Define("GoodFatJet_idx",                    "GetGoodFatJet(FatJet_pt_nominal, FatJet_eta, FatJet_jetId)") # richiesto jetId==6
     df = df.Define("nGoodFatJet",                       "GoodFatJet_idx.size()")
     df = df.Filter("nGoodJet>2 || nGoodFatJet>0 ",      "jet presel")
 
@@ -379,7 +385,7 @@ def preselection(df, btagAlg, year, EE):
            .Define("LeadingJetPt_eta",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_eta)")\
            .Define("LeadingJetPt_phi",                  "GetLeadingJetVar(LeadingJetPt_idx, Jet_phi)")\
            .Define("LeadingJetPt_mass",                 "GetLeadingJetVar(LeadingJetPt_idx, Jet_mass_nominal)")
-    df = df.Define("LeadingFatJetPt_idx",               "GetLeadingPtJet(FatJet_pt)")\
+    df = df.Define("LeadingFatJetPt_idx",               "GetLeadingPtJet(FatJet_pt_nominal)")\
            .Define("LeadingFatJetPt_pt",                "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_pt_nominal)")\
            .Define("LeadingFatJetPt_eta",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_eta)")\
            .Define("LeadingFatJetPt_phi",               "GetLeadingJetVar(LeadingFatJetPt_idx, FatJet_phi)")\
@@ -558,6 +564,18 @@ def add_TrotaScaleFactors(df, sampleflag, sample_process, TopSF_CorrLibFilePath)
                                             .Define("BestTopMerged_process",                                "1.")
 
     return df_TrotaScaleFactors
+
+def add_BTagFixedWPScaleFactor(df, era, sample_process):
+    # b-tag event weight with fixed WPs L/M/T (BTV multi-WP method), MC efficiency maps from BTagEfficiency/
+    # only b jets are reweighted (c and light jets keep factor 1, see GetBTagEventWeight_FixedWP)
+    # each background uses its own map; the inclusive maps in the json are not used
+    eff_names           = [c["name"] for c in json.load(open(BTagEff_CorrLibFilePath_dict[era]))["corrections"]]
+    if f"UParTAK4_efficiency_{sample_process}" in eff_names:
+        eff_name        = f"UParTAK4_efficiency_{sample_process}"
+    else:
+        eff_name        = "UParTAK4_efficiency_TT"                          # no map for this process (e.g. TprimeToTZ): closest topology, top + real b jets
+    print("b-tag efficiency map: ", eff_name)
+    return df.Define("SFbtag_nominal", f'GetBTagEventWeight_FixedWP("{BTV_CorrLibFilePath_dict[era]}", "{BTagEff_CorrLibFilePath_dict[era]}", "{eff_name}", GoodJet_idx, Jet_pt_nominal, Jet_eta, RVec<int>(Jet_hadronFlavour), Jet_btagUParTAK4B, btagUParTAK4B_looseWP_2024, btagUParTAK4B_mediumWP_2024, btagUParTAK4B_tightWP_2024)')
 
 def defineWeights(df, sampleflag, sample_process):
     if sampleflag:
@@ -897,8 +915,6 @@ for d in datasets:
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
         if sampleflag:
             df              = df.Define("triggerSF",        f'GetTriggerSF(PuppiMET_pt, "{era}", "sf")')
-            if s.year in [2024]:
-                df          = df.Define("SFbtag_nominal",   "1.0f")
         df                  = df.Define("PuppiMET_T1_pt_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_pt_nominal}").Define("PuppiMET_T1_phi_nominal_vec", "RVec<float>{ (float) PuppiMET_T1_phi_nominal}")
         df                  = defineWeights(df, sampleflag, sample_process)
 
@@ -934,6 +950,8 @@ for d in datasets:
                 df_hlt = df_hlt.Define("w_topPt", "1.0")
 
         df_presel           = preselection(df_hlt, bTagAlg, s.year, EE)
+        if sampleflag and s.year in [2024]:
+            df_presel       = add_BTagFixedWPScaleFactor(df_presel, era, sample_process)
         df_topsel           = select_top(df_presel, sampleflag, s.year)
         df_topsel           = df_topsel.Define("MT_T", "sqrt(2 * Top_pt * PuppiMET_T1_pt_nominal * (1 - cos(Top_phi - PuppiMET_T1_phi_nominal)))")
         df_TrotaSF          = add_TrotaScaleFactors(df_topsel, sampleflag, sample_process, TopSF_CorrLibFilePath_dict[era])

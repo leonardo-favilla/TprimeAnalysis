@@ -4,6 +4,7 @@ from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 import yaml
 import sys
 import optparse
+import subprocess
 
 config = {}
 config_paths = os.environ.get('PWD')+'/../config/config.yaml'
@@ -16,18 +17,24 @@ else:
     sys.exit(1)
 
 
-usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --categories_to_fit <cat1,cat2>"
+usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --categories_to_fit <cat1,cat2> [--symmetrize <syst1,syst2>] [--positive] [--saveWithUncertainties]"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
 parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, LooseButNotTight, Tight")
 parser.add_option(      "--categories_to_fit",      dest="categories_to_fit",           type=str,     default="topmatched,nonmatched",                  help="Comma separated categories whose SF is fitted, among: topmatched, nonmatched, other. The others are fixed to 1")
+parser.add_option(      "--symmetrize",             dest="symmetrize",                  type=str,     default="",                                       help="Comma separated systematics to symmetrize, e.g. jesTotal,jer (writes <ev_cat>_symmetrized.root)")
+parser.add_option(      "--positive",               dest="positive",                    action="store_true", default=False,                     help="Fix zero/negative bin contents of the MC histograms (writes <ev_cat>_zerosFixed.root, used in the datacards)")
+parser.add_option(      "--saveWithUncertainties",  dest="saveWithUncertainties",       action="store_true", default=False,                     help="Run FitDiagnostics with --saveWithUncertainties: pre/post-fit uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py, not used by extract_ScaleFactors.py); with combine v11 ~15 min per bin instead of ~10 s")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 TopCategory             = opt.TopCategory
 wp_cat                  = opt.wp_cat
 categories_to_plot      = ["topmatched", "nonmatched", "other"]                     # all the categories in the datacard
 categories_to_fit       = opt.categories_to_fit.split(",")                          # SFs fitted in the fit, the others are fixed to 1
+symmetrize              = opt.symmetrize
+positive                = opt.positive
+saveWithUncertainties   = opt.saveWithUncertainties
 if not set(categories_to_fit) <= set(categories_to_plot):
     print(f"Unknown categories to fit: {sorted(set(categories_to_fit) - set(categories_to_plot))}, choose among {categories_to_plot}, exiting")
     sys.exit(1)
@@ -311,6 +318,21 @@ for ev_cat, outFile in outFile_dict.items():
             histo.Write()
     outFile.Close()
 
+def run(cmd):
+    print(f"Running: {cmd}")
+    subprocess.run(cmd, shell=True, check=True)
+
+shapes_file_dict = {}                                                               # file with the histograms used in the datacard of each event category
+for ev_cat in event_categories:
+    shapes_file = f"{ev_cat}.root"
+    if symmetrize:
+        run(f"python3 symmetrizeHistos.py -i {os.path.join(workspaceSubFolder, shapes_file)} --systs {symmetrize}")
+        shapes_file = shapes_file.replace(".root", "_symmetrized.root")
+    if positive:
+        run(f"python3 makePositiveHistos.py -i {os.path.join(workspaceSubFolder, shapes_file)}")
+        shapes_file = shapes_file.replace(".root", "_zerosFixed.root")
+    shapes_file_dict[ev_cat] = shapes_file
+
 with open(os.path.join(workspaceSubFolder, "histogram_counts.txt"), "w") as count_file:
     for ev_cat, summary in summaryCount_dict.items():
         count_file.write(f"Event category:              {ev_cat}\n")
@@ -329,6 +351,7 @@ number_of_categories = len(categories_to_plot)
 print(f"Folder with datacards and workspaces: {workspaceSubFolder}")
 for ev_cat in event_categories:
     print(f"Printing datacard {ev_cat}.txt")
+    shapes_file = shapes_file_dict[ev_cat]
     with open(f"{workspaceSubFolder}/{ev_cat}.txt", 'w') as combine_card_file:
         combine_lines = []
         
@@ -337,10 +360,10 @@ for ev_cat in event_categories:
         combine_lines.append("kmax * (automatic number of nuisance parameters)\n")
         combine_lines.append("----------\n")
 
-        combine_lines.append(f"shapes data_obs pass {workspaceSubFolder}/{ev_cat}.root data_{fit_variable}_{ev_cat}_pass\n")
-        combine_lines.append(f"shapes * pass {workspaceSubFolder}/{ev_cat}.root $PROCESS_{fit_variable}_{ev_cat}_pass_nominal $PROCESS_{fit_variable}_{ev_cat}_pass_$SYSTEMATIC\n")
-        combine_lines.append(f"shapes data_obs fail {workspaceSubFolder}/{ev_cat}.root data_{fit_variable}_{ev_cat}_fail\n")
-        combine_lines.append(f"shapes * fail {workspaceSubFolder}/{ev_cat}.root $PROCESS_{fit_variable}_{ev_cat}_fail_nominal $PROCESS_{fit_variable}_{ev_cat}_fail_$SYSTEMATIC\n")
+        combine_lines.append(f"shapes data_obs pass {workspaceSubFolder}/{shapes_file} data_{fit_variable}_{ev_cat}_pass\n")
+        combine_lines.append(f"shapes * pass {workspaceSubFolder}/{shapes_file} $PROCESS_{fit_variable}_{ev_cat}_pass_nominal $PROCESS_{fit_variable}_{ev_cat}_pass_$SYSTEMATIC\n")
+        combine_lines.append(f"shapes data_obs fail {workspaceSubFolder}/{shapes_file} data_{fit_variable}_{ev_cat}_fail\n")
+        combine_lines.append(f"shapes * fail {workspaceSubFolder}/{shapes_file} $PROCESS_{fit_variable}_{ev_cat}_fail_nominal $PROCESS_{fit_variable}_{ev_cat}_fail_$SYSTEMATIC\n")
         combine_lines.append("----------\n")
 
         combine_lines.append("bin\tpass\tfail\n")
@@ -405,6 +428,7 @@ with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
                                 f"    --name _{ev_cat}\n"
                                 )
     fit_script_file.write("echo '[2/3] Running FitDiagnostics'\n")
+    save_unc_opts = "    --saveWithUncertainties \\\n" if saveWithUncertainties else ""   # uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py)
     for ev_cat in event_categories:
         fit_script_file.write(
                                 f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
@@ -413,7 +437,7 @@ with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
                                 f"    --saveShapes \\\n"
                                 f"    --cminDefaultMinimizerStrategy 2 \\\n"
                                 f"    --robustFit 1 \\\n"
-                                f"    --saveWithUncertainties \\\n"
+                                f"{save_unc_opts}"
                                 f"    --name _{ev_cat}\n"
                                 )
     fit_script_file.write("echo '[3/3] Running Impacts'\n")

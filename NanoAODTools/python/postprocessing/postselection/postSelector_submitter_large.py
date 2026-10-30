@@ -4,6 +4,8 @@ import sys
 import time
 import json
 import shutil
+import filecmp
+import subprocess
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.postselection.splitter import sampleSplitter
 
@@ -23,8 +25,9 @@ parser.add_option(      '--noPuWeight',             dest='noPuWeight',          
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
 parser.add_option(      '--noTrotaSF',              dest='noTrotaSF',           action='store_true',    default = False,                                        help='remove Trota SF')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
+parser.add_option(      '--varfile',                dest='varfile',             type=str,               default = "../variables.py",                            help='variables file passed to postSelector.py (cuts and regions), resolved from the submission folder')
 
-parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root)  ')
+parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root, merged in a local copy in /tmp/<user>/), d = delete the parts (<outpath>/parts/<sample>_part*.root, and parts/ when empty) after checking <mergepath>/plots/<sample>.root against them; use it as the last step, -m c/r then see the removed parts as failed jobs  ')
 
 parser.add_option('--config_paths', dest='config_paths', type=str, default = None, help='config file path ')
 parser.add_option('--dict_samples_file', dest='dict_samples_file', type=str, default = None, help='samples file path - will override the one in the config ')
@@ -47,14 +50,19 @@ noPuWeight          = opt.noPuWeight
 noTopPtWeight       = opt.noTopPtWeight
 noTrotaSF           = opt.noTrotaSF
 printcutflow        = opt.printcutflow
+# absolute path: the jobs run from another folder
+varfile             = os.path.abspath(opt.varfile)
+if not os.path.exists(varfile):
+    print(f"variables file {varfile} not found - please check the option --varfile")
+    exit()
 njobs_per_part      = opt.partsize
 suffix              = f"_{opt.suffix}" if opt.suffix is not None else ""
 mode = opt.mode
 verb = opt.verbose
 
-if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h")):
-    print("operational mode should be s, c, r, or h - please check that was not a typo in the command line for the option --mode ")
-    exit
+if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h") or (mode == "d")):
+    print("operational mode should be s, c, r, h or d - please check that was not a typo in the command line for the option --mode ")
+    exit()
 
 config = {}
 config_p = os.environ.get('PWD')+'/../config/config.yaml'
@@ -149,6 +157,7 @@ def runner_writer(run_folder, dataset, dict_samples_file, hist_folder, nfiles_ma
         + f"--hist_folder {hist_folder} "
         + f"--nfiles_max {nfiles_max} "
         + f"{parts} "
+        + f"--varfile {varfile} "
         + "--tmpfold"
     )
 
@@ -330,7 +339,29 @@ def checkOutputFileIsBad(path): #returns true if the root file is missing, empty
     tf.Close()
     return bad
 
-def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0): #returns true if the job has to be rerun
+def getQueuedJobs(): #returns {JobTag: (state, "cluster.proc", holdReason)} for the jobs of the user still in the condor queue
+    states = {"1": "idle", "2": "running", "5": "held", "6": "running", "7": "suspended"} # 3 = removed, 4 = completed: not in the queue anymore
+    cmd = ["condor_q", "-af:t", "JobTag", "JobStatus", "ClusterId", "ProcId", "HoldReason"]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True)
+    except OSError as e:
+        res = None
+        err = str(e)
+    if res is None or res.returncode != 0:
+        # never assume an empty queue: jobs still running would be resubmitted
+        print("ERROR: condor_q failed, cannot tell which jobs are still in the queue - exiting")
+        print(err if res is None else res.stderr)
+        sys.exit(1)
+    queued = {}
+    for line in res.stdout.splitlines():
+        fields = line.split("\t")
+        if len(fields) < 5 or fields[1] not in states:
+            continue
+        queued[fields[0]] = (states[fields[1]], fields[2]+"."+fields[3], fields[4] if fields[4] != "undefined" else "")
+    return queued
+
+def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0, queueKnown=False): #returns true if the job has to be rerun
+    # queueKnown: the job is known not to be in the condor queue (checked with condor_q)
     if not os.path.exists(condorFolder):
         if(verbose==1): print ("job does not have condor folder - has to be rerun" )
         return True
@@ -345,9 +376,12 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0
         print("outfile ",outputfileName," exists? ", outputfileExists)
         print("errorfile ",errorfileName," exists? ", errorfileExists)
     
-    jobHasEnded = (outputfileExists and errorfileExists)#check here job is not running - still to implement better 
+    jobHasEnded = (outputfileExists and errorfileExists)
     if jobHasEnded==False:
-        if(verbose==1): print ("job had not ended - does not have to be rerun yet") 
+        if queueKnown:
+            if(verbose==1): print ("job not in queue and without logs - lost, has to be rerun")
+            return True
+        if(verbose==1): print ("job had not ended - does not have to be rerun yet")
         return False
 
     if (errorfileExists and not outputfileExists):
@@ -370,38 +404,133 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0
     return False
 
 #outFolder_path      = config["outputfolder"]["postselector_results"][period]
-def histoMergeWriter(outpath, mergepath, sampleLabel):
-    if not os.path.exists(mergepath):
-        print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
-        os.makedirs(mergepath)
-    # hadd into a temporary file, renamed to <sampleLabel>.root only if the merge succeeded
-    commandHadd = "hadd -f "+mergepath+"/tmp_"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root"
+def histoMergeWriter(localParts, localMerged):
+    # parallel hadd of the local copies of the parts
+    commandHadd = "hadd -f -j 4 "+localMerged+" " + " ".join(localParts)
     return commandHadd
 
+def checkMergedFile(parts, merged, nCheck=20): #returns true if the merged file has the same histograms as the parts and the sums add up
+    # same number of keys in every part and in the merged file; for nCheck histograms spread over the key list,
+    # sum of bin contents (including under/overflow) and entries of the merged one equal to the sum over the parts
+    import ROOT
+    ROOT.gErrorIgnoreLevel = ROOT.kFatal
+    fm = ROOT.TFile.Open(merged)
+    keys = [k.GetName() for k in fm.GetListOfKeys()]
+    names = keys[::max(1, len(keys)//nCheck)]
+    hm = {n: fm.Get(n) for n in names}
+    sumContent = {n: 0. for n in names}
+    sumEntries = {n: 0. for n in names}
+    for p in parts:
+        fp = ROOT.TFile.Open(p)
+        if fp.GetListOfKeys().GetEntries() != len(keys):
+            print (" ERROR: "+p+" has "+str(fp.GetListOfKeys().GetEntries())+" keys, the merged file "+str(len(keys)))
+            fp.Close()
+            fm.Close()
+            return False
+        for n in names:
+            h = fp.Get(n)
+            sumContent[n] += sum(h.GetBinContent(i) for i in range(h.GetNcells()))
+            sumEntries[n] += h.GetEntries()
+        fp.Close()
+    good = True
+    for n in names:
+        content = sum(hm[n].GetBinContent(i) for i in range(hm[n].GetNcells()))
+        if abs(content - sumContent[n]) > 1e-6*max(abs(content), abs(sumContent[n]), 1e-300) or hm[n].GetEntries() != sumEntries[n]:
+            print (" ERROR: "+n+" in the merged file: content "+str(content)+", entries "+str(hm[n].GetEntries())+", sum over the parts: content "+str(sumContent[n])+", entries "+str(sumEntries[n]))
+            good = False
+    fm.Close()
+    return good
+
 def histoMerge(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the merge succeeded
-    badParts = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit) if checkOutputFileIsBad(outpath+"/"+sampleLabel+"_part"+str(ns)+".root")]
+    # hadd reading the parts on EOS takes minutes per sample (many small reads): the parts are copied
+    # to a local folder in /tmp, merged there and the result is copied back to EOS (~25 s for 78 parts)
+    # the parts are never removed here, see removeParts (-m d)
+    parts =[outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit)]
+    badParts = [p for p in parts if checkOutputFileIsBad(p)]
     if badParts:
         print (" ERROR: "+sampleLabel+" not merged, missing or broken parts (rerun them with -m r):")
         for p in badParts: print ("   "+p)
         return False
-    hcommand = histoMergeWriter(outpath, mergepath, sampleLabel)
-    print (" histomerge command is \n", hcommand)
+    localFolder = "/tmp/"+username+"/merge_"+sampleLabel+"_"+str(os.getpid())
+    localParts  = [localFolder+"/"+os.path.basename(p) for p in parts]
+    localMerged = localFolder+"/"+sampleLabel+".root"
+    tmpMerged   = mergepath+"/tmp_"+sampleLabel+".root"       # renamed to <sampleLabel>.root only if the merge succeeded
+    hcommand    = histoMergeWriter(localParts, localMerged)
+    print (" histomerge: "+str(nsplit)+" parts copied to "+localFolder+", command is \n", hcommand)
     if dryrun:
         return True
-    tmpMerged = mergepath+"/tmp_"+sampleLabel+".root"
-    haddStatus = os.system(hcommand)
-    if haddStatus != 0 or checkOutputFileIsBad(tmpMerged):
-        print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+    if not os.path.exists(mergepath):
+        print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
+        os.makedirs(mergepath)
+    try:
+        os.makedirs(localFolder)
+        for p, lp in zip(parts, localParts):
+            shutil.copy(p, lp)
+        haddStatus = os.system(hcommand)
+        if haddStatus != 0 or checkOutputFileIsBad(localMerged):
+            print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+            return False
+        shutil.copy(localMerged, tmpMerged)
+        # the copy is always read back byte by byte: opened by ROOT right after the copy, the file on EOS (fuse)
+        # can still have a stale tail and is seen as truncated (kRecovered) even if it is fine
+        if not filecmp.cmp(localMerged, tmpMerged, shallow=False):
+            print (" ERROR: copy of the merged file on EOS differs from the local one for "+sampleLabel+", "+mergepath+"/"+sampleLabel+".root left untouched")
+            os.remove(tmpMerged)
+            return False
+    except OSError as e:
+        print (" ERROR: merge of "+sampleLabel+" failed ("+str(e)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+        if os.path.exists(tmpMerged): os.remove(tmpMerged)
+        return False
+    finally:
+        shutil.rmtree(localFolder, ignore_errors=True)            # the local copies are removed in any case
+    if checkOutputFileIsBad(tmpMerged):
+        print (" ERROR: copy of the merged file to "+tmpMerged+" is broken, "+mergepath+"/"+sampleLabel+".root left untouched")
         if os.path.exists(tmpMerged): os.remove(tmpMerged)
         return False
     os.replace(tmpMerged, mergepath+"/"+sampleLabel+".root")
+    return True
+
+def removeParts(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the parts were removed (or were already gone)
+    # the merged file already in <mergepath> is checked against the parts (read on EOS, only the keys and a few
+    # histograms are read) and is never rewritten; parts/ is removed when empty, i.e. after the last sample
+    parts  = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit)]
+    merged = mergepath+"/"+sampleLabel+".root"
+    existing = [p for p in parts if os.path.exists(p)]
+    if not existing:
+        print (" "+sampleLabel+": no parts left in "+outpath+" - nothing to do")
+        return True
+    if len(existing) != nsplit:
+        print (" ERROR: "+sampleLabel+" has "+str(len(existing))+" of "+str(nsplit)+" parts, the merged file cannot be checked against them, parts NOT removed")
+        return False
+    if checkOutputFileIsBad(merged):
+        print (" ERROR: "+merged+" is missing or broken (merge it with -m h), parts NOT removed")
+        return False
+    badParts = [p for p in parts if checkOutputFileIsBad(p)]
+    if badParts:
+        print (" ERROR: "+sampleLabel+" has broken parts, parts NOT removed:")
+        for p in badParts: print ("   "+p)
+        return False
+    if not checkMergedFile(parts, merged):
+        print (" ERROR: "+merged+" does not match the sum of the parts (merge it again with -m h), parts NOT removed")
+        return False
+    if dryrun:
+        print (" "+sampleLabel+": merged file matches the "+str(nsplit)+" parts, they would be removed")
+        return True
+    for p in parts:
+        os.remove(p)
+    print (" "+str(nsplit)+" parts of "+sampleLabel+" removed")
+    if not os.listdir(outpath):
+        os.rmdir(outpath)
+        print (" "+outpath+" empty, removed")
     return True
     
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
     print("Please run voms command")
     exit()
 
-pass_fail_jobs={}
+pass_fail_jobs={} # job -> "ok", "failed", "idle", "running", "held" or "suspended"
+# jobs still in the condor queue are never checked nor (re)submitted
+queued = getQueuedJobs() if (mode in ("s", "c", "r") and not dryrun) else None
 #maxlaunch = 10
 
 #njobs_per_part=100
@@ -435,6 +564,12 @@ for d in dss:
         
     for sample in samples:
         nsplit,lastpartsize = sampleSplitter(samplesfile,sample.label,dat,njobs_per_part) 
+        if mode == "d":
+            if nsplit>1:
+                removeParts(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)
+            else:
+                print (" "+sample.label+" was not split, no parts to remove")
+            continue
         if mode == "h":
             if nsplit>1:
                 histoMerge(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)
@@ -474,14 +609,23 @@ for d in dss:
             log_folder              = condor_subfolder + "condor/"
 
             hasFailed=False
+            jobkey = sample.label + locsuffix # = JobTag in condor.sub
             # same destination as in runner_writer: split jobs in parts/, unsplit ones in plots/
             outfile_path = outFolder_path.rstrip("/") + "/" + ("parts" if postsuffix else "plots") + "/" + sample.label + postsuffix + ".root"
-            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0)
+            if queued is not None and jobkey in queued:
+                state, clusterid, holdreason = queued[jobkey]
+                pass_fail_jobs[jobkey] = state
+                if state == "held":
+                    print(f" job {jobkey} is held (cluster {clusterid}): {holdreason}")
+                elif (mode == "s" or mode == "r" or verb>0):
+                    print(f" job {jobkey} already in queue ({state}, cluster {clusterid}): skipped")
+                continue
+            if (mode == "c" or mode == "r"): hasFailed= checkJobHasFailed(condor_subfolder,sample.label,dat,outfile_path,0,queued is not None)
 
-            pass_fail_jobs[sample.label + locsuffix] = 1*(not hasFailed)
+            pass_fail_jobs[jobkey] = "failed" if hasFailed else "ok"
             if mode=="c":
                 if (verb>0): print(" job in ", condor_subfolder, " has failed? ",hasFailed)
-                
+
             if ( mode =="s" or (mode == "r" and hasFailed)):
                 if not os.path.exists(condor_folder):
                     os.makedirs(condor_folder)
@@ -517,14 +661,23 @@ for d in dss:
 
             
             
-if mode == "c" or mode == "r": 
+if mode == "c" or mode == "r":
     for ss in pass_fail_jobs:
         if(verb>1): print (f"{ss} {pass_fail_jobs[ss]}")
     if(verb>0): print ("files to rerun: ")
     ntorerun=0
     for ss in pass_fail_jobs:
-        if(pass_fail_jobs[ss]==0):
+        if(pass_fail_jobs[ss]=="failed"):
             ntorerun+=1
             if(verb>0):print(ss)
+    if(verb>0 and "held" in pass_fail_jobs.values()):
+        print ("held jobs (not resubmitted): ")
+        for ss in pass_fail_jobs:
+            if(pass_fail_jobs[ss]=="held"): print(f"{ss} (cluster {queued[ss][1]}): {queued[ss][2]}")
+    counts = {st: list(pass_fail_jobs.values()).count(st) for st in ["ok", "failed", "idle", "running", "held", "suspended"]}
+    print("  ".join(f"{st}: {n}" for st, n in counts.items()))
+    nqueued = counts["idle"] + counts["running"] + counts["held"] + counts["suspended"]
+    if nqueued > 0:
+        print(f"WARNING: {nqueued} jobs still in queue: run -m c again when the queue is empty")
     if(mode=="c"): print("total to rerun: "+str(ntorerun))
     if(mode=="r"): print("total being rerun: "+str(ntorerun))

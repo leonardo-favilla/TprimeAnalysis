@@ -7,7 +7,6 @@ from variables import *
 import copy
 import json
 import numpy as np
-import shutil
 import array
 #import math
 #import pickle as pkl
@@ -95,10 +94,6 @@ if not os.path.exists(folder_www):
     os.mkdir(folder_www)
 if not os.path.exists(repostack_www):
     os.mkdir(repostack_www)
-if not os.path.exists(folder_www+"index.php"):
-    shutil.copy("/eos/user/l/lfavilla/www/index.php", folder_www)
-if not os.path.exists(repostack_www+"index.php"):
-    shutil.copy("/eos/user/l/lfavilla/www/index.php", repostack_www)
 
 
 print("Created folders 'plots' and 'stacks' at ", folder)

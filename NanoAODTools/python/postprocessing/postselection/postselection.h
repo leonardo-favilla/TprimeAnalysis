@@ -353,12 +353,28 @@ bool MET_filter(bool flag_goodVertices, bool flag_globalSuperTightHalo2016Filter
 }
 
 // ########################################################
+// ############## CorrectionSet cache #####################
+// ########################################################
+
+// Read each correctionlib json only once (at the first call) instead of at every event:
+// from_file at every event costs ~7 ms/event for the b-tag jsons, the cached lookup ~0.01 ms/event.
+// Not thread-safe: fine as long as ROOT::EnableImplicitMT() is off.
+const correction::CorrectionSet& GetCachedCorrectionSet(const std::string& path)
+{
+  static std::map<std::string, std::unique_ptr<correction::CorrectionSet>> cache;   // one CorrectionSet per file path
+  auto it = cache.find(path);
+  if (it == cache.end())
+    it = cache.emplace(path, correction::CorrectionSet::from_file(path)).first;
+  return *it->second;
+}
+
+// ########################################################
 // ############## Trigger SF     ##########################
 // ########################################################
 
 float GetTriggerSF(float PuppiMET_pt, std::string era, std::string type){
-  auto cset = correction::CorrectionSet::from_file("../TriggerSF/TriggerSF.json");
-  auto triggerSF_corr = cset->at("triggerSF");
+  const auto& cset = GetCachedCorrectionSet("../TriggerSF/TriggerSF.json");
+  auto triggerSF_corr = cset.at("triggerSF");
   float weight = 1.0;
   if (PuppiMET_pt > 100){
     weight = triggerSF_corr->evaluate({PuppiMET_pt, era, type});
@@ -612,7 +628,7 @@ RVec<int> LooseElectron_idx(rvec_f Electron_pt, rvec_f Electron_eta, rvec_f Elec
   RVec<int> ids;
   for(int i = 0; i<Electron_pt.size(); i++)
   {
-    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1) ids.emplace_back(i);
+    if(Electron_cutBased[i]>=1 && Electron_pt[i] > 50 && abs(Electron_eta[i])<2.5 && Electron_mvaIso_WP80[i]==1 && Electron_minDeltaR_fromGoodJets[i] > 0.4) ids.emplace_back(i);
   }
   return ids;
 }
@@ -1073,6 +1089,54 @@ RVec<float> GetJetBTagScore(rvec_i GoodJet, rvec_f Jet_btagDeepB)
         scores.emplace_back(Jet_btagDeepB[GoodJet[i]]);
     }
     return scores;
+}
+
+////// b-tag event weight with fixed WPs (L, M, T), BTV multi-WP prescription:
+////// https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/#scale-factor-recommendations-for-event-reweighting
+////// weight = P(DATA)/P(MC) = product over the good jets of a factor that depends on the WP band of the jet:
+//////   score > T       ->  SF_T*eff_T / eff_T
+//////   M < score <= T  ->  (SF_M*eff_M - SF_T*eff_T) / (eff_M - eff_T)
+//////   L < score <= M  ->  (SF_L*eff_L - SF_M*eff_M) / (eff_L - eff_M)
+//////   score <= L      ->  (1 - SF_L*eff_L) / (1 - eff_L)
+////// eff = MC b-tag efficiency of the WP (our maps), SF = BTV scale factor of the WP
+////// only b jets (hadronFlavour 5) are reweighted, c and light jets keep factor 1
+float GetBTagEventWeight_FixedWP(std::string btvFilePath, std::string effFilePath, std::string effCorrectionName,
+                                 rvec_i GoodJet_idx, rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_hadronFlavour, rvec_f Jet_btagScore,
+                                 float wpLoose, float wpMedium, float wpTight)
+{
+  const auto& btv_cset = GetCachedCorrectionSet(btvFilePath);
+  const auto& eff_cset = GetCachedCorrectionSet(effFilePath);
+  auto sf       = btv_cset.at("UParTAK4_comb");                               // b jets
+  auto eff      = eff_cset.at(effCorrectionName);                             // process map, chosen in postSelector.py
+
+  float weight = 1.;
+  for (int j : GoodJet_idx)
+  {
+    int   flavour = Jet_hadronFlavour[j];    // 5 = b, 4 = c, 0 = udsg, same convention as the BTV json
+    if (flavour != 5) continue;              // c and light jets not reweighted
+    float abseta  = std::abs(Jet_eta[j]);
+    float pt      = Jet_pt[j];
+
+    float eff_L = eff->evaluate({"L", flavour, abseta, pt});
+    float eff_M = eff->evaluate({"M", flavour, abseta, pt});
+    float eff_T = eff->evaluate({"T", flavour, abseta, pt});
+    float sf_L  = sf->evaluate({"central", "L", flavour, abseta, pt});
+    float sf_M  = sf->evaluate({"central", "M", flavour, abseta, pt});
+    float sf_T  = sf->evaluate({"central", "T", flavour, abseta, pt});
+
+    float score = Jet_btagScore[j];
+    if (score > wpTight)
+      weight *= (sf_T*eff_T) / eff_T;
+    else if (score > wpMedium)
+      weight *= (sf_M*eff_M - sf_T*eff_T) / (eff_M - eff_T);
+    else if (score > wpLoose)
+      weight *= (sf_L*eff_L - sf_M*eff_M) / (eff_L - eff_M);
+    else
+      weight *= (1. - sf_L*eff_L) / (1. - eff_L);
+  }
+
+  if (!std::isfinite(weight) || weight < 0) return 1.;   // empty efficiency bin or non-monotonic SF*eff
+  return weight;
 }
 
 // ########################################################

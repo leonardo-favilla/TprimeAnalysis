@@ -10,7 +10,6 @@ import importlib.util
 import copy
 import json
 import numpy as np
-import shutil
 import cmsstyle as CMS
 import array
 ROOT.gROOT.SetBatch()
@@ -159,10 +158,6 @@ if not os.path.exists(folder_www):
 if not os.path.exists(repostack_www):
     os.makedirs(repostack_www, exist_ok=True)
     print("Created folder 'stacks' at ", folder_www)
-if not os.path.exists(folder_www+"index.php"):
-    shutil.copy("/eos/user/l/lfavilla/www/index.php", folder_www)
-if not os.path.exists(repostack_www+"index.php"):
-    shutil.copy("/eos/user/l/lfavilla/www/index.php", repostack_www)
 
 
 
