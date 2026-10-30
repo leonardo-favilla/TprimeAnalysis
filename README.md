@@ -35,7 +35,7 @@ source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_107 x86_64-el9-gcc13-opt
 python3 -m venv /afs/cern.ch/user/{u}/{username}/myvenv_lcg107
 source /afs/cern.ch/user/{u}/{username}/myvenv_lcg107/bin/activate
 python3 -m pip install --upgrade pip
-python3 -m pip install git+https://gitlab.cern.ch/cms-analysis/general/CMSJMECalculators.git
+python3 -m pip install git+https://gitlab.cern.ch/cms-analysis/general/CMSJMECalculators.git@a6075cbb8022120084e7ee03e63ff20a6e3c3fd1    # 0.4.1.dev33: CMSJMECalculators_module.py does not work with >= 0.4.2 (2 more MET arguments)
 python3 -m pip install tf-keras             # [only if needed]
 python3 -m pip install "cmsstyle==0.4.3"    # [for plotting]
 
