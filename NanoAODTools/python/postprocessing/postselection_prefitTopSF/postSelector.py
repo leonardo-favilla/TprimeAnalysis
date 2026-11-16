@@ -201,15 +201,19 @@ for d in datasets:
             # samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "davs://stwebdav.pi.infn.it:8443/cms/") # root://stormgf2.pi.infn.it/
             samples[d.label][s.label]['strings'][i] = string.replace("root://cms-xrd-global.cern.ch/", "root://xrootd-cms.infn.it/") # root://stormgf2.pi.infn.it/
         chain[d.label][s.label] = samples[d.label][s.label]['strings'][nstart:nend]
-        if not "Data" in s.label:            
-            ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][0:totfiles])#the total weight is the one of the sum of all
-            #weights, assuming all histograms will be summed together. A better solution would be to book histograms for the weights
-            #and fix it in post, when summing histos together
-            #ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][nstart:nend])
+        if not "Data" in s.label:
+            if (partsize>-1):
+                # part method: every part is normalized to the total weight of ALL the files of the sample,
+                # assuming all the parts will be summed together (-m h of postSelector_submitter_large.py)
+                ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][0:totfiles])
+            else:
+                # no parts: the output is used alone, so it is normalized to the total weight of the files actually processed
+                # (the first nfiles_max files; all of them when nfiles_max >= number of files, as in the submitters)
+                ntot_events[d.label][s.label] = np.sum(samples[d.label][s.label]['ntot'][nstart:nend])
         else:
             ntot_events[d.label][s.label] = None
         print("Dataset : "+s.label)
-        print("# of files to process : ", nstart-nend)
+        print("# of files to process : ", len(chain[d.label][s.label]))
         if len(chain[d.label][s.label])>1:
             print("files strings :\n  {}\n  {}\n  ... \n  {}\n  {}".format(chain[d.label][s.label][0], chain[d.label][s.label][1], chain[d.label][s.label][-2], chain[d.label][s.label][-1]))
         else:
@@ -223,7 +227,8 @@ for d in datasets:
                 TFile = ROOT.TFile.Open(f)
                 tchains[d.label][s.label].Add(f)
             except:
-                ntot_events[d.label][s.label] -= samples[d.label][s.label]['ntot'][i]
+                if ntot_events[d.label][s.label] is not None:       # None for Data
+                    ntot_events[d.label][s.label] -= samples[d.label][s.label]['ntot'][nstart+i]       # i counts from the first file of the part
                 print("Could not add file: ", f)
                 if (partsize>=-1):
                     print("Since using the part method we are interrupting the job with an ERROR")
