@@ -55,6 +55,8 @@ if not os.path.exists(workspaceSubFolder):
 
 lumi_unc_dict       = {"2022": 1.014, "2022EE": 1.014, "2023": 1.013, "2023postBPix": 1.013, "2024": 1.016} # https://twiki.cern.ch/twiki/bin/viewauth/CMS/LumiRecommendationsRun3
 event_categories    = ["pt0to200","pt200to400","pt400to600","pt600to1000","pt0to400","pt400to1000"]
+if TopCategory == "Merged":
+    event_categories.remove("pt0to200")     # Merged probe among the GoodFatJet (pt>200): pt0to200 is empty, no fit (SF = 1 +- 0 in TopSF-corrections/TrotaSF_binning.yaml)
 uncertainties       = {
                         "lumi":         [lumi_unc_dict[era],"lnN"],
                         "otherSyst":    [1.5,"lnN"],

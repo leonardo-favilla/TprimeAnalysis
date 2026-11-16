@@ -111,7 +111,7 @@ semilepPresel_njg2_nfjeq0   = "nGoodJet>2 && nGoodFatJet==0"
 semilepPresel_njfgeq1       = "nGoodFatJet>0"
 semilepPresel_MET           = "PuppiMET_T1_pt_nominal>50"
 semilepPresel_MET_W         = "W_pt>150 && PuppiMET_T1_pt_nominal>50"
-semilepPreselMixed          = "W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopMixed>=1.2 && dR_muTopLep_BestTopMixed>=1.2"
+semilepPreselMixed          = "BestTopMixed_idx>=0 && W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopMixed>=1.2 && dR_muTopLep_BestTopMixed>=1.2" # BestTopMixed_idx>=0: at least one Mixed candidate made of GoodJet/GoodFatJet
 
 topMixed_topmatched         = "TopMixedMatched_to_GenTop_dR0p2"
 topMixed_nonmatched         = "!TopMixedMatched_to_GenTop_dR0p2"

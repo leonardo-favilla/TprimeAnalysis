@@ -51,6 +51,8 @@ plotsFolder             = f"{outdir}/stacks_{wp_cat}/{fit_variable}/"
 os.makedirs(plotsFolder, exist_ok=True)
 
 event_categories        = ["pt0to200","pt200to400","pt400to600","pt600to1000","pt0to400","pt400to1000"]
+if TopCategory == "Merged":
+    event_categories.remove("pt0to200")     # not fitted for Merged (probe among the GoodFatJet, pt>200), as in collectHistograms.py
 categories              = {
                             "topmatched":   {"color": "#5790fc", "label": "Top-matched"},
                             "nonmatched":   {"color": "#e42536", "label": "Non-matched"},

@@ -111,7 +111,7 @@ semilepPresel_njg2_nfjeq0   = "nGoodJet>2 && nGoodFatJet==0"
 semilepPresel_njfgeq1       = "nGoodFatJet>0"
 semilepPresel_MET           = "PuppiMET_T1_pt_nominal>50"
 semilepPresel_MET_W         = "W_pt>150 && PuppiMET_T1_pt_nominal>50"
-semilepPreselResolved       = "W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopResolved>=1.2 && dR_muTopLep_BestTopResolved>=1.2"
+semilepPreselResolved       = "BestTopResolved_idx>=0 && W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopResolved>=1.2 && dR_muTopLep_BestTopResolved>=1.2" # BestTopResolved_idx>=0: at least one Resolved candidate made of GoodJet
 
 topResolved_topmatched      = "TopResolvedMatched_to_GenTop_dR0p2"
 topResolved_nonmatched      = "!TopResolvedMatched_to_GenTop_dR0p2"

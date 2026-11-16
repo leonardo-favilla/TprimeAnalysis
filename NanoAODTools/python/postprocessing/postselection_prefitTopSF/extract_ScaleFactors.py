@@ -97,8 +97,9 @@ for cat in categories:
             print(f"\nExtracting scale factors for event category: {evcat}")
             workspaceFolder = f"{outputfolder}/workspace_{wp_cat}/{fit_variable}"
             inFilePath      = f"{workspaceFolder}/fitDiagnostics_{evcat}.root"
-            if not os.path.exists(inFilePath):
-                print(f"Input file {inFilePath} not found. Skipping event category {evcat}.")
+            not_fitted      = (TopCategory == "Merged") and (evcat == "pt0to200")       # Merged probe among the GoodFatJet (pt>200): no fit in pt0to200, also if an old fitDiagnostics file is still there
+            if not_fitted or (not os.path.exists(inFilePath)):
+                print(f"Input file {inFilePath} not found or event category not fitted. Skipping event category {evcat}.")
                 event_categories_skipped.append(evcat)
                 sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(9999.0)  # assign a dummy value to indicate missing SF, to be treated as an outlier in the final analysis
                 sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(9999.0)  # assign a dummy error to indicate missing SF, to be treated as an outlier in the final analysis

@@ -2031,6 +2031,7 @@ Int_t TopMatched_to_GenTop_with_dR(rvec_f TopGenTopPart_eta, rvec_f TopGenTopPar
 
 RVec<int> JetBTag_NotInsideBestTopCand_idx(rvec_i JetBTag_idx, rvec_i TopCand_idxJet0, rvec_i TopCand_idxJet1, rvec_i TopCand_idxJet2, int BestTopCand_idx)
 {
+  if (BestTopCand_idx < 0) return JetBTag_idx; // no best top candidate: no b jet to remove
   int jet0 = TopCand_idxJet0[BestTopCand_idx];
   int jet1 = TopCand_idxJet1[BestTopCand_idx];
   int jet2 = TopCand_idxJet2[BestTopCand_idx];

@@ -111,7 +111,7 @@ semilepPresel_njg2_nfjeq0   = "nGoodJet>2 && nGoodFatJet==0"
 semilepPresel_njfgeq1       = "nGoodFatJet>0"
 semilepPresel_MET           = "PuppiMET_T1_pt_nominal>50"
 semilepPresel_MET_W         = "W_pt>150 && PuppiMET_T1_pt_nominal>50"
-semilepPreselMerged         = "W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopMerged>=1.2 && dR_muTopLep_BestTopMerged>=1.2"
+semilepPreselMerged         = "BestTopMerged_idx>=0 && W_pt>150 && PuppiMET_T1_pt_nominal>50 && dR_bJetTopLep_BestTopMerged>=1.2 && dR_muTopLep_BestTopMerged>=1.2" # BestTopMerged_idx>=0: at least one GoodFatJet (probe pt>200, so the pt0to200 regions are empty)
 
 topMerged_topmatched        = "TopMergedMatched_to_GenTop_dR0p2"
 topMerged_nonmatched        = "!TopMergedMatched_to_GenTop_dR0p2"

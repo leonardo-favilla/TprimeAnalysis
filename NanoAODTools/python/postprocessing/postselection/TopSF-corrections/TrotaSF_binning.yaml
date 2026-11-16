@@ -6,6 +6,8 @@
 #       Loose and Tight: SFs (pass and fail) fitted in that event category
 #       LooseButNotTight: pass SF computed from the Loose and Tight SFs and n_pass of that same event category, fail SF = 1
 #   - null: SF = 1.0 +- 0.0 for Loose, LooseButNotTight and Tight
+#   - Merged [0,200]: always null. The probe of the fit is a GoodFatJet (pt>200), pt0to200 is not fitted; 1 +- 0 in case Merged tops below 200 GeV are used
+#     (for Merged, pt0to400 contains only probes with pt in [200,400])
 # A top category with all bins null needs no input json (placeholders of the eras without SFs yet)
 #
 # Inputs: <era>/TrotaScaleFactors_<era>_<TopCategory>.json and <era>/TrotaEfficiencies_<era>_<TopCategory>.json in this folder,
@@ -52,8 +54,8 @@
     nonmatched: [pt0to400, pt0to400,   null,        null       ]
     other:      [null,     null,       null,        null       ]
   Merged:
-    topmatched: [pt0to400, pt0to400,   pt400to1000, pt400to1000]
-    nonmatched: [pt0to400, pt0to400,   null,        null       ]
+    topmatched: [null,     pt0to400,   pt400to1000, pt400to1000]
+    nonmatched: [null,     pt0to400,   null,        null       ]
     other:      [null,     null,       null,        null       ]
 
 "2023postBPix":

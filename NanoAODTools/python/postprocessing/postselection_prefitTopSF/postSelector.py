@@ -394,29 +394,37 @@ def select_top(df, isMC, year):
     # NB: TopTruth for Merged is replaced with FatJet_matched, the variable is between 0 and 3 
     # where 3 means true end less than 3 means false 
 
-    df_topselected = df_topvariables.Define("BestTopResolved_idx",                                                          "(int)ArgMax(TopResolved_TopScore_nominal)")\
-                                    .Define("BestTopMixed_idx",                                                             "(int)ArgMax(TopMixed_TopScore_nominal)")\
-                                    .Define("BestTopMerged_idx",                                                            "(int)ArgMax(TopMerged_TopScore_nominal)")\
+    # Mixed/Resolved probes: candidate with the highest score among the candidates made of GoodJet (and GoodFatJet), the same check as
+    # the Mixed/Resolved tops of step 2 (select_TopMix/select_TopRes with wp=-1: no score cut, candidates sorted by decreasing score);
+    # -1 if the event has no such candidate (the BestTop*_ variables are then -1, and semilepPreselMixed/Resolved require BestTop*_idx>=0).
+    # Merged probe: FatJet with the highest score among the GoodFatJet (pt_nominal>200, |eta|<2.4, jetId==6), the same objects as the Merged tops of step 2;
+    # -1 if the event has no GoodFatJet (the BestTopMerged_* variables are then -1, and semilepPreselMerged requires BestTopMerged_idx>=0).
+    # Before, ArgMax over all the FatJet returned 0 also for events without FatJet, and FatJet_*[0] was read out of range.
+    df_topselected = df_topvariables.Define("GoodTopRes_idx",                                                               "select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, -1.0)")\
+                                    .Define("GoodTopMix_idx",                                                               "select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, -1.0)")\
+                                    .Define("BestTopResolved_idx",                                                          "GoodTopRes_idx.size() > 0 ? GoodTopRes_idx[0] : -1")\
+                                    .Define("BestTopMixed_idx",                                                             "GoodTopMix_idx.size() > 0 ? GoodTopMix_idx[0] : -1")\
+                                    .Define("BestTopMerged_idx",                                                            "GoodFatJet_idx.size() > 0 ? (int)GoodFatJet_idx[ArgMax(Take(TopMerged_TopScore_nominal, GoodFatJet_idx))] : -1")\
                                     .Define("JetBTagMedium_NotInsideBestTopMixed_idx",                                      "JetBTag_NotInsideBestTopCand_idx(JetBTagMedium_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
                                     .Define("JetBTagMedium_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",             "JetBTag_NotInsideBestTopCand_idx(JetBTagMedium_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
                                     .Define("JetBTagTight_NotInsideBestTopMixed_idx",                                       "JetBTag_NotInsideBestTopCand_idx(JetBTagTight_idx, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, BestTopMixed_idx)")\
                                     .Define("JetBTagTight_NotInsideBestTopMixed_NotInsideBestTopResolved_idx",              "JetBTag_NotInsideBestTopCand_idx(JetBTagTight_NotInsideBestTopMixed_idx, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, BestTopResolved_idx)")\
 
-    df_topvariables = df_topselected.Define("BestTopResolved_pt",       "TopResolved_pt_nominal[BestTopResolved_idx]")\
-                                    .Define("BestTopResolved_eta",      "TopResolved_eta[BestTopResolved_idx]")\
-                                    .Define("BestTopResolved_phi",      "TopResolved_phi[BestTopResolved_idx]")\
-                                    .Define("BestTopResolved_mass",     "TopResolved_mass_nominal[BestTopResolved_idx]")\
-                                    .Define("BestTopResolved_score",    "TopResolved_TopScore_nominal[BestTopResolved_idx]")\
-                                    .Define("BestTopMixed_pt",          "TopMixed_pt_nominal[BestTopMixed_idx]")\
-                                    .Define("BestTopMixed_eta",         "TopMixed_eta[BestTopMixed_idx]")\
-                                    .Define("BestTopMixed_phi",         "TopMixed_phi[BestTopMixed_idx]")\
-                                    .Define("BestTopMixed_mass",        "TopMixed_mass_nominal[BestTopMixed_idx]")\
-                                    .Define("BestTopMixed_score",       "TopMixed_TopScore_nominal[BestTopMixed_idx]")\
-                                    .Define("BestTopMerged_pt",         "FatJet_pt_nominal[BestTopMerged_idx]")\
-                                    .Define("BestTopMerged_eta",        "FatJet_eta[BestTopMerged_idx]")\
-                                    .Define("BestTopMerged_phi",        "FatJet_phi[BestTopMerged_idx]")\
-                                    .Define("BestTopMerged_mass",       "FatJet_mass_nominal[BestTopMerged_idx]")\
-                                    .Define("BestTopMerged_score",      "TopMerged_TopScore_nominal[BestTopMerged_idx]")\
+    df_topvariables = df_topselected.Define("BestTopResolved_pt",       "BestTopResolved_idx >= 0 ? TopResolved_pt_nominal[BestTopResolved_idx]       : -1.f")\
+                                    .Define("BestTopResolved_eta",      "BestTopResolved_idx >= 0 ? TopResolved_eta[BestTopResolved_idx]              : -1.f")\
+                                    .Define("BestTopResolved_phi",      "BestTopResolved_idx >= 0 ? TopResolved_phi[BestTopResolved_idx]              : -1.f")\
+                                    .Define("BestTopResolved_mass",     "BestTopResolved_idx >= 0 ? TopResolved_mass_nominal[BestTopResolved_idx]     : -1.f")\
+                                    .Define("BestTopResolved_score",    "BestTopResolved_idx >= 0 ? TopResolved_TopScore_nominal[BestTopResolved_idx] : -1.f")\
+                                    .Define("BestTopMixed_pt",          "BestTopMixed_idx >= 0 ? TopMixed_pt_nominal[BestTopMixed_idx]                : -1.f")\
+                                    .Define("BestTopMixed_eta",         "BestTopMixed_idx >= 0 ? TopMixed_eta[BestTopMixed_idx]                       : -1.f")\
+                                    .Define("BestTopMixed_phi",         "BestTopMixed_idx >= 0 ? TopMixed_phi[BestTopMixed_idx]                       : -1.f")\
+                                    .Define("BestTopMixed_mass",        "BestTopMixed_idx >= 0 ? TopMixed_mass_nominal[BestTopMixed_idx]              : -1.f")\
+                                    .Define("BestTopMixed_score",       "BestTopMixed_idx >= 0 ? TopMixed_TopScore_nominal[BestTopMixed_idx]          : -1.f")\
+                                    .Define("BestTopMerged_pt",         "BestTopMerged_idx >= 0 ? FatJet_pt_nominal[BestTopMerged_idx]          : -1.f")\
+                                    .Define("BestTopMerged_eta",        "BestTopMerged_idx >= 0 ? FatJet_eta[BestTopMerged_idx]                 : -1.f")\
+                                    .Define("BestTopMerged_phi",        "BestTopMerged_idx >= 0 ? FatJet_phi[BestTopMerged_idx]                 : -1.f")\
+                                    .Define("BestTopMerged_mass",       "BestTopMerged_idx >= 0 ? FatJet_mass_nominal[BestTopMerged_idx]        : -1.f")\
+                                    .Define("BestTopMerged_score",      "BestTopMerged_idx >= 0 ? TopMerged_TopScore_nominal[BestTopMerged_idx] : -1.f")\
                                     .Define("BestTopResolved_passLoose",    f"BestTopResolved_score>={Top_Resolved_wp['10%']}")\
                                     .Define("BestTopResolved_passTight",    f"BestTopResolved_score>={Top_Resolved_wp['5%']}")\
                                     .Define("BestTopMixed_passLoose",       f"BestTopMixed_score>={Top_Mixed_wp['10%']}")\
