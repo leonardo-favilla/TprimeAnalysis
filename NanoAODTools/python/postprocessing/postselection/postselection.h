@@ -1506,45 +1506,13 @@ Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rve
   return idx;
 }
 
-// Best top restricted to the candidates that define the EventTopCategory (score above WP and good jets):
-// Tight*_idx for categories 1-3, LooseNOTTight*_idx for categories 4-6. Category 7 falls back to select_bestTop.
-Int_t select_bestTopInCategory(int EventTopCategory, rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i TightTopRes_idx, rvec_i LooseNOTTightTopMer_idx, rvec_i LooseNOTTightTopMix_idx, rvec_i LooseNOTTightTopRes_idx, rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore)
-{
-  RVec<int> candidates;
-  RVec<float> scores;
-  if (EventTopCategory==1 || EventTopCategory==4)
-  {
-    candidates = (EventTopCategory==1) ? TightTopRes_idx : LooseNOTTightTopRes_idx;
-    scores     = TopResolved_TopScore;
-  }
-  else if (EventTopCategory==2 || EventTopCategory==5)
-  {
-    candidates = (EventTopCategory==2) ? TightTopMix_idx : LooseNOTTightTopMix_idx;
-    scores     = TopMixed_TopScore;
-  }
-  else if (EventTopCategory==3 || EventTopCategory==6)
-  {
-    candidates = (EventTopCategory==3) ? TightTopMer_idx : LooseNOTTightTopMer_idx;
-    scores     = FatJet_particleNet_TvsQCD;
-  }
-  else
-  {
-    return select_bestTop(EventTopCategory, FatJet_particleNet_TvsQCD, TopMixed_TopScore, TopResolved_TopScore);
-  }
-
-  int idx = -1;
-  for (int i = 0; i < candidates.size(); i++)
-  {
-    if (idx == -1 || scores[candidates[i]] > scores[idx]) idx = candidates[i];
-  }
-  return idx;
-}
-
 // ########################################################
 // ######## Top categories with extra-tight (XT) tops #####
 // ########################################################
-// Used by the step 2 (postselection/postSelector.py). The functions above (select_TopCategory, numbering 1-7)
-// are kept unchanged because postselection_prefitTopSF/postSelector.py loads this same header.
+// Used by the step 2 (postselection/postSelector.py). The functions above with the old numbering 1-7
+// (select_TopCategory, select_bestTop, select_TopVar, select_TopCategoryWithTruth) are still used by
+// postselection_prefitTopSF/postSelector.py, which loads this same header; select_bestTop and select_TopVar
+// are also used by the step 2 through TopFlavourOfCategory.
 //
 // EventTopCategory with XT:
 //    1 XT Resolved,                 2 XT Mixed,                 3 XT Merged
@@ -1584,7 +1552,7 @@ Int_t select_TopCategoryWithXT(rvec_i XTightTopMer_idx,         rvec_i XTightTop
 // Flavour of the selected top for the categories with XT: 1 Resolved, 2 Mixed, 3 Merged (categories 1-9),
 // 7 for category 10: 7 is the "else" category of the old numbering, so select_bestTop, select_TopVar and
 // TopIsolation_NJets can be used unchanged with this flavour.
-Int_t TopFlavourOfCategoryWithXT(int EventTopCategory)
+Int_t TopFlavourOfCategory(int EventTopCategory)
 {
   if (EventTopCategory>=1 && EventTopCategory<=9) return (EventTopCategory-1)%3 + 1;
   else                                            return 7;
@@ -1593,11 +1561,11 @@ Int_t TopFlavourOfCategoryWithXT(int EventTopCategory)
 // Best top restricted to the candidates that define the EventTopCategory with XT:
 // XTight*_idx for categories 1-3, TightNOTXTight*_idx for 4-6, LooseNOTTight*_idx for 7-9.
 // Category 10 falls back to select_bestTop (old category 7).
-Int_t select_bestTopInCategoryWithXT(int EventTopCategory,
-                                     rvec_i XTightTopMer_idx,         rvec_i XTightTopMix_idx,         rvec_i XTightTopRes_idx,
-                                     rvec_i TightNOTXTightTopMer_idx, rvec_i TightNOTXTightTopMix_idx, rvec_i TightNOTXTightTopRes_idx,
-                                     rvec_i LooseNOTTightTopMer_idx,  rvec_i LooseNOTTightTopMix_idx,  rvec_i LooseNOTTightTopRes_idx,
-                                     rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore)
+Int_t select_bestTopInCategory(int EventTopCategory,
+                               rvec_i XTightTopMer_idx,         rvec_i XTightTopMix_idx,         rvec_i XTightTopRes_idx,
+                               rvec_i TightNOTXTightTopMer_idx, rvec_i TightNOTXTightTopMix_idx, rvec_i TightNOTXTightTopRes_idx,
+                               rvec_i LooseNOTTightTopMer_idx,  rvec_i LooseNOTTightTopMix_idx,  rvec_i LooseNOTTightTopRes_idx,
+                               rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore)
 {
   RVec<int> candidates;
   RVec<float> scores;

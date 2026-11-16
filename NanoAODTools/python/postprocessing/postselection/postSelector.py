@@ -403,10 +403,10 @@ def select_top(df, isMC, year):
     # EventTopFlavour: 1 Resolved, 2 Mixed, 3 Merged for categories 1-9, 7 for category 10 (old "else" category,
     # used by select_TopVar and TopIsolation_NJets)
     df_topcategory = df_nTops.Define("EventTopCategory", "select_TopCategoryWithXT(XTightTopMer_idx, XTightTopMix_idx, XTightTopRes_idx, TightNOTXTightTopMer_idx, TightNOTXTightTopMix_idx, TightNOTXTightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx)")\
-                             .Define("EventTopFlavour",  "TopFlavourOfCategoryWithXT(EventTopCategory)")
+                             .Define("EventTopFlavour",  "TopFlavourOfCategory(EventTopCategory)")
 
     df_topselected = df_topcategory.Define("Top_idx",
-                                           "select_bestTopInCategoryWithXT(EventTopCategory, XTightTopMer_idx, XTightTopMix_idx, XTightTopRes_idx, TightNOTXTightTopMer_idx, TightNOTXTightTopMix_idx, TightNOTXTightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx, TopMerged_TopScore_nominal, TopMixed_TopScore_nominal, TopResolved_TopScore_nominal)")
+                                           "select_bestTopInCategory(EventTopCategory, XTightTopMer_idx, XTightTopMix_idx, XTightTopRes_idx, TightNOTXTightTopMer_idx, TightNOTXTightTopMix_idx, TightNOTXTightTopRes_idx, LooseNOTTightTopMer_idx, LooseNOTTightTopMix_idx, LooseNOTTightTopRes_idx, TopMerged_TopScore_nominal, TopMixed_TopScore_nominal, TopResolved_TopScore_nominal)")
     # return best top idx wrt category --> the idx is referred to the list of candidates fixed by the EventTopCategory
     df_topvariables = df_topselected.Define("Top_pt", "select_TopVar(EventTopFlavour, Top_idx, FatJet_pt_nominal, TopMixed_pt_nominal, TopResolved_pt_nominal)")\
                         .Define("Top_eta", "select_TopVar(EventTopFlavour, Top_idx, FatJet_eta, TopMixed_eta, TopResolved_eta)")\
