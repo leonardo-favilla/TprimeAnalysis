@@ -373,17 +373,10 @@ def select_top(df, isMC, year):
                                  .Define("TightTopRes_idx",         f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['5%']})")\
                                  .Define("LooseNOTTightTopRes_idx", f"SubtractIntVectors(LooseTopRes_idx, TightTopRes_idx)")
 
-    # extra-tight (XT, 1% mistag) tops, only for the eras with the "1%" WP in TopTagging_WorkingPoints.json
-    # (for the other eras the XT lists are empty: the XT categories 1-3 are empty and 4-6 are exactly the old Tight 1-3).
-    if ("1%" in Top_Merged_wp) and ("1%" in Top_Mixed_wp) and ("1%" in Top_Resolved_wp):
-        df_goodtopXT = df_goodtopRes.Define("XTightTopMer_idx",     f"select_TopMer(TopMerged_TopScore_nominal, GoodFatJet_idx, {Top_Merged_wp['1%']})")\
-                                    .Define("XTightTopMix_idx",     f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['1%']})")\
-                                    .Define("XTightTopRes_idx",     f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['1%']})")
-    else:
-        print(f"No XT (1%) top tagging WP for era {year} in TopTagging_WorkingPoints.json: no XT tops, the XT categories 1-3 are empty")
-        df_goodtopXT = df_goodtopRes.Define("XTightTopMer_idx",     "ROOT::VecOps::RVec<int>()")\
-                                    .Define("XTightTopMix_idx",     "ROOT::VecOps::RVec<int>()")\
-                                    .Define("XTightTopRes_idx",     "ROOT::VecOps::RVec<int>()")
+    # extra-tight (XT, 1% mistag) tops, "1%" WP of TopTagging_WorkingPoints.json
+    df_goodtopXT = df_goodtopRes.Define("XTightTopMer_idx",     f"select_TopMer(TopMerged_TopScore_nominal, GoodFatJet_idx, {Top_Merged_wp['1%']})")\
+                                .Define("XTightTopMix_idx",     f"select_TopMix(TopMixed_TopScore_nominal, TopMixed_idxFatJet, TopMixed_idxJet0, TopMixed_idxJet1, TopMixed_idxJet2, GoodJet_idx, GoodFatJet_idx, {Top_Mixed_wp['1%']})")\
+                                .Define("XTightTopRes_idx",     f"select_TopRes(TopResolved_TopScore_nominal, TopResolved_idxJet0, TopResolved_idxJet1, TopResolved_idxJet2, GoodJet_idx, {Top_Resolved_wp['1%']})")
     df_goodtopXT = df_goodtopXT.Define("TightNOTXTightTopMer_idx",  "SubtractIntVectors(TightTopMer_idx, XTightTopMer_idx)")\
                                .Define("TightNOTXTightTopMix_idx",  "SubtractIntVectors(TightTopMix_idx, XTightTopMix_idx)")\
                                .Define("TightNOTXTightTopRes_idx",  "SubtractIntVectors(TightTopRes_idx, XTightTopRes_idx)")

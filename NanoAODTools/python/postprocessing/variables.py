@@ -134,7 +134,7 @@ regions = {
     "SRTop"                         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTop0fjets"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTopatleast1fjets"            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0 && EventTopCategory>=4 && EventTopCategory<=6",
-    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Loose, MET>250); empty for the eras without the XT WP
+    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Loose, MET>250)
     "SRTopResXT"                    : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1",
     "SRTop0fjetsResXT"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1 && nForwardJet==0",
     "SRTopatleast1fjetsResXT"       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1 && nForwardJet>0",
@@ -178,7 +178,7 @@ regions = {
     "SRTopBtagMedium"                             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTop0fjetsBtagMedium"                       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && nForwardJet==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTopatleast1fjetsBtagMedium"                : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && nForwardJet>0 && EventTopCategory>=4 && EventTopCategory<=6",
-    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Medium, MET>250); empty for the eras without the XT WP
+    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Medium, MET>250)
     "SRTopResXTBtagMedium"                        : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1",
     "SRTop0fjetsResXTBtagMedium"                  : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1 && nForwardJet==0",
     "SRTopatleast1fjetsResXTBtagMedium"           : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1 && nForwardJet>0",
@@ -220,7 +220,7 @@ regions = {
     "SRTopMET200"                                 : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTop0fjetsMET200"                           : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTopatleast1fjetsMET200"                    : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0 && EventTopCategory>=4 && EventTopCategory<=6",
-    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Loose, MET>200); empty for the eras without the XT WP
+    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Loose, MET>200)
     "SRTopResXTMET200"                            : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1",
     "SRTop0fjetsResXTMET200"                      : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1 && nForwardJet==0",
     "SRTopatleast1fjetsResXTMET200"               : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && EventTopCategory==1 && nForwardJet>0",
@@ -262,7 +262,7 @@ regions = {
     "SRTopBtagMediumMET200"                       : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTop0fjetsBtagMediumMET200"                 : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && nForwardJet==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SRTopatleast1fjetsBtagMediumMET200"          : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && nForwardJet>0 && EventTopCategory>=4 && EventTopCategory<=6",
-    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Medium, MET>200); empty for the eras without the XT WP
+    # SRs with an extra-tight (XT) top, EventTopCategory 1-3 (b-tag Medium, MET>200)
     "SRTopResXTBtagMediumMET200"                  : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1",
     "SRTop0fjetsResXTBtagMediumMET200"            : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1 && nForwardJet==0",
     "SRTopatleast1fjetsResXTBtagMediumMET200"     : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagMedium>0 && EventTopCategory==1 && nForwardJet>0",
