@@ -1386,145 +1386,21 @@ Int_t nTop(rvec_i ids)
   return ids.size();
 }
 
-Int_t select_TopCategory(rvec_i TightTopMer_idx, rvec_i TightTopMix_idx, rvec_i TightTopRes_idx, rvec_i LooseNotTightTopMer_idx, rvec_i LooseNotTightTopMix_idx, rvec_i LooseNotTightTopRes_idx)
-{
-  //return:  1- Event Resolved, 2- Event Mixed, 3- Event Merged, 4- Event Nothing, ...
-
-  int nTightRes = TightTopRes_idx.size();
-  int nTightMix = TightTopMix_idx.size();
-  int nTightMer = TightTopMer_idx.size();
-  int nLooseRes = LooseNotTightTopRes_idx.size();
-  int nLooseMix = LooseNotTightTopMix_idx.size();
-  int nLooseMer = LooseNotTightTopMer_idx.size();
-
-  // SRs with top tight 
-  if (nTightRes==1 && nTightMix==0 && nTightMer==0){
-    return 1;
-  }
-  else if (nTightRes<=1 && nTightMix==1 && nTightMer==0){
-    return 2;
-  }
-  else if ((nTightRes==0 && nTightMix==0 && nTightMer==1) || (nTightRes<=1 && nTightMix==1 && nTightMer==1)){
-    return 3;
-  }
-
-  // da qua vanno sviluppate le CR quindi vanno definite 4,5,6 dove si chiedono 0 top tight ma ne esistono di loose 
-  else if (nLooseRes==1 && nLooseMix==0 && nLooseMer==0){
-    return 4;
-  }
-  else if (nLooseRes<=1 && nLooseMix==1 && nLooseMer==0){
-    return 5;
-  }
-  else if ((nLooseRes==0 && nLooseMix==0 && nLooseMer==1) || (nLooseRes<=1 && nLooseMix==1 && nLooseMer==1)){
-    return 6;
-  }
-  else 
-  {
-    return 7;
-  }
-}
-
-Int_t select_bestTop(int EventTopCategory, rvec_f FatJet_particleNet_TvsQCD, rvec_f TopMixed_TopScore, rvec_f TopResolved_TopScore){
-  //RVec<int> topselect ;
-  //int bestTop_idx;
-  RVec<float> scores;
-  int idx;
-  if (EventTopCategory==3){ 
-    //topselect = GoodTopMer_idx;
-    for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
-    {
-      scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
-    }
-    idx = ArgMax(scores);
-  }
-  else if (EventTopCategory==2){
-    for(int i = 0; i < TopMixed_TopScore.size(); i++)
-    {
-      scores.emplace_back(TopMixed_TopScore[i]);
-    }
-    idx = ArgMax(scores); 
-  }
-  else if (EventTopCategory==1){ 
-    for(int i = 0; i < TopResolved_TopScore.size(); i++)
-    {
-      scores.emplace_back(TopResolved_TopScore[i]);
-    } 
-    idx = ArgMax(scores);
-  }
-  else if (EventTopCategory==6){
-    for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
-    {
-      scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
-    }
-    idx = ArgMax(scores);    
-  }
-  else if (EventTopCategory==5){
-    for(int i = 0; i < TopMixed_TopScore.size(); i++)
-    {
-      scores.emplace_back(TopMixed_TopScore[i]);
-    }
-    idx = ArgMax(scores); 
-  }
-  else if (EventTopCategory==4){
-    for(int i = 0; i < TopResolved_TopScore.size(); i++)
-    {
-      scores.emplace_back(TopResolved_TopScore[i]);
-    } 
-    idx = ArgMax(scores);
-  }
-  else 
-  {
-    if (TopMixed_TopScore.size()>0)
-    {      
-      for(int i = 0; i < TopMixed_TopScore.size(); i++)
-      {
-        scores.emplace_back(TopMixed_TopScore[i]);
-      }
-      idx = ArgMax(scores); 
-    }
-    else if (TopResolved_TopScore.size()>0)
-    {
-      for(int i = 0; i < TopResolved_TopScore.size(); i++)
-      {
-        scores.emplace_back(TopResolved_TopScore[i]);
-      } 
-      idx = ArgMax(scores);
-    }
-    else if (FatJet_particleNet_TvsQCD.size()>0)
-    {
-      for(int i = 0; i < FatJet_particleNet_TvsQCD.size(); i++)
-      {
-        scores.emplace_back(FatJet_particleNet_TvsQCD[i]);
-      }
-      idx = ArgMax(scores);
-    }
-    else
-    {
-      idx = -1;
-    }
-  }
-  return idx;
-}
-
 // ########################################################
-// ######## Top categories with extra-tight (XT) tops #####
+// ######## Top categories (with extra-tight (XT) tops) ###
 // ########################################################
-// Used by the step 2 (postselection/postSelector.py). The functions above with the old numbering 1-7
-// (select_TopCategory, select_bestTop, select_TopVar, select_TopCategoryWithTruth) are still used by
-// postselection_prefitTopSF/postSelector.py, which loads this same header; select_bestTop and select_TopVar
-// are also used by the step 2 through TopFlavourOfCategory.
+// Used by the step 2 (postselection/postSelector.py) and by the prefit (postselection_prefitTopSF/postSelector.py).
 //
-// EventTopCategory with XT:
+// EventTopCategory:
 //    1 XT Resolved,                 2 XT Mixed,                 3 XT Merged
 //    4 Tight-not-XT Resolved,       5 Tight-not-XT Mixed,       6 Tight-not-XT Merged
 //    7 Loose-not-Tight Resolved,    8 Loose-not-Tight Mixed,    9 Loose-not-Tight Merged
 //   10 else
-// Each level (XT, then Tight-not-XT, then Loose-not-Tight) uses the same patterns of select_TopCategory:
+// Each level (XT, then Tight-not-XT, then Loose-not-Tight) uses the same patterns (select_TopFlavourPattern):
 //   Resolved: exactly 1 Resolved, no Mixed and no Merged
 //   Mixed:    at most 1 Resolved, exactly 1 Mixed, no Merged
 //   Merged:   only 1 Merged, or at most 1 Resolved + 1 Mixed + 1 Merged
 // and the first level that matches gives the category.
-// For an era without the XT WP the XT lists are empty: categories 1-3 are empty and 4-6 are exactly the old Tight 1-3.
 
 // 1 Resolved, 2 Mixed, 3 Merged, 0 if the numbers of candidates match none of the patterns
 Int_t select_TopFlavourPattern(int nRes, int nMix, int nMer)
@@ -1535,9 +1411,9 @@ Int_t select_TopFlavourPattern(int nRes, int nMix, int nMer)
   else                                                                    return 0;
 }
 
-Int_t select_TopCategoryWithXT(rvec_i XTightTopMer_idx,         rvec_i XTightTopMix_idx,         rvec_i XTightTopRes_idx,
-                               rvec_i TightNOTXTightTopMer_idx, rvec_i TightNOTXTightTopMix_idx, rvec_i TightNOTXTightTopRes_idx,
-                               rvec_i LooseNOTTightTopMer_idx,  rvec_i LooseNOTTightTopMix_idx,  rvec_i LooseNOTTightTopRes_idx)
+Int_t select_TopCategory(rvec_i XTightTopMer_idx,         rvec_i XTightTopMix_idx,         rvec_i XTightTopRes_idx,
+                         rvec_i TightNOTXTightTopMer_idx, rvec_i TightNOTXTightTopMix_idx, rvec_i TightNOTXTightTopRes_idx,
+                         rvec_i LooseNOTTightTopMer_idx,  rvec_i LooseNOTTightTopMix_idx,  rvec_i LooseNOTTightTopRes_idx)
 {
   int flavourXT    = select_TopFlavourPattern(XTightTopRes_idx.size(),         XTightTopMix_idx.size(),         XTightTopMer_idx.size());
   int flavourTight = select_TopFlavourPattern(TightNOTXTightTopRes_idx.size(), TightNOTXTightTopMix_idx.size(), TightNOTXTightTopMer_idx.size());
@@ -1549,18 +1425,17 @@ Int_t select_TopCategoryWithXT(rvec_i XTightTopMer_idx,         rvec_i XTightTop
   else                       return 10;
 }
 
-// Flavour of the selected top for the categories with XT: 1 Resolved, 2 Mixed, 3 Merged (categories 1-9),
-// 7 for category 10: 7 is the "else" category of the old numbering, so select_bestTop, select_TopVar and
-// TopIsolation_NJets can be used unchanged with this flavour.
+// Flavour of the selected top: 1 Resolved, 2 Mixed, 3 Merged (categories 1-9), 7 for category 10 (no top flavour),
+// used by TopIsolation_NJets and by the *_forEvWeight_idx of the step 2.
 Int_t TopFlavourOfCategory(int EventTopCategory)
 {
   if (EventTopCategory>=1 && EventTopCategory<=9) return (EventTopCategory-1)%3 + 1;
   else                                            return 7;
 }
 
-// Best top restricted to the candidates that define the EventTopCategory with XT:
+// Best top restricted to the candidates that define the EventTopCategory:
 // XTight*_idx for categories 1-3, TightNOTXTight*_idx for 4-6, LooseNOTTight*_idx for 7-9.
-// Category 10 falls back to select_bestTop (old category 7).
+// Category 10: highest score among ALL the Mixed candidates if any, else among all the Resolved, else among all the FatJets, else -1.
 Int_t select_bestTopInCategory(int EventTopCategory,
                                rvec_i XTightTopMer_idx,         rvec_i XTightTopMix_idx,         rvec_i XTightTopRes_idx,
                                rvec_i TightNOTXTightTopMer_idx, rvec_i TightNOTXTightTopMix_idx, rvec_i TightNOTXTightTopRes_idx,
@@ -1580,7 +1455,10 @@ Int_t select_bestTopInCategory(int EventTopCategory,
   else if (EventTopCategory==9) { candidates = LooseNOTTightTopMer_idx;   scores = FatJet_particleNet_TvsQCD; }
   else
   {
-    return select_bestTop(7, FatJet_particleNet_TvsQCD, TopMixed_TopScore, TopResolved_TopScore);
+    if (TopMixed_TopScore.size()>0)               return ArgMax(TopMixed_TopScore);
+    else if (TopResolved_TopScore.size()>0)       return ArgMax(TopResolved_TopScore);
+    else if (FatJet_particleNet_TvsQCD.size()>0)  return ArgMax(FatJet_particleNet_TvsQCD);
+    else                                          return -1;
   }
 
   int idx = -1;
@@ -1591,20 +1469,27 @@ Int_t select_bestTopInCategory(int EventTopCategory,
   return idx;
 }
 
-Float_t select_TopVar(Int_t EventTopCategory, Int_t Top_idx, rvec_f FatJet_pt, rvec_f TopMixed_pt, rvec_f TopResolved_pt)
+// Variable of the selected top (Top_idx from select_bestTopInCategory):
+//   categories 1, 4, 7 -> Resolved, 2, 5, 8 -> Mixed, 3, 6, 9 -> Merged (FatJet)
+//   category 10: same choice as select_bestTopInCategory, Mixed if any candidate, else Resolved, else Merged
+//   -10000 if there is no top
+Float_t select_TopVar(Int_t EventTopCategory, Int_t Top_idx, rvec_f FatJet_var, rvec_f TopMixed_var, rvec_f TopResolved_var)
 {
-  if (EventTopCategory==1) return TopResolved_pt[Top_idx];
-  else if (EventTopCategory==2) return TopMixed_pt[Top_idx];
-  else if (EventTopCategory==3) return FatJet_pt[Top_idx];
-  else if (EventTopCategory==4) return TopResolved_pt[Top_idx];
-  else if (EventTopCategory==5) return TopMixed_pt[Top_idx];
-  else if (EventTopCategory==6) return FatJet_pt[Top_idx];
-  else if (EventTopCategory==7) 
+  if (EventTopCategory==1)      return TopResolved_var[Top_idx];   // XT Resolved
+  else if (EventTopCategory==2) return TopMixed_var[Top_idx];      // XT Mixed
+  else if (EventTopCategory==3) return FatJet_var[Top_idx];        // XT Merged
+  else if (EventTopCategory==4) return TopResolved_var[Top_idx];   // Tight-not-XT Resolved
+  else if (EventTopCategory==5) return TopMixed_var[Top_idx];      // Tight-not-XT Mixed
+  else if (EventTopCategory==6) return FatJet_var[Top_idx];        // Tight-not-XT Merged
+  else if (EventTopCategory==7) return TopResolved_var[Top_idx];   // Loose-not-Tight Resolved
+  else if (EventTopCategory==8) return TopMixed_var[Top_idx];      // Loose-not-Tight Mixed
+  else if (EventTopCategory==9) return FatJet_var[Top_idx];        // Loose-not-Tight Merged
+  else if (EventTopCategory==10)                                   // else
   {
-    if (TopMixed_pt.size()>0) return TopMixed_pt[Top_idx];
-    else if (TopResolved_pt.size()>0) return TopResolved_pt[Top_idx];
-    else if (FatJet_pt.size()>0) return FatJet_pt[Top_idx];
-    else return -10000.0;
+    if (TopMixed_var.size()>0)         return TopMixed_var[Top_idx];
+    else if (TopResolved_var.size()>0) return TopResolved_var[Top_idx];
+    else if (FatJet_var.size()>0)      return FatJet_var[Top_idx];
+    else                               return -10000.0;
   }
   else return -10000.0;
 }
@@ -1796,70 +1681,6 @@ RVec<int> RecoTaggedTopClusterResolved(rvec_rvec_i topcluster, rvec_i TopResolve
 
 // ---------------------------------------------
 
-
-Int_t select_TopCategoryWithTruth(int EventTopCategory, rvec_i FatJet_matched, rvec_i GoodTopMer_idx, rvec_i TopMixed_truth, rvec_i GoodTopMix_idx, rvec_i TopResolved_truth, rvec_i GoodTopRes_idx)
-{
-  int category;
-  if(EventTopCategory==1)
-  {
-    for(int i = 0; i < GoodTopRes_idx.size(); i++)
-    {
-      if (TopResolved_truth[GoodTopRes_idx[i]]==1) 
-      {
-        category = 1;
-      }
-    }
-  }
-  else if(EventTopCategory==2)
-  {
-    for(int i = 0; i < GoodTopMix_idx.size(); i++)
-    {
-      if (TopMixed_truth[GoodTopMix_idx[i]]==1)
-      {
-        category = 2;
-      } 
-    }
-  }
-  else if(EventTopCategory==3)
-  {
-    for(int i = 0; i < GoodTopMer_idx.size(); i++)
-    {
-      if (FatJet_matched[GoodTopMer_idx[i]]==3)
-      {
-        category = 3;
-      } 
-    }
-  }
-  else if (EventTopCategory==4) 
-  {
-    for(int i = 0; i < GoodTopRes_idx.size(); i++)
-    {
-      if (TopResolved_truth[GoodTopRes_idx[i]]==1)
-      {
-        category = 4;
-      } 
-    }
-    for(int i = 0; i < GoodTopMix_idx.size(); i++)
-    {
-      if (TopMixed_truth[GoodTopMix_idx[i]]==1)
-      {
-        category = 4;
-      } 
-    }
-    for(int i = 0; i < GoodTopMer_idx.size(); i++)
-    {
-      if (FatJet_matched[GoodTopMer_idx[i]]==3)
-      {
-        category = 4;
-      } 
-    }
-  }
-  else
-  {
-    category = -1;
-  }
-  return category;
-}
 
 Float_t TopIsolation_NJets( int EventTopCategory, int Top_idx, rvec_i TopMixed_idxFatJet, rvec_i TopMixed_idxJet0, rvec_i TopMixed_idxJet1, rvec_i TopMixed_idxJet2, rvec_f TopMixed_pt, rvec_f TopMixed_phi, rvec_f TopMixed_eta, rvec_i TopResolved_idxJet0, rvec_i TopResolved_idxJet1, rvec_i TopResolved_idxJet2, rvec_f TopResolved_pt,  rvec_f TopResolved_phi, rvec_f TopResolved_eta, rvec_f FatJet_pt, rvec_f FatJet_eta, rvec_f FatJet_phi, rvec_i FatJet_jetId, rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_jetId, float valR, int b)
 {
