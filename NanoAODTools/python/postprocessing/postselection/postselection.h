@@ -1165,6 +1165,67 @@ float GetBTagEventWeight_FixedWP(std::string btvFilePath, std::string effFilePat
 // ############## TopSelection ############################
 // ########################################################
 
+// Step 1 (nanoTopcandidate_v2_syst.py) builds the top candidates from its own lists of good jets and fatjets
+// (tools.get_jet / tools.get_fatjet) and stores TopResolved_idxJet*, TopMixed_idxJet* and TopMixed_idxFatJet
+// as POSITIONS in those lists, not as Jet/FatJet indices.
+// The selections below are the ones of the current step-1 code (since 9323a66); productions made before it
+// (2023: MC 20251127, Data 20260205) used |eta|<2.7 and no pt cut on the fatjets, and are NOT handled here.
+
+// Jet indices of the step-1 good jets, in the step-1 order: same selection as tools.get_jet
+//   step 1: list(filter(lambda x : x.jetId and x.pt>25 and abs(x.eta)<2.5, jets))
+RVec<int> StepOne_GoodJet_idx(rvec_f Jet_pt, rvec_f Jet_eta, rvec_i Jet_jetId)
+{
+  RVec<int> ids;
+  for (int i = 0; i < Jet_pt.size(); i++)
+  {
+    if (Jet_jetId[i] && Jet_pt[i] > 25 && abs(Jet_eta[i]) < 2.5)
+    {
+      ids.emplace_back(i);
+    }
+  }
+  return ids;
+}
+
+// FatJet indices of the step-1 good fatjets, in the step-1 order: same selection as tools.get_fatjet
+//   step 1: list(filter(lambda x : x.jetId and x.pt>200 and abs(x.eta)<2.5, fatjets))
+RVec<int> StepOne_GoodFatJet_idx(rvec_f FatJet_pt, rvec_f FatJet_eta, rvec_i FatJet_jetId)
+{
+  RVec<int> ids;
+  for (int i = 0; i < FatJet_pt.size(); i++)
+  {
+    if (FatJet_jetId[i] && FatJet_pt[i] > 200 && abs(FatJet_eta[i]) < 2.5)
+    {
+      ids.emplace_back(i);
+    }
+  }
+  return ids;
+}
+
+// Positions in the step-1 good-object list -> Jet/FatJet indices (-1 stays -1)
+//   TopCand_StepOnePos:  one entry per top candidate, POSITION of the jet/fatjet in the step-1 good list (-1 = none),
+//                        i.e. a candidate branch as written by step 1 (TopResolved_idxJet0, ..., TopMixed_idxFatJet)
+//   StepOneGoodObj_idx:  Jet/FatJet indices of the step-1 good list (StepOneGoodJet_idx or StepOneGoodFatJet_idx)
+RVec<int> StepOneIdx_to_CollectionIdx(rvec_i TopCand_StepOnePos, rvec_i StepOneGoodObj_idx)
+{
+  RVec<int> ids;
+  for (int i = 0; i < TopCand_StepOnePos.size(); i++)
+  {
+    if (TopCand_StepOnePos[i] < 0)
+    {
+      ids.emplace_back(-1);
+    }
+    else if (TopCand_StepOnePos[i] >= StepOneGoodObj_idx.size())
+    {
+      throw std::runtime_error("StepOneIdx_to_CollectionIdx: position outside the step-1 good-object list, wrong step-1 selection for this production");
+    }
+    else
+    {
+      ids.emplace_back(StepOneGoodObj_idx[TopCand_StepOnePos[i]]);
+    }
+  }
+  return ids;
+}
+
 // Top Merged, FatJet over threshold of particleNet_TvsQCD
 RVec<int> select_TopMer(rvec_f FatJet_particleNet_TvsQCD, rvec_i GoodFatJet_idx, float wp)
 {

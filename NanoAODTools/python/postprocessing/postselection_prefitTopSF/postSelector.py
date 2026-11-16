@@ -825,6 +825,17 @@ for d in datasets:
             print(chain[d.label][s.label])
         # df                  = ROOT.RDataFrame("Events", chain[d.label][s.label])
         df                  = ROOT.RDataFrame(tchains[d.label][s.label])
+        # Step-1 top candidates store POSITIONS in the step-1 good jet/fatjet lists (tools.get_jet/get_fatjet): converted to Jet/FatJet indices
+        # (before the Redefine of Jet_jetId for 2022/2023: the step-1 lists use the NanoAOD jetId)
+        df                  = df.Define("StepOneGoodJet_idx",        "StepOne_GoodJet_idx(Jet_pt, Jet_eta, RVec<int>(Jet_jetId))")\
+                                .Define("StepOneGoodFatJet_idx",     "StepOne_GoodFatJet_idx(FatJet_pt, FatJet_eta, RVec<int>(FatJet_jetId))")\
+                                .Redefine("TopResolved_idxJet0",     "StepOneIdx_to_CollectionIdx(TopResolved_idxJet0, StepOneGoodJet_idx)")\
+                                .Redefine("TopResolved_idxJet1",     "StepOneIdx_to_CollectionIdx(TopResolved_idxJet1, StepOneGoodJet_idx)")\
+                                .Redefine("TopResolved_idxJet2",     "StepOneIdx_to_CollectionIdx(TopResolved_idxJet2, StepOneGoodJet_idx)")\
+                                .Redefine("TopMixed_idxJet0",        "StepOneIdx_to_CollectionIdx(TopMixed_idxJet0, StepOneGoodJet_idx)")\
+                                .Redefine("TopMixed_idxJet1",        "StepOneIdx_to_CollectionIdx(TopMixed_idxJet1, StepOneGoodJet_idx)")\
+                                .Redefine("TopMixed_idxJet2",        "StepOneIdx_to_CollectionIdx(TopMixed_idxJet2, StepOneGoodJet_idx)")\
+                                .Redefine("TopMixed_idxFatJet",      "StepOneIdx_to_CollectionIdx(TopMixed_idxFatJet, StepOneGoodFatJet_idx)")
         if sampleflag:
             if s.year in [2024]:
                 df          = df.Define("SFbtag_nominal",   "1.0f")
