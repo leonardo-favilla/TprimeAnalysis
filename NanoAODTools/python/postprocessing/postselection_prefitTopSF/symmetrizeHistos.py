@@ -34,7 +34,10 @@ for histo_name in histo_dict:
             bnom        = hnom.GetBinContent(b)
             bup         = hup.GetBinContent(b)
             bdown       = hdown.GetBinContent(b)
-            delta       = (abs(bup-bnom) + abs(bdown-bnom))/2.0 # up always above the nominal, down always below
+            # delta       = (abs(bup-bnom) + abs(bdown-bnom))/2.0 # OLD: up always above the nominal, down always below
+            delta       = (bup - bdown)/2.0 # signed symm: keeps the direction of the variation, up can be below the nominal
+            if bup == bdown: # up and down on the same side, the signed delta is 0 -> unsigned delta, up above the nominal, down below
+                delta   = (abs(bup-bnom) + abs(bdown-bnom))/2.0
             bupnew      = bnom + delta
             bdownnew    = bnom - delta
             if bupnew < 0:
