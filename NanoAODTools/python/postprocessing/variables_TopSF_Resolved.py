@@ -102,7 +102,7 @@ vars2D = []
 ######## REGIONS DEFINITION ########
 ####################################
 
-# Top tagging WPs are taken per era from ../postselection/TopTagging_WorkingPoints.json in postSelector.py --> BestTopResolved_passLoose (10%), BestTopResolved_passTight (5%)
+# Top tagging WPs are taken per era from ../postselection/TopTagging_WorkingPoints.json in postSelector.py --> BestTopResolved_passLoose (10%), BestTopResolved_passTight (5%), BestTopResolved_passXTight (1%)
 
 
 semilepPresel               = ""
@@ -122,6 +122,8 @@ topResolved_LooseButNotTight_pass       = "BestTopResolved_passLoose && !BestTop
 topResolved_LooseButNotTight_fail       = "!BestTopResolved_passLoose"
 topResolved_Loose_pass                  = "BestTopResolved_passLoose"
 topResolved_Loose_fail                  = "!BestTopResolved_passLoose"
+topResolved_XTight_pass                    = "BestTopResolved_passXTight"
+topResolved_XTight_fail                    = "!BestTopResolved_passXTight"
 
 
 
@@ -246,6 +248,43 @@ regions_Resolved                        = {
                                             "SemiLep_ResolvedTight_pt600to1000_fail_topmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_Tight_fail   + " && " + topResolved_topmatched,
                                             "SemiLep_ResolvedTight_pt600to1000_fail_nonmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_Tight_fail   + " && " + topResolved_nonmatched,
                                             "SemiLep_ResolvedTight_pt600to1000_fail_other":                        semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_Tight_fail   + " && " + topResolved_other,
+
+                                            ###### XTight ######
+                                            "SemiLep_ResolvedXTight_pt0to200_pass":                                 semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_pass,
+                                            "SemiLep_ResolvedXTight_pt0to200_fail":                                 semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_fail,
+                                            "SemiLep_ResolvedXTight_pt0to200_pass_topmatched":                      semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_pass      + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt0to200_pass_nonmatched":                      semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_pass      + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt0to200_pass_other":                           semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_pass      + " && " + topResolved_other,
+                                            "SemiLep_ResolvedXTight_pt0to200_fail_topmatched":                      semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_fail      + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt0to200_fail_nonmatched":                      semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_fail      + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt0to200_fail_other":                           semilepPreselResolved + " && (BestTopResolved_pt>=0) && (BestTopResolved_pt<200)" + " && " + topResolved_XTight_fail      + " && " + topResolved_other,
+
+                                            "SemiLep_ResolvedXTight_pt200to400_pass":                               semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_pass,
+                                            "SemiLep_ResolvedXTight_pt200to400_fail":                               semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_fail,
+                                            "SemiLep_ResolvedXTight_pt200to400_pass_topmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_pass    + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt200to400_pass_nonmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_pass    + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt200to400_pass_other":                         semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_pass    + " && " + topResolved_other,
+                                            "SemiLep_ResolvedXTight_pt200to400_fail_topmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_fail    + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt200to400_fail_nonmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_fail    + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt200to400_fail_other":                         semilepPreselResolved + " && (BestTopResolved_pt>=200) && (BestTopResolved_pt<400)" + " && " + topResolved_XTight_fail    + " && " + topResolved_other,
+
+                                            "SemiLep_ResolvedXTight_pt400to600_pass":                               semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_pass,
+                                            "SemiLep_ResolvedXTight_pt400to600_fail":                               semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_fail,
+                                            "SemiLep_ResolvedXTight_pt400to600_pass_topmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_pass    + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt400to600_pass_nonmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_pass    + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt400to600_pass_other":                         semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_pass    + " && " + topResolved_other,
+                                            "SemiLep_ResolvedXTight_pt400to600_fail_topmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_fail    + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt400to600_fail_nonmatched":                    semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_fail    + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt400to600_fail_other":                         semilepPreselResolved + " && (BestTopResolved_pt>=400) && (BestTopResolved_pt<600)" + " && " + topResolved_XTight_fail    + " && " + topResolved_other,
+
+                                            "SemiLep_ResolvedXTight_pt600to1000_pass":                              semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_pass,
+                                            "SemiLep_ResolvedXTight_pt600to1000_fail":                              semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_fail,
+                                            "SemiLep_ResolvedXTight_pt600to1000_pass_topmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_pass   + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt600to1000_pass_nonmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_pass   + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt600to1000_pass_other":                        semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_pass   + " && " + topResolved_other,
+                                            "SemiLep_ResolvedXTight_pt600to1000_fail_topmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_fail   + " && " + topResolved_topmatched,
+                                            "SemiLep_ResolvedXTight_pt600to1000_fail_nonmatched":                   semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_fail   + " && " + topResolved_nonmatched,
+                                            "SemiLep_ResolvedXTight_pt600to1000_fail_other":                        semilepPreselResolved + " && (BestTopResolved_pt>=600) && (BestTopResolved_pt<1000)" + " && " + topResolved_XTight_fail   + " && " + topResolved_other,
                                         }
 
 

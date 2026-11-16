@@ -102,7 +102,7 @@ vars2D = []
 ######## REGIONS DEFINITION ########
 ####################################
 
-# Top tagging WPs are taken per era from ../postselection/TopTagging_WorkingPoints.json in postSelector.py --> BestTopMerged_passLoose (10%), BestTopMerged_passTight (5%)
+# Top tagging WPs are taken per era from ../postselection/TopTagging_WorkingPoints.json in postSelector.py --> BestTopMerged_passLoose (10%), BestTopMerged_passTight (5%), BestTopMerged_passXTight (1%)
 
 
 semilepPresel               = ""
@@ -124,6 +124,8 @@ topMerged_LooseButNotTight_pass         = "BestTopMerged_passLoose && !BestTopMe
 topMerged_LooseButNotTight_fail         = "!BestTopMerged_passLoose"
 topMerged_Loose_pass                    = "BestTopMerged_passLoose"
 topMerged_Loose_fail                    = "!BestTopMerged_passLoose"
+topMerged_XTight_pass                    = "BestTopMerged_passXTight"
+topMerged_XTight_fail                    = "!BestTopMerged_passXTight"
 
 
 regions_Merged                        = {
@@ -246,6 +248,43 @@ regions_Merged                        = {
                                             "SemiLep_MergedTight_pt600to1000_fail_topmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_Tight_fail   + " && " + topMerged_topmatched,
                                             "SemiLep_MergedTight_pt600to1000_fail_nonmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_Tight_fail   + " && " + topMerged_nonmatched,
                                             "SemiLep_MergedTight_pt600to1000_fail_other":                        semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_Tight_fail   + " && " + topMerged_other,
+
+                                            ###### XTight ######
+                                            "SemiLep_MergedXTight_pt0to200_pass":                                 semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_pass,
+                                            "SemiLep_MergedXTight_pt0to200_fail":                                 semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_fail,
+                                            "SemiLep_MergedXTight_pt0to200_pass_topmatched":                      semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_pass      + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt0to200_pass_nonmatched":                      semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_pass      + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt0to200_pass_other":                           semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_pass      + " && " + topMerged_other,
+                                            "SemiLep_MergedXTight_pt0to200_fail_topmatched":                      semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_fail      + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt0to200_fail_nonmatched":                      semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_fail      + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt0to200_fail_other":                           semilepPreselMerged + " && (BestTopMerged_pt>=0) && (BestTopMerged_pt<200)" + " && " + topMerged_XTight_fail      + " && " + topMerged_other,
+
+                                            "SemiLep_MergedXTight_pt200to400_pass":                               semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_pass,
+                                            "SemiLep_MergedXTight_pt200to400_fail":                               semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_fail,
+                                            "SemiLep_MergedXTight_pt200to400_pass_topmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_pass    + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt200to400_pass_nonmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_pass    + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt200to400_pass_other":                         semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_pass    + " && " + topMerged_other,
+                                            "SemiLep_MergedXTight_pt200to400_fail_topmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_fail    + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt200to400_fail_nonmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_fail    + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt200to400_fail_other":                         semilepPreselMerged + " && (BestTopMerged_pt>=200) && (BestTopMerged_pt<400)" + " && " + topMerged_XTight_fail    + " && " + topMerged_other,
+
+                                            "SemiLep_MergedXTight_pt400to600_pass":                               semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_pass,
+                                            "SemiLep_MergedXTight_pt400to600_fail":                               semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_fail,
+                                            "SemiLep_MergedXTight_pt400to600_pass_topmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_pass    + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt400to600_pass_nonmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_pass    + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt400to600_pass_other":                         semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_pass    + " && " + topMerged_other,
+                                            "SemiLep_MergedXTight_pt400to600_fail_topmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_fail    + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt400to600_fail_nonmatched":                    semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_fail    + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt400to600_fail_other":                         semilepPreselMerged + " && (BestTopMerged_pt>=400) && (BestTopMerged_pt<600)" + " && " + topMerged_XTight_fail    + " && " + topMerged_other,
+
+                                            "SemiLep_MergedXTight_pt600to1000_pass":                              semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_pass,
+                                            "SemiLep_MergedXTight_pt600to1000_fail":                              semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_fail,
+                                            "SemiLep_MergedXTight_pt600to1000_pass_topmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_pass   + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt600to1000_pass_nonmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_pass   + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt600to1000_pass_other":                        semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_pass   + " && " + topMerged_other,
+                                            "SemiLep_MergedXTight_pt600to1000_fail_topmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_fail   + " && " + topMerged_topmatched,
+                                            "SemiLep_MergedXTight_pt600to1000_fail_nonmatched":                   semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_fail   + " && " + topMerged_nonmatched,
+                                            "SemiLep_MergedXTight_pt600to1000_fail_other":                        semilepPreselMerged + " && (BestTopMerged_pt>=600) && (BestTopMerged_pt<1000)" + " && " + topMerged_XTight_fail   + " && " + topMerged_other,
                                         }
 
 

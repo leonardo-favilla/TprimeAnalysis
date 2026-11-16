@@ -19,13 +19,13 @@ usage                   = "python3 extract_ScaleFactors.py --era <era> --TopCate
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
-parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight (LooseButNotTight SFs are computed in the analysis from Loose/Tight SFs and efficiencies)")
+parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight, XTight (LooseButNotTight and TightButNotXTight SFs are computed in the analysis from the fitted SFs and efficiencies)")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 TopCategory             = opt.TopCategory
 wp_cat                  = opt.wp_cat
-if wp_cat not in ["Loose", "Tight"]:
-    print(f"Working point category {wp_cat} not valid: only Loose and Tight are fitted. LooseButNotTight SFs are computed in the analysis from Loose/Tight SFs and efficiencies.")
+if wp_cat not in ["Loose", "Tight", "XTight"]:
+    print(f"Working point category {wp_cat} not valid: only Loose, Tight and XTight are fitted. LooseButNotTight and TightButNotXTight SFs are computed in the analysis from the fitted SFs and efficiencies.")
     sys.exit(1)
 region                  = f"{TopCategory}{wp_cat}"
 outputfolder            = config["TrotaScaleFactor"]["outputfolder"][TopCategory][era]
@@ -91,7 +91,7 @@ for cat in categories:
                                         "n_total":      [],
                                         "efficiency":   []
                                     }
-    if wp_cat in ["Loose", "Tight"]:
+    if wp_cat in ["Loose", "Tight", "XTight"]:
         event_categories_skipped    = []
         for evcat_idx, evcat in enumerate(event_categories):
             print(f"\nExtracting scale factors for event category: {evcat}")

@@ -32,7 +32,7 @@ usage                   = "python3 plot_TopSF_stacks.py --era <era> --TopCategor
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
-parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight")
+parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight, XTight")
 parser.add_option(      "--outdir",                 dest="outdir",                      type=str,     default="",                                       help="Output folder (required), plots in <outdir>/stacks_<wp_cat>/<fit_variable>/")
 (opt, args)             = parser.parse_args()
 era                     = opt.era

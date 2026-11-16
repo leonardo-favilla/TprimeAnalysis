@@ -8,11 +8,11 @@ ROOT.gStyle.SetOptStat(0)
 
 usage   = "python3 visualize_ScaleFactors.py <json_file> --TopCategory <TopCategory> --wp_cat <wp_cat> --channel <channel> --output <output_name>"
 parser  = argparse.ArgumentParser(usage=usage, description="2D map (pT bin x tag category) of the Trota SFs, from the fitted SFs json "
-                                                          "(TrotaScaleFactors_<era>_<TopCategory>.json, Loose/Tight, 6 event categories) "
-                                                          "or from the applied correctionlib file (CorrLib_TrotaScaleFactors_<era>.json, also LooseButNotTight, 4 pT bins)")
+                                                          "(TrotaScaleFactors_<era>_<TopCategory>.json, Loose/Tight/XTight, 6 event categories) "
+                                                          "or from the applied correctionlib file (CorrLib_TrotaScaleFactors_<era>.json, also LooseButNotTight and TightButNotXTight, 4 pT bins)")
 parser.add_argument("json_file")
 parser.add_argument("--TopCategory",    default="Mixed",    choices=["Resolved", "Mixed", "Merged"])
-parser.add_argument("--wp_cat",         default="Loose",    choices=["Loose", "LooseButNotTight", "Tight"])
+parser.add_argument("--wp_cat",         default="Loose",    choices=["Loose", "LooseButNotTight", "Tight", "TightButNotXTight", "XTight"])
 parser.add_argument("--channel",        default="pass",     choices=["pass", "fail"])
 parser.add_argument("--output",         default="sf_map")
 args = parser.parse_args()
@@ -24,7 +24,7 @@ ylabels         = ["topmatched", "nonmatched", "other"]
 def get_block_from_fitted_json(data, TopCat, wp_cat):
     """block[TagCat][channel] = {"value": [...], "error": [...]} for the 6 event categories of extract_ScaleFactors.py"""
     if wp_cat not in data[TopCat]:
-        raise SystemExit(f"{wp_cat} not in {args.json_file}: the fitted SFs json has only {list(data[TopCat].keys())}, LooseButNotTight is in the correctionlib file")
+        raise SystemExit(f"{wp_cat} not in {args.json_file}: the fitted SFs json has only {list(data[TopCat].keys())}, LooseButNotTight and TightButNotXTight are in the correctionlib file")
     xlabels     = ["[0,200[", "[200,400[", "[400,600[", "[600,1000)", "[0,400[", "[400,1000)"]   # pt0to200, pt200to400, pt400to600, pt600to1000, pt0to400, pt400to1000
     return data[TopCat][wp_cat], xlabels
 

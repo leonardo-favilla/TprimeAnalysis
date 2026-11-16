@@ -446,6 +446,10 @@ def select_top(df, isMC, year):
                                     .Define("BestTopMixed_passTight",       f"BestTopMixed_score>={Top_Mixed_wp['5%']}")\
                                     .Define("BestTopMerged_passLoose",      f"BestTopMerged_score>={Top_Merged_wp['10%']}")\
                                     .Define("BestTopMerged_passTight",      f"BestTopMerged_score>={Top_Merged_wp['5%']}")
+    # extra-tight (XT, 1%) probes
+    df_topvariables = df_topvariables.Define("BestTopResolved_passXTight",   f"BestTopResolved_score>={Top_Resolved_wp['1%']}")\
+                                     .Define("BestTopMixed_passXTight",      f"BestTopMixed_score>={Top_Mixed_wp['1%']}")\
+                                     .Define("BestTopMerged_passXTight",     f"BestTopMerged_score>={Top_Merged_wp['1%']}")
 
     if isMC:
         df_topvariables = df_topvariables.Define("TopResolvedMatched_to_GenTop_dR0p2",  "TopMatched_to_GenTop_with_dR(TopGenTopPart_eta, TopGenTopPart_phi, BestTopResolved_eta, BestTopResolved_phi, 0.2)")\
