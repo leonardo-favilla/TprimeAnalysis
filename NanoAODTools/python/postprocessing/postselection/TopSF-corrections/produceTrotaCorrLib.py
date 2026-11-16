@@ -21,7 +21,7 @@ outFilePath             = opt.output if opt.output else f"{eraFolder}/CorrLib_Tr
 
 pt_edges                = [0, 200, 400, 600, 1000]
 event_categories        = ["pt0to200", "pt200to400", "pt400to600", "pt600to1000", "pt0to400", "pt400to1000"]   # same order as in extract_ScaleFactors.py
-wp_cats                 = ["Loose", "LooseButNotTight", "Tight"]
+wp_cats                 = ["Loose", "LooseButNotTight", "Tight", "TightButNotXTight", "XTight"]   # Loose, Tight, XTight fitted; LooseButNotTight, TightButNotXTight computed from them
 channels                = ["pass", "fail"]
 
 with open(binningFilePath, "r") as _f:
@@ -37,9 +37,12 @@ def load_input_json(TopCat, inJsonName):
 
 
 def get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat):
-    """Loose or Tight SF (value, error) fitted in the event category evcat; (1.0, 0.0) if evcat is None"""
+    """Loose, Tight or XTight SF (value, error) fitted in the event category evcat; (1.0, 0.0) if evcat is None"""
     if evcat is None:
         return 1.0, 0.0
+    if wp_cat not in sf_dict:
+        print(f"ERROR: {wp_cat} SFs not in the input json (fitted: {list(sf_dict.keys())}): fit {wp_cat} and run extract_ScaleFactors.py --wp_cat {wp_cat}")
+        sys.exit(1)
     evcat_idx           = event_categories.index(evcat)
     value               = sf_dict[wp_cat][TagCat][channel]["value"][evcat_idx]
     error               = sf_dict[wp_cat][TagCat][channel]["error"][evcat_idx]
@@ -49,28 +52,30 @@ def get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat):
     return value, error
 
 
-def get_LooseButNotTight_sf(sf_dict, eff_dict, TagCat, channel, evcat):
+def get_ButNot_sf(sf_dict, eff_dict, wp_outer, wp_inner, TagCat, channel, evcat):
     """
-    LooseButNotTight SF (value, error) from the Loose and Tight SFs and n_pass of the same event category evcat:
-        SF_LBNT     = (SF_L * n_L - SF_T * n_T) / (n_L - n_T)
-        sigma_LBNT  = sqrt((sigma_L * n_L)^2 + (sigma_T * n_T)^2) / |n_L - n_T|
-    (1.0, 0.0) if evcat is None, for the fail channel, if n_L == n_T, or if SF_LBNT <= 0
+    SF (value, error) of the tops passing wp_outer but not wp_inner (LooseButNotTight: Loose, Tight; TightButNotXTight: Tight, XTight),
+    from the two fitted SFs and n_pass of the same event category evcat (wp_inner tops are a subset of the wp_outer ones):
+        SF_ButNot       = (SF_outer * n_outer - SF_inner * n_inner) / (n_outer - n_inner)
+        sigma_ButNot    = sqrt((sigma_outer * n_outer)^2 + (sigma_inner * n_inner)^2) / |n_outer - n_inner|
+    (1.0, 0.0) if evcat is None, for the fail channel, if n_outer == n_inner, or if SF_ButNot <= 0
     """
+    wp_cat                      = f"{wp_outer}ButNot{wp_inner}"
     if (evcat is None) or (channel == "fail"):
         return 1.0, 0.0
-    evcat_idx           = event_categories.index(evcat)
-    sf_L, error_L       = get_fitted_sf(sf_dict, "Loose", TagCat, "pass", evcat)
-    sf_T, error_T       = get_fitted_sf(sf_dict, "Tight", TagCat, "pass", evcat)
-    n_L                 = eff_dict["Loose"][TagCat]["n_pass"][evcat_idx]
-    n_T                 = eff_dict["Tight"][TagCat]["n_pass"][evcat_idx]
-    if n_L == n_T:
-        print(f"Warning: LooseButNotTight {TagCat} {evcat}: n_pass Loose = n_pass Tight = {n_L}, SF set to 1.0 +- 0.0")
+    evcat_idx                   = event_categories.index(evcat)
+    sf_outer, error_outer       = get_fitted_sf(sf_dict, wp_outer, TagCat, "pass", evcat)
+    sf_inner, error_inner       = get_fitted_sf(sf_dict, wp_inner, TagCat, "pass", evcat)
+    n_outer                     = eff_dict[wp_outer][TagCat]["n_pass"][evcat_idx]
+    n_inner                     = eff_dict[wp_inner][TagCat]["n_pass"][evcat_idx]
+    if n_outer == n_inner:
+        print(f"Warning: {wp_cat} {TagCat} {evcat}: n_pass {wp_outer} = n_pass {wp_inner} = {n_outer}, SF set to 1.0 +- 0.0")
         return 1.0, 0.0
-    value               = (sf_L * n_L - sf_T * n_T) / (n_L - n_T)
-    error               = math.sqrt((error_L * n_L)**2 + (error_T * n_T)**2) / abs(n_L - n_T)
+    value                       = (sf_outer * n_outer - sf_inner * n_inner) / (n_outer - n_inner)
+    error                       = math.sqrt((error_outer * n_outer)**2 + (error_inner * n_inner)**2) / abs(n_outer - n_inner)
     if value <= 0:
         # negative SF set to 1 (no correction), according to BTV recommendations: https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/#scale-factor-recommendations-for-event-reweighting
-        print(f"Warning: LooseButNotTight {TagCat} {evcat}: SF = {value:.4f} +- {error:.4f} <= 0, set to 1.0 +- 0.0")
+        print(f"Warning: {wp_cat} {TagCat} {evcat}: SF = {value:.4f} +- {error:.4f} <= 0, set to 1.0 +- 0.0")
         return 1.0, 0.0
     return value, error
 
@@ -97,8 +102,10 @@ def produce_TrotaScaleFactors_dict():
                     errors      = []
                     for evcat in binning[TopCat][TagCat]:
                         if wp_cat == "LooseButNotTight":
-                            value, error = get_LooseButNotTight_sf(sf_dict, eff_dict, TagCat, channel, evcat)
-                        else:
+                            value, error = get_ButNot_sf(sf_dict, eff_dict, "Loose", "Tight", TagCat, channel, evcat)
+                        elif wp_cat == "TightButNotXTight":
+                            value, error = get_ButNot_sf(sf_dict, eff_dict, "Tight", "XTight", TagCat, channel, evcat)
+                        else:   # Loose, Tight, XTight: fitted
                             value, error = get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat)
                         values.append(value)
                         errors.append(error)
@@ -177,7 +184,7 @@ def make_correction_set(TrotaScaleFactors_dict):
         version=1,
         inputs=[
             cs.Variable(name="TopCat",          type="string", description="Top category: Resolved, Mixed, Merged"),
-            cs.Variable(name="wp_cat",          type="string", description="working point category: Loose, LooseButNotTight, Tight"),
+            cs.Variable(name="wp_cat",          type="string", description="working point category: Loose, LooseButNotTight, Tight, TightButNotXTight, XTight"),
             cs.Variable(name="TagCat",          type="string", description="Tag category: topmatched, nonmatched, other"),
             cs.Variable(name="channel",         type="string", description="insert: pass, fail"),
             cs.Variable(name="type",            type="string", description="insert: value, error"),
