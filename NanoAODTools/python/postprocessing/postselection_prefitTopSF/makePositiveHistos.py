@@ -1,4 +1,5 @@
 import ROOT
+ROOT.TH1.AddDirectory(False)   # histograms not owned by the output TFile: otherwise they are deleted twice at exit (segfault)
 import argparse
 from PhysicsTools.NanoAODTools.postprocessing.postselection.utils.loadHists import loadHists
 
