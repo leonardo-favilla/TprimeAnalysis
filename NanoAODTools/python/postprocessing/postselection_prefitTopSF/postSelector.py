@@ -578,14 +578,9 @@ for d in datasets:
     if 'Data' in d.label:
         isMC                = False
         sampleflag          = 0
-        if "Muon" in s.label:
-            DataMuon        = True
-        elif "JetMET" in s.label:
-            DataMuon        = False
     else:
         isMC                = True
         sampleflag          = 1
-        DataMuon            = None
 
     c_                      = cut
     h[d.label]              = {}
@@ -593,6 +588,17 @@ for d in datasets:
     if do_variations:
         h_varied[d.label]   = {}
     for s in s_list:
+        # Data: muon trigger for the Muon datasets, vetoed for the JetMET ones (no double counting); set per component
+        if isMC:
+            DataMuon        = None
+        elif "Muon" in s.label:
+            DataMuon        = True
+        elif "JetMET" in s.label:
+            DataMuon        = False
+        else:
+            print(f"ERROR: Data component {s.label} is neither a Muon nor a JetMET dataset: trigger selection not defined")
+            sys.exit(1)
+
         if tmpfold:
             repohisto_tmp = "/tmp/"+username+"/"
             if not os.path.exists(repohisto_tmp):
