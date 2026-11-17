@@ -11,6 +11,10 @@ import shutil
 from datetime import datetime
 import importlib.util
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
+from PhysicsTools.NanoAODTools.postprocessing.postselection.utils.bookhisto import bookhisto           # same booking/saving functions as step 2 (postselection/utils/)
+from PhysicsTools.NanoAODTools.postprocessing.postselection.utils.bookhisto2D import bookhisto2D
+from PhysicsTools.NanoAODTools.postprocessing.postselection.utils.savehisto import savehisto
+from PhysicsTools.NanoAODTools.postprocessing.postselection.utils.savehisto2d import savehisto2d
 # from PhysicsTools.NanoAODTools.postprocessing.variables import *
 sys.path.append('../')
 
@@ -553,200 +557,6 @@ def SF_variations(df):
     return df_sys
 
 
-
-
-def bookhisto(df, regions_def, var, s_cut):
-    h_ = {}
-    for reg in regions_def.keys():
-        h_[reg] = {}
-        for v in var:
-            if v._MConly and not sampleflag: 
-                continue
-            else:
-                # print(v._name+"_"+reg+"_"+s_cut)
-                if regions_def[reg] == "":
-                    if "NoPu" in reg: 
-                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name)
-                    else: 
-                        h_[reg][v._name]= df.Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
-                else:
-                    if "NoPu" in reg: 
-                        h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title+"", v._nbins, v._xmin, v._xmax), v._name)
-                    else: h_[reg][v._name]= df.Filter(regions_def[reg]).Histo1D((v._name+"_"+reg," ;"+v._title, v._nbins, v._xmin, v._xmax), v._name, "w_nominal")
-    return h_
-
-def bookhisto2D(df, regions_def, var2d, s_cut):
-    h_ = {}
-    # for reg in ["SR"]:
-    #     h_[reg] = {}
-    #     for v in var2d:
-    v = var2d[0]
-    h_["incl"] = {}
-            # if regions_def[reg]=="":
-            #     h_[reg][v._name] = df.Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
-            #                          .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-            #                          .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
-            # else:
-            #     h_[reg][v._name] = df.Filter(regions_def[reg])\
-            #                          .Redefine(v._xname, "UnOvBin("+v._xname+","+str(v._nxbins)+","+str(v._xmin)+","+str(v._xmax)+")")\
-            #                          .Redefine(v._yname, "UnOvBin("+v._yname+","+str(v._nybins)+","+str(v._ymin)+","+str(v._ymax)+")")\
-            #                          .Histo2D((v._xname+"Vs"+v._yname+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname)
-    h_["incl"][v._name+"_0TopMer"] = df.Filter("nTightTopMerged==0")\
-                                    .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_0TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
-    h_["incl"][v._name+"_1TopMer"] = df.Filter("nTightTopMerged>0")\
-                                    .Histo2D((v._xname+"Vs"+v._yname+"_"+"incl_1TopMer"," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax), v._xname, v._yname, "w_nominal")
-    return h_
-
-def savehisto(d, dict_h, regions_def, var, s_cut, outfile_dict):
-    histo = {reg: {v._name: ROOT.TH1D(v._name+"_"+reg+"_"+s_cut," ;"+v._title+"", v._nbins, v._xmin, v._xmax) for v in var} for reg in regions_def.keys()}
-    isMC=True
-    if "Data" in d.label: isMC = False
-    if hasattr(d, "components"):
-        s_list = d.components
-    else:
-        s_list = [d]
-    
-    for s in s_list:
-        outfile_path = outfile_dict[s.label]
-        if os.path.exists(outfile_path):
-            os.remove(outfile_path)
-        outfile     = ROOT.TFile.Open(outfile_path, "RECREATE")
-        for n, vari in enumerate(variations):
-            for reg in regions_def.keys():
-                for v in var:
-                    if "SFbtag" in v._name: continue
-                    if v._MConly and not isMC:
-                        continue
-                    else:
-                        # da capire come fare il getvalue e dividere le variazioni
-                        if isMC:
-                            if do_variations:
-                                if vari=='nominal':
-                                    h1 = dict_h[d.label][s.label][reg][v._name]["nominal"]
-                                    h1.SetName(h1.GetName()+"_nominal")
-                                    nbins = h1.GetNbinsX()
-                                    if not v._noUnOvFlowbin:
-                                        h1.SetBinContent(1, h1.GetBinContent(0) + h1.GetBinContent(1))
-                                        h1.SetBinError(1, math.sqrt(pow(h1.GetBinError(0),2) + pow(h1.GetBinError(1),2)))
-                                        h1.SetBinContent(nbins, h1.GetBinContent(nbins) + h1.GetBinContent(nbins+1))
-                                        h1.SetBinError(nbins, math.sqrt(pow(h1.GetBinError(nbins),2) + pow(h1.GetBinError(nbins+1),2)))
-                                    if isMC:
-                                        h1.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                                    histo_name = h1.GetName()
-                                    if "nominal" not in histo_name : h1.SetName(histo_name+"_nominal")
-                                    outfile.cd()
-                                    h1.Write()
-                                elif vari=="pdf_total":
-                                    hnom = dict_h[d.label][s.label][reg][v._name]["nominal"]
-                                    hup = dict_h[d.label][s.label][reg][v._name][vari+":up"]
-                                    hdown = dict_h[d.label][s.label][reg][v._name][vari+":down"]
-                                    hup.SetName(hup.GetName())
-                                    hdown.SetName(hdown.GetName())
-                                    nbins = hup.GetNbinsX()
-                                    nbins = hdown.GetNbinsX()
-                                    if not v._noUnOvFlowbin:
-                                        hup.SetBinContent(1, hup.GetBinContent(0) + hup.GetBinContent(1))
-                                        hup.SetBinError(1, math.sqrt(pow(hup.GetBinError(0),2) + pow(hup.GetBinError(1),2)))
-                                        hup.SetBinContent(nbins, hup.GetBinContent(nbins) + hup.GetBinContent(nbins+1))
-                                        hup.SetBinError(nbins, math.sqrt(pow(hup.GetBinError(nbins),2) + pow(hup.GetBinError(nbins+1),2)))
-                                        hdown.SetBinContent(1, hdown.GetBinContent(0) + hdown.GetBinContent(1))
-                                        hdown.SetBinError(1, math.sqrt(pow(hdown.GetBinError(0),2) + pow(hdown.GetBinError(1),2)))
-                                        hdown.SetBinContent(nbins, hdown.GetBinContent(nbins) + hdown.GetBinContent(nbins+1))
-                                        hdown.SetBinError(nbins, math.sqrt(pow(hdown.GetBinError(nbins),2) + pow(hdown.GetBinError(nbins+1),2)))
-                                    if isMC:
-                                        hup.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                                        hdown.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                                        if hup.Integral()>0 and hdown.Integral()>0:
-                                            hup.Scale((hnom.Integral()+(hup.Integral()-hdown.Integral()))/hup.Integral())
-                                            hdown.Scale((hnom.Integral()-(hup.Integral()-hdown.Integral()))/hdown.Integral())
-                                    outfile.cd()
-                                    hup.Write()
-                                    hdown.Write()
-                                else:
-                                    for var_type in ['up', 'down']:
-                                        if f"{vari}:{var_type}" not in dict_h[d.label][s.label][reg][v._name].GetKeys():
-                                            continue
-                                        h1 = dict_h[d.label][s.label][reg][v._name][vari+":"+var_type]
-                                        # h1.SetName(h1.GetName()+"_"+vari+var_type.capitalize())
-                                        histo_name = h1.GetName()
-                                        if vari+"_"+var_type not in histo_name:
-                                            h1.SetName(h1.GetName()+"_"+vari+"_"+var_type)
-                                        if not v._noUnOvFlowbin:
-                                            nbins = h1.GetNbinsX()
-                                            h1.SetBinContent(1, h1.GetBinContent(0) + h1.GetBinContent(1))
-                                            h1.SetBinError(1, math.sqrt(pow(h1.GetBinError(0),2) + pow(h1.GetBinError(1),2)))
-                                            h1.SetBinContent(nbins, h1.GetBinContent(nbins) + h1.GetBinContent(nbins+1))
-                                            h1.SetBinError(nbins, math.sqrt(pow(h1.GetBinError(nbins),2) + pow(h1.GetBinError(nbins+1),2)))
-
-                                        if isMC:
-                                            h1.Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                                        outfile.cd()
-                                        h1.Write()
-                            else:
-                                histo[reg][v._name] = dict_h[d.label][s.label][reg][v._name].GetValue()      
-                                if not v._noUnOvFlowbin:
-                                    nbins = histo[reg][v._name].GetNbinsX()
-                                    histo[reg][v._name].SetBinContent(1, histo[reg][v._name].GetBinContent(0) + histo[reg][v._name].GetBinContent(1))
-                                    histo[reg][v._name].SetBinError(1, math.sqrt(pow(histo[reg][v._name].GetBinError(0),2) + pow(histo[reg][v._name].GetBinError(1),2)))
-                                    histo[reg][v._name].SetBinContent(nbins, histo[reg][v._name].GetBinContent(nbins) + histo[reg][v._name].GetBinContent(nbins+1))
-                                    histo[reg][v._name].SetBinError(nbins, math.sqrt(pow(histo[reg][v._name].GetBinError(nbins),2) + pow(histo[reg][v._name].GetBinError(nbins+1),2)))
-                                if isMC:
-                                    histo[reg][v._name].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                                outfile.cd()
-                                histo[reg][v._name].Write()
-                        else:
-                            histo[reg][v._name] = dict_h[d.label][s.label][reg][v._name].GetValue()
-                            if not v._noUnOvFlowbin:
-                                nbins = histo[reg][v._name].GetNbinsX()
-                                histo[reg][v._name].SetBinContent(1, histo[reg][v._name].GetBinContent(0) + histo[reg][v._name].GetBinContent(1))
-                                histo[reg][v._name].SetBinError(1, math.sqrt(pow(histo[reg][v._name].GetBinError(0),2) + pow(histo[reg][v._name].GetBinError(1),2)))
-                                histo[reg][v._name].SetBinContent(nbins, histo[reg][v._name].GetBinContent(nbins) + histo[reg][v._name].GetBinContent(nbins+1))
-                                histo[reg][v._name].SetBinError(nbins, math.sqrt(pow(histo[reg][v._name].GetBinError(nbins),2) + pow(histo[reg][v._name].GetBinError(nbins+1),2)))
-                            if isMC:
-                                histo[reg][v._name].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-                            outfile.cd()
-                            histo[reg][v._name].Write()
-        outfile.Close()
-
-# i plot2d per il momento non ci servono, si deve trovare un modo più intelligente di farli
-def savehisto2d(d, h, regions_def, var2d, s_cut):
-    # histo = {reg: {v._name: ROOT.TH2D(v._name+"_"+reg+"_"+s_cut," ;"+v._xtitle+";"+v._ytitle, v._nxbins, v._xmin, v._xmax, v._nybins, v._ymin, v._ymax,) for v in var2d} for reg in regions_def.keys()}
-    histo = {'incl': {
-        'nTopMixedVsnTopResolved_0TopMer': ROOT.TH2D('nTopMixedVsnTopResolved_0TopMer_SR', ' ;Number of TopResolved;Number of TopMixed', 6, -0.5, 5.5, 6, -0.5, 5.5),
-        'nTopMixedVsnTopResolved_1TopMer': ROOT.TH2D('nTopMixedVsnTopResolved_1TopMer_SR', ' ;Number of TopResolved;Number of TopMixed', 6, -0.5, 5.5, 6, -0.5, 5.5)
-    }}
-        
-    if hasattr(d, "components"):
-        s_list = d.components
-    else:
-        s_list = [d]
-    
-    for s in s_list:
-        outfile = ROOT.TFile.Open(repohisto+s.label+'_2D.root', "RECREATE")
-        # for reg in regions_def.keys():
-        #     for v in histo[reg].keys():
-        #         histo[reg][v] = h[d.label][s.label][reg][v].GetValue()
-        #         if isMC:
-        #             histo[reg][v._name].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-        #         outfile.cd()
-        #         histo[reg][v].Write()
-        if do_variations:
-            histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_0TopMer']["nominal"]
-            histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_1TopMer']["nominal"]
-        else:
-            histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].GetValue()
-            histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'] = h[d.label][s.label]['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].GetValue()
-
-        # histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-        # histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].Scale(s.sigma*10**3/ntot_events[d.label][s.label])
-        histo['incl']['nTightTopMixedVsnTightTopResolved_0TopMer'].Write()
-        histo['incl']['nTightTopMixedVsnTightTopResolved_1TopMer'].Write()
-        outfile.Close()
-
-
-
-
-
 t0 = datetime.now()
 print("starting loop on datasets: ", [d.label for d in datasets])
 print("Local time :", t0)
@@ -937,9 +747,9 @@ for d in datasets:
         if do_histos:
             s_cut = cut_string(cut)
             if len(var) != 0 :
-                h[d.label][s.label] = bookhisto(df_wnom, regions_def, var, s_cut)
+                h[d.label][s.label] = bookhisto(df_wnom, regions_def, var, s_cut, "w_nominal", sampleflag, False)     # no cutflow print
             if len(var2d) != 0:
-                h_2D[d.label][s.label] = bookhisto2D(df_wnom, regions_def, var2d, s_cut)
+                h_2D[d.label][s.label] = bookhisto2D(df_wnom, regions_def, var2d, "w_nominal")
 
         
         if do_variations:
@@ -958,14 +768,12 @@ if do_histos:
     for d in datasets:
         if len(var):
             if do_variations:
-                print(h_varied.keys())
-                # print(h_varied[d.label].keys())
-                savehisto(d, h_varied, regions_def, var, s_cut, outfile_dict)
+                savehisto(d, h_varied, regions_def, var, s_cut, outfile_dict, variations, do_variations, ntot_events)
             else:
-                savehisto(d, h, regions_def, var, s_cut, outfile_dict)
-        # if len(var2d) != 0 :
-        #     savehisto2d(d, h_2D, regions_def, var2d, s_cut)
-        # print(d.label + " histos saved")
+                savehisto(d, h, regions_def, var, s_cut, outfile_dict, variations, do_variations, ntot_events)
+        if len(var2d) != 0:
+            savehisto2d(d, h_2D, regions_def, var2d, repohisto, ntot_events)
+        print(d.label + " histos saved")
 if do_snapshot:
     snapshot_df.GetValue()
     print("Snapshot done!")
