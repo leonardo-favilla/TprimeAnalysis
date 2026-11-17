@@ -75,6 +75,17 @@ eff_dict[TopCategory][wp_cat]          = {}
 
 
 
+def append_missing_sf(cat):
+    # dummy 9999 values for an event category without SF (no fit, or SF_<cat> not in the fit): the lists stay aligned with event_categories
+    sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(9999.0)
+    sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(9999.0)
+    sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(9999.0)
+    sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(9999.0)
+    eff_dict[TopCategory][wp_cat][cat]["n_pass"].append(9999.0)
+    eff_dict[TopCategory][wp_cat][cat]["n_total"].append(9999.0)
+    eff_dict[TopCategory][wp_cat][cat]["efficiency"].append(9999.0)
+
+
 for cat in categories:
     poi                         = f"SF_{cat}"
     sf_dict[TopCategory][wp_cat][cat]  = {}
@@ -101,13 +112,7 @@ for cat in categories:
             if not_fitted or (not os.path.exists(inFilePath)):
                 print(f"Input file {inFilePath} not found or event category not fitted. Skipping event category {evcat}.")
                 event_categories_skipped.append(evcat)
-                sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(9999.0)  # assign a dummy value to indicate missing SF, to be treated as an outlier in the final analysis
-                sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(9999.0)  # assign a dummy error to indicate missing SF, to be treated as an outlier in the final analysis
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(9999.0)  # assign a dummy value to indicate missing SF, to be treated as an outlier in the final analysis
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(9999.0)  # assign a dummy error to indicate missing SF, to be treated as an outlier in the final analysis
-                eff_dict[TopCategory][wp_cat][cat]["n_pass"].append(9999.0)
-                eff_dict[TopCategory][wp_cat][cat]["n_total"].append(9999.0)
-                eff_dict[TopCategory][wp_cat][cat]["efficiency"].append(9999.0)
+                append_missing_sf(cat)
                 continue
 
 
@@ -115,8 +120,17 @@ for cat in categories:
             fit             = file.Get("fit_s")                             # get the signal+background fit
             norm_prefit     = file.Get("norm_prefit")                       # prefit shapes/yields
             # fit.Print("v")
+            if not fit:
+                print(f"Warning: fit_s not found in {inFilePath} (failed fit?): {poi} set to 9999 for {evcat}")
+                append_missing_sf(cat)
+                continue
 
             sf              = fit.floatParsFinal().find(poi)
+            if not sf:
+                # e.g. a category not fitted (fixed to 1, as "other" by default)
+                print(f"{poi} not found in RooFitResult: set to 9999 for {evcat}")
+                append_missing_sf(cat)
+                continue
             total_data      = 0.0                                           # retrieve total DATA yield from the prefit shapes
             for channel in ["pass", "fail"]:
                 data_graph  = file.Get(f"shapes_prefit/{channel}/data")
@@ -133,49 +147,43 @@ for cat in categories:
             ###############
             ### SF_pass ###
             ###############
-            if sf:
-                sf_pass_value = sf.getVal()
-                sf_pass_error = sf.getError()
+            sf_pass_value   = sf.getVal()
+            sf_pass_error   = sf.getError()
 
-                ######## Modifications due to low statistics ########
-                # if (cat == "other"):
-                #     sf_pass_value = 1.0
-                #     sf_pass_error = 0.0
-                # elif (TopCategory in ["Resolved", "Mixed"]) and (evcat == "pt600to1000"):
-                #     sf_pass_value = 1.0
-                #     sf_pass_error = 0.0
-                # elif (TopCategory == "Merged") and (cat == "topmatched") and (evcat == "pt0to200"):
-                #     sf_pass_value = 1.0
-                #     sf_pass_error = 0.0
+            ######## Modifications due to low statistics ########
+            # if (cat == "other"):
+            #     sf_pass_value = 1.0
+            #     sf_pass_error = 0.0
+            # elif (TopCategory in ["Resolved", "Mixed"]) and (evcat == "pt600to1000"):
+            #     sf_pass_value = 1.0
+            #     sf_pass_error = 0.0
+            # elif (TopCategory == "Merged") and (cat == "topmatched") and (evcat == "pt0to200"):
+            #     sf_pass_value = 1.0
+            #     sf_pass_error = 0.0
 
-                sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(sf_pass_value)
-                sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(sf_pass_error)
-                print(f"{poi} \t\t= {sf_pass_value:.4f} ± {sf_pass_error:.4f}")
-            else:
-                print(f"{poi} not found in RooFitResult")
+            sf_dict[TopCategory][wp_cat][cat]["pass"]["value"].append(sf_pass_value)
+            sf_dict[TopCategory][wp_cat][cat]["pass"]["error"].append(sf_pass_error)
+            print(f"{poi} \t\t= {sf_pass_value:.4f} ± {sf_pass_error:.4f}")
 
             ###############
             ### SF_fail ###
             ###############
-            if sf:   
-                norm_prefit_pass = norm_prefit.find(f"pass/{cat}").getVal()
-                norm_prefit_fail = norm_prefit.find(f"fail/{cat}").getVal()
-                print(f"Calculating w_fail for {evcat} using the relation:      w_fail = SF_fail    = 1 + (1 - SF_pass) * (norm_prefit_pass / norm_prefit_fail)")
-                print(f"with error:                                             sigma_fail          = sigma_pass * (norm_prefit_pass / norm_prefit_fail)")
-                print(f"where                                                   w_pass = SF_pass    = {sf_pass_value:.4f} ± {sf_pass_error:.4f}, norm_prefit_pass = {norm_prefit_pass:.4f}, norm_prefit_fail = {norm_prefit_fail:.4f}")
-                sf_fail_value = 1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail)
-                if sf_fail_value < 0:
-                    # same expression as the fail scale of the fit, max(0, ...) in TagAndProbeExtended.py
-                    print(f"Warning: {TopCategory} {wp_cat} {cat} {evcat}: SF_fail = {sf_fail_value:.4f} < 0, set to 0 as in the fit")
-                    sf_fail_value = 0.0
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(sf_fail_value)
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(sf_pass_error * (norm_prefit_pass / norm_prefit_fail))
+            norm_prefit_pass = norm_prefit.find(f"pass/{cat}").getVal()
+            norm_prefit_fail = norm_prefit.find(f"fail/{cat}").getVal()
+            print(f"Calculating w_fail for {evcat} using the relation:      w_fail = SF_fail    = 1 + (1 - SF_pass) * (norm_prefit_pass / norm_prefit_fail)")
+            print(f"with error:                                             sigma_fail          = sigma_pass * (norm_prefit_pass / norm_prefit_fail)")
+            print(f"where                                                   w_pass = SF_pass    = {sf_pass_value:.4f} ± {sf_pass_error:.4f}, norm_prefit_pass = {norm_prefit_pass:.4f}, norm_prefit_fail = {norm_prefit_fail:.4f}")
+            sf_fail_value = 1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail)
+            if sf_fail_value < 0:
+                # same expression as the fail scale of the fit, max(0, ...) in TagAndProbeExtended.py
+                print(f"Warning: {TopCategory} {wp_cat} {cat} {evcat}: SF_fail = {sf_fail_value:.4f} < 0, set to 0 as in the fit")
+                sf_fail_value = 0.0
+            sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(sf_fail_value)
+            sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(sf_pass_error * (norm_prefit_pass / norm_prefit_fail))
 
-                eff_dict[TopCategory][wp_cat][cat]["n_pass"].append(norm_prefit_pass)
-                eff_dict[TopCategory][wp_cat][cat]["n_total"].append(norm_prefit_pass + norm_prefit_fail)
-                eff_dict[TopCategory][wp_cat][cat]["efficiency"].append(norm_prefit_pass / (norm_prefit_pass + norm_prefit_fail))
-            else:
-                print(f"{poi} not found in RooFitResult")
+            eff_dict[TopCategory][wp_cat][cat]["n_pass"].append(norm_prefit_pass)
+            eff_dict[TopCategory][wp_cat][cat]["n_total"].append(norm_prefit_pass + norm_prefit_fail)
+            eff_dict[TopCategory][wp_cat][cat]["efficiency"].append(norm_prefit_pass / (norm_prefit_pass + norm_prefit_fail))
 
 
 

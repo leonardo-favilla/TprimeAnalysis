@@ -209,12 +209,15 @@ def build_table(
     matching_items = ordered_matching_items(matching_map)
     for match_index, (matching, matching_data) in enumerate(matching_items):
         total_rows = 0
+        all_missing = True     # matching never fitted (e.g. "other"): all its values are the dummy 9999 of extract_ScaleFactors.py
         for channel in DEFAULT_CHANNELS:
             payload = matching_data.get(channel)
             if isinstance(payload, dict):
                 total_rows += len(payload.get("value", []))
+                if any(float(v) != 9999.0 for v in payload.get("value", [])):
+                    all_missing = False
 
-        if total_rows == 0:
+        if total_rows == 0 or all_missing:
             continue
 
         first_row_of_matching = True
