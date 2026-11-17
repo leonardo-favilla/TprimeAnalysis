@@ -2169,28 +2169,50 @@ RVec<int> top_process_category(std::string sample_process, rvec_i TopTruth_Match
   return top_process;
 }
 
+////// SF of the top candidates passing the looser WP but not the tighter one:
+//////     LooseButNotTight:  looser WP = Loose (10%), tighter WP = Tight  (5%)
+//////     TightButNotXTight: looser WP = Tight (5%),  tighter WP = XTight (1%)
+////// the tops passing the tighter WP are a subset of those passing the looser WP; BTV fixed-WP formula with the fitted SFs
+////// and the MC efficiencies of the fit region:
+//////     SF     = (SF_looserWP * eff_looserWP - SF_tighterWP * eff_tighterWP) / (eff_looserWP - eff_tighterWP)
+//////     sigma  = sqrt((sigma_looserWP * eff_looserWP)^2 + (sigma_tighterWP * eff_tighterWP)^2) / |eff_looserWP - eff_tighterWP|
+////// 1 +- 0 if an efficiency is < 0 (null bin of TrotaSF_binning.yaml), if eff_looserWP == eff_tighterWP, or if SF <= 0 (BTV recommendation)
+std::pair<float, float> TrotaButNotSF(float sf_looserWP, float error_looserWP, float eff_looserWP, float sf_tighterWP, float error_tighterWP, float eff_tighterWP)
+{
+  if (eff_looserWP < 0 || eff_tighterWP < 0 || eff_looserWP == eff_tighterWP)
+  {
+    return {1.0, 0.0};
+  }
+  float value = (sf_looserWP * eff_looserWP - sf_tighterWP * eff_tighterWP) / (eff_looserWP - eff_tighterWP);
+  float error = std::sqrt(std::pow(error_looserWP * eff_looserWP, 2) + std::pow(error_tighterWP * eff_tighterWP, 2)) / std::abs(eff_looserWP - eff_tighterWP);
+  if (value <= 0)
+  {
+    return {1.0, 0.0};
+  }
+  return {value, error};
+}
+
 ////// Calculate the Trota SF for each top candidate of a given category
-RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string TopCat, rvec_i TopCandidate_TagCat, rvec_f TopCandidate_score, float wpLoose, float wpTight, rvec_f TopCandidate_pt, std::string scenario){
+RVec<float> GetTrotaSF(std::string sfFilePath, std::string effFilePath, std::string TopCat, rvec_i TopCandidate_TagCat, rvec_f TopCandidate_score, float wpLoose, float wpTight, float wpXTight, rvec_f TopCandidate_pt, std::string scenario){
   /**
   * @brief Compute the Trota scale factor for each top candidate.
   *
-  * This function loops over all top candidates and evaluates the
-  * "TrotaScaleFactors" correction from a CorrectionLib JSON file.
+  * For each candidate, from its score:
+  * - score >= wpXTight:            XTight SF ("pass"), fitted
+  * - wpTight <= score < wpXTight:  TightButNotXTight SF, from the Tight and XTight SFs and efficiencies (TrotaButNotSF)
+  * - wpLoose <= score < wpTight:   LooseButNotTight SF, from the Loose and Tight SFs and efficiencies (TrotaButNotSF)
+  * - score < wpLoose:              fail, SF = 1 (case b below)
+  * The fitted SFs are read from the "TrotaScaleFactors" correction {TopCat, wp_cat, TagCat, channel, "value"/"error", pt},
+  * the efficiencies from the "TrotaEfficiencies" correction {TopCat, wp_cat, TagCat, pt} (both written by produceTrotaCorrLib.py).
   *
-  * For each candidate:
-  * - read its score, pT, and tag category
-  * - determine whether it belongs to the "pass" or "fail" region
-  *   according to the tagger working points
-  * - evaluate the scale factor with CorrectionLib using:
-  *     {TopCat, wpTag, TagCat, channel, "value", pt}
-  * - store the resulting weight in the output vector
-  *
-  * @param corrLibFilePath Path to the CorrectionLib JSON file.
+  * @param sfFilePath CorrectionLib JSON file of the fitted SFs (CorrLib_TrotaScaleFactors_<era>.json).
+  * @param effFilePath CorrectionLib JSON file of the efficiencies (CorrLib_TrotaEfficiencies_<era>.json).
   * @param TopCat Top category string passed to the correction: Resolved, Mixed, Merged.
   * @param TopCandidate_TagCat Per-candidate tag category: 0-->topmatched, 1-->nonmatched, 2-->other.
   * @param TopCandidate_score Per-candidate Trota score.
-  * @param wpLoose Loose working-point threshold used to define pass/fail.
-  * @param wpTight Tight working-point threshold used to define pass/fail.
+  * @param wpLoose Loose (10%) working-point threshold.
+  * @param wpTight Tight (5%) working-point threshold.
+  * @param wpXTight XTight (1%) working-point threshold.
   * @param TopCandidate_pt Per-candidate transverse momentum used in the SF evaluation.
   * @param scenario String to select whether to return nominal SF ("nominal") or systematic variations ("up"/"down").
   *
@@ -2199,8 +2221,10 @@ RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string TopCat, rvec_i T
   * @note The function assumes that all input vectors have the same size.
   */
 
-  auto cset             = correction::CorrectionSet::from_file(corrLibFilePath);
-  auto trotaSF_corr     = cset->at("TrotaScaleFactors");
+  const auto& sf_cset   = GetCachedCorrectionSet(sfFilePath);
+  const auto& eff_cset  = GetCachedCorrectionSet(effFilePath);
+  auto trotaSF_corr     = sf_cset.at("TrotaScaleFactors");
+  auto trotaEff_corr    = eff_cset.at("TrotaEfficiencies");
   RVec<float> weights_nominal;
   RVec<float> weights_up;
   RVec<float> weights_down;
@@ -2210,8 +2234,6 @@ RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string TopCat, rvec_i T
     float score   = TopCandidate_score[i];
     float pt      = TopCandidate_pt[i];
     std::string TagCat;
-    std::string channel;
-    std::string wpTag;
     float weight  = 1.0;
     float error   = 0.0;
 
@@ -2227,36 +2249,43 @@ RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string TopCat, rvec_i T
     {
       TagCat = "other";
     }
-  
-    
-    if(score >= wpTight)
-    {
-      wpTag   = "Tight";
-      channel = "pass";
-    }
-    else if(score < wpTight)
-    {
-      if(score >= wpLoose)
-      {
-        wpTag   = "LooseButNotTight";
-        channel = "pass";
-      }
-      else if(score < wpLoose)
-      {
-        wpTag   = "Loose";
-        channel = "fail";
-      }
-    }
 
-    // case a: all processes, pass and fail
-    weight  = trotaSF_corr->evaluate({TopCat, wpTag, TagCat, channel, "value", pt});
-    error   = trotaSF_corr->evaluate({TopCat, wpTag, TagCat, channel, "error", pt});
-
-    // case b: all processes, only pass
-    if (channel == "fail")
+    if (score >= wpXTight)
     {
-      weight = 1.0;
-      error = 0.0;
+      weight  = trotaSF_corr->evaluate({TopCat, "XTight", TagCat, "pass", "value", pt});
+      error   = trotaSF_corr->evaluate({TopCat, "XTight", TagCat, "pass", "error", pt});
+    }
+    else if (score >= wpTight)
+    {
+      std::pair<float, float> sf = TrotaButNotSF(trotaSF_corr->evaluate({TopCat, "Tight", TagCat, "pass", "value", pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "Tight", TagCat, "pass", "error", pt}),
+                                                 trotaEff_corr->evaluate({TopCat, "Tight", TagCat, pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "XTight", TagCat, "pass", "value", pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "XTight", TagCat, "pass", "error", pt}),
+                                                 trotaEff_corr->evaluate({TopCat, "XTight", TagCat, pt}));
+      weight  = sf.first;
+      error   = sf.second;
+    }
+    else if (score >= wpLoose)
+    {
+      std::pair<float, float> sf = TrotaButNotSF(trotaSF_corr->evaluate({TopCat, "Loose", TagCat, "pass", "value", pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "Loose", TagCat, "pass", "error", pt}),
+                                                 trotaEff_corr->evaluate({TopCat, "Loose", TagCat, pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "Tight", TagCat, "pass", "value", pt}),
+                                                 trotaSF_corr->evaluate({TopCat, "Tight", TagCat, "pass", "error", pt}),
+                                                 trotaEff_corr->evaluate({TopCat, "Tight", TagCat, pt}));
+      weight  = sf.first;
+      error   = sf.second;
+    }
+    else
+    {
+      // case a: all processes, pass and fail (fail SF of the Loose WP)
+      weight  = trotaSF_corr->evaluate({TopCat, "Loose", TagCat, "fail", "value", pt});
+      error   = trotaSF_corr->evaluate({TopCat, "Loose", TagCat, "fail", "error", pt});
+
+      // case b: all processes, only pass
+      weight  = 1.0;
+      error   = 0.0;
     }
 
     // case c: only topmatched, pass and fail
@@ -2265,9 +2294,9 @@ RVec<float> GetTrotaSF(std::string corrLibFilePath, std::string TopCat, rvec_i T
     //   weight = 1.0;
     //   error = 0.0;
     // }
-    
+
     // case d: only topmatched, only pass
-    // if ((TagCat != "topmatched") || (channel == "fail"))
+    // if ((TagCat != "topmatched") || (score < wpLoose))
     // {
     //   weight = 1.0;
     //   error = 0.0;

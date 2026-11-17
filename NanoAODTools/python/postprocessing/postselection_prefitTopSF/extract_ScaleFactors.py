@@ -50,7 +50,7 @@ else:
     print(f"Output file {outJsonPath} does not exist. Extracting scale factors from fit results.")
     sf_dict         = {}
 if (TopCategory in sf_dict) and ("LooseButNotTight" in sf_dict[TopCategory]):
-    print(f"Removing old LooseButNotTight scale factors of {TopCategory} from {outJsonPath}: they are computed in the analysis by produceTrotaCorrLib.py")
+    print(f"Removing old LooseButNotTight scale factors of {TopCategory} from {outJsonPath}: they are computed in step 2 (GetTrotaSF) from the fitted SFs and efficiencies")
     del sf_dict[TopCategory]["LooseButNotTight"]
 if TopCategory in sf_dict:
     print(f"Candidate {TopCategory} already exists in the results for era {era}. Overwriting existing scale factors for this candidate.")
@@ -61,7 +61,7 @@ if wp_cat in sf_dict[TopCategory]:
 else:
     sf_dict[TopCategory][wp_cat]       = {}
 
-# MC tagging efficiencies (prefit yields, efficiency = n_pass / n_total), needed in the analysis to compute the LooseButNotTight SFs
+# MC tagging efficiencies (prefit yields, efficiency = n_pass / n_total), needed in step 2 to compute the LooseButNotTight and TightButNotXTight SFs
 if os.path.exists(outEffJsonPath):
     print(f"Output file {outEffJsonPath} already exists. Retrieving existing results.")
     with open(outEffJsonPath, "r") as json_file:

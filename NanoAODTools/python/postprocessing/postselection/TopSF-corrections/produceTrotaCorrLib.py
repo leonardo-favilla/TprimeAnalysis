@@ -8,20 +8,27 @@ import optparse
 
 script_folder           = os.path.dirname(os.path.abspath(__file__))
 
+# Two correctionlib files per era, read by postselection/postSelector.py (GetTrotaSF in postselection.h):
+#   CorrLib_TrotaScaleFactors_<era>.json: fitted Loose, Tight, XTight SFs (pass and fail)
+#   CorrLib_TrotaEfficiencies_<era>.json: MC efficiencies n_pass/n_total of Loose, Tight, XTight, from the prefit yields of the same fits
+# The SFs of the tops passing a WP but not the tighter one (LooseButNotTight, TightButNotXTight) are computed in step 2
+# from these SFs and efficiencies (BTV fixed-WP formula), not stored here.
 usage                   = "python3 produceTrotaCorrLib.py --era <era>"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                                       help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      "--binning",                dest="binning",                     type=str,     default=f"{script_folder}/TrotaSF_binning.yaml",                      help="yaml file with the event categories used in each pT bin, per era and top category")
-parser.add_option(      "--output",                 dest="output",                      type=str,     default="",                                                           help="Output correctionlib file, default: <era>/CorrLib_TrotaScaleFactors_<era>.json in this folder")
+parser.add_option(      "--output",                 dest="output",                      type=str,     default="",                                                           help="Output correctionlib file of the SFs, default: <era>/CorrLib_TrotaScaleFactors_<era>.json in this folder")
+parser.add_option(      "--output_eff",             dest="output_eff",                  type=str,     default="",                                                           help="Output correctionlib file of the efficiencies, default: <era>/CorrLib_TrotaEfficiencies_<era>.json in this folder")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 binningFilePath         = opt.binning
 eraFolder               = f"{script_folder}/{era}"     # input json from postselection_prefitTopSF/extract_ScaleFactors.py and output correctionlib file
 outFilePath             = opt.output if opt.output else f"{eraFolder}/CorrLib_TrotaScaleFactors_{era}.json"
+outEffFilePath          = opt.output_eff if opt.output_eff else f"{eraFolder}/CorrLib_TrotaEfficiencies_{era}.json"
 
 pt_edges                = [0, 200, 400, 600, 1000]
 event_categories        = ["pt0to200", "pt200to400", "pt400to600", "pt600to1000", "pt0to400", "pt400to1000"]   # same order as in extract_ScaleFactors.py
-wp_cats                 = ["Loose", "LooseButNotTight", "Tight", "TightButNotXTight", "XTight"]   # Loose, Tight, XTight fitted; LooseButNotTight, TightButNotXTight computed from them
+wp_cats                 = ["Loose", "Tight", "XTight"]       # fitted WPs; LooseButNotTight and TightButNotXTight are computed in step 2
 channels                = ["pass", "fail"]
 
 with open(binningFilePath, "r") as _f:
@@ -52,32 +59,19 @@ def get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat):
     return value, error
 
 
-def get_ButNot_sf(sf_dict, eff_dict, wp_outer, wp_inner, TagCat, channel, evcat):
-    """
-    SF (value, error) of the tops passing wp_outer but not wp_inner (LooseButNotTight: Loose, Tight; TightButNotXTight: Tight, XTight),
-    from the two fitted SFs and n_pass of the same event category evcat (wp_inner tops are a subset of the wp_outer ones):
-        SF_ButNot       = (SF_outer * n_outer - SF_inner * n_inner) / (n_outer - n_inner)
-        sigma_ButNot    = sqrt((sigma_outer * n_outer)^2 + (sigma_inner * n_inner)^2) / |n_outer - n_inner|
-    (1.0, 0.0) if evcat is None, for the fail channel, if n_outer == n_inner, or if SF_ButNot <= 0
-    """
-    wp_cat                      = f"{wp_outer}ButNot{wp_inner}"
-    if (evcat is None) or (channel == "fail"):
-        return 1.0, 0.0
-    evcat_idx                   = event_categories.index(evcat)
-    sf_outer, error_outer       = get_fitted_sf(sf_dict, wp_outer, TagCat, "pass", evcat)
-    sf_inner, error_inner       = get_fitted_sf(sf_dict, wp_inner, TagCat, "pass", evcat)
-    n_outer                     = eff_dict[wp_outer][TagCat]["n_pass"][evcat_idx]
-    n_inner                     = eff_dict[wp_inner][TagCat]["n_pass"][evcat_idx]
-    if n_outer == n_inner:
-        print(f"Warning: {wp_cat} {TagCat} {evcat}: n_pass {wp_outer} = n_pass {wp_inner} = {n_outer}, SF set to 1.0 +- 0.0")
-        return 1.0, 0.0
-    value                       = (sf_outer * n_outer - sf_inner * n_inner) / (n_outer - n_inner)
-    error                       = math.sqrt((error_outer * n_outer)**2 + (error_inner * n_inner)**2) / abs(n_outer - n_inner)
-    if value <= 0:
-        # negative SF set to 1 (no correction), according to BTV recommendations: https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/#scale-factor-recommendations-for-event-reweighting
-        print(f"Warning: {wp_cat} {TagCat} {evcat}: SF = {value:.4f} +- {error:.4f} <= 0, set to 1.0 +- 0.0")
-        return 1.0, 0.0
-    return value, error
+def get_efficiency(eff_dict, wp_cat, TagCat, evcat):
+    """MC efficiency n_pass/n_total of wp_cat in the event category evcat (same prefit yields as the fit); -1 if evcat is None (null bin: SF 1 +- 0 in step 2)"""
+    if evcat is None:
+        return -1.0
+    if wp_cat not in eff_dict:
+        print(f"ERROR: {wp_cat} efficiencies not in the input json (fitted: {list(eff_dict.keys())}): fit {wp_cat} and run extract_ScaleFactors.py --wp_cat {wp_cat}")
+        sys.exit(1)
+    evcat_idx           = event_categories.index(evcat)
+    efficiency          = eff_dict[wp_cat][TagCat]["efficiency"][evcat_idx]
+    if efficiency == 9999.0:
+        print(f"ERROR: {wp_cat} {TagCat} efficiency missing (9999) for {evcat}: fit not available, choose another event category in {binningFilePath}")
+        sys.exit(1)
+    return efficiency
 
 
 def produce_TrotaScaleFactors_dict():
@@ -87,11 +81,9 @@ def produce_TrotaScaleFactors_dict():
         evcats_used     = [evcat for TagCat in binning[TopCat].keys() for evcat in binning[TopCat][TagCat] if evcat is not None]
         if evcats_used:
             sf_dict     = load_input_json(TopCat, "TrotaScaleFactors")
-            eff_dict    = load_input_json(TopCat, "TrotaEfficiencies")
         else:
             print(f"{TopCat}: all pT bins null in {binningFilePath}, SFs set to 1.0 +- 0.0 (no input json needed)")
             sf_dict     = None
-            eff_dict    = None
         TrotaScaleFactors_dict[TopCat] = {}
         for wp_cat in wp_cats:
             TrotaScaleFactors_dict[TopCat][wp_cat] = {}
@@ -101,12 +93,7 @@ def produce_TrotaScaleFactors_dict():
                     values      = []
                     errors      = []
                     for evcat in binning[TopCat][TagCat]:
-                        if wp_cat == "LooseButNotTight":
-                            value, error = get_ButNot_sf(sf_dict, eff_dict, "Loose", "Tight", TagCat, channel, evcat)
-                        elif wp_cat == "TightButNotXTight":
-                            value, error = get_ButNot_sf(sf_dict, eff_dict, "Tight", "XTight", TagCat, channel, evcat)
-                        else:   # Loose, Tight, XTight: fitted
-                            value, error = get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat)
+                        value, error = get_fitted_sf(sf_dict, wp_cat, TagCat, channel, evcat)
                         values.append(value)
                         errors.append(error)
                     TrotaScaleFactors_dict[TopCat][wp_cat][TagCat][channel] = {
@@ -114,6 +101,24 @@ def produce_TrotaScaleFactors_dict():
                         "error": errors,
                     }
     return TrotaScaleFactors_dict
+
+
+def produce_TrotaEfficiencies_dict():
+    """TrotaEfficiencies_dict[TopCat][wp_cat][TagCat] = [efficiency, one per pT bin] (-1 in the null bins)"""
+    TrotaEfficiencies_dict = {}
+    for TopCat in binning.keys():
+        evcats_used     = [evcat for TagCat in binning[TopCat].keys() for evcat in binning[TopCat][TagCat] if evcat is not None]
+        if evcats_used:
+            eff_dict    = load_input_json(TopCat, "TrotaEfficiencies")
+        else:
+            print(f"{TopCat}: all pT bins null in {binningFilePath}, efficiencies set to -1 (no input json needed)")
+            eff_dict    = None
+        TrotaEfficiencies_dict[TopCat] = {}
+        for wp_cat in wp_cats:
+            TrotaEfficiencies_dict[TopCat][wp_cat] = {}
+            for TagCat in binning[TopCat].keys():
+                TrotaEfficiencies_dict[TopCat][wp_cat][TagCat] = [get_efficiency(eff_dict, wp_cat, TagCat, evcat) for evcat in binning[TopCat][TagCat]]
+    return TrotaEfficiencies_dict
 
 
 def make_topcat_content(TrotaScaleFactors_dict, TopCat):
@@ -184,7 +189,7 @@ def make_correction_set(TrotaScaleFactors_dict):
         version=1,
         inputs=[
             cs.Variable(name="TopCat",          type="string", description="Top category: Resolved, Mixed, Merged"),
-            cs.Variable(name="wp_cat",          type="string", description="working point category: Loose, LooseButNotTight, Tight, TightButNotXTight, XTight"),
+            cs.Variable(name="wp_cat",          type="string", description="working point category: Loose, Tight, XTight"),
             cs.Variable(name="TagCat",          type="string", description="Tag category: topmatched, nonmatched, other"),
             cs.Variable(name="channel",         type="string", description="insert: pass, fail"),
             cs.Variable(name="type",            type="string", description="insert: value, error"),
@@ -209,8 +214,73 @@ def make_correction_set(TrotaScaleFactors_dict):
     return cset.dict()
 
 
+def make_efficiency_correction_set(TrotaEfficiencies_dict):
+    corr = cs.Correction(
+        name="TrotaEfficiencies",
+        version=1,
+        inputs=[
+            cs.Variable(name="TopCat",          type="string", description="Top category: Resolved, Mixed, Merged"),
+            cs.Variable(name="wp_cat",          type="string", description="working point category: Loose, Tight, XTight"),
+            cs.Variable(name="TagCat",          type="string", description="Tag category: topmatched, nonmatched, other"),
+            cs.Variable(name="TopCandidate_pt", type="real",   description="Top candidate pt"),
+        ],
+        output=cs.Variable(
+            name="TrotaEfficiency",
+            type="real",
+            description="MC efficiency n_pass/n_total of the Trota top tagger WP in the region of the fit (-1: null bin)",
+        ),
+        data=cs.Category(
+            nodetype="category",
+            input="TopCat",
+            content=[
+                {
+                    "key": TopCat,
+                    "value": cs.Category(
+                        nodetype="category",
+                        input="wp_cat",
+                        content=[
+                            {
+                                "key": wp_cat,
+                                "value": cs.Category(
+                                    nodetype="category",
+                                    input="TagCat",
+                                    content=[
+                                        {
+                                            "key": TagCat,
+                                            "value": cs.Binning(
+                                                nodetype="binning",
+                                                input="TopCandidate_pt",
+                                                edges=pt_edges,
+                                                content=TrotaEfficiencies_dict[TopCat][wp_cat][TagCat],
+                                                flow="clamp",
+                                            ),
+                                        }
+                                        for TagCat in TrotaEfficiencies_dict[TopCat][wp_cat].keys()
+                                    ],
+                                ),
+                            }
+                            for wp_cat in TrotaEfficiencies_dict[TopCat].keys()
+                        ],
+                    ),
+                }
+                for TopCat in TrotaEfficiencies_dict.keys()
+            ],
+        ),
+    )
+
+    cset = cs.CorrectionSet(schema_version=2, corrections=[corr])
+    return cset.dict()
+
+
 TrotaScaleFactors_dict  = produce_TrotaScaleFactors_dict()
+TrotaEfficiencies_dict  = produce_TrotaEfficiencies_dict()
+
 cset_dict               = make_correction_set(TrotaScaleFactors_dict)
 with open(outFilePath, "w") as f:
     json.dump(cset_dict, f, indent=2)
 print(f"Saved correctionlib file: {outFilePath}")
+
+cset_eff_dict           = make_efficiency_correction_set(TrotaEfficiencies_dict)
+with open(outEffFilePath, "w") as f:
+    json.dump(cset_eff_dict, f, indent=2)
+print(f"Saved correctionlib file: {outEffFilePath}")

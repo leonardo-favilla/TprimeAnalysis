@@ -3,17 +3,18 @@
 #
 # Each list has one entry per bin of TopCandidate_pt in the correctionlib file: [0,200], [200,400], [400,600], [600,1000]
 #   - event category of extract_ScaleFactors.py: pt0to200, pt200to400, pt400to600, pt600to1000, pt0to400, pt400to1000
-#       Loose and Tight: SFs (pass and fail) fitted in that event category
-#       LooseButNotTight: pass SF computed from the Loose and Tight SFs and n_pass of that same event category, fail SF = 1
-#   - null: SF = 1.0 +- 0.0 for Loose, LooseButNotTight and Tight
+#       Loose, Tight and XTight: SFs (pass and fail) and MC efficiencies fitted in that event category
+#       LooseButNotTight, TightButNotXTight: pass SF computed in step 2 (GetTrotaSF/TrotaButNotSF in postselection.h) from the
+#       SFs and efficiencies of that same event category, fail SF = 1
+#   - null: SF = 1.0 +- 0.0 for Loose, Tight and XTight, efficiency -1 (SF 1.0 +- 0.0 also for the ButNot bands)
 #   - Merged [0,200]: always null. The probe of the fit is a GoodFatJet (pt>200), pt0to200 is not fitted; 1 +- 0 in case Merged tops below 200 GeV are used
 #     (for Merged, pt0to400 contains only probes with pt in [200,400])
 # A top category with all bins null needs no input json (placeholders of the eras without SFs yet)
 #
-# Inputs: <era>/TrotaScaleFactors_<era>_<TopCategory>.json and <era>/TrotaEfficiencies_<era>_<TopCategory>.json in this folder,
-#         raw Loose and Tight SFs and efficiencies written by postselection_prefitTopSF/extract_ScaleFactors.py
-# Output: <era>/CorrLib_TrotaScaleFactors_<era>.json in this folder, read by postselection/postSelector.py
-# Usage:  python3 produceTrotaCorrLib.py --era <era>
+# Inputs:  <era>/TrotaScaleFactors_<era>_<TopCategory>.json and <era>/TrotaEfficiencies_<era>_<TopCategory>.json in this folder,
+#          raw Loose, Tight and XTight SFs and efficiencies written by postselection_prefitTopSF/extract_ScaleFactors.py
+# Outputs: <era>/CorrLib_TrotaScaleFactors_<era>.json and <era>/CorrLib_TrotaEfficiencies_<era>.json in this folder, read by postselection/postSelector.py
+# Usage:   python3 produceTrotaCorrLib.py --era <era>
 ####################################################################################################
 
 "2022":
