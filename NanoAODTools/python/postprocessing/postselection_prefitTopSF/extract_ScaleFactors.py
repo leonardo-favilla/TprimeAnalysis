@@ -163,7 +163,12 @@ for cat in categories:
                 print(f"Calculating w_fail for {evcat} using the relation:      w_fail = SF_fail    = 1 + (1 - SF_pass) * (norm_prefit_pass / norm_prefit_fail)")
                 print(f"with error:                                             sigma_fail          = sigma_pass * (norm_prefit_pass / norm_prefit_fail)")
                 print(f"where                                                   w_pass = SF_pass    = {sf_pass_value:.4f} ± {sf_pass_error:.4f}, norm_prefit_pass = {norm_prefit_pass:.4f}, norm_prefit_fail = {norm_prefit_fail:.4f}")
-                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail))
+                sf_fail_value = 1 + (1 - sf_pass_value) * (norm_prefit_pass / norm_prefit_fail)
+                if sf_fail_value < 0:
+                    # same expression as the fail scale of the fit, max(0, ...) in TagAndProbeExtended.py
+                    print(f"Warning: {TopCategory} {wp_cat} {cat} {evcat}: SF_fail = {sf_fail_value:.4f} < 0, set to 0 as in the fit")
+                    sf_fail_value = 0.0
+                sf_dict[TopCategory][wp_cat][cat]["fail"]["value"].append(sf_fail_value)
                 sf_dict[TopCategory][wp_cat][cat]["fail"]["error"].append(sf_pass_error * (norm_prefit_pass / norm_prefit_fail))
 
                 eff_dict[TopCategory][wp_cat][cat]["n_pass"].append(norm_prefit_pass)
