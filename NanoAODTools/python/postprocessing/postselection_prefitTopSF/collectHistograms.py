@@ -25,7 +25,7 @@ parser.add_option(      '--TopCategory',            dest='TopCategory',         
 parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight, XTight")
 parser.add_option(      "--categories_to_fit",      dest="categories_to_fit",           type=str,     default="topmatched,nonmatched",                  help="Comma separated categories whose SF is fitted, among: topmatched, nonmatched, other. The others are fixed to 1")
 parser.add_option(      "--symmetrize",             dest="symmetrize",                  type=str,     default="",                                       help="Comma separated systematics to symmetrize, e.g. jesTotal,jer (writes <ev_cat>_symmetrized.root)")
-parser.add_option(      "--positive",               dest="positive",                    action="store_true", default=False,                     help="Fix zero/negative bin contents of the MC histograms (writes <ev_cat>_zerosFixed.root, used in the datacards)")
+parser.add_option(      "--positive",               dest="positive",                    action="store_true", default=False,                     help="Fix zero/negative bin contents of the MC histograms (writes <ev_cat>_zerosFixed.root, used in the datacards); to be used for the fits, the histograms are otherwise written as they are")
 parser.add_option(      "--saveWithUncertainties",  dest="saveWithUncertainties",       action="store_true", default=False,                     help="Run FitDiagnostics with --saveWithUncertainties: pre/post-fit uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py, not used by extract_ScaleFactors.py); with combine v11 ~15 min per bin instead of ~10 s")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
@@ -114,7 +114,7 @@ for dataset_to_run in datasets:
     if hasattr(sample_dict[dataset_to_run], "components"):
         components.extend([c.label for c in sample_dict[dataset_to_run].components])
     else:
-        components.extend(sample_dict[dataset_to_run].label)
+        components.extend([sample_dict[dataset_to_run].label])
 
 
 
@@ -159,7 +159,7 @@ for tag_cat in tag_categories:
         if hasattr(sample_dict[dataset_in_cat], "components"):
             components_in_cat.extend([c.label for c in sample_dict[dataset_in_cat].components])
         else:
-            components_in_cat.extend(sample_dict[dataset_in_cat].label)
+            components_in_cat.extend([sample_dict[dataset_in_cat].label])
     print(f"Tag category:   {tag_cat}")
     print(f"  Processes:    {processes_in_cat}")
     print(f"  Datasets:     {datasets_in_cat}")
@@ -303,21 +303,11 @@ for ev_cat, outFile in outFile_dict.items():
     outFile.cd()
     for histoname_out in outputHistograms_dict:
         if ev_cat in histoname_out:
-            if ("nominal" in histoname_out) and (outputCount_dict[histoname_out] <= 0):
-                print(f"Warning: nominal histogram '{histoname_out}' has non-positive integral {outputCount_dict[histoname_out]:.1f} --> forcing to 0")
-                outputHistograms_dict[histoname_out].Reset()
-                outputHistograms_dict[histoname_out].SetBinContent(1, 1e-10) # set a very small content to avoid issues with zero yields in datacards
-                histo = outputHistograms_dict[histoname_out].Clone(histoname_out)
-            
-            elif (outputCount_dict[histoname_out] <= 0) and not ("data" in histoname_out or "nominal" in histoname_out):
-                print(f"Warning: histogram '{histoname_out}' has non-positive integral {outputCount_dict[histoname_out]:.1f} --> substituting with nominal histogram")
-                for unc,unc_tag in uncertainties_tags.items():
-                    if histoname_out.endswith(f"_{unc_tag}"):
-                        unc_tag_to_replace = unc_tag
-                        break
-                histo = outputHistograms_dict[histoname_out.replace(unc_tag_to_replace, "nominal")].Clone(histoname_out)
-            else:
-                histo = outputHistograms_dict[histoname_out].Clone(histoname_out)
+            # histograms written as they are (as in CollectHistos.py of TprimeStats): bins <= 0 are fixed bin by bin,
+            # for the nominal and the variations in the same way, by makePositiveHistos.py (--positive)
+            if (outputCount_dict[histoname_out] <= 0) and ("data" not in histoname_out):
+                print(f"Warning: histogram '{histoname_out}' has non-positive integral {outputCount_dict[histoname_out]:.1f} (bins fixed only with --positive)")
+            histo = outputHistograms_dict[histoname_out].Clone(histoname_out)
             histo.Write()
     outFile.Close()
 
