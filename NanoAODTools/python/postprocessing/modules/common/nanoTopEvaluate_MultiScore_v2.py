@@ -135,6 +135,13 @@ class nanoTopevaluate_MultiScore(Module):
         # Low Pt
         self.out.branch("TopResolved_TopScore", "F", lenVar="nTopResolved")
 
+        # 2024: the other 2 DNN outputs (False, QCD), only to look at them (TopScore = True output)
+        if self.year in [2024]:
+            self.out.branch("TopMixed_TopScoreFalse", "F", lenVar="nTopMixed")
+            self.out.branch("TopMixed_TopScoreQCD", "F", lenVar="nTopMixed")
+            self.out.branch("TopResolved_TopScoreFalse", "F", lenVar="nTopResolved")
+            self.out.branch("TopResolved_TopScoreQCD", "F", lenVar="nTopResolved")
+
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -192,19 +199,25 @@ class nanoTopevaluate_MultiScore(Module):
         ####### SCORES ####### 
         # Calculate Scores for several models #
         scores                  = []
+        scores_False            = []
+        scores_QCD              = []
         if len(tophighpt)!=0:
             if self.year in [2018,2022,2023]:
                 scores          = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy().flatten().tolist()
             elif self.year in [2024]:
-                scores_True     = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy()[:,1].flatten()
-                scores_False    = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy()[:,0].flatten()
-                scores_QCD      = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy()[:,2].flatten()
-                scores          = scores_True.tolist() # True/(True+QCD)
+                dnn_output      = self.modelMix({"fatjet": fj_dnn, "jet": jets_dnn, "top": mass_dnn}).numpy() # one DNN evaluation, columns: 0 False, 1 True, 2 QCD
+                scores_False    = dnn_output[:,0].flatten().tolist()
+                scores_True     = dnn_output[:,1].flatten()
+                scores_QCD      = dnn_output[:,2].flatten().tolist()
+                scores          = scores_True.tolist() # TopScore = True output
         else:
             scores              = []
 
         # Branch the scores calculated #
         self.out.fillBranch(f"TopMixed_TopScore", scores)
+        if self.year in [2024]:
+            self.out.fillBranch("TopMixed_TopScoreFalse", scores_False)
+            self.out.fillBranch("TopMixed_TopScoreQCD", scores_QCD)
 
 
         # loop su Low Pt candidates per valutare lo score con i modelli corrispondenti
@@ -216,16 +229,22 @@ class nanoTopevaluate_MultiScore(Module):
             sumjet = j0.p4()+j1.p4()+j2.p4()
             jets_dnn = fill_jets(self.year, jets_dnn, j0, j1, j2, sumjet, fj.Phi(), fj.Eta(), i)
         scores = []
+        scores_False = []
+        scores_QCD   = []
         if len(toplowpt)!=0:
             if self.year in [2018,2022,2023]:
                 scores          = self.modelRes({"jet0": jets_dnn[:,0,:-2], "jet1": jets_dnn[:,1,:-2], "jet2": jets_dnn[:,2,:-2]}).numpy().flatten().tolist()
             elif self.year in [2024]:
-                scores_True     = self.modelRes({"jet": jets_dnn}).numpy()[:,1].flatten()
-                scores_False    = self.modelRes({"jet": jets_dnn}).numpy()[:,0].flatten()
-                scores_QCD      = self.modelRes({"jet": jets_dnn}).numpy()[:,2].flatten()
-                scores          = scores_True.tolist() # True/(True+QCD)
+                dnn_output      = self.modelRes({"jet": jets_dnn}).numpy() # one DNN evaluation, columns: 0 False, 1 True, 2 QCD
+                scores_False    = dnn_output[:,0].flatten().tolist()
+                scores_True     = dnn_output[:,1].flatten()
+                scores_QCD      = dnn_output[:,2].flatten().tolist()
+                scores          = scores_True.tolist() # TopScore = True output
         else:
             scores = []
         self.out.fillBranch("TopResolved_TopScore", scores)
+        if self.year in [2024]:
+            self.out.fillBranch("TopResolved_TopScoreFalse", scores_False)
+            self.out.fillBranch("TopResolved_TopScoreQCD", scores_QCD)
 
         return True

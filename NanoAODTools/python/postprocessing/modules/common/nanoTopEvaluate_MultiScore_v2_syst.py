@@ -148,6 +148,12 @@ class nanoTopevaluate_MultiScore(Module):
         for scenario in self.scenarios:
             self.out.branch("TopMixed_TopScore_"+scenario, "F", lenVar="nTopMixed")
             self.out.branch("TopResolved_TopScore_"+scenario, "F", lenVar="nTopResolved")
+        # 2024: the other 2 DNN outputs (False, QCD), only nominal, only to look at them (TopScore = True output)
+        if self.year in [2024]:
+            self.out.branch("TopMixed_TopScoreFalse_nominal", "F", lenVar="nTopMixed")
+            self.out.branch("TopMixed_TopScoreQCD_nominal", "F", lenVar="nTopMixed")
+            self.out.branch("TopResolved_TopScoreFalse_nominal", "F", lenVar="nTopResolved")
+            self.out.branch("TopResolved_TopScoreQCD_nominal", "F", lenVar="nTopResolved")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -206,6 +212,8 @@ class nanoTopevaluate_MultiScore(Module):
 
         ####### SCORES ####### 
         scores                  = {}
+        scores_False_nominal    = []
+        scores_QCD_nominal      = []
         if len(tophighpt)!=0:
             # Concatenate jets_dnn[s] along the first axis
             jets_dnn_concatenated   = np.concatenate(list(jets_dnn.values()), axis=0)
@@ -215,11 +223,17 @@ class nanoTopevaluate_MultiScore(Module):
             if self.year in [2018,2022,2023]:
                 scores_         = self.modelMix({"fatjet": fj_dnn_concatenated, "jet": jets_dnn_concatenated, "top": mass_dnn_concatenated}).numpy().flatten().tolist()
             elif self.year in [2024]:
-                scores_True     = self.modelMix({"fatjet": fj_dnn_concatenated, "jet": jets_dnn_concatenated, "top": mass_dnn_concatenated}).numpy()[:,1].flatten()
-                # scores_False    = self.modelMix({"fatjet": fj_dnn_concatenated, "jet": jets_dnn_concatenated, "top": mass_dnn_concatenated}).numpy()[:,0].flatten() # not used (each line is a full DNN evaluation)
-                # scores_QCD      = self.modelMix({"fatjet": fj_dnn_concatenated, "jet": jets_dnn_concatenated, "top": mass_dnn_concatenated}).numpy()[:,2].flatten() # not used (each line is a full DNN evaluation)
-                scores_         = scores_True.tolist() # True/(True+QCD)
-            
+                dnn_output      = self.modelMix({"fatjet": fj_dnn_concatenated, "jet": jets_dnn_concatenated, "top": mass_dnn_concatenated}).numpy() # one DNN evaluation, columns: 0 False, 1 True, 2 QCD
+                scores_False    = dnn_output[:,0].flatten()
+                scores_True     = dnn_output[:,1].flatten()
+                scores_QCD      = dnn_output[:,2].flatten()
+                scores_         = scores_True.tolist() # TopScore = True output
+
+                # False and QCD outputs: only the nominal slice of the concatenation over the scenarios
+                i_nominal            = self.scenarios.index("nominal")
+                scores_False_nominal = scores_False[i_nominal*len(tophighpt): (i_nominal+1)*len(tophighpt)].tolist()
+                scores_QCD_nominal   = scores_QCD[i_nominal*len(tophighpt): (i_nominal+1)*len(tophighpt)].tolist()
+
             for i, s in enumerate(self.scenarios):
                 scores[s]       = scores_[0 + i*len(tophighpt): len(tophighpt)+i*len(tophighpt)]
         else:
@@ -228,6 +242,9 @@ class nanoTopevaluate_MultiScore(Module):
         # Branch the scores calculated #
         for s in self.scenarios:
             self.out.fillBranch(f"TopMixed_TopScore_"+s, scores[s])
+        if self.year in [2024]:
+            self.out.fillBranch("TopMixed_TopScoreFalse_nominal", scores_False_nominal)
+            self.out.fillBranch("TopMixed_TopScoreQCD_nominal", scores_QCD_nominal)
 
 
         # loop su Low Pt candidates per valutare lo score con i modelli corrispondenti
@@ -241,15 +258,23 @@ class nanoTopevaluate_MultiScore(Module):
                 jets_dnn[s] = fill_jets(self.year, jets_dnn[s], j0, j1, j2, sumjet, fj.Phi(), fj.Eta(), i, scenario = s)
 
         scores                  = {}
+        scores_False_nominal    = []
+        scores_QCD_nominal      = []
         if len(toplowpt)!=0:
             jets_dnn_concatenated = np.concatenate(list(jets_dnn.values()), axis=0)
             if self.year in [2018,2022,2023]:
                 scores_         = self.modelRes({"jet0": jets_dnn_concatenated[:,0,:-2], "jet1": jets_dnn_concatenated[:,1,:-2], "jet2": jets_dnn_concatenated[:,2,:-2]}).numpy().flatten().tolist()
             elif self.year in [2024]:
-                scores_True     = self.modelRes({"jet": jets_dnn_concatenated}).numpy()[:,1].flatten()
-                # scores_False    = self.modelRes({"jet": jets_dnn_concatenated}).numpy()[:,0].flatten() # not used (each line is a full DNN evaluation)
-                # scores_QCD      = self.modelRes({"jet": jets_dnn_concatenated}).numpy()[:,2].flatten() # not used (each line is a full DNN evaluation)
-                scores_         = scores_True.tolist() # True/(True+QCD)
+                dnn_output      = self.modelRes({"jet": jets_dnn_concatenated}).numpy() # one DNN evaluation, columns: 0 False, 1 True, 2 QCD
+                scores_False    = dnn_output[:,0].flatten()
+                scores_True     = dnn_output[:,1].flatten()
+                scores_QCD      = dnn_output[:,2].flatten()
+                scores_         = scores_True.tolist() # TopScore = True output
+
+                # False and QCD outputs: only the nominal slice of the concatenation over the scenarios
+                i_nominal            = self.scenarios.index("nominal")
+                scores_False_nominal = scores_False[i_nominal*len(toplowpt): (i_nominal+1)*len(toplowpt)].tolist()
+                scores_QCD_nominal   = scores_QCD[i_nominal*len(toplowpt): (i_nominal+1)*len(toplowpt)].tolist()
 
             for i, s in enumerate(self.scenarios):
                 scores[s] = scores_[0 + i*len(toplowpt): len(toplowpt)+i*len(toplowpt)]
@@ -258,4 +283,7 @@ class nanoTopevaluate_MultiScore(Module):
 
         for s in self.scenarios:
             self.out.fillBranch("TopResolved_TopScore_"+s, scores[s])
+        if self.year in [2024]:
+            self.out.fillBranch("TopResolved_TopScoreFalse_nominal", scores_False_nominal)
+            self.out.fillBranch("TopResolved_TopScoreQCD_nominal", scores_QCD_nominal)
         return True
