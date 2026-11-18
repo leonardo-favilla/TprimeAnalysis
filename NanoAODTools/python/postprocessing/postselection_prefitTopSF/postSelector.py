@@ -79,10 +79,7 @@ if hist_folder=="":
 folder                  = hist_folder
 repohisto               = folder+"plots/"
 
-if not os.path.exists(folder):
-    os.mkdir(folder)
-if not os.path.exists(repohisto):
-    os.mkdir(repohisto)
+os.makedirs(repohisto, exist_ok=True)      # exist_ok: many condor jobs start at the same time and create the same folder
 
 #This does occasionally create problems, removed it
 #try:

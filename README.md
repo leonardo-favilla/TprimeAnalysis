@@ -359,9 +359,10 @@ Environments: the prefit histograms, `collectHistograms.py` and the plots run in
 ```bash
 cd TprimeAnalysis/NanoAODTools/python/postprocessing/postselection_prefitTopSF/
 for CAT in Resolved Mixed Merged; do
-  for DS in DataMuon_2024 TT_2024 TW_2024 QCD_2024 ZJetsToNuNu_2jets_2024 WJets_2jets_2024; do
+  for DS in TT_2024 TW_2024 QCD_2024 ZJetsToNuNu_2jets_2024 WJets_2jets_2024; do
     python3 postSelector_submitter_large.py -d $DS --TopCategory $CAT --syst --partsize 10 -m s
   done
+  python3 postSelector_submitter_large.py -d DataMuon_2024 --TopCategory $CAT --partsize 10 -m s      # Data without --syst: no jes/jer MET variations in the Data files
 done
 ```
 Then the same commands with `-m c` (check), `-m r` (resubmit the failed jobs) and `-m h` (merge the parts into `<outputfolder>/plots/`; with `--partsize` every part is normalized to all the files of the sample, so the merge is needed).
