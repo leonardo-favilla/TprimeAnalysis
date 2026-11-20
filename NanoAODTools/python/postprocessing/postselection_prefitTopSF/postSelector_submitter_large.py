@@ -4,6 +4,7 @@ import sys
 import time
 import json
 import shutil
+import filecmp
 import subprocess
 from PhysicsTools.NanoAODTools.postprocessing.samples.samples import *
 from PhysicsTools.NanoAODTools.postprocessing.postselection.splitter import sampleSplitter
@@ -25,7 +26,7 @@ parser.add_option(      '--noPuWeight',             dest='noPuWeight',          
 parser.add_option(      '--noTopPtWeight',          dest='noTopPtWeight',       action='store_true',    default = False,                                        help='remove top pt weight')
 parser.add_option(      '--printcutflow',           dest='printcutflow',        action='store_true',    default = False,                                        help='print cutflow')
 
-parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root)  ')
+parser.add_option( '-m',     '--mode',           dest='mode',        type=str ,  default = "s",                 help='modes: s = submit, c = check failed, r = resubmit failed, h = add histograms (hadd <outpath>/parts/<sample>_part*.root into <mergepath>/plots/<sample>.root), d = remove the parts after checking them against the merged file  ')
 
 parser.add_option('--config_paths', dest='config_paths', type=str, default = None, help='config file path ')
 parser.add_option('--dict_samples_file', dest='dict_samples_file', type=str, default = None, help='samples file path - will override the one in the config ')
@@ -53,9 +54,9 @@ suffix              = f"_{TopCategory}" + (f"_{opt.suffix}" if opt.suffix is not
 mode = opt.mode
 verb = opt.verbose
 
-if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h")):
-    print("operational mode should be s, c, r, or h - please check that was not a typo in the command line for the option --mode ")
-    exit
+if not ( (mode == "s") or (mode=="r") or (mode =="c") or (mode == "h") or (mode == "d")):
+    print("operational mode should be s, c, r, h or d - please check that was not a typo in the command line for the option --mode ")
+    exit()
 
 config = {}
 config_p = os.environ.get('PWD')+'/../config/config.yaml'
@@ -391,31 +392,122 @@ def checkJobHasFailed(condorFolder, sampleLabel, dataset, outfilePath, verbose=0
     return False
 
 #outFolder_path      = config["outputfolder"]["postselector_results"][period]
-def histoMergeWriter(outpath, mergepath, sampleLabel):
-    if not os.path.exists(mergepath):
-        print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
-        os.makedirs(mergepath)
-    # hadd into a temporary file, renamed to <sampleLabel>.root only if the merge succeeded
-    commandHadd = "hadd -f "+mergepath+"/tmp_"+sampleLabel+".root " + outpath+"/"+sampleLabel+"_part*.root"
+def histoMergeWriter(localParts, localMerged):
+    # parallel hadd of the local copies of the parts
+    commandHadd = "hadd -f -j 4 "+localMerged+" " + " ".join(localParts)
     return commandHadd
 
+def checkMergedFile(parts, merged, nCheck=20): #returns true if the merged file has the same histograms as the parts and the sums add up
+    # same number of keys in every part and in the merged file; for nCheck histograms spread over the key list,
+    # sum of bin contents (including under/overflow) and entries of the merged one equal to the sum over the parts
+    import ROOT
+    ROOT.gErrorIgnoreLevel = ROOT.kFatal
+    fm = ROOT.TFile.Open(merged)
+    keys = [k.GetName() for k in fm.GetListOfKeys()]
+    names = keys[::max(1, len(keys)//nCheck)]
+    hm = {n: fm.Get(n) for n in names}
+    sumContent = {n: 0. for n in names}
+    sumEntries = {n: 0. for n in names}
+    for p in parts:
+        fp = ROOT.TFile.Open(p)
+        if fp.GetListOfKeys().GetEntries() != len(keys):
+            print (" ERROR: "+p+" has "+str(fp.GetListOfKeys().GetEntries())+" keys, the merged file "+str(len(keys)))
+            fp.Close()
+            fm.Close()
+            return False
+        for n in names:
+            h = fp.Get(n)
+            sumContent[n] += sum(h.GetBinContent(i) for i in range(h.GetNcells()))
+            sumEntries[n] += h.GetEntries()
+        fp.Close()
+    good = True
+    for n in names:
+        content = sum(hm[n].GetBinContent(i) for i in range(hm[n].GetNcells()))
+        if abs(content - sumContent[n]) > 1e-6*max(abs(content), abs(sumContent[n]), 1e-300) or hm[n].GetEntries() != sumEntries[n]:
+            print (" ERROR: "+n+" in the merged file: content "+str(content)+", entries "+str(hm[n].GetEntries())+", sum over the parts: content "+str(sumContent[n])+", entries "+str(sumEntries[n]))
+            good = False
+    fm.Close()
+    return good
+
 def histoMerge(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the merge succeeded
-    badParts = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit) if checkOutputFileIsBad(outpath+"/"+sampleLabel+"_part"+str(ns)+".root")]
+    # hadd reading the parts on EOS takes minutes per sample (many small reads): the parts are copied
+    # to a local folder in /tmp, merged there and the result is copied back to EOS (~25 s for 78 parts)
+    # the parts are never removed here, see removeParts (-m d)
+    parts =[outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit)]
+    badParts = [p for p in parts if checkOutputFileIsBad(p)]
     if badParts:
         print (" ERROR: "+sampleLabel+" not merged, missing or broken parts (rerun them with -m r):")
         for p in badParts: print ("   "+p)
         return False
-    hcommand = histoMergeWriter(outpath, mergepath, sampleLabel)
-    print (" histomerge command is \n", hcommand)
+    localFolder = "/tmp/"+username+"/merge_"+sampleLabel+"_"+str(os.getpid())
+    localParts  = [localFolder+"/"+os.path.basename(p) for p in parts]
+    localMerged = localFolder+"/"+sampleLabel+".root"
+    tmpMerged   = mergepath+"/tmp_"+sampleLabel+".root"       # renamed to <sampleLabel>.root only if the merge succeeded
+    hcommand    = histoMergeWriter(localParts, localMerged)
+    print (" histomerge: "+str(nsplit)+" parts copied to "+localFolder+", command is \n", hcommand)
     if dryrun:
         return True
-    tmpMerged = mergepath+"/tmp_"+sampleLabel+".root"
-    haddStatus = os.system(hcommand)
-    if haddStatus != 0 or checkOutputFileIsBad(tmpMerged):
-        print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+    if not os.path.exists(mergepath):
+        print (" warning, merge path: "+mergepath+" did not exist at time of adding histos, creating it on the fly.")
+        os.makedirs(mergepath)
+    try:
+        os.makedirs(localFolder)
+        for p, lp in zip(parts, localParts):
+            shutil.copy(p, lp)
+        haddStatus = os.system(hcommand)
+        if haddStatus != 0 or checkOutputFileIsBad(localMerged):
+            print (" ERROR: hadd failed for "+sampleLabel+" (exit status "+str(haddStatus)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
+            return False
+        shutil.copy(localMerged, tmpMerged)
+        # the copy is read back byte by byte (size and content) against the local file, already checked with ROOT above.
+        # It is NOT reopened with ROOT: right after the copy, the file on EOS (fuse) can still have a stale tail and
+        # is seen as truncated (kRecovered) even if it is identical; the merged file on EOS is checked with ROOT
+        # later by -m d (checkMergedFile), before the parts are removed
+        if not filecmp.cmp(localMerged, tmpMerged, shallow=False):
+            print (" ERROR: copy of the merged file on EOS differs from the local one for "+sampleLabel+", "+mergepath+"/"+sampleLabel+".root left untouched")
+            os.remove(tmpMerged)
+            return False
+    except OSError as e:
+        print (" ERROR: merge of "+sampleLabel+" failed ("+str(e)+"), "+mergepath+"/"+sampleLabel+".root left untouched")
         if os.path.exists(tmpMerged): os.remove(tmpMerged)
         return False
+    finally:
+        shutil.rmtree(localFolder, ignore_errors=True)            # the local copies are removed in any case
     os.replace(tmpMerged, mergepath+"/"+sampleLabel+".root")
+    return True
+
+def removeParts(outpath, mergepath, sampleLabel, nsplit, dryrun=False): #returns true if the parts were removed (or were already gone)
+    # the merged file already in <mergepath> is checked against the parts (read on EOS, only the keys and a few
+    # histograms are read) and is never rewritten; parts/ is removed when empty, i.e. after the last sample
+    parts  = [outpath+"/"+sampleLabel+"_part"+str(ns)+".root" for ns in range(nsplit)]
+    merged = mergepath+"/"+sampleLabel+".root"
+    existing = [p for p in parts if os.path.exists(p)]
+    if not existing:
+        print (" "+sampleLabel+": no parts left in "+outpath+" - nothing to do")
+        return True
+    if len(existing) != nsplit:
+        print (" ERROR: "+sampleLabel+" has "+str(len(existing))+" of "+str(nsplit)+" parts, the merged file cannot be checked against them, parts NOT removed")
+        return False
+    if checkOutputFileIsBad(merged):
+        print (" ERROR: "+merged+" is missing or broken (merge it with -m h), parts NOT removed")
+        return False
+    badParts = [p for p in parts if checkOutputFileIsBad(p)]
+    if badParts:
+        print (" ERROR: "+sampleLabel+" has broken parts, parts NOT removed:")
+        for p in badParts: print ("   "+p)
+        return False
+    if not checkMergedFile(parts, merged):
+        print (" ERROR: "+merged+" does not match the sum of the parts (merge it again with -m h), parts NOT removed")
+        return False
+    if dryrun:
+        print (" "+sampleLabel+": merged file matches the "+str(nsplit)+" parts, they would be removed")
+        return True
+    for p in parts:
+        os.remove(p)
+    print (" "+str(nsplit)+" parts of "+sampleLabel+" removed")
+    if not os.listdir(outpath):
+        os.rmdir(outpath)
+        print (" "+outpath+" empty, removed")
     return True
     
 if not os.path.exists("/tmp/x509up_u" + str(uid)):
@@ -458,6 +550,13 @@ for d in dss:
         
     for sample in samples:
         nsplit,lastpartsize = sampleSplitter(samplesfile,sample.label,dat,njobs_per_part) 
+        # -m d: the merged file in <mergepath>/plots/ is checked against the parts in <outpath>/parts/, then the parts are removed
+        if mode == "d":
+            if nsplit>1:
+                removeParts(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)
+            else:
+                print (" "+sample.label+" was not split, no parts to remove")
+            continue
         if mode == "h":
             if nsplit>1:
                 histoMerge(outFolder_path+"/parts", mergeFolder_path+"/plots", sample.label, nsplit, dryrun)

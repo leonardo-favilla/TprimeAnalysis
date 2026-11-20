@@ -365,7 +365,7 @@ for CAT in Resolved Mixed Merged; do
   python3 postSelector_submitter_large.py -d DataMuon_2024 --TopCategory $CAT --partsize 10 -m s      # Data without --syst: no jes/jer MET variations in the Data files
 done
 ```
-Then the same commands with `-m c` (check), `-m r` (resubmit the failed jobs) and `-m h` (merge the parts into `<outputfolder>/plots/`; with `--partsize` every part is normalized to all the files of the sample, so the merge is needed).
+Then the same commands with `-m c` (check), `-m r` (resubmit the failed jobs) and `-m h` (merge the parts into `<outputfolder>/plots/`; with `--partsize` every part is normalized to all the files of the sample, so the merge is needed). The parts are copied to /tmp and merged there with `hadd -j 4`. Finally `-m d` removes the parts after checking them against the merged file (same number of histograms, sums of 20 histograms); after it, `-m c`/`-m r` see the jobs as failed.
 
 **2. Histograms, datacards, fits and SFs**, for each top category and working point:
 ```bash
