@@ -123,10 +123,10 @@ def write_crab_script(sample, file, modules, run_folder, calculate_systematics, 
     else:
         extra_str=""
     if isMC:
-        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")# haddFileName='"+sample.label+".root'
+        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")# haddFileName='"+sample.label+".root'
 
     else:
-        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, haddFileName='tree.root', fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")#
+        f.write(f"p=PostProcessor('.', ['root://cms-xrd-global.cern.ch/{file}'], '', modules=[{modules}], provenance=True, fwkJobReport=False, histFileName='hist.root', histDirName='plots', outputbranchsel='/afs/cern.ch/{workdir}/{inituser}/{username}/{name_main_folder}/NanoAODTools/scripts/keep_and_drop.txt'{extra_str})\n")#
 
     f.write("t_run = time.time()\n")
     f.write("p.run()\n")
@@ -173,7 +173,8 @@ def runner_writer(folder, i, remote_folder_name, sample_folder, launchtime, outf
     f.write("pwd\n")
     f.write("python3 "+folder+"/crab_script.py\n")
     f.write("pwd\n")
-    f.write("hadd -f tree_hadd_"+str(i)+".root tree.root hist.root\n")
+    # one input file per job: hadd directly from the PostProcessor output (*_Skim.root, no tree.root copy) and remove it only if hadd succeeded (less disk on the worker)
+    f.write("hadd -f tree_hadd_"+str(i)+".root *_Skim.root hist.root && rm -f *_Skim.root\n")
     f.write("pwd\n")
     f.write("davix-put tree_hadd_{}.root {}/store/user/{}/{}/{}/{}/tree_hadd_{}.root -E $1 --capath /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/\n".format(str(i), redirector, username, remote_folder_name, sample_folder, launchtime, str(i)))
     f.close()
