@@ -400,7 +400,7 @@ It writes `2024/CorrLib_TrotaScaleFactors_2024.json` (fitted Loose, Tight and XT
 **Plots** (standalone environment, from `postselection_prefitTopSF/`):
 ```bash
 python3 plot_TopSF_stacks.py --era 2024 --TopCategory Mixed --wp_cat Tight [--outdir *outdir*]      # prefit/postfit stacks per tag category; default outdir <TrotaScaleFactor/folder_www/<era>>/<TopCategory>
-python3 visualize_ScaleFactors.py --era 2024 --output *outdir*      # SF and efficiency plots of Loose/Tight/XTight: fitted/2D, fitted/1D (json of extract_ScaleFactors), applied/2D, applied/1D (correctionlib files)
+python3 visualize_ScaleFactors.py --era 2024 [--output *outdir*]      # default output <TrotaScaleFactor/folder_www/<era>>/ScaleFactors; SF and efficiency plots of Loose/Tight/XTight: fitted/2D, fitted/1D (6 event categories) (json of extract_ScaleFactors), applied/2D, applied/1D (correctionlib files)
 python3 drawCorrelationMatrix_pois.py -i <outputfolder>/workspace_Tight/MT_W/fitDiagnostics_pt200to400.root -p SF_topmatched,SF_nonmatched -o *outname*
 ```
 `plot_TopSF_stacks.sh` runs the stacks for all the categories of one era; `visualize_ScaleFactors.sh` writes the SF and efficiency plots of one era on EOS.

@@ -9,5 +9,4 @@
 ERA="2023"
 python3 visualize_ScaleFactors.py \
   --era "${ERA}" \
-  --input_folder "../postselection/TopSF-corrections/${ERA}" \
-  --output "/eos/user/l/lfavilla/www/RDF_DManalysis/TopSF/corrections/${ERA}"
+  --input_folder "../postselection/TopSF-corrections/${ERA}"    # output: <TrotaScaleFactor/folder_www/<era>>/ScaleFactors of config.yaml, or --output
