@@ -2,20 +2,19 @@ import ROOT
 import os
 import re
 import sys
+import math
 import yaml
 import optparse
-import numpy as np
-import mplhep as hep
-from matplotlib import pyplot as plt
-from matplotlib.ticker import MaxNLocator
+import cmsstyle as CMS
 ROOT.gROOT.SetBatch()
-plt.style.use(hep.style.CMS)
+ROOT.gStyle.SetOptStat(0)
 
 # Pre-fit and post-fit stacks of the Trota SF fit, split by tag category (topmatched, nonmatched, other) instead of by sample
-# Adapted from plot_histograms.py of https://github.com/vicha-w/TopSF
+# Adapted from plot_histograms.py of https://github.com/vicha-w/TopSF, drawn with PyROOT + cmsstyle
 #   prefit:  shapes file of the datacard (<ev_cat>[_symmetrized][_zerosFixed].root), MC normalized to lumi only as in produce_stacks.py
 #            (the fit also multiplies the MC by norm_match_mc_data of the datacard, not applied here)
-#   postfit: shapes_fit_s of fitDiagnostics_<ev_cat>.root (written by fit_procedure.sh), compared with the prefit above
+#   postfit: shapes_fit_s of fitDiagnostics_<ev_cat>.root (written by fit_procedure.sh), compared with the prefit above;
+#            the postfit band needs FitDiagnostics --saveWithUncertainties (default of collectHistograms.py)
 # Run from postselection_prefitTopSF/ after collectHistograms.py (and fit_procedure.sh for the postfit plots)
 
 config = {}
@@ -28,12 +27,12 @@ else:
     print(f"Config file not found in {config_paths}, exiting")
     sys.exit(1)
 
-usage                   = "python3 plot_TopSF_stacks.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --outdir <outdir>"
+usage                   = "python3 plot_TopSF_stacks.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> [--outdir <outdir>]"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
 parser.add_option(      "--wp_cat",                 dest="wp_cat",                      type=str,     default="Tight",                                  help="Working point category to consider among: Loose, Tight, XTight")
-parser.add_option(      "--outdir",                 dest="outdir",                      type=str,     default="",                                       help="Output folder (required), plots in <outdir>/stacks_<wp_cat>/<fit_variable>/")
+parser.add_option(      "--outdir",                 dest="outdir",                      type=str,     default=None,                                     help="Output folder, plots in <outdir>/stacks_<wp_cat>/<fit_variable>/ (default: <TrotaScaleFactor/folder_www/<era>>/<TopCategory> of config/config.yaml)")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 TopCategory             = opt.TopCategory
@@ -43,10 +42,14 @@ outputfolder            = config["TrotaScaleFactor"]["outputfolder"][TopCategory
 fit_variable            = config["TrotaScaleFactor"]["fit_variable"][region]
 lumi                    = config["plotting"]["lumi_dict"][era]
 workspaceSubFolder      = f"{outputfolder}/workspace_{wp_cat}/{fit_variable}/"
-outdir                  = opt.outdir
-if not outdir:
-    print("Output folder not given: use --outdir, exiting")
-    sys.exit(1)
+if opt.outdir is not None:
+    outdir              = opt.outdir
+else:
+    folder_www          = config["TrotaScaleFactor"].get("folder_www", {}).get(era, "")
+    if not folder_www:
+        print(f"Output folder not given: use --outdir or set TrotaScaleFactor/folder_www/{era} in {config_paths}, exiting")
+        sys.exit(1)
+    outdir              = f"{folder_www}/{TopCategory}"
 plotsFolder             = f"{outdir}/stacks_{wp_cat}/{fit_variable}/"
 os.makedirs(plotsFolder, exist_ok=True)
 
@@ -54,13 +57,21 @@ event_categories        = ["pt0to200","pt200to400","pt400to600","pt600to1000","p
 if TopCategory == "Merged":
     event_categories.remove("pt0to200")     # not fitted for Merged (probe among the GoodFatJet, pt>200), as in collectHistograms.py
 categories              = {
-                            "topmatched":   {"color": "#5790fc", "label": "Top-matched"},
-                            "nonmatched":   {"color": "#e42536", "label": "Non-matched"},
-                            "other":        {"color": "#964a8b", "label": "Other"},
+                            "topmatched":   {"color": ROOT.TColor.GetColor("#5790fc"), "label": "Top-matched"},
+                            "nonmatched":   {"color": ROOT.TColor.GetColor("#e42536"), "label": "Non-matched"},
+                            "other":        {"color": ROOT.TColor.GetColor("#964a8b"), "label": "Other"},
                             }
-xlabels                 = {"MT_W": r"$M_{T}^{W}$ [GeV]"}
-xlabel                  = xlabels.get(fit_variable, fit_variable)
-com                     = 13.6
+total_color             = ROOT.TColor.GetColor("#717581")
+xtitles                 = {"MT_W": "M_{T}^{W} [GeV]"}
+xtitle                  = xtitles.get(fit_variable, fit_variable)
+
+
+############# Inputs #############
+def detached_clone(hist, name):
+    """clone not attached to the current directory: otherwise it is deleted when the open ROOT file is closed"""
+    clone = hist.Clone(name)
+    clone.SetDirectory(0)
+    return clone
 
 
 def read_shapes_file(ev_cat):
@@ -69,118 +80,204 @@ def read_shapes_file(ev_cat):
         text = card.read()
     return re.search(r"^shapes data_obs pass (\S+)", text, re.M).group(1)
 
-def hist_to_bins(hist):
-    return np.array([hist.GetBinLowEdge(i) for i in range(1, hist.GetNbinsX()+2)])
 
-def hist_to_array(hist):
-    values  = np.array([hist.GetBinContent(i) for i in range(1, hist.GetNbinsX()+1)])
-    errors  = np.array([hist.GetBinError(i)   for i in range(1, hist.GetNbinsX()+1)])
-    return values, errors
-
-def data_hist_to_array(hist):
-    """data yields with Poisson errors (up, down)"""
+def data_graph_from_hist(hist):
+    """data yields with Poisson errors (up, down), x at the bin centers"""
     hist.SetBinErrorOption(ROOT.TH1.kPoisson)
-    values  = np.array([hist.GetBinContent(i) for i in range(1, hist.GetNbinsX()+1)])
-    errors  = np.array([[hist.GetBinErrorUp(i) for i in range(1, hist.GetNbinsX()+1)],
-                        [hist.GetBinErrorLow(i) for i in range(1, hist.GetNbinsX()+1)]])
-    return values, errors
+    graph = ROOT.TGraphAsymmErrors()
+    for i in range(1, hist.GetNbinsX()+1):
+        n = graph.GetN()
+        graph.SetPoint(n, hist.GetBinCenter(i), hist.GetBinContent(i))
+        graph.SetPointError(n, 0., 0., hist.GetBinErrorLow(i), hist.GetBinErrorUp(i))
+    return graph
 
-def graph_to_array(graph):
-    """data of fitDiagnostics (TGraphAsymmErrors) with errors (up, down)"""
-    values  = np.array([graph.GetPointY(i) for i in range(graph.GetN())])
-    errors  = np.array([[graph.GetErrorYhigh(i) for i in range(graph.GetN())],
-                        [graph.GetErrorYlow(i) for i in range(graph.GetN())]])
-    return values, errors
 
-def legend_title(ev_cat, channel):
-    pt_low, pt_high = re.match(r"pt(\d+)to(\d+)", ev_cat).groups()
-    return rf"$p_T \in [{pt_low}, {pt_high}]$ GeV, {channel}"
+def data_graph_from_fitdiag(fit_graph, binning):
+    """data of fitDiagnostics (TGraphAsymmErrors with unit-width bins), moved to the bin centers of the datacard histograms"""
+    graph = ROOT.TGraphAsymmErrors()
+    for i in range(fit_graph.GetN()):
+        graph.SetPoint(i, binning.GetBinCenter(i+1), fit_graph.GetPointY(i))
+        graph.SetPointError(i, 0., 0., fit_graph.GetErrorYlow(i), fit_graph.GetErrorYhigh(i))
+    return graph
 
-def make_figure():
-    fig         = plt.figure(figsize=(12, 12), facecolor="white")
-    main_ax     = plt.subplot2grid((5, 1), (0, 0), rowspan=4)
-    ratio_ax    = plt.subplot2grid((5, 1), (4, 0), sharex=main_ax)
-    fig.subplots_adjust(hspace=0)
-    return fig, main_ax, ratio_ax
 
-def plot_ratio(ratio_ax, centers, data, data_err, mc_sum):
-    """data/MC points, bins without data are not drawn"""
-    has_data    = data > 0
-    ratio_ax.errorbar(centers[has_data], data[has_data]/mc_sum[has_data], yerr=data_err[:, has_data]/mc_sum[has_data], fmt="o", color="black", capsize=5)
-    return data[has_data]/mc_sum[has_data]
+def hist_with_binning(fit_hist, binning, name):
+    """fitDiagnostics shapes have unit-width bins: same contents and errors with the binning of the datacard histograms"""
+    hist = detached_clone(binning, name)
+    hist.Reset()
+    for i in range(1, binning.GetNbinsX()+1):
+        hist.SetBinContent(i, fit_hist.GetBinContent(i))
+        hist.SetBinError(i, fit_hist.GetBinError(i))
+    return hist
 
-def ratio_half_width(ratio, default):
+
+def ratio_graph(data_graph, mc_hist):
+    """data/MC with the data errors divided by MC; bins without data or MC are not drawn"""
+    graph = ROOT.TGraphAsymmErrors()
+    for i in range(data_graph.GetN()):
+        data    = data_graph.GetPointY(i)
+        mc      = mc_hist.GetBinContent(i+1)
+        if data <= 0 or mc <= 0:
+            continue
+        n = graph.GetN()
+        graph.SetPoint(n, data_graph.GetPointX(i), data/mc)
+        graph.SetPointError(n, 0., 0., data_graph.GetErrorYlow(i)/mc, data_graph.GetErrorYhigh(i)/mc)
+    return graph
+
+
+def relative_band(hist):
+    """band around 1 with the relative uncertainty of hist (bins with content 0: no band)"""
+    band = detached_clone(hist, hist.GetName() + "_relative")
+    for i in range(1, hist.GetNbinsX()+1):
+        content = hist.GetBinContent(i)
+        band.SetBinContent(i, 1.)
+        band.SetBinError(i, hist.GetBinError(i)/content if content > 0 else 0.)
+    return band
+
+
+def ratio_half_width(graph, default):
     """half width of the ratio panel around 1: the default one, enlarged (up to 1) to show all the points"""
-    max_deviation = np.max(np.abs(ratio[np.isfinite(ratio)] - 1), initial=0)
-    return min(max(default, np.ceil(12*max_deviation)/10), 1.0)                     # 1.2 x max deviation, rounded up to 0.1
+    max_deviation = max([abs(graph.GetPointY(i) - 1) for i in range(graph.GetN())], default=0.)
+    return min(max(default, math.ceil(12*max_deviation)/10), 1.0)                   # 1.2 x max deviation, rounded up to 0.1
 
-def finalize(fig, main_ax, ratio_ax, bins, ymax, half_width, filename):
-    main_ax.set_xlim((bins[0], bins[-1]))
-    main_ax.set_ylim((0, ymax*1.5))
-    main_ax.set_ylabel("Events")
-    main_ax.tick_params(labelbottom=False)
-    main_ax.yaxis.get_major_ticks()[0].label1.set_visible(False)
-    ratio_ax.hlines(1, bins[0], bins[-1], linestyles="--", colors="#9c9ca1")
-    ratio_ax.set_ylim((1 - half_width, 1 + half_width))
-    ratio_ax.yaxis.set_major_locator(MaxNLocator(nbins=4, steps=[1, 2, 2.5, 5, 10], prune="both"))
-    ratio_ax.set_xlabel(xlabel)
-    ratio_ax.set_ylabel("Data/MC")
-    hep.cms.label(llabel="Preliminary", data=True, lumi=lumi, com=com, ax=main_ax)
-    fig.savefig(filename + ".png", bbox_inches="tight")
-    fig.savefig(filename + ".pdf", bbox_inches="tight")
-    plt.close(fig)
+
+def legend_header(ev_cat, channel):
+    pt_low, pt_high = re.match(r"pt(\d+)to(\d+)", ev_cat).groups()
+    return f"p_{{T}} #in [{pt_low}, {pt_high}] GeV, {channel}"
+
+
+############# Plots #############
+def set_cms_header():
+    """text on the top right: '<lumi> fb^{-1} (13.6 TeV)'; set directly because cmsstyle 0.4.3 and 0.5.0 have different SetLumi/SetEnergy"""
+    CMS.SetExtraText("Work in Progress")
+    CMS.cmsstyle.cms_lumi   = f"{lumi:.1f} fb^{{-1}}"
+    CMS.cmsstyle.cms_energy = "13.6 TeV"
+
+
+def redraw_cms_header(pad):
+    """cmsDiCanvas draws the header with its own margins: after changing the margins remove it (TLatex) and draw it again"""
+    for obj in list(pad.GetListOfPrimitives()):
+        if obj.InheritsFrom("TLatex"):
+            pad.GetListOfPrimitives().Remove(obj)
+    CMS.CMS_lumi(pad, 0)
+
+
+def has_errors(hist):
+    """False if all the bin errors are 0 (FitDiagnostics without --saveWithUncertainties: no postfit uncertainties)"""
+    return any(hist.GetBinError(i) > 0 for i in range(1, hist.GetNbinsX()+1))
+
+
+def make_canvas(name, binning, ymax, half_width):
+    """canvas with the main pad (Events) and the ratio pad (Data/MC in [1 - half_width, 1 + half_width])"""
+    set_cms_header()
+    xmin    = binning.GetXaxis().GetXmin()
+    xmax    = binning.GetXaxis().GetXmax()
+    canvas  = CMS.cmsDiCanvas(name, xmin, xmax, 0, 1.6*ymax, 1 - half_width, 1 + half_width,
+                              xtitle, "Events", "Data/MC", square=True, iPos=0)
+    # wider left margin than cmsDiCanvas (0.15): the y labels have up to 5 digits; y titles moved by the same factor
+    for i_pad in [1, 2]:
+        pad     = canvas.cd(i_pad)
+        frame   = pad.GetListOfPrimitives().FindObject("hframe")
+        pad.SetLeftMargin(0.18)
+        frame.GetYaxis().SetTitleOffset(1.35 * frame.GetYaxis().GetTitleOffset())
+        if i_pad == 2:
+            frame.GetYaxis().SetNdivisions(505)
+    redraw_cms_header(canvas.cd(1))
+    return canvas
+
+
+def make_legend(n_entries, header):
+    """legend in the top right corner of the main pad, header = pT bin and channel"""
+    legend = CMS.cmsLeg(0.55, 0.89 - 0.055*(n_entries + 1), 0.92, 0.89, textSize=0.042)
+    legend.SetHeader(header)
+    return legend
+
+
+def draw_ratio_pad(canvas, binning, data_graph, mc_hist):
+    """data/MC points and the relative uncertainty of mc_hist around 1 (if it has uncertainties)"""
+    canvas.cd(2)
+    band = relative_band(mc_hist)
+    if has_errors(mc_hist):
+        CMS.cmsDraw(band, "E2SAME", fcolor=ROOT.kGray+2, fstyle=3004, msize=0, lwidth=0)
+    line = ROOT.TLine(binning.GetXaxis().GetXmin(), 1, binning.GetXaxis().GetXmax(), 1)
+    CMS.cmsDrawLine(line, lcolor=ROOT.kGray+1, lstyle=ROOT.kDashed, lwidth=1)
+    ratio = ratio_graph(data_graph, mc_hist)
+    CMS.cmsDraw(ratio, "PZ", marker=20, mcolor=ROOT.kBlack, lcolor=ROOT.kBlack)
+    ROOT.gPad.RedrawAxis()
+    return band, line, ratio
+
+
+def save(canvas, filename):
+    for extension in ["png", "pdf"]:
+        canvas.SaveAs(f"{filename}.{extension}")
+    canvas.Close()
     print(f"Saved {filename}.png/.pdf")
 
 
-def plot_prefit(mc, mc_err, data, data_err, bins, title, filename):
+def plot_prefit(mc, data_hist, header, filename):
     """stack of the tag categories, MC stat. uncertainty on the total"""
-    centers     = (bins[:-1] + bins[1:]) / 2
-    fig, main_ax, ratio_ax = make_figure()
+    data_graph  = data_graph_from_hist(data_hist)
+    mc_sum      = detached_clone(mc["topmatched"], "mc_sum_prefit")
+    mc_sum.Reset()
+    for hist in mc.values():
+        mc_sum.Add(hist)
+    ymax        = max(mc_sum.GetMaximum(), max(data_graph.GetPointY(i) + data_graph.GetErrorYhigh(i) for i in range(data_graph.GetN())))
+    half_width  = ratio_half_width(ratio_graph(data_graph, mc_sum), 0.5)
+    canvas      = make_canvas("c_prefit", data_hist, ymax, half_width)
 
-    baseline    = np.zeros(len(centers))
+    canvas.cd(1)
+    legend      = make_legend(len(categories) + 2, header)
+    legend.AddEntry(data_graph, "Data", "pe")
+    stack       = ROOT.THStack("stack_prefit", "")
     for cat, cat_cfg in categories.items():
-        main_ax.stairs(mc[cat] + baseline, bins, baseline=baseline, fill=True, label=cat_cfg["label"], facecolor=cat_cfg["color"])
-        baseline += mc[cat]
-    mc_sum      = baseline
-    mc_sum_err  = np.sqrt(sum(mc_err[cat]**2 for cat in categories))
-    main_ax.stairs(mc_sum + mc_sum_err, bins, baseline=mc_sum - mc_sum_err, fill=False, hatch="///", color="#717581", linewidth=0, label="MC stat. unc.")
-    main_ax.errorbar(centers, data, yerr=data_err, fmt="o", color="black", label="Data", capsize=5)
+        hist = mc[cat]
+        hist.SetFillColor(cat_cfg["color"])
+        hist.SetLineColor(cat_cfg["color"])
+        stack.Add(hist)
+    for cat in reversed(list(categories)):              # legend from the top of the stack
+        legend.AddEntry(mc[cat], categories[cat]["label"], "f")
+    stack.Draw("HIST SAME")
+    CMS.cmsDraw(mc_sum, "E2SAME", fcolor=ROOT.kGray+2, fstyle=3004, msize=0, lwidth=0)
+    legend.AddEntry(mc_sum, "MC stat. unc.", "f")
+    CMS.cmsDraw(data_graph, "PZ", marker=20, mcolor=ROOT.kBlack, lcolor=ROOT.kBlack)
+    legend.Draw()
+    ROOT.gPad.RedrawAxis()
 
-    handles, labels = main_ax.get_legend_handles_labels()
-    order       = [len(labels)-1] + list(range(len(labels)-1))                     # data first
-    main_ax.legend([handles[i] for i in order], [labels[i] for i in order], title=title)
-
-    ratio_ax.stairs(1 + mc_sum_err/mc_sum, bins, baseline=1 - mc_sum_err/mc_sum, fill=False, hatch="///", color="black", linewidth=0)
-    ratio       = plot_ratio(ratio_ax, centers, data, data_err, mc_sum)
-
-    finalize(fig, main_ax, ratio_ax, bins, max(max(mc_sum), max(data)), ratio_half_width(ratio, 0.5), filename)
+    ratio_objects = draw_ratio_pad(canvas, data_hist, data_graph, mc_sum)
+    save(canvas, filename)
 
 
-def plot_postfit(prefit, prefit_sum, postfit, postfit_err, postfit_sum, postfit_sum_err, data, data_err, bins, title, filename):
+def plot_postfit(prefit, prefit_sum, postfit, postfit_sum, data_graph, binning, header, filename):
     """pre-fit (dotted) and post-fit (solid) shapes of each tag category and of their sum, post-fit uncertainty on the sum"""
-    centers     = (bins[:-1] + bins[1:]) / 2
-    fig, main_ax, ratio_ax = make_figure()
+    ymax        = max(postfit_sum.GetMaximum(), prefit_sum.GetMaximum(),
+                      max(data_graph.GetPointY(i) + data_graph.GetErrorYhigh(i) for i in range(data_graph.GetN())))
+    half_width  = ratio_half_width(ratio_graph(data_graph, postfit_sum), 0.3)
+    canvas      = make_canvas("c_postfit", binning, ymax, half_width)
 
+    canvas.cd(1)
+    legend      = make_legend(len(categories) + 3 + has_errors(postfit_sum), header)
+    legend.AddEntry(data_graph, "Data", "pe")
     for cat, cat_cfg in categories.items():
-        main_ax.stairs(prefit[cat], bins, color=cat_cfg["color"], linestyle=":", linewidth=2)
-        main_ax.stairs(postfit[cat], bins, label=cat_cfg["label"], color=cat_cfg["color"], linestyle="-", linewidth=2)
-        main_ax.errorbar(centers, postfit[cat], yerr=postfit_err[cat], fmt="none", ecolor=cat_cfg["color"], capsize=5, linewidth=2)
-    main_ax.stairs(prefit_sum, bins, color="#717581", linestyle=":", linewidth=2, label="Prefit")
-    main_ax.stairs(postfit_sum, bins, color="#717581", linestyle="-", linewidth=2, label="Total SM")
-    main_ax.stairs(postfit_sum + postfit_sum_err, bins, baseline=postfit_sum - postfit_sum_err, fill=False, hatch="///", color="#717581", linewidth=0, label="Postfit unc.")
-    main_ax.errorbar(centers, data, yerr=data_err, fmt="o", color="black", label="Data", capsize=5, linewidth=2)
+        CMS.cmsDraw(prefit[cat], "HISTSAME", lcolor=cat_cfg["color"], lstyle=ROOT.kDotted, lwidth=2, fstyle=0, msize=0)
+        CMS.cmsDraw(postfit[cat], "HISTSAME", lcolor=cat_cfg["color"], lstyle=ROOT.kSolid, lwidth=2, fstyle=0, msize=0)
+        legend.AddEntry(postfit[cat], cat_cfg["label"], "l")
+    CMS.cmsDraw(prefit_sum, "HISTSAME", lcolor=total_color, lstyle=ROOT.kDotted, lwidth=2, fstyle=0, msize=0)
+    CMS.cmsDraw(postfit_sum, "HISTSAME", lcolor=total_color, lstyle=ROOT.kSolid, lwidth=2, fstyle=0, msize=0)
+    legend.AddEntry(postfit_sum, "Total SM (postfit)", "l")
+    if has_errors(postfit_sum):
+        postfit_band = detached_clone(postfit_sum, "postfit_band")
+        CMS.cmsDraw(postfit_band, "E2SAME", fcolor=ROOT.kGray+2, fstyle=3004, msize=0, lwidth=0)
+        legend.AddEntry(postfit_band, "Postfit unc.", "f")
+    legend.AddEntry(prefit_sum, "Prefit", "l")
+    CMS.cmsDraw(data_graph, "PZ", marker=20, mcolor=ROOT.kBlack, lcolor=ROOT.kBlack)
+    legend.Draw()
+    ROOT.gPad.RedrawAxis()
 
-    handles, labels = main_ax.get_legend_handles_labels()
-    n_cat       = len(categories)
-    order       = [len(labels)-1] + list(range(n_cat)) + [n_cat+1, n_cat+2, n_cat]  # data, categories, total, unc., prefit
-    main_ax.legend([handles[i] for i in order], [labels[i] for i in order], title=title)
-
-    ratio_ax.stairs(1 + postfit_sum_err/postfit_sum, bins, baseline=1 - postfit_sum_err/postfit_sum, fill=False, hatch="///", color="black", linewidth=0)
-    ratio       = plot_ratio(ratio_ax, centers, data, data_err, postfit_sum)
-
-    finalize(fig, main_ax, ratio_ax, bins, max(max(postfit_sum), max(prefit_sum), max(data)), ratio_half_width(ratio, 0.3), filename)
+    ratio_objects = draw_ratio_pad(canvas, binning, data_graph, postfit_sum)
+    save(canvas, filename)
 
 
+############# Loop on the event categories #############
 for ev_cat in event_categories:
     if not os.path.exists(f"{workspaceSubFolder}/{ev_cat}.txt"):
         print(f"Datacard {workspaceSubFolder}/{ev_cat}.txt not found, skipping {ev_cat}")
@@ -194,24 +291,23 @@ for ev_cat in event_categories:
         print(f"{fitdiagfile_path} not found, only prefit plots for {ev_cat}")
 
     for channel in ["pass", "fail"]:
-        title               = legend_title(ev_cat, channel)
-        hist_data           = prefitfile.Get(f"data_{fit_variable}_{ev_cat}_{channel}")
-        bins                = hist_to_bins(hist_data)                                   # fitDiagnostics shapes have unit-width bins: use the binning of the datacard histograms
-        data, data_err      = data_hist_to_array(hist_data)
-
-        mc, mc_err          = {}, {}
+        header              = legend_header(ev_cat, channel)
+        data_hist           = detached_clone(prefitfile.Get(f"data_{fit_variable}_{ev_cat}_{channel}"), f"data_{channel}")
+        mc                  = {}
         for cat in categories:
-            mc[cat], mc_err[cat] = hist_to_array(prefitfile.Get(f"{cat}_{fit_variable}_{ev_cat}_{channel}_nominal"))
-        plot_prefit(mc, mc_err, data, data_err, bins, title, f"{plotsFolder}/prefit_{channel}_{ev_cat}")
+            mc[cat] = detached_clone(prefitfile.Get(f"{cat}_{fit_variable}_{ev_cat}_{channel}_nominal"), f"prefit_{cat}_{channel}")
+        plot_prefit(mc, data_hist, header, f"{plotsFolder}/prefit_{channel}_{ev_cat}")
 
         if fitdiagfile is None:
             continue
-        postfit, postfit_err = {}, {}
-        for cat in categories:
-            postfit[cat], postfit_err[cat]  = hist_to_array(fitdiagfile.Get(f"shapes_fit_s/{channel}/{cat}"))
-        postfit_sum, postfit_sum_err        = hist_to_array(fitdiagfile.Get(f"shapes_fit_s/{channel}/total"))
-        fit_data, fit_data_err              = graph_to_array(fitdiagfile.Get(f"shapes_prefit/{channel}/data"))
-        plot_postfit(mc, sum(mc.values()), postfit, postfit_err, postfit_sum, postfit_sum_err, fit_data, fit_data_err, bins, title, f"{plotsFolder}/postfit_{channel}_{ev_cat}")
+        prefit_sum          = detached_clone(data_hist, f"prefit_sum_{channel}")
+        prefit_sum.Reset()
+        for hist in mc.values():
+            prefit_sum.Add(hist)
+        postfit             = {cat: hist_with_binning(fitdiagfile.Get(f"shapes_fit_s/{channel}/{cat}"), data_hist, f"postfit_{cat}_{channel}") for cat in categories}
+        postfit_sum         = hist_with_binning(fitdiagfile.Get(f"shapes_fit_s/{channel}/total"), data_hist, f"postfit_total_{channel}")
+        fit_data_graph      = data_graph_from_fitdiag(fitdiagfile.Get(f"shapes_prefit/{channel}/data"), data_hist)
+        plot_postfit(mc, prefit_sum, postfit, postfit_sum, fit_data_graph, data_hist, header, f"{plotsFolder}/postfit_{channel}_{ev_cat}")
     prefitfile.Close()
     if fitdiagfile is not None:
         fitdiagfile.Close()

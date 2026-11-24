@@ -326,6 +326,14 @@ TrotaScaleFactor:
                   "2024":         "",
                 },
     }
+
+  folder_www: {
+    "2022":         "",
+    "2022EE":       "",
+    "2023":         "",
+    "2023postBPix": "",
+    "2024":         "",
+    }
     
   fit_variable: {
     "ResolvedLoose":                "MT_W",
@@ -341,6 +349,7 @@ TrotaScaleFactor:
 ```
 - `outputfolder/btagEfficiency_results`: folder of the b-tag efficiency maps (`BTagEfficiency/`) for each era;
 - `TrotaScaleFactor/outputfolder`: folder of the top tagging SF production of each top category and era (prefit histograms in `plots/`, fits in `workspace_<wp_cat>/<fit_variable>/`);
+- `TrotaScaleFactor/folder_www`: folder of the top tagging SF plots of each era (`plot_TopSF_stacks.py` in `<TopCategory>/`, `visualize_ScaleFactors.py` in `ScaleFactors/`), used when `--outdir`/`--output` is not given;
 - `TrotaScaleFactor/fit_variable`: variable fitted in each `<TopCategory><wp_cat>` (only Loose, Tight and XTight are fitted, see [Top tagging scale factors](#top-tagging-scale-factors)).
 
 If you want to check if the output files have been correctly produced, i.e. they contain the histograms in the right format, for all component and so on, you can run:
@@ -390,7 +399,7 @@ It writes `2024/CorrLib_TrotaScaleFactors_2024.json` (fitted Loose, Tight and XT
 
 **Plots** (standalone environment, from `postselection_prefitTopSF/`):
 ```bash
-python3 plot_TopSF_stacks.py --era 2024 --TopCategory Mixed --wp_cat Tight --outdir *outdir*      # prefit/postfit stacks per tag category
+python3 plot_TopSF_stacks.py --era 2024 --TopCategory Mixed --wp_cat Tight [--outdir *outdir*]      # prefit/postfit stacks per tag category; default outdir <TrotaScaleFactor/folder_www/<era>>/<TopCategory>
 python3 visualize_ScaleFactors.py --era 2024 --output *outdir*      # SF and efficiency plots of Loose/Tight/XTight: fitted/2D, fitted/1D (json of extract_ScaleFactors), applied/2D, applied/1D (correctionlib files)
 python3 drawCorrelationMatrix_pois.py -i <outputfolder>/workspace_Tight/MT_W/fitDiagnostics_pt200to400.root -p SF_topmatched,SF_nonmatched -o *outname*
 ```
