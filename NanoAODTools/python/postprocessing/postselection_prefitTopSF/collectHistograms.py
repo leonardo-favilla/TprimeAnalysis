@@ -18,7 +18,7 @@ else:
     sys.exit(1)
 
 
-usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --categories_to_fit <cat1,cat2> [--symmetrize <syst1,syst2>] [--positive] [--saveWithUncertainties]"
+usage                   = "python3 collectHistograms.py --era <era> --TopCategory <TopCategory> --wp_cat <wp_cat> --categories_to_fit <cat1,cat2> [--symmetrize <syst1,syst2>] [--positive] [--noSaveWithUncertainties] [--numToysForShapes <n>]"
 parser                  = optparse.OptionParser(usage)
 parser.add_option(      "--era",                    dest="era",                         type=str,     default="2023",                                   help="Please enter the era, e.g. 2022, 2022EE, etc.")
 parser.add_option(      '--TopCategory',            dest='TopCategory',                 type=str,     default="Mixed",                                  help='Top category for the histograms: Resolved, Mixed or Merged')
@@ -26,7 +26,8 @@ parser.add_option(      "--wp_cat",                 dest="wp_cat",              
 parser.add_option(      "--categories_to_fit",      dest="categories_to_fit",           type=str,     default="topmatched,nonmatched",                  help="Comma separated categories whose SF is fitted, among: topmatched, nonmatched, other. The others are fixed to 1")
 parser.add_option(      "--symmetrize",             dest="symmetrize",                  type=str,     default="",                                       help="Comma separated systematics to symmetrize, e.g. jesTotal,jer (writes <ev_cat>_symmetrized.root)")
 parser.add_option(      "--positive",               dest="positive",                    action="store_true", default=False,                     help="Fix zero/negative bin contents of the MC histograms (writes <ev_cat>_zerosFixed.root, used in the datacards); to be used for the fits, the histograms are otherwise written as they are")
-parser.add_option(      "--saveWithUncertainties",  dest="saveWithUncertainties",       action="store_true", default=False,                     help="Run FitDiagnostics with --saveWithUncertainties: pre/post-fit uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py, not used by extract_ScaleFactors.py); with combine v11 ~15 min per bin instead of ~10 s")
+parser.add_option(      "--noSaveWithUncertainties",dest="saveWithUncertainties",       action="store_false", default=True,                     help="Run FitDiagnostics without --saveWithUncertainties (by default it is used: pre/post-fit uncertainties on norm_*/shapes_*, postfit band of plot_TopSF_stacks.py, not used by extract_ScaleFactors.py)")
+parser.add_option(      "--numToysForShapes",       dest="numToysForShapes",            type=int,     default=20,                                       help="Toys of FitDiagnostics --saveWithUncertainties for the shape uncertainties (combine default 200: ~15-30 min per bin with combine v11; 20: ~2 min)")
 (opt, args)             = parser.parse_args()
 era                     = opt.era
 TopCategory             = opt.TopCategory
@@ -36,6 +37,7 @@ categories_to_fit       = opt.categories_to_fit.split(",")                      
 symmetrize              = opt.symmetrize
 positive                = opt.positive
 saveWithUncertainties   = opt.saveWithUncertainties
+numToysForShapes        = opt.numToysForShapes
 if not set(categories_to_fit) <= set(categories_to_plot):
     print(f"Unknown categories to fit: {sorted(set(categories_to_fit) - set(categories_to_plot))}, choose among {categories_to_plot}, exiting")
     sys.exit(1)
@@ -421,7 +423,7 @@ with open(f"{workspaceSubFolder}/fit_procedure.sh", 'w') as fit_script_file:
                                 f"    --name _{ev_cat}\n"
                                 )
     fit_script_file.write("echo '[2/3] Running FitDiagnostics'\n")
-    save_unc_opts = "    --saveWithUncertainties \\\n" if saveWithUncertainties else ""   # uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py)
+    save_unc_opts = f"    --saveWithUncertainties --numToysForShapes {numToysForShapes} \\\n" if saveWithUncertainties else ""   # uncertainties on norm_*/shapes_* (postfit band of plot_TopSF_stacks.py)
     for ev_cat in event_categories:
         fit_script_file.write(
                                 f"combine -M FitDiagnostics workspace_{ev_cat}.root \\\n"
