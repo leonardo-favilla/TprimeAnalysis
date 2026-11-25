@@ -864,7 +864,7 @@ float min_DeltaPhi(float MET_phi, rvec_f Jet_phi, rvec_i GoodJet_idx)
   float min_dphi = 4;
   for(int i = 0; i < GoodJet_idx.size(); i++)
   {
-    float dphi = deltaPhi(MET_phi, Jet_phi[GoodJet_idx[i]]);
+    float dphi = abs(deltaPhi(MET_phi, Jet_phi[GoodJet_idx[i]]));
     if (dphi < min_dphi) min_dphi = dphi;
   }
   return min_dphi;
