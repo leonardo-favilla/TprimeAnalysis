@@ -119,6 +119,7 @@ regions = {
     ### Signal Regions ###
     # EventTopCategory: 1-3 XT, 4-6 Tight-not-XT, 7-9 Loose-not-Tight (Resolved, Mixed, Merged), 10 else.
     # The "Tight" regions (SRTop*, *Tight) are Tight-not-XT (4-6), the "XT" ones 1-3, the "Loose" ones 7-9: disjoint.
+    # The "TorXT" CRs are Tight including XT (1-6) = union of the "Tight" and "XT" ones.
     "SR"                            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0",
     "SR0fjets"                      : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet==0",
     "SRatleast1fjets"               : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon ==0) && nJetBtagLoose>0 && nForwardJet>0",
@@ -294,6 +295,7 @@ regions = {
     "btagSFcheck"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
     "STnonTTbar"                    : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=4 && EventTopCategory<=6",
     "STnonTTbarXT"                  : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=1 && EventTopCategory<=3",
+    "STnonTTbarTorXT"               : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AH"                            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
     "AHBtagMedium"                  : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
@@ -301,9 +303,11 @@ regions = {
     "AHTight"                       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AHLoose"                       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AHXT"                          : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AHTorXT"                       : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AHTightBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AHLooseBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AHXTBtagMedium"                : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AHTorXTBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "SL"                            : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0",
     "SLBtagMedium"                  : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0",
@@ -311,9 +315,11 @@ regions = {
     "SLTight"                       : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SLLoose"                       : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "SLXT"                          : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "SLTorXT"                       : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "SLTightBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SLLooseBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "SLXTBtagMedium"                : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "SLTorXTBtagMedium"             : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AH1lWR"                        : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0",
     "AH1lWRBtagMedium"              : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
@@ -321,9 +327,11 @@ regions = {
     "AH1lWRTight"                   : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH1lWRLoose"                   : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH1lWRXT"                      : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH1lWRTorXT"                   : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AH1lWRTightBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH1lWRLooseBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH1lWRXTBtagMedium"            : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH1lWRTorXTBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AH0lZR"                        : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0",
     "AH0lZRBtagMedium"              : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0",
@@ -331,14 +339,17 @@ regions = {
     "AH0lZRTight"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH0lZRLoose"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH0lZRXT"                      : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH0lZRTorXT"                   : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AH0lZRTightBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH0lZRLooseBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH0lZRXTBtagMedium"            : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH0lZRTorXTBtagMedium"         : "PuppiMET_T1_pt_nominal>250 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     ### Control Regions (MET>200) ###
     "btagSFcheckMET200"             : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>0.6 && (nVetoElectron==0 && nVetoMuon==0)",
     "STnonTTbarMET200"              : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=4 && EventTopCategory<=6",
     "STnonTTbarXTMET200"            : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=1 && EventTopCategory<=3",
+    "STnonTTbarTorXTMET200"         : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && (nJetBtagMedium==1 && nJetBtagLoose==1) && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AHMET200"                      : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0",
     "AHBtagMediumMET200"            : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0",
@@ -346,9 +357,11 @@ regions = {
     "AHTightMET200"                 : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AHLooseMET200"                 : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AHXTMET200"                    : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AHTorXTMET200"                 : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AHTightBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AHLooseBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AHXTBtagMediumMET200"          : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AHTorXTBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi<0.6 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "SLMET200"                      : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagLoose > 0",
     "SLBtagMediumMET200"            : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagMedium > 0",
@@ -356,9 +369,11 @@ regions = {
     "SLTightMET200"                 : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SLLooseMET200"                 : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "SLXTMET200"                    : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "SLTorXTMET200"                 : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagLoose > 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "SLTightBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "SLLooseBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "SLXTBtagMediumMET200"          : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "SLTorXTBtagMediumMET200"       : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nJetBtagMedium > 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AH1lWRMET200"                  : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0",
     "AH1lWRBtagMediumMET200"        : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0",
@@ -366,9 +381,11 @@ regions = {
     "AH1lWRTightMET200"             : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH1lWRLooseMET200"             : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH1lWRXTMET200"                : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH1lWRTorXTMET200"             : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagLoose == 0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AH1lWRTightBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH1lWRLooseBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH1lWRXTBtagMediumMET200"      : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH1lWRTorXTBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && " + singleLep + " && nGoodJet>=3 && MT<=140 && nJetBtagMedium == 0 && EventTopCategory>=1 && EventTopCategory<=6",
 
     "AH0lZRMET200"                  : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0",
     "AH0lZRBtagMediumMET200"        : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0",
@@ -376,7 +393,9 @@ regions = {
     "AH0lZRTightMET200"             : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH0lZRLooseMET200"             : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH0lZRXTMET200"                : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH0lZRTorXTMET200"             : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagLoose==0 && EventTopCategory>=1 && EventTopCategory<=6",
     "AH0lZRTightBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=4 && EventTopCategory<=6",
     "AH0lZRLooseBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=7 && EventTopCategory<=9",
     "AH0lZRXTBtagMediumMET200"      : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=1 && EventTopCategory<=3",
+    "AH0lZRTorXTBtagMediumMET200"   : "PuppiMET_T1_pt_nominal>200 && MinDelta_phi>2.5 && (nVetoMuon+nVetoElectron) == 0 && nJetBtagMedium==0 && EventTopCategory>=1 && EventTopCategory<=6",
 }
